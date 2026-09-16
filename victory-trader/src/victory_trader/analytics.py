@@ -8,6 +8,7 @@ import pandas as pd
 
 
 RETURN_RE = re.compile(r"^return_(\d+)m_pct$")
+NET_RETURN_RE = re.compile(r"^return_(\d+)m_([^_]+)_net_return_pct$")
 BARRIER_STATUS_RE = re.compile(r"^(tp[^_]+_sl[^_]+)_status$")
 RVOL_BINS = [0.0, 1.0, 2.0, 5.0, 10.0, float("inf")]
 RVOL_LABELS = ["<1x", "1-2x", "2-5x", "5-10x", ">=10x"]
@@ -59,6 +60,53 @@ def summarize_by_threshold(frame: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def summarize_cost_scenarios(frame: pd.DataFrame, *, horizon_min: int = 5) -> pd.DataFrame:
+    """Compare gross continuation against all available execution scenarios."""
+    gross_col = f"return_{horizon_min}m_pct"
+    if gross_col not in frame.columns:
+        raise ValueError(f"dataset missing {gross_col}")
+
+    scenario_columns: list[tuple[str, str]] = []
+    for column in frame.columns:
+        match = NET_RETURN_RE.match(column)
+        if match and int(match.group(1)) == horizon_min:
+            scenario_columns.append((match.group(2), column))
+    if not scenario_columns:
+        return pd.DataFrame()
+
+    rows: list[dict] = []
+    for threshold, group in frame.groupby("threshold_pct", sort=True):
+        gross = pd.to_numeric(group[gross_col], errors="coerce").dropna()
+        if not gross.empty:
+            rows.append(
+                {
+                    "threshold_pct": float(threshold),
+                    "horizon_min": horizon_min,
+                    "scenario": "gross",
+                    "n": int(len(gross)),
+                    "mean_return_pct": float(gross.mean()),
+                    "median_return_pct": float(gross.median()),
+                    "positive_rate": float((gross > 0).mean()),
+                }
+            )
+        for scenario, column in sorted(scenario_columns):
+            values = pd.to_numeric(group[column], errors="coerce").dropna()
+            if values.empty:
+                continue
+            rows.append(
+                {
+                    "threshold_pct": float(threshold),
+                    "horizon_min": horizon_min,
+                    "scenario": scenario,
+                    "n": int(len(values)),
+                    "mean_return_pct": float(values.mean()),
+                    "median_return_pct": float(values.median()),
+                    "positive_rate": float((values > 0).mean()),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def summarize_excursions(frame: pd.DataFrame) -> pd.DataFrame:
     required = {"threshold_pct", "mfe_pct", "mae_pct"}
     missing = required - set(frame.columns)
@@ -85,7 +133,6 @@ def summarize_excursions(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def summarize_barriers(frame: pd.DataFrame) -> pd.DataFrame:
-    """Summarize short take-profit / stop-loss first-hit experiments."""
     if frame.empty:
         return pd.DataFrame()
     barrier_keys = []
@@ -105,20 +152,24 @@ def summarize_barriers(frame: pd.DataFrame) -> pd.DataFrame:
             resolved = statuses.isin(["take_profit", "stop_loss", "timeout"])
             returns = pd.to_numeric(group.loc[resolved, return_col], errors="coerce").dropna()
             resolved_count = int(resolved.sum())
-            rows.append(
-                {
-                    "threshold_pct": float(threshold),
-                    "barrier": key,
-                    "n": int(len(group)),
-                    "resolved_n": resolved_count,
-                    "take_profit_rate": float((statuses == "take_profit").sum() / resolved_count) if resolved_count else np.nan,
-                    "stop_loss_rate": float((statuses == "stop_loss").sum() / resolved_count) if resolved_count else np.nan,
-                    "timeout_rate": float((statuses == "timeout").sum() / resolved_count) if resolved_count else np.nan,
-                    "ambiguous_rate": float((statuses == "ambiguous").mean()),
-                    "mean_exit_return_pct": float(returns.mean()) if not returns.empty else np.nan,
-                    "median_exit_return_pct": float(returns.median()) if not returns.empty else np.nan,
-                }
-            )
+            row = {
+                "threshold_pct": float(threshold),
+                "barrier": key,
+                "n": int(len(group)),
+                "resolved_n": resolved_count,
+                "take_profit_rate": float((statuses == "take_profit").sum() / resolved_count) if resolved_count else np.nan,
+                "stop_loss_rate": float((statuses == "stop_loss").sum() / resolved_count) if resolved_count else np.nan,
+                "timeout_rate": float((statuses == "timeout").sum() / resolved_count) if resolved_count else np.nan,
+                "ambiguous_rate": float((statuses == "ambiguous").mean()),
+                "mean_exit_return_pct": float(returns.mean()) if not returns.empty else np.nan,
+                "median_exit_return_pct": float(returns.median()) if not returns.empty else np.nan,
+            }
+            for scenario in ("light", "base", "stress"):
+                net_col = f"{key}_{scenario}_net_return_pct"
+                if net_col in group.columns:
+                    net = pd.to_numeric(group.loc[resolved, net_col], errors="coerce").dropna()
+                    row[f"mean_{scenario}_net_pct"] = float(net.mean()) if not net.empty else np.nan
+            rows.append(row)
     return pd.DataFrame(rows)
 
 
