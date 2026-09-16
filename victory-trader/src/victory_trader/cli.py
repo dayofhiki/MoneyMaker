@@ -9,6 +9,7 @@ from .analytics import (
     load_event_dataset,
     summarize_barriers,
     summarize_by_threshold,
+    summarize_cost_scenarios,
     summarize_excursions,
     summarize_rvol,
 )
@@ -58,6 +59,7 @@ def market_dataset(
     min_dollar_volume: float,
     max_candidates: int | None,
     request_interval: float,
+    annotate_halts: bool,
 ) -> int:
     settings = load_settings()
     client = MassiveClient(settings.massive_api_key)
@@ -70,6 +72,7 @@ def market_dataset(
         min_day_dollar_volume=min_dollar_volume,
         max_candidates=max_candidates,
         request_interval_seconds=request_interval,
+        annotate_halts=annotate_halts,
     )
 
     if result.empty:
@@ -93,6 +96,7 @@ def multi_day_dataset(
     min_dollar_volume: float,
     max_candidates: int | None,
     request_interval: float,
+    annotate_halts: bool,
 ) -> int:
     settings = load_settings()
     client = MassiveClient(settings.massive_api_key)
@@ -106,6 +110,7 @@ def multi_day_dataset(
         min_day_dollar_volume=min_dollar_volume,
         max_candidates=max_candidates,
         request_interval_seconds=request_interval,
+        annotate_halts=annotate_halts,
     )
 
     if not result.empty:
@@ -135,6 +140,12 @@ def analyze_dataset(path: Path, horizon: int) -> int:
 
     print("\n=== Continuation by threshold ===")
     print(summarize_by_threshold(frame).to_string(index=False))
+
+    costs = summarize_cost_scenarios(frame, horizon_min=horizon)
+    if not costs.empty:
+        print(f"\n=== Gross vs execution-friction scenarios at +{horizon}m ===")
+        print(costs.to_string(index=False))
+
     print("\n=== MFE / MAE by threshold ===")
     print(summarize_excursions(frame).to_string(index=False))
 
@@ -163,6 +174,11 @@ def _add_dataset_options(parser: argparse.ArgumentParser) -> None:
         default=12.5,
         help="Seconds between Massive requests; 12.5 is conservative for the free plan.",
     )
+    parser.add_argument(
+        "--annotate-halts",
+        action="store_true",
+        help="Attach official Nasdaq Trader halt records when the public feed is available.",
+    )
 
 
 def main() -> int:
@@ -184,9 +200,9 @@ def main() -> int:
     multi.add_argument("end", type=date.fromisoformat)
     _add_dataset_options(multi)
 
-    analyze = sub.add_parser("analyze-dataset", help="Summarize continuation, exits, and RVOL")
+    analyze = sub.add_parser("analyze-dataset", help="Summarize continuation, costs, exits, and RVOL")
     analyze.add_argument("path", type=Path)
-    analyze.add_argument("--horizon", type=int, default=5, help="Horizon used for RVOL bucket analysis")
+    analyze.add_argument("--horizon", type=int, default=5, help="Horizon used for cost/RVOL analysis")
 
     args = parser.parse_args()
     if args.command == "check-api":
@@ -197,13 +213,13 @@ def main() -> int:
         return market_dataset(
             args.day, args.output, args.min_price, args.max_price,
             args.min_high_return, args.min_dollar_volume, args.max_candidates,
-            args.request_interval,
+            args.request_interval, args.annotate_halts,
         )
     if args.command == "multi-day-dataset":
         return multi_day_dataset(
             args.start, args.end, args.output, args.min_price, args.max_price,
             args.min_high_return, args.min_dollar_volume, args.max_candidates,
-            args.request_interval,
+            args.request_interval, args.annotate_halts,
         )
     if args.command == "analyze-dataset":
         return analyze_dataset(args.path, args.horizon)
