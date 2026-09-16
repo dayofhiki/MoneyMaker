@@ -4,10 +4,11 @@ Research codebase for studying short-horizon momentum in low-priced U.S. equitie
 
 ## Current scope
 
-- U.S. exchange-listed common stocks
-- Research price universe: roughly $0.50 to $20
+- U.S. exchange-listed low-priced equities, with common-stock reference filtering planned next
+- Research price universe: prior-session close roughly $0.50 to $20
 - 1-minute OHLCV as the first-resolution dataset
 - Event-study first: detect large intraday moves, then measure subsequent price paths
+- Market-wide daily candidate screening before downloading minute bars
 - No live-money execution in this phase
 
 ## Principles
@@ -28,17 +29,64 @@ pip install -e .[dev]
 copy .env.example .env
 ```
 
-Put your Massive API key in `.env`, then run:
+Put your Massive API key in `.env`, then check connectivity:
 
 ```bash
-python -m victory_trader.cli check-api
+victory-trader check-api
 ```
 
-## Planned milestones
+Run an event study for one ticker/day:
 
-- Phase 1: API connectivity + local parquet cache
-- Phase 2: intraday event detector
-- Phase 3: event-study analytics
-- Phase 4: cost-aware backtester
-- Phase 5: walk-forward / out-of-sample validation
-- Phase 6: paper-trading integration
+```bash
+victory-trader event-study TICKER 2026-09-15
+```
+
+Build a market-wide event dataset for one U.S. trading day:
+
+```bash
+victory-trader market-dataset 2026-09-15
+```
+
+The default market scan uses:
+
+- prior-session close between $0.50 and $20
+- target-session high at least +20% above the prior close
+- OTC excluded at the Massive grouped-market request
+- conservative 12.5-second spacing between Massive requests for the free-plan workflow
+- output to `data/events/market_events_YYYY-MM-DD.parquet`
+
+Useful research controls:
+
+```bash
+victory-trader market-dataset 2026-09-15 \
+  --min-price 0.50 \
+  --max-price 20 \
+  --min-high-return 20 \
+  --min-dollar-volume 1000000 \
+  --max-candidates 10
+```
+
+`data/`, `.env`, and artifacts are intentionally excluded from Git.
+
+## Implemented
+
+- Massive REST connectivity
+- Historical previous-close lookup
+- 1-minute aggregate normalization
+- First threshold crossing detection (+10/+20/+30/+50/+75/+100%)
+- Post-event returns at 1/2/5/10/15/30/60 minutes
+- MFE and MAE measurement using future bars only
+- Market-wide grouped-daily candidate screening
+- Per-candidate minute-bar event extraction
+- Parquet/CSV event dataset output
+- Automated pytest suite in GitHub Actions
+
+## Next milestones
+
+- Reference-data filter for point-in-time common stocks only
+- Corporate-action and split audit layer
+- Multi-day / multi-year dataset builder
+- Descriptive event analytics and short-horizon exit comparisons
+- Cost-aware backtester
+- Walk-forward / out-of-sample validation
+- Paper-trading integration
