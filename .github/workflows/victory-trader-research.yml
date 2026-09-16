@@ -1,0 +1,96 @@
+name: Victory Trader Research
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Start date (YYYY-MM-DD)'
+        required: true
+        default: '2026-09-01'
+      end_date:
+        description: 'End date (YYYY-MM-DD)'
+        required: true
+        default: '2026-09-05'
+      max_candidates:
+        description: 'Max momentum candidates per day (blank = all)'
+        required: false
+        default: '5'
+      request_interval:
+        description: 'Seconds between Massive API requests'
+        required: true
+        default: '12.5'
+      annotate_halts:
+        description: 'Try to attach Nasdaq halt annotations'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate API secret
+        shell: bash
+        run: |
+          if [ -z "$MASSIVE_API_KEY" ]; then
+            echo "MASSIVE_API_KEY repository secret is not configured."
+            exit 1
+          fi
+
+      - name: Install Victory Trader
+        run: python -m pip install -e '.[dev]'
+
+      - name: Run tests first
+        run: pytest -q
+
+      - name: Build research dataset
+        shell: bash
+        run: |
+          mkdir -p data/events artifacts
+          ARGS=(
+            "${{ inputs.start_date }}"
+            "${{ inputs.end_date }}"
+            --output data/events/research.parquet
+            --request-interval "${{ inputs.request_interval }}"
+          )
+          if [ -n "${{ inputs.max_candidates }}" ]; then
+            ARGS+=(--max-candidates "${{ inputs.max_candidates }}")
+          fi
+          if [ "${{ inputs.annotate_halts }}" = "true" ]; then
+            ARGS+=(--annotate-halts)
+          fi
+          victory-trader multi-day-dataset "${ARGS[@]}" | tee artifacts/build.log
+
+      - name: Analyze dataset
+        shell: bash
+        run: |
+          if [ -f data/events/research.parquet ]; then
+            victory-trader analyze-dataset data/events/research.parquet --horizon 5 \
+              | tee artifacts/analysis.txt
+          else
+            echo "No dataset file was produced." | tee artifacts/analysis.txt
+          fi
+
+      - name: Upload research artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: victory-trader-${{ inputs.start_date }}-${{ inputs.end_date }}
+          path: |
+            victory-trader/data/events/research.parquet
+            victory-trader/artifacts/build.log
+            victory-trader/artifacts/analysis.txt
+          if-no-files-found: warn
+          retention-days: 30
