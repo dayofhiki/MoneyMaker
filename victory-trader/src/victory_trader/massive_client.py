@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 
 import requests
@@ -28,3 +28,21 @@ class MassiveClient:
             f"/v2/aggs/ticker/{ticker.upper()}/range/1/minute/{day_str}/{day_str}",
             {"adjusted": "true", "sort": "asc", "limit": 50000},
         )
+
+    def daily_bars(self, ticker: str, start: date, end: date) -> dict[str, Any]:
+        return self._get(
+            f"/v2/aggs/ticker/{ticker.upper()}/range/1/day/{start.isoformat()}/{end.isoformat()}",
+            {"adjusted": "true", "sort": "asc", "limit": 5000},
+        )
+
+    def historical_previous_close(self, ticker: str, day: date) -> float:
+        """Return the latest adjusted daily close strictly before `day`.
+
+        A 14-calendar-day lookback safely spans ordinary weekends and exchange
+        holidays without hard-coding a trading calendar in the first prototype.
+        """
+        payload = self.daily_bars(ticker, day - timedelta(days=14), day - timedelta(days=1))
+        results = payload.get("results") or []
+        if not results:
+            raise ValueError(f"No prior daily bar found for {ticker.upper()} before {day}")
+        return float(results[-1]["c"])
