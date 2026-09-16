@@ -8,6 +8,7 @@ import pandas as pd
 
 
 RETURN_RE = re.compile(r"^return_(\d+)m_pct$")
+BARRIER_STATUS_RE = re.compile(r"^(tp[^_]+_sl[^_]+)_status$")
 RVOL_BINS = [0.0, 1.0, 2.0, 5.0, 10.0, float("inf")]
 RVOL_LABELS = ["<1x", "1-2x", "2-5x", "5-10x", ">=10x"]
 
@@ -31,7 +32,6 @@ def available_horizons(frame: pd.DataFrame) -> list[int]:
 
 
 def summarize_by_threshold(frame: pd.DataFrame) -> pd.DataFrame:
-    """Describe continuation after each first-crossing threshold."""
     if frame.empty:
         return pd.DataFrame()
     if "threshold_pct" not in frame.columns:
@@ -84,12 +84,49 @@ def summarize_excursions(frame: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def summarize_barriers(frame: pd.DataFrame) -> pd.DataFrame:
+    """Summarize short take-profit / stop-loss first-hit experiments."""
+    if frame.empty:
+        return pd.DataFrame()
+    barrier_keys = []
+    for column in frame.columns:
+        match = BARRIER_STATUS_RE.match(column)
+        if match:
+            barrier_keys.append(match.group(1))
+    if not barrier_keys:
+        return pd.DataFrame()
+
+    rows: list[dict] = []
+    for threshold, group in frame.groupby("threshold_pct", sort=True):
+        for key in sorted(barrier_keys):
+            status_col = f"{key}_status"
+            return_col = f"{key}_exit_return_pct"
+            statuses = group[status_col].astype("string")
+            resolved = statuses.isin(["take_profit", "stop_loss", "timeout"])
+            returns = pd.to_numeric(group.loc[resolved, return_col], errors="coerce").dropna()
+            resolved_count = int(resolved.sum())
+            rows.append(
+                {
+                    "threshold_pct": float(threshold),
+                    "barrier": key,
+                    "n": int(len(group)),
+                    "resolved_n": resolved_count,
+                    "take_profit_rate": float((statuses == "take_profit").sum() / resolved_count) if resolved_count else np.nan,
+                    "stop_loss_rate": float((statuses == "stop_loss").sum() / resolved_count) if resolved_count else np.nan,
+                    "timeout_rate": float((statuses == "timeout").sum() / resolved_count) if resolved_count else np.nan,
+                    "ambiguous_rate": float((statuses == "ambiguous").mean()),
+                    "mean_exit_return_pct": float(returns.mean()) if not returns.empty else np.nan,
+                    "median_exit_return_pct": float(returns.median()) if not returns.empty else np.nan,
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def summarize_rvol(
     frame: pd.DataFrame,
     *,
     horizon_min: int = 5,
 ) -> pd.DataFrame:
-    """Compare continuation across point-in-time cumulative RVOL buckets."""
     return_col = f"return_{horizon_min}m_pct"
     required = {"threshold_pct", "rvol_cumulative_20d", return_col}
     missing = required - set(frame.columns)
