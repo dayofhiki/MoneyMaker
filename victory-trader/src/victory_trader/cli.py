@@ -5,9 +5,10 @@ import json
 from datetime import date
 from pathlib import Path
 
+from .analytics import load_event_dataset, summarize_by_threshold, summarize_excursions, summarize_rvol
 from .config import load_settings
 from .event_study import run_event_study
-from .market_data import bars_from_massive_payload
+from .history import load_target_with_history
 from .market_dataset import build_market_event_dataset, save_dataset
 from .massive_client import MassiveClient
 from .multi_day import build_multi_day_dataset
@@ -24,11 +25,15 @@ def check_api() -> int:
 def event_study(ticker: str, day: date) -> int:
     settings = load_settings()
     client = MassiveClient(settings.massive_api_key)
-    payload = client.minute_bars(ticker, day)
-    bars = bars_from_massive_payload(payload)
+    bars, history_bars = load_target_with_history(client, ticker, day)
     previous_close = client.historical_previous_close(ticker, day)
 
-    result = run_event_study(ticker=ticker, bars=bars, previous_close=previous_close)
+    result = run_event_study(
+        ticker=ticker,
+        bars=bars,
+        previous_close=previous_close,
+        history_bars=history_bars,
+    )
     if result.empty:
         print("No threshold crossing events found.")
         return 0
@@ -116,6 +121,24 @@ def multi_day_dataset(
     return 0
 
 
+def analyze_dataset(path: Path, horizon: int) -> int:
+    frame = load_event_dataset(path)
+    if frame.empty:
+        print("Dataset is empty.")
+        return 0
+
+    print("\n=== Continuation by threshold ===")
+    print(summarize_by_threshold(frame).to_string(index=False))
+    print("\n=== MFE / MAE by threshold ===")
+    print(summarize_excursions(frame).to_string(index=False))
+
+    if "rvol_cumulative_20d" in frame.columns:
+        print(f"\n=== RVOL buckets at +{horizon}m ===")
+        rvol = summarize_rvol(frame, horizon_min=horizon)
+        print(rvol.to_string(index=False) if not rvol.empty else "No rows with historical RVOL yet.")
+    return 0
+
+
 def _add_dataset_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--min-price", type=float, default=0.50)
@@ -150,6 +173,10 @@ def main() -> int:
     multi.add_argument("end", type=date.fromisoformat)
     _add_dataset_options(multi)
 
+    analyze = sub.add_parser("analyze-dataset", help="Summarize continuation, excursions, and RVOL")
+    analyze.add_argument("path", type=Path)
+    analyze.add_argument("--horizon", type=int, default=5, help="Horizon used for RVOL bucket analysis")
+
     args = parser.parse_args()
     if args.command == "check-api":
         return check_api()
@@ -167,6 +194,8 @@ def main() -> int:
             args.min_high_return, args.min_dollar_volume, args.max_candidates,
             args.request_interval,
         )
+    if args.command == "analyze-dataset":
+        return analyze_dataset(args.path, args.horizon)
     raise RuntimeError(f"Unknown command: {args.command}")
 
 
