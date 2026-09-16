@@ -11,7 +11,7 @@ import pandas as pd
 
 from .config import load_settings
 from .event_study import DEFAULT_HORIZONS, run_event_study
-from .market_data import bars_from_massive_payload
+from .history import load_target_with_history
 from .massive_client import MassiveClient
 from .universe import fetch_security_metadata, split_tickers_from_payload
 
@@ -55,7 +55,6 @@ def select_candidates(
     min_high_return_pct: float = 20.0,
     min_day_dollar_volume: float = 0.0,
 ) -> list[Candidate]:
-    """Pre-screen symbols cheaply from two market-wide daily summaries."""
     if min_price <= 0 or max_price <= min_price:
         raise ValueError("price bounds must satisfy 0 < min_price < max_price")
 
@@ -145,13 +144,15 @@ def build_market_event_dataset(
     request_interval_seconds: float = 12.5,
     enforce_common_stock: bool = True,
     exclude_split_days: bool = True,
+    historical_context_days: int = 35,
 ) -> pd.DataFrame:
-    """Build a defensively filtered event-study dataset for one U.S. trading day.
+    """Build one day's point-in-time momentum research dataset.
 
-    The cheap grouped summary first finds possible movers. We then remove symbols
-    with same-day split events and verify each remaining candidate point-in-time
-    as a U.S. common stock primarily listed on Nasdaq, NYSE, or NYSE American.
-    Only after those checks do we download 1-minute bars.
+    Candidate discovery may use the completed daily summary because this function
+    is constructing a historical event sample, not simulating live discovery.
+    Every feature attached to an event, however, is restricted to information
+    available at or before that event timestamp. Historical RVOL uses only prior
+    trading dates.
     """
     target_payload = grouped_daily(client, day)
     if not _market_rows(target_payload):
@@ -193,7 +194,12 @@ def build_market_event_dataset(
                 continue
 
         _sleep(request_interval_seconds)
-        bars = bars_from_massive_payload(client.minute_bars(candidate.ticker, day))
+        bars, history_bars = load_target_with_history(
+            client,
+            candidate.ticker,
+            day,
+            calendar_lookback_days=historical_context_days,
+        )
         if bars.empty:
             continue
 
@@ -203,6 +209,7 @@ def build_market_event_dataset(
             previous_close=candidate.previous_close,
             thresholds_pct=thresholds_pct,
             horizons=horizons,
+            history_bars=history_bars,
         )
         if study.empty:
             continue
@@ -254,6 +261,7 @@ def main() -> int:
     parser.add_argument("--min-dollar-volume", type=float, default=0.0)
     parser.add_argument("--max-candidates", type=int, default=None)
     parser.add_argument("--request-interval", type=float, default=12.5)
+    parser.add_argument("--history-days", type=int, default=35)
     args = parser.parse_args()
 
     settings = load_settings()
@@ -267,6 +275,7 @@ def main() -> int:
         min_day_dollar_volume=args.min_dollar_volume,
         max_candidates=args.max_candidates,
         request_interval_seconds=args.request_interval,
+        historical_context_days=args.history_days,
     )
 
     if frame.empty:
