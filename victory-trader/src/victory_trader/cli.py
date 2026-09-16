@@ -5,7 +5,13 @@ import json
 from datetime import date
 from pathlib import Path
 
-from .analytics import load_event_dataset, summarize_by_threshold, summarize_excursions, summarize_rvol
+from .analytics import (
+    load_event_dataset,
+    summarize_barriers,
+    summarize_by_threshold,
+    summarize_excursions,
+    summarize_rvol,
+)
 from .config import load_settings
 from .event_study import run_event_study
 from .history import load_target_with_history
@@ -132,6 +138,11 @@ def analyze_dataset(path: Path, horizon: int) -> int:
     print("\n=== MFE / MAE by threshold ===")
     print(summarize_excursions(frame).to_string(index=False))
 
+    barriers = summarize_barriers(frame)
+    if not barriers.empty:
+        print("\n=== Short TP / SL first-hit experiments ===")
+        print(barriers.to_string(index=False))
+
     if "rvol_cumulative_20d" in frame.columns:
         print(f"\n=== RVOL buckets at +{horizon}m ===")
         rvol = summarize_rvol(frame, horizon_min=horizon)
@@ -173,7 +184,7 @@ def main() -> int:
     multi.add_argument("end", type=date.fromisoformat)
     _add_dataset_options(multi)
 
-    analyze = sub.add_parser("analyze-dataset", help="Summarize continuation, excursions, and RVOL")
+    analyze = sub.add_parser("analyze-dataset", help="Summarize continuation, exits, and RVOL")
     analyze.add_argument("path", type=Path)
     analyze.add_argument("--horizon", type=int, default=5, help="Horizon used for RVOL bucket analysis")
 
