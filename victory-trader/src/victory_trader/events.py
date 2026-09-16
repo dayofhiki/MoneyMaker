@@ -24,8 +24,9 @@ def detect_threshold_crossings(
     """Return the first close-price crossing for each intraday return threshold.
 
     Expected columns: `t` (Unix milliseconds) and `c` (close).
-    This is intentionally simple. Later versions will support high/low crossing,
-    session filters, halts, and richer event definitions.
+    Thresholds are compared as target prices rather than percentage values so an
+    exact boundary such as 10 -> 12 (+20%) is not missed by floating-point
+    representation noise.
     """
     if previous_close <= 0:
         raise ValueError("previous_close must be positive")
@@ -36,11 +37,13 @@ def detect_threshold_crossings(
         raise ValueError(f"bars missing required columns: {sorted(missing)}")
 
     frame = bars.sort_values("t").copy()
-    frame["return_pct"] = (frame["c"] / previous_close - 1.0) * 100.0
+    frame["c"] = pd.to_numeric(frame["c"], errors="raise")
 
     events: list[CrossingEvent] = []
     for threshold in sorted(set(float(x) for x in thresholds_pct)):
-        crossed = frame.loc[frame["return_pct"] >= threshold]
+        target_price = previous_close * (1.0 + threshold / 100.0)
+        tolerance = max(abs(target_price) * 1e-12, 1e-12)
+        crossed = frame.loc[frame["c"] + tolerance >= target_price]
         if crossed.empty:
             continue
         row = crossed.iloc[0]
