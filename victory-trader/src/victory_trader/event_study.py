@@ -6,6 +6,7 @@ from typing import Iterable
 import pandas as pd
 
 from .events import CrossingEvent, detect_threshold_crossings
+from .execution_costs import DEFAULT_EXECUTION_SCENARIOS, add_execution_scenarios_to_record
 from .exits import DEFAULT_BARRIERS, evaluate_default_barriers
 from .features import extract_event_features
 
@@ -92,6 +93,38 @@ def measure_event_outcome(
     )
 
 
+def _cost_adjusted_outcomes(
+    event: CrossingEvent,
+    outcome: EventOutcome,
+    barriers_record: dict,
+) -> dict[str, float | None]:
+    """Apply transparent friction scenarios to horizon and barrier exits."""
+    adjusted: dict[str, float | None] = {}
+    for horizon, gross_return in outcome.future_returns_pct.items():
+        adjusted.update(
+            add_execution_scenarios_to_record(
+                event.price,
+                gross_return,
+                DEFAULT_EXECUTION_SCENARIOS,
+                prefix=f"return_{horizon}m",
+            )
+        )
+
+    for key, gross_return in barriers_record.items():
+        if not key.endswith("_exit_return_pct"):
+            continue
+        prefix = key.removesuffix("_exit_return_pct")
+        adjusted.update(
+            add_execution_scenarios_to_record(
+                event.price,
+                gross_return if isinstance(gross_return, (int, float)) else None,
+                DEFAULT_EXECUTION_SCENARIOS,
+                prefix=prefix,
+            )
+        )
+    return adjusted
+
+
 def run_event_study(
     ticker: str,
     bars: pd.DataFrame,
@@ -101,7 +134,8 @@ def run_event_study(
     history_bars: pd.DataFrame | None = None,
     barriers: Iterable[tuple[float, float]] = DEFAULT_BARRIERS,
 ) -> pd.DataFrame:
-    """Detect crossings and emit features, future paths, and short-exit labels."""
+    """Emit point-in-time features plus gross and friction-adjusted outcomes."""
+    requested_horizons = tuple(int(h) for h in horizons)
     events = detect_threshold_crossings(
         ticker=ticker,
         bars=bars,
@@ -111,10 +145,10 @@ def run_event_study(
     if not events:
         return pd.DataFrame()
 
-    max_horizon = max((int(h) for h in horizons), default=60)
+    max_horizon = max(requested_horizons, default=60)
     records: list[dict] = []
     for event in events:
-        outcome = measure_event_outcome(event, bars, horizons)
+        outcome = measure_event_outcome(event, bars, requested_horizons)
         features = extract_event_features(event, bars, history_bars=history_bars)
         barriers_record = evaluate_default_barriers(
             event,
@@ -122,8 +156,10 @@ def run_event_study(
             barriers=barriers,
             max_horizon_minutes=max_horizon,
         )
+        cost_record = _cost_adjusted_outcomes(event, outcome, barriers_record)
         record = outcome.to_record()
         record.update(features.to_record())
         record.update(barriers_record)
+        record.update(cost_record)
         records.append(record)
     return pd.DataFrame(records)
