@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime, time
 from zoneinfo import ZoneInfo
 
-import numpy as np
 import pandas as pd
 
 from .events import CrossingEvent
 
 
 NEW_YORK = ZoneInfo("America/New_York")
+UTC = ZoneInfo("UTC")
 PREMARKET_START = time(4, 0)
 REGULAR_START = time(9, 30)
 REGULAR_END = time(16, 0)
@@ -25,6 +25,9 @@ class EventFeatures:
     volume_30m: float
     volume_accel_1m_vs_prior20m: float | None
     volume_accel_5m_vs_prior20m: float | None
+    rvol_cumulative_20d: float | None
+    rvol_5m_20d: float | None
+    rvol_history_days: int
     session_vwap: float | None
     vwap_distance_pct: float | None
     hod_distance_pct: float | None
@@ -41,12 +44,16 @@ class EventFeatures:
     is_regular_session: bool
     is_after_hours: bool
 
-    def to_record(self) -> dict[str, float | bool | None]:
+    def to_record(self) -> dict[str, float | bool | int | None]:
         return asdict(self)
 
 
-def _timestamp_et(timestamp_ms: int) -> datetime:
-    return datetime.fromtimestamp(timestamp_ms / 1000.0, tz=ZoneInfo("UTC")).astimezone(NEW_YORK)
+def timestamp_et(timestamp_ms: int) -> datetime:
+    return datetime.fromtimestamp(timestamp_ms / 1000.0, tz=UTC).astimezone(NEW_YORK)
+
+
+def _minute_of_day(dt: datetime) -> int:
+    return dt.hour * 60 + dt.minute
 
 
 def _window(frame: pd.DataFrame, end_idx: int, minutes: int) -> pd.DataFrame:
@@ -75,7 +82,12 @@ def _volatility(frame: pd.DataFrame, end_idx: int, minutes: int) -> float | None
     return float(returns.std(ddof=1) * 100.0)
 
 
-def _volume_acceleration(frame: pd.DataFrame, end_idx: int, recent_minutes: int, baseline_minutes: int = 20) -> float | None:
+def _volume_acceleration(
+    frame: pd.DataFrame,
+    end_idx: int,
+    recent_minutes: int,
+    baseline_minutes: int = 20,
+) -> float | None:
     recent_start = max(0, end_idx - recent_minutes + 1)
     recent = frame.iloc[recent_start : end_idx + 1]
     baseline_end = recent_start
@@ -93,8 +105,7 @@ def _volume_acceleration(frame: pd.DataFrame, end_idx: int, recent_minutes: int,
 
 def _session_vwap(frame: pd.DataFrame) -> float | None:
     volume = pd.to_numeric(frame["v"], errors="coerce").fillna(0.0)
-    total_volume = float(volume.sum())
-    if total_volume <= 0:
+    if float(volume.sum()) <= 0:
         return None
 
     if "vw" in frame.columns:
@@ -109,7 +120,60 @@ def _session_vwap(frame: pd.DataFrame) -> float | None:
     return float((prices[valid] * volume[valid]).sum() / volume[valid].sum())
 
 
-def extract_event_features(event: CrossingEvent, bars: pd.DataFrame) -> EventFeatures:
+def _historical_rvol(
+    history_bars: pd.DataFrame | None,
+    event_dt: datetime,
+    current_cumulative_volume: float,
+    current_5m_volume: float,
+    max_days: int = 20,
+) -> tuple[float | None, float | None, int]:
+    if history_bars is None or history_bars.empty:
+        return None, None, 0
+    if "t" not in history_bars.columns or "v" not in history_bars.columns:
+        return None, None, 0
+
+    history = history_bars.copy()
+    history["_dt_et"] = history["t"].map(lambda x: timestamp_et(int(x)))
+    history = history.loc[history["_dt_et"].map(lambda x: x.date() < event_dt.date())]
+    if history.empty:
+        return None, None, 0
+
+    dates = sorted(history["_dt_et"].map(lambda x: x.date()).unique())[-max_days:]
+    event_minute = _minute_of_day(event_dt)
+    session_start_minute = PREMARKET_START.hour * 60 + PREMARKET_START.minute
+    window_start = event_minute - 4
+
+    cumulative_samples: list[float] = []
+    window_samples: list[float] = []
+    for trading_date in dates:
+        day_frame = history.loc[history["_dt_et"].map(lambda x: x.date() == trading_date)].copy()
+        minute_index = day_frame["_dt_et"].map(_minute_of_day)
+        observed = day_frame.loc[(minute_index >= session_start_minute) & (minute_index <= event_minute)]
+        if observed.empty:
+            continue
+        cumulative_samples.append(float(pd.to_numeric(observed["v"], errors="coerce").fillna(0.0).sum()))
+
+        observed_minutes = observed["_dt_et"].map(_minute_of_day)
+        recent = observed.loc[(observed_minutes >= window_start) & (observed_minutes <= event_minute)]
+        window_samples.append(float(pd.to_numeric(recent["v"], errors="coerce").fillna(0.0).sum()))
+
+    if not cumulative_samples:
+        return None, None, 0
+
+    average_cumulative = sum(cumulative_samples) / len(cumulative_samples)
+    valid_window_samples = [value for value in window_samples if value >= 0]
+    average_5m = sum(valid_window_samples) / len(valid_window_samples) if valid_window_samples else 0.0
+
+    cumulative_rvol = current_cumulative_volume / average_cumulative if average_cumulative > 0 else None
+    five_min_rvol = current_5m_volume / average_5m if average_5m > 0 else None
+    return cumulative_rvol, five_min_rvol, len(cumulative_samples)
+
+
+def extract_event_features(
+    event: CrossingEvent,
+    bars: pd.DataFrame,
+    history_bars: pd.DataFrame | None = None,
+) -> EventFeatures:
     required = {"t", "o", "h", "l", "c", "v"}
     missing = required - set(bars.columns)
     if missing:
@@ -122,18 +186,28 @@ def extract_event_features(event: CrossingEvent, bars: pd.DataFrame) -> EventFea
     event_idx = matches[0]
     observed = frame.iloc[: event_idx + 1].copy()
 
-    event_dt = _timestamp_et(event.timestamp_ms)
+    event_dt = timestamp_et(event.timestamp_ms)
     local_time = event_dt.time().replace(tzinfo=None)
     is_premarket = PREMARKET_START <= local_time < REGULAR_START
     is_regular = REGULAR_START <= local_time < REGULAR_END
     is_after_hours = local_time >= REGULAR_END
 
-    same_date_mask = observed["t"].map(lambda x: _timestamp_et(int(x)).date() == event_dt.date())
+    same_date_mask = observed["t"].map(lambda x: timestamp_et(int(x)).date() == event_dt.date())
     observed = observed.loc[same_date_mask].reset_index(drop=True)
     event_idx = len(observed) - 1
 
     event_volume = float(observed.iloc[event_idx]["v"])
     cumulative_volume = float(pd.to_numeric(observed["v"], errors="coerce").fillna(0.0).sum())
+    volume_5m = float(pd.to_numeric(_window(observed, event_idx, 5)["v"], errors="coerce").fillna(0.0).sum())
+    volume_15m = float(pd.to_numeric(_window(observed, event_idx, 15)["v"], errors="coerce").fillna(0.0).sum())
+    volume_30m = float(pd.to_numeric(_window(observed, event_idx, 30)["v"], errors="coerce").fillna(0.0).sum())
+
+    rvol_cumulative, rvol_5m, rvol_days = _historical_rvol(
+        history_bars,
+        event_dt,
+        cumulative_volume,
+        volume_5m,
+    )
 
     session_vwap = _session_vwap(observed)
     vwap_distance = None if session_vwap is None or session_vwap <= 0 else (event.price / session_vwap - 1.0) * 100.0
@@ -143,7 +217,7 @@ def extract_event_features(event: CrossingEvent, bars: pd.DataFrame) -> EventFea
 
     premarket_rows = []
     for idx, row in observed.iterrows():
-        dt = _timestamp_et(int(row["t"]))
+        dt = timestamp_et(int(row["t"]))
         lt = dt.time().replace(tzinfo=None)
         if PREMARKET_START <= lt < REGULAR_START:
             premarket_rows.append(idx)
@@ -163,11 +237,14 @@ def extract_event_features(event: CrossingEvent, bars: pd.DataFrame) -> EventFea
     return EventFeatures(
         event_volume=event_volume,
         cumulative_volume=cumulative_volume,
-        volume_5m=float(pd.to_numeric(_window(observed, event_idx, 5)["v"], errors="coerce").fillna(0.0).sum()),
-        volume_15m=float(pd.to_numeric(_window(observed, event_idx, 15)["v"], errors="coerce").fillna(0.0).sum()),
-        volume_30m=float(pd.to_numeric(_window(observed, event_idx, 30)["v"], errors="coerce").fillna(0.0).sum()),
+        volume_5m=volume_5m,
+        volume_15m=volume_15m,
+        volume_30m=volume_30m,
         volume_accel_1m_vs_prior20m=_volume_acceleration(observed, event_idx, 1, 20),
         volume_accel_5m_vs_prior20m=_volume_acceleration(observed, event_idx, 5, 20),
+        rvol_cumulative_20d=rvol_cumulative,
+        rvol_5m_20d=rvol_5m,
+        rvol_history_days=rvol_days,
         session_vwap=session_vwap,
         vwap_distance_pct=vwap_distance,
         hod_distance_pct=hod_distance,
