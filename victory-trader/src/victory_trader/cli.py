@@ -18,11 +18,12 @@ def check_api() -> int:
     return 0
 
 
-def event_study(ticker: str, day: date, previous_close: float) -> int:
+def event_study(ticker: str, day: date) -> int:
     settings = load_settings()
     client = MassiveClient(settings.massive_api_key)
     payload = client.minute_bars(ticker, day)
     bars = bars_from_massive_payload(payload)
+    previous_close = client.historical_previous_close(ticker, day)
 
     result = run_event_study(
         ticker=ticker,
@@ -34,6 +35,7 @@ def event_study(ticker: str, day: date, previous_close: float) -> int:
         print("No threshold crossing events found.")
         return 0
 
+    print(f"Previous close: {previous_close:.4f}")
     print(result.to_string(index=False))
     return 0
 
@@ -50,19 +52,13 @@ def main() -> int:
     )
     study.add_argument("ticker", help="U.S. equity ticker, e.g. AAPL")
     study.add_argument("day", type=date.fromisoformat, help="Trading day in YYYY-MM-DD format")
-    study.add_argument(
-        "--previous-close",
-        type=float,
-        required=True,
-        help="Adjusted close of the previous trading session",
-    )
 
     args = parser.parse_args()
 
     if args.command == "check-api":
         return check_api()
     if args.command == "event-study":
-        return event_study(args.ticker, args.day, args.previous_close)
+        return event_study(args.ticker, args.day)
     raise RuntimeError(f"Unknown command: {args.command}")
 
 
