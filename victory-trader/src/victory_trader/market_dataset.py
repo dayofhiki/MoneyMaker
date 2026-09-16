@@ -177,8 +177,8 @@ def build_market_event_dataset(
         candidates = candidates[:max_candidates]
 
     frames: list[pd.DataFrame] = []
-    for index, candidate in enumerate(candidates):
-        if index > 0 and request_interval_seconds > 0:
+    for candidate in candidates:
+        if request_interval_seconds > 0:
             time.sleep(request_interval_seconds)
 
         bars = bars_from_massive_payload(client.minute_bars(candidate.ticker, day))
