@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Iterable
 
 import pandas as pd
 
 from .events import CrossingEvent, detect_threshold_crossings
+from .features import extract_event_features
 
 
 DEFAULT_HORIZONS = (1, 2, 5, 10, 15, 30, 60)
@@ -50,12 +51,7 @@ def measure_event_outcome(
     bars: pd.DataFrame,
     horizons: Iterable[int] = DEFAULT_HORIZONS,
 ) -> EventOutcome:
-    """Measure post-event path using only bars strictly after the event bar.
-
-    A horizon of N means the close of the N-th following 1-minute bar. MFE/MAE
-    use future highs/lows from minute +1 through the largest requested horizon.
-    Missing future bars produce None rather than silently shortening the horizon.
-    """
+    """Measure post-event path using only bars strictly after the event bar."""
     frame = _validate_bars(bars)
     matches = frame.index[frame["t"] == event.timestamp_ms].tolist()
     if len(matches) != 1:
@@ -103,14 +99,25 @@ def run_event_study(
     thresholds_pct: Iterable[float] = (10, 20, 30, 50, 75, 100),
     horizons: Iterable[int] = DEFAULT_HORIZONS,
 ) -> pd.DataFrame:
-    """Detect first threshold crossings and measure each subsequent path."""
+    """Detect first threshold crossings, attach features, and measure outcomes.
+
+    Feature extraction is point-in-time: only bars at or before the event bar are
+    allowed into model inputs. Outcomes intentionally use only later bars.
+    """
     events = detect_threshold_crossings(
         ticker=ticker,
         bars=bars,
         previous_close=previous_close,
         thresholds_pct=thresholds_pct,
     )
-    outcomes = [measure_event_outcome(event, bars, horizons) for event in events]
-    if not outcomes:
+    if not events:
         return pd.DataFrame()
-    return pd.DataFrame([outcome.to_record() for outcome in outcomes])
+
+    records: list[dict] = []
+    for event in events:
+        outcome = measure_event_outcome(event, bars, horizons)
+        features = extract_event_features(event, bars)
+        record = outcome.to_record()
+        record.update(features.to_record())
+        records.append(record)
+    return pd.DataFrame(records)
