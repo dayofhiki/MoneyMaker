@@ -23,9 +23,11 @@ class MassiveClient:
         return self._get(f"/v2/aggs/ticker/{ticker.upper()}/prev", {"adjusted": "true"})
 
     def minute_bars(self, ticker: str, day: date) -> dict[str, Any]:
-        day_str = day.isoformat()
+        return self.minute_bars_range(ticker, day, day)
+
+    def minute_bars_range(self, ticker: str, start: date, end: date) -> dict[str, Any]:
         return self._get(
-            f"/v2/aggs/ticker/{ticker.upper()}/range/1/minute/{day_str}/{day_str}",
+            f"/v2/aggs/ticker/{ticker.upper()}/range/1/minute/{start.isoformat()}/{end.isoformat()}",
             {"adjusted": "true", "sort": "asc", "limit": 50000},
         )
 
@@ -52,11 +54,6 @@ class MassiveClient:
         )
 
     def historical_previous_close(self, ticker: str, day: date) -> float:
-        """Return the latest adjusted daily close strictly before `day`.
-
-        A 14-calendar-day lookback safely spans ordinary weekends and exchange
-        holidays without hard-coding a trading calendar in the first prototype.
-        """
         payload = self.daily_bars(ticker, day - timedelta(days=14), day - timedelta(days=1))
         results = payload.get("results") or []
         if not results:
