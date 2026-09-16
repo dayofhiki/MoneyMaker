@@ -51,7 +51,6 @@ def measure_event_outcome(
     bars: pd.DataFrame,
     horizons: Iterable[int] = DEFAULT_HORIZONS,
 ) -> EventOutcome:
-    """Measure post-event path using only bars strictly after the event bar."""
     frame = _validate_bars(bars)
     matches = frame.index[frame["t"] == event.timestamp_ms].tolist()
     if len(matches) != 1:
@@ -98,12 +97,9 @@ def run_event_study(
     previous_close: float,
     thresholds_pct: Iterable[float] = (10, 20, 30, 50, 75, 100),
     horizons: Iterable[int] = DEFAULT_HORIZONS,
+    history_bars: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Detect first threshold crossings, attach features, and measure outcomes.
-
-    Feature extraction is point-in-time: only bars at or before the event bar are
-    allowed into model inputs. Outcomes intentionally use only later bars.
-    """
+    """Detect crossings, attach point-in-time features, and measure future outcomes."""
     events = detect_threshold_crossings(
         ticker=ticker,
         bars=bars,
@@ -116,7 +112,7 @@ def run_event_study(
     records: list[dict] = []
     for event in events:
         outcome = measure_event_outcome(event, bars, horizons)
-        features = extract_event_features(event, bars)
+        features = extract_event_features(event, bars, history_bars=history_bars)
         record = outcome.to_record()
         record.update(features.to_record())
         records.append(record)
