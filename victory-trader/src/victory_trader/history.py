@@ -30,12 +30,18 @@ def load_target_with_history(
     *,
     calendar_lookback_days: int = 35,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Fetch target-day bars plus enough prior minute data for ~20 trading days.
+    """Fetch target-day bars plus prior minute context for historical RVOL.
 
-    This replaces the old target-day-only request, so historical RVOL context is
-    obtained without adding another candidate-level API request.
+    Real MassiveClient instances use one ranged request. The compatibility branch
+    keeps deterministic tests and lightweight mock clients working without
+    pretending they contain historical context.
     """
-    start = target_day - timedelta(days=calendar_lookback_days)
-    payload = client.minute_bars_range(ticker, start, target_day)
-    bars = bars_from_massive_payload(payload)
-    return split_target_and_history(bars, target_day)
+    if hasattr(client, "minute_bars_range"):
+        start = target_day - timedelta(days=calendar_lookback_days)
+        payload = client.minute_bars_range(ticker, start, target_day)
+        bars = bars_from_massive_payload(payload)
+        return split_target_and_history(bars, target_day)
+
+    payload = client.minute_bars(ticker, target_day)
+    target = bars_from_massive_payload(payload)
+    return target, pd.DataFrame(columns=target.columns)
