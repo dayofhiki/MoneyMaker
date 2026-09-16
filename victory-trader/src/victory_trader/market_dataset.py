@@ -11,6 +11,7 @@ import pandas as pd
 
 from .config import load_settings
 from .event_study import DEFAULT_HORIZONS, run_event_study
+from .halts import annotate_frame_with_halts, fetch_nasdaq_halts
 from .history import load_target_with_history
 from .massive_client import MassiveClient
 from .universe import fetch_security_metadata, split_tickers_from_payload
@@ -145,14 +146,14 @@ def build_market_event_dataset(
     enforce_common_stock: bool = True,
     exclude_split_days: bool = True,
     historical_context_days: int = 35,
+    annotate_halts: bool = False,
 ) -> pd.DataFrame:
     """Build one day's point-in-time momentum research dataset.
 
-    Candidate discovery may use the completed daily summary because this function
-    is constructing a historical event sample, not simulating live discovery.
-    Every feature attached to an event, however, is restricted to information
-    available at or before that event timestamp. Historical RVOL uses only prior
-    trading dates.
+    Completed daily summaries are used only to discover historical event days.
+    Event features themselves are point-in-time. Halt annotations are optional
+    because Nasdaq's public feed has independent availability/coverage from
+    Massive and should never be silently confused with 'no halt'.
     """
     target_payload = grouped_daily(client, day)
     if not _market_rows(target_payload):
@@ -232,9 +233,22 @@ def build_market_event_dataset(
 
     if not frames:
         return pd.DataFrame()
-    return pd.concat(frames, ignore_index=True).sort_values(
+
+    result = pd.concat(frames, ignore_index=True).sort_values(
         ["ticker", "timestamp_ms", "threshold_pct"]
     ).reset_index(drop=True)
+
+    if annotate_halts:
+        try:
+            halt_records = fetch_nasdaq_halts(day)
+        except Exception as exc:
+            result["halt_data_available"] = False
+            result["halt_annotation_error"] = f"{type(exc).__name__}: {exc}"
+        else:
+            result = annotate_frame_with_halts(result, halt_records)
+            result["halt_data_available"] = True
+            result["halt_annotation_error"] = None
+    return result
 
 
 def save_dataset(frame: pd.DataFrame, output: Path) -> None:
@@ -262,6 +276,7 @@ def main() -> int:
     parser.add_argument("--max-candidates", type=int, default=None)
     parser.add_argument("--request-interval", type=float, default=12.5)
     parser.add_argument("--history-days", type=int, default=35)
+    parser.add_argument("--annotate-halts", action="store_true")
     args = parser.parse_args()
 
     settings = load_settings()
@@ -276,6 +291,7 @@ def main() -> int:
         max_candidates=args.max_candidates,
         request_interval_seconds=args.request_interval,
         historical_context_days=args.history_days,
+        annotate_halts=args.annotate_halts,
     )
 
     if frame.empty:
