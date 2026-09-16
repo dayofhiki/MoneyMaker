@@ -33,7 +33,10 @@ def test_select_candidates_filters_price_and_move():
 
 
 class FakeClient:
-    def __init__(self):
+    def __init__(self, split=False, security_type="CS", exchange="XNAS"):
+        self.split = split
+        self.security_type = security_type
+        self.exchange = exchange
         self.market = {
             "2026-09-14": grouped([{"T": "AAA", "c": 2.00}]),
             "2026-09-15": grouped(
@@ -44,6 +47,25 @@ class FakeClient:
     def _get(self, path, params=None):
         day = path.rsplit("/", 1)[-1]
         return self.market.get(day, grouped([]))
+
+    def splits_on(self, day):
+        rows = [{"ticker": "AAA", "execution_date": day.isoformat()}] if self.split else []
+        return {"results": rows}
+
+    def ticker_details(self, ticker, day=None):
+        return {
+            "results": {
+                "ticker": ticker,
+                "name": "AAA Corp",
+                "type": self.security_type,
+                "market": "stocks",
+                "locale": "us",
+                "primary_exchange": self.exchange,
+                "active": True,
+                "market_cap": 50_000_000,
+                "share_class_shares_outstanding": 20_000_000,
+            }
+        }
 
     def minute_bars(self, ticker, day):
         assert ticker == "AAA"
@@ -70,7 +92,25 @@ def test_build_market_event_dataset_end_to_end_without_network():
     assert not result.empty
     assert list(result["threshold_pct"]) == [20.0, 30.0, 50.0]
     assert set(result["ticker"]) == {"AAA"}
-    assert set(result["trading_day"]) == {"2026-09-15"}
-    assert set(result["previous_trading_day"]) == {"2026-09-14"}
+    assert set(result["security_type"]) == {"CS"}
+    assert set(result["primary_exchange"]) == {"XNAS"}
+    assert set(result["market_cap"]) == {50_000_000.0}
     assert "return_1m_pct" in result.columns
-    assert "day_high_return_pct" in result.columns
+
+
+def test_split_day_is_excluded():
+    result = build_market_event_dataset(
+        FakeClient(split=True),
+        date(2026, 9, 15),
+        request_interval_seconds=0,
+    )
+    assert result.empty
+
+
+def test_non_common_stock_is_excluded():
+    result = build_market_event_dataset(
+        FakeClient(security_type="ETF"),
+        date(2026, 9, 15),
+        request_interval_seconds=0,
+    )
+    assert result.empty
