@@ -6,6 +6,7 @@ from typing import Iterable
 import pandas as pd
 
 from .events import CrossingEvent, detect_threshold_crossings
+from .exits import DEFAULT_BARRIERS, evaluate_default_barriers
 from .features import extract_event_features
 
 
@@ -98,8 +99,9 @@ def run_event_study(
     thresholds_pct: Iterable[float] = (10, 20, 30, 50, 75, 100),
     horizons: Iterable[int] = DEFAULT_HORIZONS,
     history_bars: pd.DataFrame | None = None,
+    barriers: Iterable[tuple[float, float]] = DEFAULT_BARRIERS,
 ) -> pd.DataFrame:
-    """Detect crossings, attach point-in-time features, and measure future outcomes."""
+    """Detect crossings and emit features, future paths, and short-exit labels."""
     events = detect_threshold_crossings(
         ticker=ticker,
         bars=bars,
@@ -109,11 +111,19 @@ def run_event_study(
     if not events:
         return pd.DataFrame()
 
+    max_horizon = max((int(h) for h in horizons), default=60)
     records: list[dict] = []
     for event in events:
         outcome = measure_event_outcome(event, bars, horizons)
         features = extract_event_features(event, bars, history_bars=history_bars)
+        barriers_record = evaluate_default_barriers(
+            event,
+            bars,
+            barriers=barriers,
+            max_horizon_minutes=max_horizon,
+        )
         record = outcome.to_record()
         record.update(features.to_record())
+        record.update(barriers_record)
         records.append(record)
     return pd.DataFrame(records)
