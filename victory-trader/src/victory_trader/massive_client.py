@@ -35,6 +35,22 @@ class MassiveClient:
             {"adjusted": "true", "sort": "asc", "limit": 5000},
         )
 
+    def ticker_details(self, ticker: str, day: date | None = None) -> dict[str, Any]:
+        params: dict[str, Any] = {}
+        if day is not None:
+            params["date"] = day.isoformat()
+        return self._get(f"/v3/reference/tickers/{ticker.upper()}", params)
+
+    def splits_on(self, day: date) -> dict[str, Any]:
+        return self._get(
+            "/stocks/v1/splits",
+            {
+                "execution_date": day.isoformat(),
+                "limit": 5000,
+                "sort": "execution_date.asc",
+            },
+        )
+
     def historical_previous_close(self, ticker: str, day: date) -> float:
         """Return the latest adjusted daily close strictly before `day`.
 
