@@ -13,6 +13,7 @@ from .config import load_settings
 from .event_study import DEFAULT_HORIZONS, run_event_study
 from .market_data import bars_from_massive_payload
 from .massive_client import MassiveClient
+from .universe import fetch_security_metadata, split_tickers_from_payload
 
 
 @dataclass(frozen=True)
@@ -40,6 +41,11 @@ def _ticker_map(payload: dict) -> dict[str, dict]:
     }
 
 
+def _sleep(seconds: float) -> None:
+    if seconds > 0:
+        time.sleep(seconds)
+
+
 def select_candidates(
     previous_payload: dict,
     target_payload: dict,
@@ -49,12 +55,7 @@ def select_candidates(
     min_high_return_pct: float = 20.0,
     min_day_dollar_volume: float = 0.0,
 ) -> list[Candidate]:
-    """Select low-priced symbols that actually produced a large intraday move.
-
-    Price eligibility is based on the prior trading day's adjusted close. This
-    prevents a stock that started above our research universe from entering only
-    because it crashed into the range during the target session.
-    """
+    """Pre-screen symbols cheaply from two market-wide daily summaries."""
     if min_price <= 0 or max_price <= min_price:
         raise ValueError("price bounds must satisfy 0 < min_price < max_price")
 
@@ -108,8 +109,7 @@ def select_candidates(
 
 
 def grouped_daily(client: MassiveClient, day: date) -> dict:
-    """Fetch Massive's market-wide daily aggregate without OTC symbols."""
-    return client._get(  # centralized auth/error handling lives on MassiveClient
+    return client._get(
         f"/v2/aggs/grouped/locale/us/market/stocks/{day.isoformat()}",
         {"adjusted": "true", "include_otc": "false"},
     )
@@ -122,14 +122,12 @@ def previous_market_payload(
     max_calendar_lookback: int = 10,
     request_interval_seconds: float = 0.0,
 ) -> tuple[date, dict]:
-    """Find the latest prior date for which Massive returns grouped daily data."""
     for offset in range(1, max_calendar_lookback + 1):
         candidate_day = day - timedelta(days=offset)
         payload = grouped_daily(client, candidate_day)
         if _market_rows(payload):
             return candidate_day, payload
-        if request_interval_seconds > 0:
-            time.sleep(request_interval_seconds)
+        _sleep(request_interval_seconds)
     raise ValueError(f"No prior market summary found within {max_calendar_lookback} days before {day}")
 
 
@@ -145,20 +143,21 @@ def build_market_event_dataset(
     horizons: Iterable[int] = DEFAULT_HORIZONS,
     max_candidates: int | None = None,
     request_interval_seconds: float = 12.5,
+    enforce_common_stock: bool = True,
+    exclude_split_days: bool = True,
 ) -> pd.DataFrame:
-    """Build one trading day's market-wide event-study dataset.
+    """Build a defensively filtered event-study dataset for one U.S. trading day.
 
-    Two cheap grouped-daily requests identify which low-priced stocks could have
-    crossed our momentum thresholds. Only those candidates receive expensive
-    1-minute requests. This is intentionally compatible with Massive's free-plan
-    workflow, although a multi-year study should later use Flat Files.
+    The cheap grouped summary first finds possible movers. We then remove symbols
+    with same-day split events and verify each remaining candidate point-in-time
+    as a U.S. common stock primarily listed on Nasdaq, NYSE, or NYSE American.
+    Only after those checks do we download 1-minute bars.
     """
     target_payload = grouped_daily(client, day)
     if not _market_rows(target_payload):
         raise ValueError(f"No grouped market data returned for {day}")
 
-    if request_interval_seconds > 0:
-        time.sleep(request_interval_seconds)
+    _sleep(request_interval_seconds)
     previous_day, prior_payload = previous_market_payload(
         client,
         day,
@@ -176,11 +175,24 @@ def build_market_event_dataset(
     if max_candidates is not None:
         candidates = candidates[:max_candidates]
 
+    split_tickers: set[str] = set()
+    if exclude_split_days and candidates:
+        _sleep(request_interval_seconds)
+        split_tickers = split_tickers_from_payload(client.splits_on(day))
+
     frames: list[pd.DataFrame] = []
     for candidate in candidates:
-        if request_interval_seconds > 0:
-            time.sleep(request_interval_seconds)
+        if candidate.ticker in split_tickers:
+            continue
 
+        metadata = None
+        if enforce_common_stock:
+            _sleep(request_interval_seconds)
+            metadata = fetch_security_metadata(client, candidate.ticker, day)
+            if not metadata.is_research_common_stock:
+                continue
+
+        _sleep(request_interval_seconds)
         bars = bars_from_massive_payload(client.minute_bars(candidate.ticker, day))
         if bars.empty:
             continue
@@ -203,6 +215,12 @@ def build_market_event_dataset(
         study["day_vwap"] = candidate.day_vwap
         study["day_dollar_volume"] = candidate.day_dollar_volume
         study["day_high_return_pct"] = candidate.high_return_pct
+        study["split_day"] = False
+        if metadata is not None:
+            study["security_type"] = metadata.security_type
+            study["primary_exchange"] = metadata.primary_exchange
+            study["market_cap"] = metadata.market_cap
+            study["shares_outstanding"] = metadata.shares_outstanding
         frames.append(study)
 
     if not frames:
@@ -235,12 +253,7 @@ def main() -> int:
     parser.add_argument("--min-high-return", type=float, default=20.0)
     parser.add_argument("--min-dollar-volume", type=float, default=0.0)
     parser.add_argument("--max-candidates", type=int, default=None)
-    parser.add_argument(
-        "--request-interval",
-        type=float,
-        default=12.5,
-        help="Seconds between Massive requests; 12.5 is conservative for the free plan.",
-    )
+    parser.add_argument("--request-interval", type=float, default=12.5)
     args = parser.parse_args()
 
     settings = load_settings()
