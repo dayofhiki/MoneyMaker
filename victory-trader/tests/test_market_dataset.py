@@ -1,6 +1,6 @@
 from datetime import date
 
-import pandas as pd
+import pytest
 
 from victory_trader.market_dataset import build_market_event_dataset, select_candidates
 
@@ -28,8 +28,8 @@ def test_select_candidates_filters_price_and_move():
     result = select_candidates(previous, target, min_high_return_pct=20.0)
 
     assert [item.ticker for item in result] == ["AAA"]
-    assert result[0].high_return_pct == 30.0
-    assert result[0].day_dollar_volume == 2_300_000.0
+    assert result[0].high_return_pct == pytest.approx(30.0)
+    assert result[0].day_dollar_volume == pytest.approx(2_300_000.0)
 
 
 class FakeClient:
