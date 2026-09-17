@@ -3,15 +3,16 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "victory-trader"
-version = "0.1.0"
-description = "Research platform for short-horizon momentum in low-priced U.S. equities"
+name = "moneymaker-research"
+version = "0.2.0"
+description = "MoneyMaker research platform for short-horizon momentum in low-priced U.S. equities"
 requires-python = ">=3.11"
 dependencies = [
   "requests>=2.32",
   "python-dotenv>=1.0",
   "pydantic>=2.8",
   "pandas>=2.2",
+  "pandas-market-calendars>=5.1",
   "polars>=1.5",
   "pyarrow>=17",
   "duckdb>=1.1",
@@ -26,6 +27,7 @@ dev = [
 ]
 
 [project.scripts]
+moneymaker = "victory_trader.cli:main"
 victory-trader = "victory_trader.cli:main"
 
 [tool.setuptools.packages.find]
