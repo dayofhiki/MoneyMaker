@@ -33,11 +33,10 @@ class SecurityMetadata:
         )
 
 
-def metadata_from_payload(payload: dict) -> SecurityMetadata:
-    row = payload.get("results") or {}
+def metadata_from_row(row: dict) -> SecurityMetadata:
     ticker = str(row.get("ticker") or "").upper()
     if not ticker:
-        raise ValueError("ticker details payload has no ticker")
+        raise ValueError("ticker metadata row has no ticker")
 
     def optional_float(key: str) -> float | None:
         raw = row.get(key)
@@ -58,6 +57,10 @@ def metadata_from_payload(payload: dict) -> SecurityMetadata:
     )
 
 
+def metadata_from_payload(payload: dict) -> SecurityMetadata:
+    return metadata_from_row(payload.get("results") or {})
+
+
 def _missing_metadata(ticker: str) -> SecurityMetadata:
     """Sentinel metadata that safely fails the research-universe predicate."""
     return SecurityMetadata(
@@ -74,18 +77,34 @@ def _missing_metadata(ticker: str) -> SecurityMetadata:
 
 
 def fetch_security_metadata(client: MassiveClient, ticker: str, day: date) -> SecurityMetadata:
-    """Fetch point-in-time metadata; treat a 404 as an ineligible candidate.
-
-    Historical grouped aggregates can contain test/synthetic or otherwise
-    unresolvable symbols. One such symbol must not abort an entire trading day.
-    Other HTTP failures are still raised so real provider outages remain visible.
-    """
+    """Fetch point-in-time metadata; treat a 404 as an ineligible candidate."""
     try:
         return metadata_from_payload(client.ticker_details(ticker, day))
     except requests.HTTPError as exc:
         if exc.response is not None and exc.response.status_code == 404:
             return _missing_metadata(ticker)
         raise
+
+
+def fetch_research_universe_metadata(
+    client: MassiveClient,
+    day: date,
+) -> dict[str, SecurityMetadata]:
+    """Fetch point-in-time common-stock taxonomy in bulk for one trading day.
+
+    Massive's all-tickers endpoint can return up to 1000 symbols per page. Using it
+    once per day avoids a separate rate-limited ticker-details request for every
+    momentum candidate while preserving historical type/exchange filtering.
+    """
+    rows = client.reference_tickers(day, market="stocks", security_type="CS", active=True)
+    metadata: dict[str, SecurityMetadata] = {}
+    for row in rows:
+        try:
+            item = metadata_from_row(row)
+        except (TypeError, ValueError):
+            continue
+        metadata[item.ticker] = item
+    return metadata
 
 
 def split_tickers_from_payload(payload: dict) -> set[str]:
