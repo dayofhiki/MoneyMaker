@@ -25,6 +25,7 @@ from .analytics import (
 from .audit import audit_event_dataset
 from .config import load_settings
 from .event_study import run_event_study
+from .exposure_diagnostics import summarize_unresolved_exposure
 from .history import load_target_with_history
 from .market_dataset import build_market_event_dataset, save_dataset
 from .massive_client import MassiveClient
@@ -179,6 +180,10 @@ def analyze_dataset(path: Path, horizon: int) -> int:
     _print_section(
         "Tail-risk diagnostics (primary base endpoint)",
         summarize_tail_risk(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Unresolved entered-exposure sensitivity",
+        summarize_unresolved_exposure(frame, horizon_min=horizon, scenario="base"),
     )
     _print_section(
         "Ticker-day concentration diagnostics",
