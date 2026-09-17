@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from .config import load_settings
+from .market_calendar import is_us_equity_trading_day
 from .market_dataset import DayBuildStats, build_market_event_dataset, save_dataset
 from .massive_client import MassiveClient
 
@@ -60,12 +61,7 @@ def build_multi_day_dataset(
     manifest_path: Path | None = None,
     **day_kwargs,
 ) -> tuple[pd.DataFrame, list[tuple[date, str]]]:
-    """Build a date range with daily, resumable, auditable checkpoints.
-
-    Completed day checkpoints are immutable inputs on subsequent runs. Unexpected
-    failures remain fail-fast and do not mark a day complete, so a restart resumes
-    from the first unfinished day instead of re-downloading successful history.
-    """
+    """Build a date range with daily resumable checkpoints and a run manifest."""
     frames: list[pd.DataFrame] = []
     skipped: list[tuple[date, str]] = []
     manifest_days: list[dict] = []
@@ -94,6 +90,24 @@ def build_multi_day_dataset(
                     resumed["resumed"] = True
                     manifest_days.append(resumed)
                     continue
+
+        # Avoid provider calls on weekends/holidays and use the same exchange
+        # calendar later used to interpret regular sessions and early closes.
+        if not is_us_equity_trading_day(day):
+            reason = f"closed_market_calendar: {day.isoformat()}"
+            skipped.append((day, reason))
+            status = {
+                "state": "complete",
+                "kind": "closed_market",
+                "trading_day": day.isoformat(),
+                "reason": reason,
+                "build_stats": DayBuildStats(trading_day=day.isoformat()).to_dict(),
+                "client_stats_delta": {},
+            }
+            if status_path is not None:
+                _atomic_json(status_path, status)
+            manifest_days.append(status)
+            continue
 
         before = _client_stats(client)
         stats = DayBuildStats(trading_day=day.isoformat())
@@ -145,10 +159,8 @@ def build_multi_day_dataset(
             skipped.append((day, f"ERROR {type(exc).__name__}: {exc}"))
             continue
 
-        if frame.empty:
-            kind = "no_events"
-        else:
-            kind = "events"
+        kind = "no_events" if frame.empty else "events"
+        if not frame.empty:
             frames.append(frame)
             if data_path is not None:
                 save_dataset(frame, data_path)
@@ -193,10 +205,7 @@ def build_multi_day_dataset(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        prog="python -m victory_trader.multi_day",
-        description="Build a momentum event dataset across a date range.",
-    )
+    parser = argparse.ArgumentParser(prog="python -m victory_trader.multi_day")
     parser.add_argument("start", type=date.fromisoformat)
     parser.add_argument("end", type=date.fromisoformat)
     parser.add_argument("--output", type=Path, default=None)
@@ -229,9 +238,7 @@ def main() -> int:
         manifest_path=args.manifest,
     )
 
-    output = args.output or Path("data/events") / (
-        f"market_events_{args.start.isoformat()}_{args.end.isoformat()}.parquet"
-    )
+    output = args.output or Path("data/events") / f"market_events_{args.start.isoformat()}_{args.end.isoformat()}.parquet"
     if not frame.empty:
         save_dataset(frame, output)
         print(
@@ -240,7 +247,6 @@ def main() -> int:
         )
     else:
         print("No qualifying momentum events found in the requested range.")
-
     if skipped:
         print(f"Skipped {len(skipped)} closed/error calendar days.")
         for day, reason in skipped[:10]:
