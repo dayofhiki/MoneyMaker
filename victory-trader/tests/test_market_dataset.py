@@ -2,7 +2,12 @@ from datetime import date
 
 import pytest
 
-from victory_trader.market_dataset import build_market_event_dataset, select_candidates
+from victory_trader.market_dataset import (
+    Candidate,
+    build_market_event_dataset,
+    limit_candidates_for_debug,
+    select_candidates,
+)
 
 
 def grouped(rows):
@@ -30,6 +35,50 @@ def test_select_candidates_filters_price_and_move():
     assert [item.ticker for item in result] == ["AAA"]
     assert result[0].high_return_pct == pytest.approx(30.0)
     assert result[0].day_dollar_volume == pytest.approx(2_300_000.0)
+
+
+def _candidate(ticker: str, high_return_pct: float) -> Candidate:
+    return Candidate(
+        ticker=ticker,
+        previous_close=2.0,
+        day_high=2.0 * (1.0 + high_return_pct / 100.0),
+        day_close=2.1,
+        day_volume=1_000_000,
+        day_vwap=2.05,
+        high_return_pct=high_return_pct,
+        day_dollar_volume=2_050_000,
+    )
+
+
+def test_debug_candidate_limit_does_not_depend_on_eventual_return_rank():
+    trading_day = date(2026, 9, 15)
+    first = [
+        _candidate("AAA", 25.0),
+        _candidate("BBB", 500.0),
+        _candidate("CCC", 40.0),
+        _candidate("DDD", 200.0),
+    ]
+    second = [
+        _candidate("AAA", 900.0),
+        _candidate("BBB", 21.0),
+        _candidate("CCC", 700.0),
+        _candidate("DDD", 22.0),
+    ]
+
+    chosen_first = limit_candidates_for_debug(first, day=trading_day, max_candidates=2)
+    chosen_second = limit_candidates_for_debug(second, day=trading_day, max_candidates=2)
+
+    assert [item.ticker for item in chosen_first] == [item.ticker for item in chosen_second]
+    assert len(chosen_first) == 2
+
+
+def test_debug_candidate_limit_requires_positive_count():
+    with pytest.raises(ValueError):
+        limit_candidates_for_debug(
+            [_candidate("AAA", 25.0)],
+            day=date(2026, 9, 15),
+            max_candidates=0,
+        )
 
 
 class FakeClient:
@@ -95,6 +144,8 @@ def test_build_market_event_dataset_end_to_end_without_network():
     assert set(result["security_type"]) == {"CS"}
     assert set(result["primary_exchange"]) == {"XNAS"}
     assert set(result["market_cap"]) == {50_000_000.0}
+    assert set(result["discovered_candidate_count"]) == {1}
+    assert result["debug_candidate_limit"].isna().all()
     assert "return_1m_pct" in result.columns
 
 
