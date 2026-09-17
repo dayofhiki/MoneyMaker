@@ -11,6 +11,9 @@ from .market_dataset import build_market_event_dataset, save_dataset
 from .massive_client import MassiveClient
 
 
+NO_MARKET_DATA_PREFIX = "No grouped market data returned for "
+
+
 def daterange(start: date, end: date):
     if end < start:
         raise ValueError("end must be on or after start")
@@ -20,19 +23,27 @@ def daterange(start: date, end: date):
         current += timedelta(days=1)
 
 
+def _is_expected_closed_market_day(exc: Exception) -> bool:
+    return isinstance(exc, ValueError) and str(exc).startswith(NO_MARKET_DATA_PREFIX)
+
+
 def build_multi_day_dataset(
     client: MassiveClient,
     start: date,
     end: date,
     *,
-    continue_on_error: bool = True,
+    continue_on_error: bool = False,
     **day_kwargs,
 ) -> tuple[pd.DataFrame, list[tuple[date, str]]]:
     """Accumulate daily event datasets across a calendar range.
 
-    Weekends/holidays naturally produce no grouped data and are recorded as
-    skipped errors when continue_on_error=True. This keeps the first version
-    independent of a separate exchange-calendar dependency.
+    A target date with no grouped market data is treated as an expected closed
+    market day and recorded in ``skipped``. API failures, authentication errors,
+    rate-limit failures, parsing bugs, and other unexpected exceptions fail fast
+    by default so a partial dataset cannot silently masquerade as complete.
+
+    ``continue_on_error=True`` exists only for diagnostics and should not be used
+    for production research runs.
     """
     frames: list[pd.DataFrame] = []
     skipped: list[tuple[date, str]] = []
@@ -41,9 +52,12 @@ def build_multi_day_dataset(
         try:
             frame = build_market_event_dataset(client, day, **day_kwargs)
         except Exception as exc:
+            if _is_expected_closed_market_day(exc):
+                skipped.append((day, f"closed_market: {exc}"))
+                continue
             if not continue_on_error:
                 raise
-            skipped.append((day, f"{type(exc).__name__}: {exc}"))
+            skipped.append((day, f"ERROR {type(exc).__name__}: {exc}"))
             continue
         if not frame.empty:
             frames.append(frame)
@@ -74,7 +88,10 @@ def main() -> int:
     args = parser.parse_args()
 
     settings = load_settings()
-    client = MassiveClient(settings.massive_api_key)
+    client = MassiveClient(
+        settings.massive_api_key,
+        cache_dir=Path("data/cache/massive"),
+    )
     frame, skipped = build_multi_day_dataset(
         client,
         args.start,
@@ -100,7 +117,7 @@ def main() -> int:
         print("No qualifying momentum events found in the requested range.")
 
     if skipped:
-        print(f"Skipped {len(skipped)} calendar days (weekends, holidays, or API/data errors).")
+        print(f"Skipped {len(skipped)} closed-market calendar days.")
         for day, reason in skipped[:10]:
             print(f"  {day}: {reason}")
     return 0
