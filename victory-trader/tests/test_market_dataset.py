@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -8,6 +9,13 @@ from victory_trader.market_dataset import (
     limit_candidates_for_debug,
     select_candidates,
 )
+
+
+ET = ZoneInfo("America/New_York")
+
+
+def ts(hour: int, minute: int) -> int:
+    return int(datetime(2026, 9, 15, hour, minute, tzinfo=ET).timestamp() * 1000)
 
 
 def grouped(rows):
@@ -112,12 +120,12 @@ class FakeClient:
         assert ticker == "AAA"
         return {
             "results": [
-                {"t": 0, "o": 2.00, "h": 2.05, "l": 1.95, "c": 2.00, "v": 1000},
-                {"t": 60_000, "o": 2.00, "h": 2.45, "l": 2.00, "c": 2.40, "v": 5000},
-                {"t": 120_000, "o": 2.40, "h": 2.65, "l": 2.35, "c": 2.60, "v": 6000},
-                {"t": 180_000, "o": 2.60, "h": 3.05, "l": 2.55, "c": 3.00, "v": 8000},
-                {"t": 240_000, "o": 3.00, "h": 3.20, "l": 2.90, "c": 3.10, "v": 9000},
-                {"t": 300_000, "o": 3.10, "h": 3.15, "l": 3.00, "c": 3.05, "v": 7000},
+                {"t": ts(9, 30), "o": 2.00, "h": 2.05, "l": 1.95, "c": 2.00, "v": 1000},
+                {"t": ts(9, 31), "o": 2.00, "h": 2.45, "l": 2.00, "c": 2.40, "v": 5000},
+                {"t": ts(9, 32), "o": 2.40, "h": 2.65, "l": 2.35, "c": 2.60, "v": 6000},
+                {"t": ts(9, 33), "o": 2.60, "h": 3.05, "l": 2.55, "c": 3.00, "v": 8000},
+                {"t": ts(9, 34), "o": 3.00, "h": 3.20, "l": 2.90, "c": 3.10, "v": 9000},
+                {"t": ts(9, 35), "o": 3.10, "h": 3.15, "l": 3.00, "c": 3.05, "v": 7000},
             ]
         }
 
@@ -141,6 +149,8 @@ def test_build_market_event_dataset_end_to_end_without_network():
     assert "day_high" not in result.columns
     assert set(result["source_prices_adjusted"]) == {False}
     assert set(result["discovery_high_return_threshold_pct"]) == {20.0}
+    assert set(result["event_session_scope"]) == {"regular"}
+    assert set(result["regular_entry_required"]) == {True}
     assert result["debug_candidate_limit"].isna().all()
     assert "return_1m_pct" in result.columns
     assert "delay1_return_1m_pct" in result.columns
