@@ -115,9 +115,8 @@ def measure_event_outcome(
 
     A close-based event is observable only after its minute closes. Delay 0 therefore
     enters at the exact next minute's open; delay 1/2 wait one/two additional clock
-    minutes. Missing entry bars mean the trade was not observable as executable and
-    all primary outcomes remain missing. Formal v0.2 market-wide research also
-    requires the entry minute itself to remain inside the regular session.
+    minutes. Formal v0.2 regular-session research requires the entry and each measured
+    executable horizon to stay inside the official regular session.
     """
     if entry_delay_minutes < 0:
         raise ValueError("entry_delay_minutes must be non-negative")
@@ -155,9 +154,10 @@ def measure_event_outcome(
 
     future_returns: dict[int, float | None] = {}
     for horizon in requested:
-        # Enter at the bar open. Its close is one minute after entry, so an h-minute
-        # exit uses the bar whose start is entry + (h-1) minutes.
         target_bar_ts = entry_ts + (horizon - 1) * MINUTE_MS
+        if require_regular_entry and not _is_regular_timestamp(target_bar_ts):
+            future_returns[horizon] = None
+            continue
         future_close = _close_at(frame, target_bar_ts)
         future_returns[horizon] = (
             None
@@ -168,6 +168,9 @@ def measure_event_outcome(
     max_horizon = max(requested, default=0)
     window_end_bar_ts = entry_ts + max(max_horizon - 1, 0) * MINUTE_MS
     future_slice = frame.loc[(frame["t"] >= entry_ts) & (frame["t"] <= window_end_bar_ts)]
+    if require_regular_entry and not future_slice.empty:
+        regular_mask = future_slice["t"].map(lambda value: _is_regular_timestamp(int(value)))
+        future_slice = future_slice.loc[regular_mask]
     if future_slice.empty:
         mfe = None
         mae = None
@@ -263,12 +266,7 @@ def run_event_study(
     event_session_scope: str = "all",
     require_regular_entry: bool = False,
 ) -> pd.DataFrame:
-    """Emit point-in-time features and executable, friction-adjusted outcomes.
-
-    Formal market-wide v0.2 research uses ``event_session_scope='regular'`` so the
-    grouped daily high is a complete discovery superset for the event family.
-    Extended-hours bars remain available for premarket context features.
-    """
+    """Emit point-in-time features and executable, friction-adjusted outcomes."""
     requested_horizons = tuple(int(h) for h in horizons)
     requested_barriers = tuple((float(tp), float(sl)) for tp, sl in barriers)
     delays = tuple(sorted({int(delay) for delay in entry_delays}))
@@ -310,6 +308,7 @@ def run_event_study(
                 max_horizon_minutes=max_horizon,
                 entry_timestamp_ms=primary.entry_timestamp_ms,
                 entry_price=primary.entry_price,
+                regular_session_only=require_regular_entry,
             )
 
         cost_record = _cost_adjusted_outcomes(
@@ -328,8 +327,6 @@ def run_event_study(
         record.update(barriers_record)
         record.update(cost_record)
 
-        # Latency sensitivity: same signal, later exact clock-time entries. These
-        # are diagnostics and never replace the primary delay-0 endpoint.
         for delay in delays:
             if delay == 0:
                 continue
