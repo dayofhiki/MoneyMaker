@@ -1,0 +1,137 @@
+name: MoneyMaker Enrich Existing Research
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: 'Completed MoneyMaker Research run ID'
+        required: true
+        default: '35221986774'
+      source_artifact:
+        description: 'Research artifact name from that run'
+        required: true
+        default: 'moneymaker-2026-03-01-2026-03-31'
+      output_label:
+        description: 'Label for enriched artifact'
+        required: true
+        default: '2026-03-v04'
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      actions: read
+      contents: read
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Ruff critical checks
+        run: ruff check src tests --select E4,E7,E9,F
+
+      - name: Test
+        run: pytest -q
+
+      - name: Validate Flat Files credentials
+        shell: bash
+        run: |
+          test -n "$MASSIVE_S3_ACCESS_KEY" || { echo "MASSIVE_S3_ACCESS_KEY is missing"; exit 1; }
+          test -n "$MASSIVE_S3_SECRET_KEY" || { echo "MASSIVE_S3_SECRET_KEY is missing"; exit 1; }
+
+      - name: Restore reusable minute Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-enrichment-v04-${{ runner.os }}-${{ inputs.source_run_id }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-enrichment-v04-${{ runner.os }}-${{ inputs.source_run_id }}-
+            moneymaker-enrichment-v04-${{ runner.os }}-
+
+      - name: Download existing research artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.source_artifact }}
+          path: victory-trader/source-artifact
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: ${{ inputs.source_run_id }}
+
+      - name: Enrich only newly pre-specified features
+        shell: bash
+        run: |
+          mkdir -p data/events artifacts
+          python -m victory_trader.path_enrichment \
+            source-artifact/data/events/research.parquet \
+            --output data/events/research-enriched.parquet \
+            | tee artifacts/enrichment.log
+
+      - name: Verify original research columns are unchanged
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pandas as pd
+
+          before = pd.read_parquet('source-artifact/data/events/research.parquet')
+          after = pd.read_parquet('data/events/research-enriched.parquet')
+          if len(before) != len(after):
+              raise SystemExit(f'row count changed: {len(before)} -> {len(after)}')
+          missing = [column for column in before.columns if column not in after.columns]
+          if missing:
+              raise SystemExit(f'original columns disappeared: {missing}')
+          for column in before.columns:
+              pd.testing.assert_series_equal(
+                  before[column].reset_index(drop=True),
+                  after[column].reset_index(drop=True),
+                  check_names=True,
+                  check_dtype=True,
+              )
+          new_columns = [column for column in after.columns if column not in before.columns]
+          print(f'Original {len(before.columns)} columns unchanged across {len(before)} rows')
+          print(f'Added columns ({len(new_columns)}): {new_columns}')
+          PY
+
+      - name: Audit enriched dataset
+        run: moneymaker audit-dataset data/events/research-enriched.parquet | tee artifacts/audit-enriched.txt
+
+      - name: Run gross-versus-net extended edge discovery
+        run: |
+          python -m victory_trader.extended_edge_discovery \
+            data/events/research-enriched.parquet \
+            --horizon 5 \
+            --output artifacts/extended-edge-discovery.txt \
+            | tee artifacts/extended-edge-discovery.log
+
+      - name: Save reusable minute Flat File cache
+        if: ${{ always() }}
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-enrichment-v04-${{ runner.os }}-${{ inputs.source_run_id }}-${{ github.run_id }}
+
+      - name: Upload enriched research artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-enriched-${{ inputs.output_label }}
+          path: |
+            victory-trader/data/events/research-enriched.parquet
+            victory-trader/artifacts/enrichment.log
+            victory-trader/artifacts/audit-enriched.txt
+            victory-trader/artifacts/extended-edge-discovery.txt
+            victory-trader/artifacts/extended-edge-discovery.log
+          if-no-files-found: warn
+          retention-days: 90
