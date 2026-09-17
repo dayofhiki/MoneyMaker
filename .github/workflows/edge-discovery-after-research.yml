@@ -81,6 +81,16 @@ jobs:
             --output artifacts/extended-edge-discovery.txt \
             | tee artifacts/extended-edge-discovery.log
 
+      - name: Run pre-specified multi-horizon discovery
+        shell: bash
+        run: |
+          python -m victory_trader.multi_horizon_discovery \
+            data/events/research-enriched.parquet \
+            --output artifacts/multi-horizon-discovery.txt \
+            --details-csv artifacts/multi-horizon-details.csv \
+            --stability-csv artifacts/multi-horizon-stability.csv \
+            | tee artifacts/multi-horizon-discovery.log
+
       - name: Save reusable discovery Flat File cache
         if: ${{ always() }}
         uses: actions/cache/save@v4
@@ -99,5 +109,9 @@ jobs:
             victory-trader/artifacts/audit-enriched.txt
             victory-trader/artifacts/extended-edge-discovery.txt
             victory-trader/artifacts/extended-edge-discovery.log
+            victory-trader/artifacts/multi-horizon-discovery.txt
+            victory-trader/artifacts/multi-horizon-discovery.log
+            victory-trader/artifacts/multi-horizon-details.csv
+            victory-trader/artifacts/multi-horizon-stability.csv
           if-no-files-found: warn
           retention-days: 90
