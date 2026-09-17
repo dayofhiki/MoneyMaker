@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from functools import lru_cache
 from zoneinfo import ZoneInfo
 
@@ -13,7 +13,7 @@ NYSE = mcal.get_calendar("NYSE")
 
 @lru_cache(maxsize=4096)
 def regular_session_bounds(day: date) -> tuple[datetime, datetime] | None:
-    """Return official regular-session open/close, including early closes."""
+    """Return official regular-session open/close, including holidays and early closes."""
     schedule = NYSE.schedule(start_date=day.isoformat(), end_date=day.isoformat())
     if schedule.empty:
         return None
@@ -30,14 +30,6 @@ def is_us_equity_trading_day(day: date) -> bool:
 
 @lru_cache(maxsize=4096)
 def previous_us_equity_trading_day(day: date) -> date:
-    # A two-week window safely spans long holiday/weekend combinations.
-    valid = NYSE.valid_days(
-        start_date=(day.replace(day=day.day) if False else day).isoformat(),
-        end_date=day.isoformat(),
-    )
-    # valid_days cannot look backwards when start=end, so use a bounded schedule.
-    from datetime import timedelta
-
     valid = NYSE.valid_days(
         start_date=(day - timedelta(days=14)).isoformat(),
         end_date=(day - timedelta(days=1)).isoformat(),
