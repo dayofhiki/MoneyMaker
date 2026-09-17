@@ -1,4 +1,10 @@
-from victory_trader.universe import metadata_from_payload, split_tickers_from_payload
+import requests
+
+from victory_trader.universe import (
+    fetch_security_metadata,
+    metadata_from_payload,
+    split_tickers_from_payload,
+)
 
 
 def test_common_stock_metadata_is_accepted():
@@ -30,6 +36,19 @@ def test_etf_and_wrong_exchange_are_rejected():
     )
     assert not etf.is_research_common_stock
     assert not arca.is_research_common_stock
+
+
+def test_missing_historical_metadata_is_rejected_without_aborting_day():
+    class MissingClient:
+        def ticker_details(self, ticker, day):
+            response = requests.Response()
+            response.status_code = 404
+            response.url = f"https://api.massive.com/v3/reference/tickers/{ticker}"
+            raise requests.HTTPError("404 Client Error", response=response)
+
+    metadata = fetch_security_metadata(MissingClient(), "ZVZZT", None)
+    assert metadata.ticker == "ZVZZT"
+    assert not metadata.is_research_common_stock
 
 
 def test_split_ticker_extraction():
