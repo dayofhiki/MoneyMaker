@@ -12,6 +12,7 @@ from .features import extract_event_features
 
 
 DEFAULT_HORIZONS = (1, 2, 5, 10, 15, 30, 60)
+DEFAULT_ENTRY_DELAYS = (0, 1, 2)
 MINUTE_MS = 60_000
 
 
@@ -20,9 +21,13 @@ class EventOutcome:
     ticker: str
     timestamp_ms: int
     threshold_pct: float
-    entry_price: float
+    signal_price: float
     previous_close: float
+    entry_timestamp_ms: int | None
+    entry_price: float | None
+    entry_delay_minutes: int
     future_returns_pct: dict[int, float | None]
+    signal_returns_pct: dict[int, float | None]
     mfe_pct: float | None
     mae_pct: float | None
 
@@ -31,36 +36,74 @@ class EventOutcome:
             "ticker": self.ticker,
             "timestamp_ms": self.timestamp_ms,
             "threshold_pct": self.threshold_pct,
+            "signal_price": self.signal_price,
+            "entry_timestamp_ms": self.entry_timestamp_ms,
             "entry_price": self.entry_price,
+            "entry_delay_minutes": self.entry_delay_minutes,
+            "entry_model": "next_minute_open",
             "previous_close": self.previous_close,
             "mfe_pct": self.mfe_pct,
             "mae_pct": self.mae_pct,
         }
         for horizon, value in sorted(self.future_returns_pct.items()):
             record[f"return_{horizon}m_pct"] = value
+        for horizon, value in sorted(self.signal_returns_pct.items()):
+            record[f"signal_return_{horizon}m_pct"] = value
         return record
 
 
 def _validate_bars(bars: pd.DataFrame) -> pd.DataFrame:
-    required = {"t", "h", "l", "c"}
+    required = {"t", "o", "h", "l", "c"}
     missing = required - set(bars.columns)
     if missing:
         raise ValueError(f"bars missing required columns: {sorted(missing)}")
     return bars.sort_values("t").reset_index(drop=True)
 
 
+def _close_at(frame: pd.DataFrame, timestamp_ms: int) -> float | None:
+    values = frame.loc[frame["t"] == timestamp_ms, "c"]
+    return float(values.iloc[0]) if len(values) == 1 else None
+
+
+def _open_at(frame: pd.DataFrame, timestamp_ms: int) -> float | None:
+    values = frame.loc[frame["t"] == timestamp_ms, "o"]
+    return float(values.iloc[0]) if len(values) == 1 else None
+
+
+def _signal_close_returns(
+    event: CrossingEvent,
+    frame: pd.DataFrame,
+    horizons: Iterable[int],
+) -> dict[int, float | None]:
+    result: dict[int, float | None] = {}
+    for horizon in horizons:
+        future_close = _close_at(frame, event.timestamp_ms + horizon * MINUTE_MS)
+        result[horizon] = (
+            None
+            if future_close is None
+            else (future_close / event.price - 1.0) * 100.0
+        )
+    return result
+
+
 def measure_event_outcome(
     event: CrossingEvent,
     bars: pd.DataFrame,
     horizons: Iterable[int] = DEFAULT_HORIZONS,
+    *,
+    entry_delay_minutes: int = 0,
 ) -> EventOutcome:
-    """Measure outcomes at exact clock-time horizons.
+    """Measure executable outcomes from a delayed next-minute-open entry.
 
-    If the exact target minute has no bar, the return is left missing rather than
-    silently substituting a later bar. This matters around trading halts and other
-    gaps where "five bars later" may be much more than five elapsed minutes.
-    MFE/MAE use only bars whose timestamps fall inside the requested clock window.
+    A close-based event is observable only after its minute closes. Delay 0 therefore
+    enters at the exact next minute's open; delay 1/2 wait one/two additional clock
+    minutes. Missing entry bars mean the trade was not observable as executable and
+    all primary outcomes remain missing. Signal-close returns are retained only as an
+    optimistic research benchmark.
     """
+    if entry_delay_minutes < 0:
+        raise ValueError("entry_delay_minutes must be non-negative")
+
     frame = _validate_bars(bars)
     matches = frame.index[frame["t"] == event.timestamp_ms].tolist()
     if len(matches) != 1:
@@ -70,73 +113,121 @@ def measure_event_outcome(
     if any(h <= 0 for h in requested):
         raise ValueError("horizons must be positive integers")
 
-    timestamp_to_close = {
-        int(row["t"]): float(row["c"])
-        for _, row in frame.iterrows()
-    }
+    signal_returns = _signal_close_returns(event, frame, requested)
+    entry_ts = event.timestamp_ms + (entry_delay_minutes + 1) * MINUTE_MS
+    entry_price = _open_at(frame, entry_ts)
+
+    if entry_price is None or entry_price <= 0:
+        return EventOutcome(
+            ticker=event.ticker,
+            timestamp_ms=event.timestamp_ms,
+            threshold_pct=event.threshold_pct,
+            signal_price=event.price,
+            previous_close=event.previous_close,
+            entry_timestamp_ms=None,
+            entry_price=None,
+            entry_delay_minutes=entry_delay_minutes,
+            future_returns_pct={h: None for h in requested},
+            signal_returns_pct=signal_returns,
+            mfe_pct=None,
+            mae_pct=None,
+        )
+
     future_returns: dict[int, float | None] = {}
     for horizon in requested:
-        target_ts = event.timestamp_ms + horizon * MINUTE_MS
-        future_close = timestamp_to_close.get(target_ts)
-        if future_close is None:
-            future_returns[horizon] = None
-        else:
-            future_returns[horizon] = (future_close / event.price - 1.0) * 100.0
+        # Enter at the bar open. Its close is one minute after entry, so an h-minute
+        # exit uses the bar whose start is entry + (h-1) minutes.
+        target_bar_ts = entry_ts + (horizon - 1) * MINUTE_MS
+        future_close = _close_at(frame, target_bar_ts)
+        future_returns[horizon] = (
+            None
+            if future_close is None
+            else (future_close / entry_price - 1.0) * 100.0
+        )
 
     max_horizon = max(requested, default=0)
-    window_end = event.timestamp_ms + max_horizon * MINUTE_MS
-    future_slice = frame.loc[
-        (frame["t"] > event.timestamp_ms) & (frame["t"] <= window_end)
-    ]
+    window_end_bar_ts = entry_ts + max(max_horizon - 1, 0) * MINUTE_MS
+    future_slice = frame.loc[(frame["t"] >= entry_ts) & (frame["t"] <= window_end_bar_ts)]
     if future_slice.empty:
         mfe = None
         mae = None
     else:
-        mfe = (float(future_slice["h"].max()) / event.price - 1.0) * 100.0
-        mae = (float(future_slice["l"].min()) / event.price - 1.0) * 100.0
+        mfe = (float(future_slice["h"].max()) / entry_price - 1.0) * 100.0
+        mae = (float(future_slice["l"].min()) / entry_price - 1.0) * 100.0
 
     return EventOutcome(
         ticker=event.ticker,
         timestamp_ms=event.timestamp_ms,
         threshold_pct=event.threshold_pct,
-        entry_price=event.price,
+        signal_price=event.price,
         previous_close=event.previous_close,
+        entry_timestamp_ms=entry_ts,
+        entry_price=entry_price,
+        entry_delay_minutes=entry_delay_minutes,
         future_returns_pct=future_returns,
+        signal_returns_pct=signal_returns,
         mfe_pct=mfe,
         mae_pct=mae,
     )
 
 
 def _cost_adjusted_outcomes(
-    event: CrossingEvent,
-    outcome: EventOutcome,
+    entry_price: float | None,
+    future_returns_pct: dict[int, float | None],
     barriers_record: dict,
+    *,
+    horizon_prefix: str = "return",
 ) -> dict[str, float | None]:
-    """Apply transparent friction scenarios to horizon and barrier exits."""
     adjusted: dict[str, float | None] = {}
-    for horizon, gross_return in outcome.future_returns_pct.items():
-        adjusted.update(
-            add_execution_scenarios_to_record(
-                event.price,
-                gross_return,
-                DEFAULT_EXECUTION_SCENARIOS,
-                prefix=f"return_{horizon}m",
+    for horizon, gross_return in future_returns_pct.items():
+        prefix = f"{horizon_prefix}_{horizon}m"
+        if entry_price is None:
+            for scenario in DEFAULT_EXECUTION_SCENARIOS:
+                adjusted[f"{prefix}_{scenario.name}_net_return_pct"] = None
+        else:
+            adjusted.update(
+                add_execution_scenarios_to_record(
+                    entry_price,
+                    gross_return,
+                    DEFAULT_EXECUTION_SCENARIOS,
+                    prefix=prefix,
+                )
             )
-        )
+
+    if horizon_prefix != "return":
+        return adjusted
 
     for key, gross_return in barriers_record.items():
         if not key.endswith("_exit_return_pct"):
             continue
         prefix = key.removesuffix("_exit_return_pct")
-        adjusted.update(
-            add_execution_scenarios_to_record(
-                event.price,
-                gross_return if isinstance(gross_return, (int, float)) else None,
-                DEFAULT_EXECUTION_SCENARIOS,
-                prefix=prefix,
+        if entry_price is None:
+            for scenario in DEFAULT_EXECUTION_SCENARIOS:
+                adjusted[f"{prefix}_{scenario.name}_net_return_pct"] = None
+        else:
+            adjusted.update(
+                add_execution_scenarios_to_record(
+                    entry_price,
+                    gross_return if isinstance(gross_return, (int, float)) else None,
+                    DEFAULT_EXECUTION_SCENARIOS,
+                    prefix=prefix,
+                )
             )
-        )
     return adjusted
+
+
+def _entry_unavailable_barriers(
+    barriers: Iterable[tuple[float, float]],
+) -> dict[str, str | int | float | None]:
+    record: dict[str, str | int | float | None] = {}
+    for tp, sl in barriers:
+        tp_text = str(float(tp)).rstrip("0").rstrip(".").replace(".", "p")
+        sl_text = str(float(sl)).rstrip("0").rstrip(".").replace(".", "p")
+        key = f"tp{tp_text}_sl{sl_text}"
+        record[f"{key}_status"] = "entry_unavailable"
+        record[f"{key}_minutes"] = None
+        record[f"{key}_exit_return_pct"] = None
+    return record
 
 
 def run_event_study(
@@ -147,9 +238,15 @@ def run_event_study(
     horizons: Iterable[int] = DEFAULT_HORIZONS,
     history_bars: pd.DataFrame | None = None,
     barriers: Iterable[tuple[float, float]] = DEFAULT_BARRIERS,
+    entry_delays: Iterable[int] = DEFAULT_ENTRY_DELAYS,
 ) -> pd.DataFrame:
-    """Emit point-in-time features plus gross and friction-adjusted outcomes."""
+    """Emit point-in-time features and executable, friction-adjusted outcomes."""
     requested_horizons = tuple(int(h) for h in horizons)
+    requested_barriers = tuple((float(tp), float(sl)) for tp, sl in barriers)
+    delays = tuple(sorted({int(delay) for delay in entry_delays}))
+    if 0 not in delays:
+        raise ValueError("entry_delays must include 0 for the primary next-minute-open model")
+
     events = detect_threshold_crossings(
         ticker=ticker,
         bars=bars,
@@ -162,16 +259,32 @@ def run_event_study(
     max_horizon = max(requested_horizons, default=60)
     records: list[dict] = []
     for event in events:
-        outcome = measure_event_outcome(event, bars, requested_horizons)
-        features = extract_event_features(event, bars, history_bars=history_bars)
-        barriers_record = evaluate_default_barriers(
+        primary = measure_event_outcome(
             event,
             bars,
-            barriers=barriers,
-            max_horizon_minutes=max_horizon,
+            requested_horizons,
+            entry_delay_minutes=0,
         )
-        cost_record = _cost_adjusted_outcomes(event, outcome, barriers_record)
-        record = outcome.to_record()
+        features = extract_event_features(event, bars, history_bars=history_bars)
+
+        if primary.entry_price is None or primary.entry_timestamp_ms is None:
+            barriers_record = _entry_unavailable_barriers(requested_barriers)
+        else:
+            barriers_record = evaluate_default_barriers(
+                event,
+                bars,
+                barriers=requested_barriers,
+                max_horizon_minutes=max_horizon,
+                entry_timestamp_ms=primary.entry_timestamp_ms,
+                entry_price=primary.entry_price,
+            )
+
+        cost_record = _cost_adjusted_outcomes(
+            primary.entry_price,
+            primary.future_returns_pct,
+            barriers_record,
+        )
+        record = primary.to_record()
         feature_record = features.to_record()
         overlap = set(record) & set(feature_record)
         if overlap:
@@ -179,5 +292,31 @@ def run_event_study(
         record.update(feature_record)
         record.update(barriers_record)
         record.update(cost_record)
+
+        # Latency sensitivity: same signal, later exact clock-time entries. These
+        # are diagnostics and never replace the primary delay-0 endpoint.
+        for delay in delays:
+            if delay == 0:
+                continue
+            delayed = measure_event_outcome(
+                event,
+                bars,
+                requested_horizons,
+                entry_delay_minutes=delay,
+            )
+            prefix = f"delay{delay}"
+            record[f"{prefix}_entry_timestamp_ms"] = delayed.entry_timestamp_ms
+            record[f"{prefix}_entry_price"] = delayed.entry_price
+            for horizon, value in delayed.future_returns_pct.items():
+                record[f"{prefix}_return_{horizon}m_pct"] = value
+            record.update(
+                _cost_adjusted_outcomes(
+                    delayed.entry_price,
+                    delayed.future_returns_pct,
+                    {},
+                    horizon_prefix=f"{prefix}_return",
+                )
+            )
+
         records.append(record)
     return pd.DataFrame(records)
