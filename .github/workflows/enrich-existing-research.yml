@@ -14,7 +14,7 @@ on:
       output_label:
         description: 'Label for enriched artifact'
         required: true
-        default: '2026-03-v04'
+        default: '2026-03-v05'
 
 jobs:
   enrich:
@@ -56,10 +56,10 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: victory-trader/data/cache/massive-flatfiles
-          key: moneymaker-enrichment-v04-${{ runner.os }}-${{ inputs.source_run_id }}-${{ github.run_id }}
+          key: moneymaker-enrichment-v05-${{ runner.os }}-${{ inputs.source_run_id }}-${{ github.run_id }}
           restore-keys: |
-            moneymaker-enrichment-v04-${{ runner.os }}-${{ inputs.source_run_id }}-
-            moneymaker-enrichment-v04-${{ runner.os }}-
+            moneymaker-enrichment-v05-${{ runner.os }}-${{ inputs.source_run_id }}-
+            moneymaker-enrichment-v05-${{ runner.os }}-
 
       - name: Download existing research artifact
         uses: actions/download-artifact@v4
@@ -120,7 +120,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: victory-trader/data/cache/massive-flatfiles
-          key: moneymaker-enrichment-v04-${{ runner.os }}-${{ inputs.source_run_id }}-${{ github.run_id }}
+          key: moneymaker-enrichment-v05-${{ runner.os }}-${{ inputs.source_run_id }}-${{ github.run_id }}
 
       - name: Upload enriched research artifact
         if: ${{ always() }}
