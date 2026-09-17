@@ -48,6 +48,23 @@ def test_event_features_do_not_use_future_bars():
     assert with_future.hod_distance_pct == pytest.approx((12.0 / 12.2 - 1.0) * 100.0)
 
 
+def test_clock_window_does_not_turn_five_bars_into_more_than_five_minutes():
+    bars = pd.DataFrame(
+        [
+            bar(ts(15, 9, 20), 9.0, 10_000),
+            bar(ts(15, 9, 28), 9.5, 20_000),
+            bar(ts(15, 9, 30), 10.0, 100),
+            bar(ts(15, 9, 31), 11.0, 200),
+            bar(ts(15, 9, 32), 12.0, 300),
+        ]
+    )
+    event = CrossingEvent("TEST", ts(15, 9, 32), 20.0, 12.0, 10.0)
+    features = extract_event_features(event, bars)
+
+    assert features.volume_5m == pytest.approx(600.0)
+    assert features.trailing_return_5m_pct is None
+
+
 def test_historical_rvol_uses_prior_dates_at_same_clock_time():
     history = pd.DataFrame(
         [
@@ -75,7 +92,21 @@ def test_historical_rvol_uses_prior_dates_at_same_clock_time():
     assert features.rvol_history_days == 2
 
 
-def test_event_study_emits_model_features_and_future_outcomes_separately():
+def test_regular_vwap_is_separate_from_extended_session_vwap():
+    bars = pd.DataFrame(
+        [
+            bar(ts(15, 9, 0), 8.0, 1_000),
+            bar(ts(15, 9, 30), 10.0, 100),
+            bar(ts(15, 9, 31), 12.0, 100),
+        ]
+    )
+    event = CrossingEvent("TEST", ts(15, 9, 31), 20.0, 12.0, 10.0)
+    features = extract_event_features(event, bars)
+    assert features.session_vwap != features.regular_vwap
+    assert features.regular_vwap == pytest.approx(11.0)
+
+
+def test_event_study_emits_model_features_and_executable_outcomes_separately():
     bars = pd.DataFrame(
         [
             bar(ts(15, 9, 30), 10.0, 100),
@@ -94,8 +125,10 @@ def test_event_study_emits_model_features_and_future_outcomes_separately():
     )
 
     assert result.iloc[0]["cumulative_volume"] == 600.0
-    assert result.iloc[0]["return_1m_pct"] == pytest.approx(5.0)
+    assert result.iloc[0]["entry_price"] == pytest.approx(12.6)
+    assert result.iloc[0]["return_1m_pct"] == pytest.approx(0.0)
     assert "trailing_return_5m_pct" in result.columns
     assert "return_5m_pct" not in result.columns
     assert "vwap_distance_pct" in result.columns
+    assert "regular_vwap_distance_pct" in result.columns
     assert "rvol_cumulative_20d" in result.columns
