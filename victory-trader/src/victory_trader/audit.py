@@ -61,6 +61,8 @@ def audit_event_dataset(frame: pd.DataFrame, *, require_full_universe: bool = Tr
         "dataset_schema_version",
         "source_prices_adjusted",
         "discovery_high_return_threshold_pct",
+        "event_session_scope",
+        "regular_entry_required",
     }
     missing_required = sorted(required - set(frame.columns))
     if missing_required:
@@ -80,6 +82,15 @@ def audit_event_dataset(frame: pd.DataFrame, *, require_full_universe: bool = Tr
         else 0
     )
     summary.append(f"rows={rows} tickers={tickers} trading_days={days} ticker_day_clusters={clusters}")
+
+    if "event_session_scope" in frame.columns:
+        scopes = set(frame["event_session_scope"].dropna().astype(str))
+        if scopes != {"regular"}:
+            issues.append(f"formal dataset must use regular event-session scope, got: {sorted(scopes)}")
+    if "regular_entry_required" in frame.columns:
+        required_flags = frame["regular_entry_required"].fillna(False).astype(bool)
+        if not required_flags.all():
+            issues.append("formal dataset must require regular-session primary entries")
 
     if "threshold_pct" in frame.columns:
         thresholds = sorted(pd.to_numeric(frame["threshold_pct"], errors="coerce").dropna().unique())
@@ -180,6 +191,10 @@ def audit_event_dataset(frame: pd.DataFrame, *, require_full_universe: bool = Tr
         overlapping = int((flags.sum(axis=1) > 1).sum())
         if overlapping:
             issues.append(f"overlapping session labels: {overlapping} rows")
+        if "event_session_scope" in frame.columns and set(frame["event_session_scope"].dropna().astype(str)) == {"regular"}:
+            non_regular_signals = int((flags["is_regular_session"] != 1).sum())
+            if non_regular_signals:
+                issues.append(f"regular-scope dataset contains non-regular signal rows: {non_regular_signals}")
 
     if "halt_data_available" in frame.columns:
         available = frame["halt_data_available"].fillna(False).astype(bool)
