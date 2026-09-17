@@ -79,6 +79,6 @@ def test_flatfile_builder_preserves_point_in_time_event_semantics():
     assert row["market_data_backend"] == "massive_flatfiles"
     assert row["dataset_schema_version"] == "0.3"
     assert row["bar_vwap_source"] == "volume_weighted_bar_close_proxy"
-    assert row["source_prices_adjusted"] is False or row["source_prices_adjusted"] == False
+    assert not bool(row["source_prices_adjusted"])
     assert stats.discovered_candidates == 1
     assert stats.event_tickers == 1
