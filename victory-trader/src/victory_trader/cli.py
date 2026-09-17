@@ -13,6 +13,7 @@ from .analytics import (
     summarize_excursions,
     summarize_rvol,
 )
+from .audit import audit_event_dataset
 from .config import load_settings
 from .event_study import run_event_study
 from .history import load_target_with_history
@@ -130,10 +131,17 @@ def multi_day_dataset(
         print("No qualifying momentum events found in the requested range.")
 
     if skipped:
-        print(f"Skipped {len(skipped)} calendar days.")
+        print(f"Skipped {len(skipped)} closed-market calendar days.")
         for skipped_day, reason in skipped[:10]:
             print(f"  {skipped_day}: {reason}")
     return 0
+
+
+def audit_dataset(path: Path, allow_debug_sample: bool) -> int:
+    frame = load_event_dataset(path)
+    result = audit_event_dataset(frame, require_full_universe=not allow_debug_sample)
+    print(result.render())
+    return 0 if result.ok else 1
 
 
 def analyze_dataset(path: Path, horizon: int) -> int:
@@ -212,6 +220,14 @@ def main() -> int:
     multi.add_argument("end", type=date.fromisoformat)
     _add_dataset_options(multi)
 
+    audit = sub.add_parser("audit-dataset", help="Fail if a research dataset violates integrity invariants")
+    audit.add_argument("path", type=Path)
+    audit.add_argument(
+        "--allow-debug-sample",
+        action="store_true",
+        help="Permit a debug candidate limit; full research should not use this.",
+    )
+
     analyze = sub.add_parser("analyze-dataset", help="Summarize continuation, costs, exits, and RVOL")
     analyze.add_argument("path", type=Path)
     analyze.add_argument("--horizon", type=int, default=5, help="Horizon used for cost/RVOL analysis")
@@ -233,6 +249,8 @@ def main() -> int:
             args.min_high_return, args.min_dollar_volume, args.max_candidates,
             args.request_interval, args.annotate_halts,
         )
+    if args.command == "audit-dataset":
+        return audit_dataset(args.path, args.allow_debug_sample)
     if args.command == "analyze-dataset":
         return analyze_dataset(args.path, args.horizon)
     raise RuntimeError(f"Unknown command: {args.command}")
