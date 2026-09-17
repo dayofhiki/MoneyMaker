@@ -31,9 +31,9 @@ class EventFeatures:
     session_vwap: float | None
     vwap_distance_pct: float | None
     hod_distance_pct: float | None
-    return_5m_pct: float | None
-    return_15m_pct: float | None
-    return_30m_pct: float | None
+    trailing_return_5m_pct: float | None
+    trailing_return_15m_pct: float | None
+    trailing_return_30m_pct: float | None
     volatility_5m_pct: float | None
     volatility_15m_pct: float | None
     volatility_30m_pct: float | None
@@ -248,9 +248,9 @@ def extract_event_features(
         session_vwap=session_vwap,
         vwap_distance_pct=vwap_distance,
         hod_distance_pct=hod_distance,
-        return_5m_pct=_return_over_window(observed, event_idx, 5),
-        return_15m_pct=_return_over_window(observed, event_idx, 15),
-        return_30m_pct=_return_over_window(observed, event_idx, 30),
+        trailing_return_5m_pct=_return_over_window(observed, event_idx, 5),
+        trailing_return_15m_pct=_return_over_window(observed, event_idx, 15),
+        trailing_return_30m_pct=_return_over_window(observed, event_idx, 30),
         volatility_5m_pct=_volatility(observed, event_idx, 5),
         volatility_15m_pct=_volatility(observed, event_idx, 15),
         volatility_30m_pct=_volatility(observed, event_idx, 30),
