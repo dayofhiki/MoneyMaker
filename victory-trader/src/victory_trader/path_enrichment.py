@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from .config import load_settings, require_flatfile_credentials
+from .config import load_flatfile_credentials
 from .features import MINUTE_MS, STANDARD_THRESHOLDS
 from .flatfiles import MassiveFlatFileStore, MassiveFlatFilesClient, STOCKS_MINUTE_PREFIX
 from .market_calendar import regular_session_bounds
@@ -407,8 +407,7 @@ def main() -> int:
     args = parser.parse_args()
 
     frame = pd.read_parquet(args.input)
-    settings = load_settings()
-    access_key, secret_key = require_flatfile_credentials(settings)
+    access_key, secret_key = load_flatfile_credentials()
     store = MassiveFlatFileStore(
         MassiveFlatFilesClient(access_key, secret_key),
         FLATFILE_CACHE_DIR,
