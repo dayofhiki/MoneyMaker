@@ -13,9 +13,18 @@ class MassiveClient:
     base_url: str = "https://api.massive.com"
 
     def _get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
-        query = dict(params or {})
-        query["apiKey"] = self.api_key
-        response = requests.get(f"{self.base_url}{path}", params=query, timeout=30)
+        """GET JSON from Massive without ever putting the API key in the URL.
+
+        Massive supports Authorization: Bearer authentication. Using the header
+        keeps credentials out of request URLs, exception strings, CI logs, proxy
+        logs, and copied diagnostics.
+        """
+        response = requests.get(
+            f"{self.base_url}{path}",
+            params=dict(params or {}),
+            headers={"Authorization": f"Bearer {self.api_key}"},
+            timeout=30,
+        )
         response.raise_for_status()
         return response.json()
 
