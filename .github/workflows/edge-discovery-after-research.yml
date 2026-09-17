@@ -45,9 +45,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: victory-trader/data/cache/massive-flatfiles
-          key: moneymaker-discovery-v04-${{ runner.os }}-${{ github.event.workflow_run.id }}-${{ github.run_id }}
+          key: moneymaker-discovery-v05-${{ runner.os }}-${{ github.event.workflow_run.id }}-${{ github.run_id }}
           restore-keys: |
-            moneymaker-discovery-v04-${{ runner.os }}-
+            moneymaker-discovery-v05-${{ runner.os }}-
 
       - name: Download final research artifact
         uses: actions/download-artifact@v4
@@ -86,7 +86,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: victory-trader/data/cache/massive-flatfiles
-          key: moneymaker-discovery-v04-${{ runner.os }}-${{ github.event.workflow_run.id }}-${{ github.run_id }}
+          key: moneymaker-discovery-v05-${{ runner.os }}-${{ github.event.workflow_run.id }}-${{ github.run_id }}
 
       - name: Upload enriched discovery artifact
         if: ${{ always() }}
