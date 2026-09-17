@@ -24,9 +24,9 @@ def _frame() -> pd.DataFrame:
                 "volatility_15m_pct": low_is_good + 0.1,
                 "signal_bar_range_pct": low_is_good + 0.2,
                 "trailing_return_5m_pct": low_is_good + 0.3,
-                "dollar_volume_5m": 1_000_000.0 + i * 10_000,
-                "transactions_5m": 1_000.0 + i * 10,
-                "active_minute_fraction_15m": 0.5 + i / 200.0,
+                "dollar_volume_5m": 2_000_000.0 + (i % 7) * 10_000,
+                "transactions_5m": 2_000.0 + (i % 5) * 10,
+                "active_minute_fraction_15m": 0.9 + (i % 3) * 0.02,
             }
             for horizon in horizons:
                 gross = 2.0 - low_is_good * 0.02 + horizon * 0.001
