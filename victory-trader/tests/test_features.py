@@ -70,7 +70,6 @@ def test_historical_rvol_uses_prior_dates_at_same_clock_time():
 
     features = extract_event_features(event, target, history_bars=history)
 
-    # Current cumulative = 900; historical cumulative samples = 300 and 600.
     assert features.rvol_cumulative_20d == pytest.approx(2.0)
     assert features.rvol_5m_20d == pytest.approx(2.0)
     assert features.rvol_history_days == 2
@@ -96,5 +95,7 @@ def test_event_study_emits_model_features_and_future_outcomes_separately():
 
     assert result.iloc[0]["cumulative_volume"] == 600.0
     assert result.iloc[0]["return_1m_pct"] == pytest.approx(5.0)
+    assert "trailing_return_5m_pct" in result.columns
+    assert "return_5m_pct" not in result.columns
     assert "vwap_distance_pct" in result.columns
     assert "rvol_cumulative_20d" in result.columns
