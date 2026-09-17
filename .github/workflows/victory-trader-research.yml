@@ -106,7 +106,7 @@ jobs:
           python-version: '3.11'
 
       - name: Restore cumulative research cache and checkpoints
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             victory-trader/data/cache/massive
@@ -176,7 +176,17 @@ jobs:
             echo "No event rows in this chunk." > "artifacts/analysis-${{ matrix.id }}.txt"
           fi
 
+      - name: Save cumulative research cache and checkpoints
+        if: ${{ always() }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            victory-trader/data/cache/massive
+            victory-trader/data/checkpoints
+          key: moneymaker-research-${{ runner.os }}-${{ github.run_id }}-${{ matrix.id }}
+
       - name: Upload chunk artifact
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: moneymaker-chunk-${{ matrix.id }}
