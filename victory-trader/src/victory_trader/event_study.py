@@ -12,6 +12,7 @@ from .features import extract_event_features
 
 
 DEFAULT_HORIZONS = (1, 2, 5, 10, 15, 30, 60)
+MINUTE_MS = 60_000
 
 
 @dataclass(frozen=True)
@@ -53,27 +54,40 @@ def measure_event_outcome(
     bars: pd.DataFrame,
     horizons: Iterable[int] = DEFAULT_HORIZONS,
 ) -> EventOutcome:
+    """Measure outcomes at exact clock-time horizons.
+
+    If the exact target minute has no bar, the return is left missing rather than
+    silently substituting a later bar. This matters around trading halts and other
+    gaps where "five bars later" may be much more than five elapsed minutes.
+    MFE/MAE use only bars whose timestamps fall inside the requested clock window.
+    """
     frame = _validate_bars(bars)
     matches = frame.index[frame["t"] == event.timestamp_ms].tolist()
     if len(matches) != 1:
         raise ValueError("event timestamp must match exactly one bar")
 
-    event_idx = matches[0]
     requested = sorted({int(h) for h in horizons})
     if any(h <= 0 for h in requested):
         raise ValueError("horizons must be positive integers")
 
+    timestamp_to_close = {
+        int(row["t"]): float(row["c"])
+        for _, row in frame.iterrows()
+    }
     future_returns: dict[int, float | None] = {}
     for horizon in requested:
-        target_idx = event_idx + horizon
-        if target_idx >= len(frame):
+        target_ts = event.timestamp_ms + horizon * MINUTE_MS
+        future_close = timestamp_to_close.get(target_ts)
+        if future_close is None:
             future_returns[horizon] = None
-            continue
-        future_close = float(frame.iloc[target_idx]["c"])
-        future_returns[horizon] = (future_close / event.price - 1.0) * 100.0
+        else:
+            future_returns[horizon] = (future_close / event.price - 1.0) * 100.0
 
     max_horizon = max(requested, default=0)
-    future_slice = frame.iloc[event_idx + 1 : event_idx + max_horizon + 1]
+    window_end = event.timestamp_ms + max_horizon * MINUTE_MS
+    future_slice = frame.loc[
+        (frame["t"] > event.timestamp_ms) & (frame["t"] <= window_end)
+    ]
     if future_slice.empty:
         mfe = None
         mae = None
@@ -158,7 +172,11 @@ def run_event_study(
         )
         cost_record = _cost_adjusted_outcomes(event, outcome, barriers_record)
         record = outcome.to_record()
-        record.update(features.to_record())
+        feature_record = features.to_record()
+        overlap = set(record) & set(feature_record)
+        if overlap:
+            raise ValueError(f"feature/outcome column collision: {sorted(overlap)}")
+        record.update(feature_record)
         record.update(barriers_record)
         record.update(cost_record)
         records.append(record)
