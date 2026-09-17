@@ -15,8 +15,8 @@ def event():
 
 def test_take_profit_first():
     frame = bars([
-        {"t": 0, "h": 10.0, "l": 10.0, "c": 10.0},
-        {"t": 60_000, "h": 10.25, "l": 9.95, "c": 10.20},
+        {"t": 0, "o": 10.0, "h": 10.0, "l": 10.0, "c": 10.0},
+        {"t": 60_000, "o": 10.0, "h": 10.25, "l": 9.95, "c": 10.20},
     ])
     result = evaluate_barrier(event(), frame, take_profit_pct=2, stop_loss_pct=1)
     assert result.status == "take_profit"
@@ -26,33 +26,52 @@ def test_take_profit_first():
 
 def test_stop_loss_first():
     frame = bars([
-        {"t": 0, "h": 10.0, "l": 10.0, "c": 10.0},
-        {"t": 60_000, "h": 10.05, "l": 9.85, "c": 9.90},
+        {"t": 0, "o": 10.0, "h": 10.0, "l": 10.0, "c": 10.0},
+        {"t": 60_000, "o": 10.0, "h": 10.05, "l": 9.85, "c": 9.90},
     ])
     result = evaluate_barrier(event(), frame, take_profit_pct=2, stop_loss_pct=1)
     assert result.status == "stop_loss"
     assert result.exit_return_pct == -1
 
 
+def test_gap_through_stop_uses_observed_open():
+    frame = bars([
+        {"t": 0, "o": 10.0, "h": 10.0, "l": 10.0, "c": 10.0},
+        {"t": 60_000, "o": 9.50, "h": 9.60, "l": 9.40, "c": 9.55},
+    ])
+    result = evaluate_barrier(event(), frame, take_profit_pct=2, stop_loss_pct=1)
+    assert result.status == "stop_gap"
+    assert result.exit_return_pct == pytest.approx(-5.0)
+
+
 def test_same_bar_double_hit_is_ambiguous():
     frame = bars([
-        {"t": 0, "h": 10.0, "l": 10.0, "c": 10.0},
-        {"t": 60_000, "h": 10.25, "l": 9.85, "c": 10.10},
+        {"t": 0, "o": 10.0, "h": 10.0, "l": 10.0, "c": 10.0},
+        {"t": 60_000, "o": 10.0, "h": 10.25, "l": 9.85, "c": 10.10},
     ])
     result = evaluate_barrier(event(), frame, take_profit_pct=2, stop_loss_pct=1)
     assert result.status == "ambiguous"
     assert result.exit_return_pct is None
 
 
-def test_timeout_uses_last_available_close():
+def test_timeout_requires_exact_clock_horizon_bar():
     frame = bars([
-        {"t": 0, "h": 10.0, "l": 10.0, "c": 10.0},
-        {"t": 60_000, "h": 10.10, "l": 9.95, "c": 10.05},
-        {"t": 120_000, "h": 10.15, "l": 9.95, "c": 10.10},
+        {"t": 0, "o": 10.0, "h": 10.0, "l": 10.0, "c": 10.0},
+        {"t": 60_000, "o": 10.0, "h": 10.10, "l": 9.95, "c": 10.05},
+        {"t": 120_000, "o": 10.05, "h": 10.15, "l": 9.95, "c": 10.10},
     ])
-    result = evaluate_barrier(
-        event(), frame, take_profit_pct=2, stop_loss_pct=1, max_horizon_minutes=2
-    )
+    result = evaluate_barrier(event(), frame, take_profit_pct=2, stop_loss_pct=1, max_horizon_minutes=2)
     assert result.status == "timeout"
     assert result.minutes_to_exit == 2
     assert result.exit_return_pct == pytest.approx(1.0)
+
+
+def test_missing_timeout_bar_is_not_replaced_by_earlier_close():
+    frame = bars([
+        {"t": 0, "o": 10.0, "h": 10.0, "l": 10.0, "c": 10.0},
+        {"t": 60_000, "o": 10.0, "h": 10.05, "l": 9.95, "c": 10.0},
+        {"t": 180_000, "o": 10.0, "h": 10.05, "l": 9.95, "c": 10.0},
+    ])
+    result = evaluate_barrier(event(), frame, take_profit_pct=2, stop_loss_pct=1, max_horizon_minutes=2)
+    assert result.status == "unresolved_missing"
+    assert result.exit_return_pct is None
