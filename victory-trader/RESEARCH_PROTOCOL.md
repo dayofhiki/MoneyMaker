@@ -6,7 +6,7 @@ This document limits researcher degrees of freedom. Any material change after fo
 
 ## 1. Research objective
 
-Test whether low-priced U.S. common stocks that have already entered an extreme intraday momentum state contain short-lived, repeatable continuation that survives executable-entry assumptions, transaction-cost stress, clustering, and chronological out-of-sample validation.
+Test whether low-priced U.S. common stocks that have already entered an extreme **regular-session** intraday momentum state contain short-lived, repeatable continuation that survives executable-entry assumptions, transaction-cost stress, clustering, and chronological out-of-sample validation.
 
 The first goal is not a high backtest win rate. The goal is positive expectancy after realistic frictions with controlled downside tails. Win rate is a supporting diagnostic only.
 
@@ -17,7 +17,7 @@ Initial universe:
 - U.S. stocks market
 - common-stock type (`CS`)
 - primary exchange XNAS / XNYS / XASE
-- prior-session **nominal/as-traded** close from $0.50 through $20.00
+- prior-session nominal/as-traded close from $0.50 through $20.00
 - OTC excluded
 - same-day split events excluded
 
@@ -25,11 +25,15 @@ Universe selection uses unadjusted historical prices so later splits/reverse spl
 
 Provider market-cap/share-count fields are excluded from the initial model allowlist until their publication-time semantics are verified. Identity/taxonomy metadata may still be used for common-stock/exchange validation.
 
-## 3. Historical candidate discovery
+## 3. Historical candidate discovery and session scope
 
-The completed daily high may be used only to avoid downloading minute data for ticker-days that could not possibly contain a studied threshold event.
+The completed daily high may be used only to avoid downloading minute data for ticker-days that could not possibly contain a studied **regular-session** threshold event.
 
-The discovery threshold must be **less than or equal to the lowest event threshold under study**. With the v0.2 event family, discovery therefore defaults to +10%.
+The discovery threshold must be less than or equal to the lowest event threshold under study. With the v0.2 event family, discovery therefore defaults to +10%.
+
+Formal v0.2 event signals are restricted to the official regular session. This is deliberate: Massive minute aggregates include extended-hours activity, while daily OHLC follows the daily consolidated aggregation convention. A market-wide daily-high pre-screen therefore cannot be assumed to be a complete discovery mechanism for premarket-only or after-hours-only threshold events. Premarket bars remain available as point-in-time context features.
+
+Extended-hours event discovery is deferred to a later protocol version using a market-wide minute/trade source capable of discovering those events without future-selected sampling.
 
 Completed daily high/close/volume/dollar-volume:
 
@@ -42,7 +46,7 @@ A debug candidate limit, when explicitly requested, uses deterministic date+tick
 
 ## 4. Event definition
 
-First close-based crossing of each threshold during a trading date:
+First close-based crossing of each threshold during the official regular session:
 
 - +10%
 - +20%
@@ -53,15 +57,16 @@ First close-based crossing of each threshold during a trading date:
 
 Reference price is the prior-session nominal close.
 
-The event becomes observable only after the crossing minute closes.
+The event becomes observable only after the crossing minute closes. Premarket activity may influence point-in-time features, but a premarket-only threshold crossing is not a formal v0.2 event.
 
 ## 5. Executable entry model
 
 Primary v0.2 entry:
 
-- signal: crossing minute close
-- primary entry: **exact next minute bar open**
-- if the exact next-minute bar is absent, the trade is marked not executable and primary outcomes are missing
+- signal: regular-session crossing minute close
+- primary entry: exact next minute bar open
+- primary entry must itself still be inside the official regular session
+- if the exact next-minute bar is absent or lies outside regular hours, the trade is marked not executable and primary outcomes are missing
 
 Latency sensitivity is pre-specified:
 
@@ -69,7 +74,7 @@ Latency sensitivity is pre-specified:
 - delay 1: one additional clock minute later
 - delay 2: two additional clock minutes later
 
-The signal-close return is retained only as an optimistic diagnostic benchmark and is not the primary strategy return.
+The same regular-session requirement applies to delayed entries. The signal-close return is retained only as an optimistic diagnostic benchmark and is not the primary strategy return.
 
 ## 6. Primary outcomes
 
@@ -87,9 +92,9 @@ Primary v0.2 endpoint:
 
 - **5-minute, delay-0, base-friction-adjusted return**
 
-If the exact entry or exit minute required by the model is unavailable, the executable outcome is missing. A later bar is never substituted.
+If the exact entry or exit minute required by the model is unavailable, the executable outcome is missing. A later bar is never silently substituted.
 
-Supporting outcomes include gross executable return, signal-close benchmark return, MFE/MAE, median, positive-return rate, latency sensitivity, session-specific results, and missingness diagnostics.
+Supporting outcomes include gross executable return, signal-close benchmark return, MFE/MAE, median, positive-return rate, latency sensitivity, missingness diagnostics, and tail-risk diagnostics.
 
 ## 7. Short-exit experiments
 
@@ -108,6 +113,8 @@ Rules:
 - ambiguous rows are never assigned a favorable ordering,
 - a stop-market gap through the stop exits at the first observed bar open rather than the requested stop price,
 - if the requested timeout minute is not tradable/observable, the timeout outcome is unresolved rather than fabricated from an earlier close.
+
+The unresolved/ambiguous rates are themselves reported. Before any barrier strategy is treated as executable, halt/resume and finer trade/quote data must be used to quantify unresolved tail outcomes.
 
 Any expanded TP/SL grid requires a new protocol version.
 
@@ -131,7 +138,7 @@ Initial allowed families:
 
 - threshold level
 - signal price and prior close
-- session label and minutes from official regular open
+- minutes from official regular open
 - event/cumulative/clock-window volume
 - clock-window volume acceleration
 - historical same-time RVOL
@@ -142,6 +149,8 @@ Initial allowed families:
 - clock-window trailing volatility using consecutive minutes only
 - premarket return and volume
 - common-stock/exchange taxonomy
+
+Historical same-time RVOL excludes prior dates where the comparison clock time was outside the regular session because of an early close.
 
 Forbidden model inputs include:
 
@@ -154,9 +163,9 @@ Forbidden model inputs include:
 
 ## 10. Sessions and exchange calendar
 
-Official U.S. equity exchange-calendar data is used for holidays and regular-session early closes.
+Official U.S. equity exchange-calendar data is used for holidays, previous trading-day lookup, regular-session boundaries, and early closes.
 
-Premarket, regular, and after-hours results must be reported separately. They may not be assumed to share the same microstructure or execution quality merely because the same stress-cost function is applied.
+Formal v0.2 signals and entries are regular-session only. Premarket data is retained as context. Premarket/after-hours event trading is a separate future research problem because it requires an unbiased market-wide extended-hours discovery source and different microstructure assumptions.
 
 ## 11. Missing bars and finalized historical aggregates
 
@@ -177,7 +186,7 @@ Initial chronological partitions:
 - Final untouched holdout: **2026-07-01 through 2026-08-31**
 - Engineering/debug: **2026-09-01 onward**
 
-Before querying validation/holdout for strategy selection, development data must show adequate independent ticker-day/event counts and market-regime coverage. If the validation/holdout windows are changed for sample-size reasons, the rule must be changed **before either period is inspected**.
+Before querying validation/holdout for strategy selection, development data must show adequate independent ticker-day/event counts and market-regime coverage. If the validation/holdout windows are changed for sample-size reasons, the rule must be changed before either period is inspected.
 
 ## 13. Statistical dependence and uncertainty
 
@@ -200,7 +209,7 @@ A large raw row count cannot substitute for independent-cluster coverage.
 
 Research must prefer broad stable neighborhoods to isolated best cells.
 
-No result is called robust merely because one combination of threshold, RVOL bucket, session, price bucket, or TP/SL looks strong. Candidate selection must account for parameter sensitivity, neighboring specifications, time stability, and the number of exploratory cuts performed.
+No result is called robust merely because one combination of threshold, RVOL bucket, price bucket, time-of-day, or TP/SL looks strong. Candidate selection must account for parameter sensitivity, neighboring specifications, time stability, and the number of exploratory cuts performed.
 
 Once a candidate rule/model and evaluation procedure are frozen, validation and final holdout are chronological and untouched by further tuning.
 
@@ -214,12 +223,13 @@ Collection rules:
 - cache hits do not incur API pacing sleeps,
 - 429 and transient 5xx/network failures use bounded retries/backoff,
 - authentication failures remain fatal,
+- official calendar lookup avoids wasting provider requests on weekends/holidays,
 - collection is split into bounded chronological chunks,
 - daily checkpoints and manifests distinguish complete/no-event/closed/error states,
 - a completed checkpoint is reused instead of re-downloaded,
 - unexpected failures do not silently turn a partial dataset into a valid one.
 
-Research calculations, strategy changes, and ML experiments should operate on already-collected data whenever possible.
+Research calculations, strategy changes, and ML experiments operate on already-collected event data whenever possible. The HTTP cache/checkpoint layer is operational persistence, not the long-term archival source of truth; a permanent private object store can replace it later without changing the research schema.
 
 ## 16. Required dataset integrity gates
 
@@ -229,6 +239,8 @@ A formal dataset must pass automated audit checks including:
 - no debug candidate limit
 - nominal/unadjusted universe provenance
 - discovery threshold no higher than the lowest event threshold
+- regular-session signal scope
+- regular-session executable entry requirement
 - no completed-day/fundamental leakage columns
 - next-minute-open primary entry provenance
 - required exact-clock horizons
@@ -289,3 +301,5 @@ Event-study expectancy alone is not a tradable portfolio backtest.
 `No edge found` is a valid successful research result.
 
 A candidate edge is credible only if it remains positive after primary friction, does not rely on a few ticker-days, is stable across nearby specifications and time segments, survives chronological validation/holdout, and later reproduces under finer execution data or realtime paper trading.
+
+A high win rate is never accepted as a substitute for positive expectancy and controlled tail risk. MoneyMaker may optimize win rate only subject to those constraints.
