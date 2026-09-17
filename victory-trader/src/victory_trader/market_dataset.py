@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import time
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
@@ -18,6 +17,9 @@ from .massive_client import MassiveClient
 from .universe import fetch_security_metadata, split_tickers_from_payload
 
 
+DATASET_SCHEMA_VERSION = "0.2"
+
+
 @dataclass(frozen=True)
 class Candidate:
     ticker: str
@@ -30,22 +32,32 @@ class Candidate:
     day_dollar_volume: float
 
 
+@dataclass
+class DayBuildStats:
+    trading_day: str = ""
+    discovered_candidates: int = 0
+    debug_selected_candidates: int = 0
+    split_excluded: int = 0
+    metadata_excluded: int = 0
+    no_bars: int = 0
+    no_events: int = 0
+    event_tickers: int = 0
+    event_rows: int = 0
+
+    def to_dict(self) -> dict[str, int | str]:
+        return vars(self).copy()
+
+
 def _market_rows(payload: dict) -> list[dict]:
     return list(payload.get("results") or [])
 
 
 def _ticker_map(payload: dict) -> dict[str, dict]:
-    rows = _market_rows(payload)
     return {
         str(row.get("T", "")).upper(): row
-        for row in rows
+        for row in _market_rows(payload)
         if row.get("T")
     }
-
-
-def _sleep(seconds: float) -> None:
-    if seconds > 0:
-        time.sleep(seconds)
 
 
 def select_candidates(
@@ -54,18 +66,22 @@ def select_candidates(
     *,
     min_price: float = 0.50,
     max_price: float = 20.0,
-    min_high_return_pct: float = 20.0,
+    min_high_return_pct: float = 10.0,
     min_day_dollar_volume: float = 0.0,
 ) -> list[Candidate]:
-    """Find historical days that contained a qualifying momentum event.
+    """Find historical dates/tickers that could contain the lowest studied event.
 
-    The completed daily high is used only as an efficient historical discovery
-    filter. The returned order is ticker order, never outcome rank, so callers
-    cannot accidentally select the day's biggest eventual winners merely by
-    taking the first N rows.
+    Completed daily high is a discovery accelerator only. It may never rank or
+    truncate production candidates. Completed-day dollar-volume filtering is
+    intentionally forbidden because it is future information at entry time.
     """
     if min_price <= 0 or max_price <= min_price:
         raise ValueError("price bounds must satisfy 0 < min_price < max_price")
+    if min_day_dollar_volume > 0:
+        raise ValueError(
+            "completed-day dollar-volume filtering is forbidden in point-in-time research; "
+            "use event-time cumulative/trailing liquidity features instead"
+        )
 
     previous = _ticker_map(previous_payload)
     target = _ticker_map(target_payload)
@@ -75,7 +91,6 @@ def select_candidates(
         prior = previous.get(ticker)
         if prior is None:
             continue
-
         try:
             previous_close = float(prior["c"])
             day_high = float(today["h"])
@@ -83,7 +98,6 @@ def select_candidates(
             day_volume = float(today.get("v", 0.0) or 0.0)
         except (KeyError, TypeError, ValueError):
             continue
-
         if not (min_price <= previous_close <= max_price):
             continue
         if previous_close <= 0:
@@ -97,9 +111,6 @@ def select_candidates(
         day_vwap = float(raw_vwap) if raw_vwap is not None else None
         reference_price = day_vwap if day_vwap is not None else day_close
         day_dollar_volume = reference_price * day_volume
-        if day_dollar_volume < min_day_dollar_volume:
-            continue
-
         candidates.append(
             Candidate(
                 ticker=ticker,
@@ -112,7 +123,6 @@ def select_candidates(
                 day_dollar_volume=day_dollar_volume,
             )
         )
-
     return sorted(candidates, key=lambda item: item.ticker)
 
 
@@ -122,13 +132,6 @@ def limit_candidates_for_debug(
     day: date,
     max_candidates: int | None,
 ) -> list[Candidate]:
-    """Deterministically subsample candidates without looking at their outcome.
-
-    Production research should leave ``max_candidates`` unset and process the
-    full qualifying universe. This helper exists only for smoke/debug runs. The
-    ordering is a stable hash of trading day + ticker and does not use day high,
-    close, volume, or any forward return.
-    """
     if max_candidates is None:
         return candidates
     if max_candidates <= 0:
@@ -142,9 +145,10 @@ def limit_candidates_for_debug(
 
 
 def grouped_daily(client: MassiveClient, day: date) -> dict:
+    # Nominal, as-traded prices are required for the historical $0.50-$20 universe.
     return client._get(
         f"/v2/aggs/grouped/locale/us/market/stocks/{day.isoformat()}",
-        {"adjusted": "true", "include_otc": "false"},
+        {"adjusted": "false", "include_otc": "false"},
     )
 
 
@@ -155,12 +159,14 @@ def previous_market_payload(
     max_calendar_lookback: int = 10,
     request_interval_seconds: float = 0.0,
 ) -> tuple[date, dict]:
+    # request_interval_seconds remains accepted for backwards compatibility. Real
+    # throttling belongs inside MassiveClient and only occurs on network misses.
+    del request_interval_seconds
     for offset in range(1, max_calendar_lookback + 1):
         candidate_day = day - timedelta(days=offset)
         payload = grouped_daily(client, candidate_day)
         if _market_rows(payload):
             return candidate_day, payload
-        _sleep(request_interval_seconds)
     raise ValueError(f"No prior market summary found within {max_calendar_lookback} days before {day}")
 
 
@@ -170,7 +176,7 @@ def build_market_event_dataset(
     *,
     min_price: float = 0.50,
     max_price: float = 20.0,
-    min_high_return_pct: float = 20.0,
+    min_high_return_pct: float = 10.0,
     min_day_dollar_volume: float = 0.0,
     thresholds_pct: Iterable[float] = (10, 20, 30, 50, 75, 100),
     horizons: Iterable[int] = DEFAULT_HORIZONS,
@@ -180,25 +186,27 @@ def build_market_event_dataset(
     exclude_split_days: bool = True,
     historical_context_days: int = 35,
     annotate_halts: bool = False,
+    build_stats: DayBuildStats | None = None,
 ) -> pd.DataFrame:
-    """Build one day's point-in-time momentum research dataset.
+    """Build one day's point-in-time momentum research dataset."""
+    del request_interval_seconds
+    thresholds = tuple(sorted({float(value) for value in thresholds_pct}))
+    if not thresholds:
+        raise ValueError("at least one event threshold is required")
+    if min_high_return_pct > min(thresholds):
+        raise ValueError(
+            "discovery high-return threshold cannot exceed the lowest studied event threshold; "
+            "that would create future-selected samples"
+        )
 
-    Completed daily summaries are used only to discover historical event days.
-    Event features themselves are point-in-time. ``max_candidates`` is a debug
-    subsample only; full research should leave it unset. Halt annotations are
-    optional because Nasdaq's public feed has independent availability/coverage.
-    """
+    stats = build_stats if build_stats is not None else DayBuildStats()
+    stats.trading_day = day.isoformat()
+
     target_payload = grouped_daily(client, day)
     if not _market_rows(target_payload):
         raise ValueError(f"No grouped market data returned for {day}")
 
-    _sleep(request_interval_seconds)
-    previous_day, prior_payload = previous_market_payload(
-        client,
-        day,
-        request_interval_seconds=request_interval_seconds,
-    )
-
+    previous_day, prior_payload = previous_market_payload(client, day)
     candidates = select_candidates(
         prior_payload,
         target_payload,
@@ -207,31 +215,27 @@ def build_market_event_dataset(
         min_high_return_pct=min_high_return_pct,
         min_day_dollar_volume=min_day_dollar_volume,
     )
-    discovered_candidate_count = len(candidates)
-    candidates = limit_candidates_for_debug(
-        candidates,
-        day=day,
-        max_candidates=max_candidates,
-    )
+    stats.discovered_candidates = len(candidates)
+    candidates = limit_candidates_for_debug(candidates, day=day, max_candidates=max_candidates)
+    stats.debug_selected_candidates = len(candidates)
 
     split_tickers: set[str] = set()
     if exclude_split_days and candidates:
-        _sleep(request_interval_seconds)
         split_tickers = split_tickers_from_payload(client.splits_on(day))
 
     frames: list[pd.DataFrame] = []
     for candidate in candidates:
         if candidate.ticker in split_tickers:
+            stats.split_excluded += 1
             continue
 
         metadata = None
         if enforce_common_stock:
-            _sleep(request_interval_seconds)
             metadata = fetch_security_metadata(client, candidate.ticker, day)
             if not metadata.is_research_common_stock:
+                stats.metadata_excluded += 1
                 continue
 
-        _sleep(request_interval_seconds)
         bars, history_bars = load_target_with_history(
             client,
             candidate.ticker,
@@ -239,36 +243,38 @@ def build_market_event_dataset(
             calendar_lookback_days=historical_context_days,
         )
         if bars.empty:
+            stats.no_bars += 1
             continue
 
         study = run_event_study(
             ticker=candidate.ticker,
             bars=bars,
             previous_close=candidate.previous_close,
-            thresholds_pct=thresholds_pct,
+            thresholds_pct=thresholds,
             horizons=horizons,
             history_bars=history_bars,
         )
         if study.empty:
+            stats.no_events += 1
             continue
 
         study.insert(0, "trading_day", day.isoformat())
         study.insert(1, "previous_trading_day", previous_day.isoformat())
-        study["discovered_candidate_count"] = discovered_candidate_count
+        study["dataset_schema_version"] = DATASET_SCHEMA_VERSION
+        study["source_prices_adjusted"] = False
+        study["discovery_high_return_threshold_pct"] = float(min_high_return_pct)
+        study["discovered_candidate_count"] = stats.discovered_candidates
         study["debug_candidate_limit"] = max_candidates
-        study["day_high"] = candidate.day_high
-        study["day_close"] = candidate.day_close
-        study["day_volume"] = candidate.day_volume
-        study["day_vwap"] = candidate.day_vwap
-        study["day_dollar_volume"] = candidate.day_dollar_volume
-        study["day_high_return_pct"] = candidate.high_return_pct
         study["split_day"] = False
         if metadata is not None:
+            # Identity/taxonomy only. Provider fundamentals such as historical market
+            # cap/shares are deliberately excluded until publication-time semantics
+            # are guaranteed for model use.
             study["security_type"] = metadata.security_type
             study["primary_exchange"] = metadata.primary_exchange
-            study["market_cap"] = metadata.market_cap
-            study["shares_outstanding"] = metadata.shares_outstanding
         frames.append(study)
+        stats.event_tickers += 1
+        stats.event_rows += len(study)
 
     if not frames:
         return pd.DataFrame()
@@ -310,7 +316,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--min-price", type=float, default=0.50)
     parser.add_argument("--max-price", type=float, default=20.0)
-    parser.add_argument("--min-high-return", type=float, default=20.0)
+    parser.add_argument("--min-high-return", type=float, default=10.0)
     parser.add_argument("--min-dollar-volume", type=float, default=0.0)
     parser.add_argument("--max-candidates", type=int, default=None)
     parser.add_argument("--request-interval", type=float, default=12.5)
@@ -319,7 +325,11 @@ def main() -> int:
     args = parser.parse_args()
 
     settings = load_settings()
-    client = MassiveClient(settings.massive_api_key, cache_dir=Path("data/cache/massive"))
+    client = MassiveClient(
+        settings.massive_api_key,
+        cache_dir=Path("data/cache/massive"),
+        request_interval_seconds=args.request_interval,
+    )
     frame = build_market_event_dataset(
         client,
         args.day,
@@ -328,7 +338,6 @@ def main() -> int:
         min_high_return_pct=args.min_high_return,
         min_day_dollar_volume=args.min_dollar_volume,
         max_candidates=args.max_candidates,
-        request_interval_seconds=args.request_interval,
         historical_context_days=args.history_days,
         annotate_halts=args.annotate_halts,
     )
