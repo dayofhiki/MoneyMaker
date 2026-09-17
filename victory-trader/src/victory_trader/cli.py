@@ -21,17 +21,23 @@ from .massive_client import MassiveClient
 from .multi_day import build_multi_day_dataset
 
 
-def check_api() -> int:
+CACHE_DIR = Path("data/cache/massive")
+
+
+def _client() -> MassiveClient:
     settings = load_settings()
-    client = MassiveClient(settings.massive_api_key)
+    return MassiveClient(settings.massive_api_key, cache_dir=CACHE_DIR)
+
+
+def check_api() -> int:
+    client = _client()
     payload = client.previous_close("AAPL")
     print(json.dumps(payload, indent=2))
     return 0
 
 
 def event_study(ticker: str, day: date) -> int:
-    settings = load_settings()
-    client = MassiveClient(settings.massive_api_key)
+    client = _client()
     bars, history_bars = load_target_with_history(client, ticker, day)
     previous_close = client.historical_previous_close(ticker, day)
 
@@ -61,8 +67,7 @@ def market_dataset(
     request_interval: float,
     annotate_halts: bool,
 ) -> int:
-    settings = load_settings()
-    client = MassiveClient(settings.massive_api_key)
+    client = _client()
     result = build_market_event_dataset(
         client,
         day,
@@ -98,8 +103,7 @@ def multi_day_dataset(
     request_interval: float,
     annotate_halts: bool,
 ) -> int:
-    settings = load_settings()
-    client = MassiveClient(settings.massive_api_key)
+    client = _client()
     result, skipped = build_multi_day_dataset(
         client,
         start,
@@ -167,12 +171,20 @@ def _add_dataset_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--max-price", type=float, default=20.0)
     parser.add_argument("--min-high-return", type=float, default=20.0)
     parser.add_argument("--min-dollar-volume", type=float, default=0.0)
-    parser.add_argument("--max-candidates", type=int, default=None)
+    parser.add_argument(
+        "--max-candidates",
+        type=int,
+        default=None,
+        help=(
+            "Debug-only deterministic candidate subsample. Leave unset for unbiased full research; "
+            "selection never uses eventual return rank."
+        ),
+    )
     parser.add_argument(
         "--request-interval",
         type=float,
         default=12.5,
-        help="Seconds between Massive requests; 12.5 is conservative for the free plan.",
+        help="Seconds between Massive requests; cached requests return immediately.",
     )
     parser.add_argument(
         "--annotate-halts",
