@@ -150,8 +150,7 @@ def summarize_univariate_discovery(
             adverse = work.loc[work["_threshold_rank"] >= 0.8].copy()
 
         cell_cols = ["trading_day", "threshold_pct"]
-        work["_cell_mean"] = work.groupby(cell_cols)[target].transform("mean")
-        cell_means = work.set_index(cell_cols)["_cell_mean"]
+        cell_means = work.groupby(cell_cols)[target].mean()
 
         def adjusted_mean(selection: pd.DataFrame) -> float:
             if selection.empty:
@@ -233,6 +232,7 @@ def summarize_chronological_feature_holdout(
         raise ValueError(f"dataset missing holdout columns: {sorted(missing)}")
 
     base = frame.loc[pd.to_numeric(frame[target], errors="coerce").notna()].copy()
+    base[target] = pd.to_numeric(base[target], errors="coerce")
     base["trading_day"] = base["trading_day"].astype(str)
     dates = sorted(base["trading_day"].unique())
     if len(dates) < 4:
@@ -244,10 +244,7 @@ def summarize_chronological_feature_holdout(
 
     train_base = base.loc[base["trading_day"].isin(train_dates)]
     test_base = base.loc[base["trading_day"].isin(test_dates)].copy()
-    test_base["_cell_mean"] = test_base.groupby(["trading_day", "threshold_pct"])[
-        target
-    ].transform("mean")
-    benchmark = test_base.set_index(["trading_day", "threshold_pct"])["_cell_mean"]
+    benchmark = test_base.groupby(["trading_day", "threshold_pct"])[target].mean()
 
     rows: list[dict[str, float | int | str]] = []
     for feature in features:
