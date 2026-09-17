@@ -17,7 +17,7 @@ def sample_bars() -> pd.DataFrame:
     )
 
 
-def test_measure_event_outcome_uses_future_bars_only():
+def test_measure_event_outcome_uses_future_clock_minutes_only():
     bars = sample_bars()
     event = CrossingEvent(
         ticker="TEST",
@@ -34,6 +34,22 @@ def test_measure_event_outcome_uses_future_bars_only():
     assert outcome.future_returns_pct[5] is None
     assert outcome.mfe_pct == pytest.approx((13.0 / 12.0 - 1) * 100)
     assert outcome.mae_pct == pytest.approx((11.4 / 12.0 - 1) * 100)
+
+
+def test_missing_target_minute_is_not_replaced_by_later_bar():
+    bars = pd.DataFrame(
+        [
+            {"t": 0, "o": 10.0, "h": 10.1, "l": 9.9, "c": 10.0, "v": 100},
+            {"t": 60_000, "o": 10.0, "h": 12.1, "l": 10.0, "c": 12.0, "v": 200},
+            # 120_000 is absent, representing a gap/halt-like missing minute.
+            {"t": 180_000, "o": 12.0, "h": 13.2, "l": 11.8, "c": 13.0, "v": 300},
+        ]
+    )
+    event = CrossingEvent("TEST", 60_000, 20.0, 12.0, 10.0)
+    outcome = measure_event_outcome(event, bars, horizons=(1, 2))
+
+    assert outcome.future_returns_pct[1] is None
+    assert outcome.future_returns_pct[2] == pytest.approx((13.0 / 12.0 - 1) * 100)
 
 
 def test_run_event_study_detects_first_crossing_per_threshold():
