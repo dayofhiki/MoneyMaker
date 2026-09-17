@@ -10,6 +10,9 @@ class ExecutionScenario:
     Historical 1-minute bars do not contain enough order-book information to know
     the true spread or market impact. These parameters intentionally make the
     assumption explicit so a strategy must survive multiple friction levels.
+
+    ``min_half_spread_cents`` is expressed in actual cents. For example, 1.0 means
+    one cent, which converts to $0.01 in the fill model.
     """
 
     name: str
@@ -30,9 +33,9 @@ class ExecutionScenario:
 
 
 DEFAULT_EXECUTION_SCENARIOS = (
-    ExecutionScenario("light", half_spread_bps=10.0, slippage_bps=10.0, min_half_spread_cents=0.005),
-    ExecutionScenario("base", half_spread_bps=25.0, slippage_bps=25.0, min_half_spread_cents=0.01),
-    ExecutionScenario("stress", half_spread_bps=75.0, slippage_bps=75.0, min_half_spread_cents=0.02),
+    ExecutionScenario("light", half_spread_bps=10.0, slippage_bps=10.0, min_half_spread_cents=0.5),
+    ExecutionScenario("base", half_spread_bps=25.0, slippage_bps=25.0, min_half_spread_cents=1.0),
+    ExecutionScenario("stress", half_spread_bps=75.0, slippage_bps=75.0, min_half_spread_cents=2.0),
 )
 
 
