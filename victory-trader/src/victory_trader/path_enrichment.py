@@ -17,13 +17,15 @@ from .market_calendar import regular_session_bounds
 FLATFILE_CACHE_DIR = Path("data/cache/massive-flatfiles")
 ET = ZoneInfo("America/New_York")
 
-# These are pre-specified, point-in-time discovery features. They deliberately
-# stay outside MODEL_FEATURE_COLUMNS until they survive out-of-sample research.
+# Pre-specified, point-in-time discovery features. They deliberately stay
+# outside MODEL_FEATURE_COLUMNS until they survive out-of-sample research.
 ENRICHMENT_FEATURE_COLUMNS = (
     "minutes_since_10pct_cross",
     "minutes_since_prior_threshold_cross",
+    "threshold_overshoot_pct",
     "prior_15m_high_distance_pct",
     "prior_15m_low_rebound_pct",
+    "trend_efficiency_15m",
     "max_drawdown_since_10pct_pct",
     "signal_bar_range_pct",
     "signal_bar_body_pct",
@@ -34,9 +36,12 @@ ENRICHMENT_FEATURE_COLUMNS = (
     "active_minute_fraction_15m",
     "regular_open_gap_pct",
     "premarket_high_return_pct",
+    "premarket_high_distance_pct",
     "runners_10pct_so_far",
     "runners_10pct_last_30m",
     "iwm_return_since_open_pct",
+    "iwm_return_15m_pct",
+    "iwm_volatility_15m_pct",
 )
 
 
@@ -128,20 +133,47 @@ def _session_ms(day: date) -> tuple[int, int, int]:
     )
 
 
-def _market_return_since_open(
+def _market_context_features(
     bars: pd.DataFrame,
     event_timestamp_ms: int,
     regular_open_ms: int,
-) -> float | None:
-    regular = bars.loc[(bars["t"] >= regular_open_ms) & (bars["t"] <= event_timestamp_ms)]
+) -> tuple[float | None, float | None, float | None]:
+    regular = bars.loc[(bars["t"] >= regular_open_ms) & (bars["t"] <= event_timestamp_ms)].sort_values("t")
     if regular.empty:
-        return None
-    first_open = float(regular.iloc[0]["o"])
+        return None, None, None
+
     event_bar = regular.loc[regular["t"] == event_timestamp_ms]
-    if first_open <= 0 or event_bar.empty:
+    first_open = float(regular.iloc[0]["o"])
+    since_open = None
+    if first_open > 0 and not event_bar.empty:
+        since_open = (float(event_bar.iloc[-1]["c"]) / first_open - 1.0) * 100.0
+
+    start_15m = event_timestamp_ms - 15 * MINUTE_MS
+    prior_exact = regular.loc[regular["t"] == start_15m]
+    return_15m = None
+    if not event_bar.empty and not prior_exact.empty:
+        prior_close = float(prior_exact.iloc[-1]["c"])
+        if prior_close > 0:
+            return_15m = (float(event_bar.iloc[-1]["c"]) / prior_close - 1.0) * 100.0
+
+    recent = regular.loc[regular["t"] >= event_timestamp_ms - 14 * MINUTE_MS].copy()
+    volatility_15m = None
+    if len(recent) >= 3:
+        returns = recent["c"].astype(float).pct_change().dropna()
+        if len(returns) >= 2:
+            volatility_15m = float(returns.std(ddof=1) * 100.0)
+    return since_open, return_15m, volatility_15m
+
+
+def _trend_efficiency(window: pd.DataFrame) -> float | None:
+    if len(window) < 2:
         return None
-    last_close = float(event_bar.iloc[-1]["c"])
-    return (last_close / first_open - 1.0) * 100.0
+    closes = window.sort_values("t")["c"].astype(float)
+    path = float(closes.diff().abs().dropna().sum())
+    if path <= 0:
+        return 0.0
+    net = abs(float(closes.iloc[-1] - closes.iloc[0]))
+    return min(net / path, 1.0)
 
 
 def _event_bar_features(
@@ -150,19 +182,29 @@ def _event_bar_features(
     event_timestamp_ms: int,
     event_price: float,
     previous_close: float,
+    threshold_pct: float,
     first_10_timestamp_ms: int | None,
     premarket_start_ms: int,
     regular_open_ms: int,
 ) -> dict[str, float | None]:
     event_bar = bars.loc[bars["t"] == event_timestamp_ms]
+    iwm_features = {
+        "iwm_return_since_open_pct",
+        "iwm_return_15m_pct",
+        "iwm_volatility_15m_pct",
+    }
+    non_bar_features = {
+        "minutes_since_10pct_cross",
+        "minutes_since_prior_threshold_cross",
+        "runners_10pct_so_far",
+        "runners_10pct_last_30m",
+    } | iwm_features
     if event_bar.empty:
-        return {column: None for column in ENRICHMENT_FEATURE_COLUMNS if column not in {
-            "minutes_since_10pct_cross",
-            "minutes_since_prior_threshold_cross",
-            "runners_10pct_so_far",
-            "runners_10pct_last_30m",
-            "iwm_return_since_open_pct",
-        }}
+        return {
+            column: None
+            for column in ENRICHMENT_FEATURE_COLUMNS
+            if column not in non_bar_features
+        }
 
     row = event_bar.iloc[-1]
     bar_open = float(row["o"])
@@ -173,6 +215,13 @@ def _event_bar_features(
     signal_bar_range_pct = (bar_range / bar_close) * 100.0 if bar_close > 0 else None
     signal_bar_body_pct = ((bar_close / bar_open) - 1.0) * 100.0 if bar_open > 0 else None
     signal_close_location = (bar_close - bar_low) / bar_range if bar_range > 0 else 0.5
+
+    threshold_price = previous_close * (1.0 + threshold_pct / 100.0)
+    threshold_overshoot_pct = (
+        (event_price / threshold_price - 1.0) * 100.0
+        if threshold_price > 0
+        else None
+    )
 
     prior_start = event_timestamp_ms - 15 * MINUTE_MS
     prior = bars.loc[(bars["t"] >= prior_start) & (bars["t"] < event_timestamp_ms)]
@@ -211,6 +260,7 @@ def _event_bar_features(
         & (bars["t"] <= event_timestamp_ms)
     ]
     active_minute_fraction_15m = min(window_15m["t"].nunique() / 15.0, 1.0)
+    trend_efficiency_15m = _trend_efficiency(window_15m)
 
     regular_to_event = bars.loc[
         (bars["t"] >= regular_open_ms) & (bars["t"] <= event_timestamp_ms)
@@ -224,9 +274,13 @@ def _event_bar_features(
         (bars["t"] >= premarket_start_ms) & (bars["t"] < regular_open_ms)
     ]
     premarket_high_return_pct = None
-    if not premarket.empty and previous_close > 0:
+    premarket_high_distance_pct = None
+    if not premarket.empty:
         premarket_high = float(premarket["h"].max())
-        premarket_high_return_pct = (premarket_high / previous_close - 1.0) * 100.0
+        if previous_close > 0:
+            premarket_high_return_pct = (premarket_high / previous_close - 1.0) * 100.0
+        if premarket_high > 0:
+            premarket_high_distance_pct = (event_price / premarket_high - 1.0) * 100.0
 
     max_drawdown_since_10pct_pct = None
     if first_10_timestamp_ms is not None:
@@ -240,8 +294,10 @@ def _event_bar_features(
             max_drawdown_since_10pct_pct = float(drawdowns.min() * 100.0)
 
     return {
+        "threshold_overshoot_pct": threshold_overshoot_pct,
         "prior_15m_high_distance_pct": prior_high_distance,
         "prior_15m_low_rebound_pct": prior_low_rebound,
+        "trend_efficiency_15m": trend_efficiency_15m,
         "max_drawdown_since_10pct_pct": max_drawdown_since_10pct_pct,
         "signal_bar_range_pct": signal_bar_range_pct,
         "signal_bar_body_pct": signal_bar_body_pct,
@@ -252,6 +308,7 @@ def _event_bar_features(
         "active_minute_fraction_15m": active_minute_fraction_15m,
         "regular_open_gap_pct": regular_open_gap_pct,
         "premarket_high_return_pct": premarket_high_return_pct,
+        "premarket_high_distance_pct": premarket_high_distance_pct,
     }
 
 
@@ -296,7 +353,12 @@ def enrich_path_features(
 
         iwm_bars = bars.loc[bars["ticker"] == "IWM"].sort_values("t")
         first_10_by_ticker = {
-            str(ticker).upper(): int(group.loc[pd.to_numeric(group["threshold_pct"], errors="coerce").eq(10.0), "timestamp_ms"].iloc[0])
+            str(ticker).upper(): int(
+                group.loc[
+                    pd.to_numeric(group["threshold_pct"], errors="coerce").eq(10.0),
+                    "timestamp_ms",
+                ].iloc[0]
+            )
             for ticker, group in day_rows.groupby("ticker", sort=False)
             if pd.to_numeric(group["threshold_pct"], errors="coerce").eq(10.0).any()
         }
@@ -314,17 +376,21 @@ def enrich_path_features(
                     event_timestamp_ms=event_ts,
                     event_price=float(result.at[idx, "signal_price"]),
                     previous_close=float(result.at[idx, "previous_close"]),
+                    threshold_pct=float(result.at[idx, "threshold_pct"]),
                     first_10_timestamp_ms=first_10,
                     premarket_start_ms=premarket_start_ms,
                     regular_open_ms=regular_open_ms,
                 )
                 for column, value in values.items():
                     result.at[idx, column] = value
-                result.at[idx, "iwm_return_since_open_pct"] = _market_return_since_open(
-                    iwm_bars,
-                    event_ts,
-                    regular_open_ms,
-                )
+                (
+                    iwm_since_open,
+                    iwm_return_15m,
+                    iwm_volatility_15m,
+                ) = _market_context_features(iwm_bars, event_ts, regular_open_ms)
+                result.at[idx, "iwm_return_since_open_pct"] = iwm_since_open
+                result.at[idx, "iwm_return_15m_pct"] = iwm_return_15m
+                result.at[idx, "iwm_volatility_15m_pct"] = iwm_volatility_15m
 
     for column in ENRICHMENT_FEATURE_COLUMNS:
         result[column] = pd.to_numeric(result[column], errors="coerce")
