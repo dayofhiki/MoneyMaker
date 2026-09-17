@@ -14,7 +14,7 @@ on:
       chunk_days:
         description: 'Calendar days per bounded collection job'
         required: true
-        default: '5'
+        default: '1'
       max_candidates:
         description: 'DEBUG ONLY: deterministic candidates/day (blank = unbiased full universe)'
         required: false
