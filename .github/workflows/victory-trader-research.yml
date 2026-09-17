@@ -12,17 +12,13 @@ on:
         required: true
         default: '2026-04-30'
       chunk_days:
-        description: 'Calendar days per bounded collection job'
+        description: 'Calendar days per Flat Files collection job'
         required: true
-        default: '1'
+        default: '31'
       max_candidates:
         description: 'DEBUG ONLY: deterministic candidates/day (blank = unbiased full universe)'
         required: false
         default: ''
-      request_interval:
-        description: 'Minimum seconds between real Massive network requests'
-        required: true
-        default: '12.5'
       annotate_halts:
         description: 'Try to attach Nasdaq halt annotations'
         required: true
@@ -52,8 +48,8 @@ jobs:
           chunk_days = int(os.environ['CHUNK_DAYS'])
           if end < start:
               raise SystemExit('end_date must be on or after start_date')
-          if chunk_days < 1 or chunk_days > 14:
-              raise SystemExit('chunk_days must be between 1 and 14')
+          if chunk_days < 1 or chunk_days > 45:
+              raise SystemExit('chunk_days must be between 1 and 45')
 
           chunks = []
           cursor = start
@@ -81,6 +77,8 @@ jobs:
           python-version: '3.11'
       - name: Install MoneyMaker
         run: python -m pip install -e '.[dev]'
+      - name: Ruff critical checks
+        run: ruff check src tests --select E4,E7,E9,F
       - name: Test
         run: pytest -q
 
@@ -90,13 +88,15 @@ jobs:
     timeout-minutes: 330
     strategy:
       fail-fast: true
-      max-parallel: 1
+      max-parallel: 3
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     defaults:
       run:
         working-directory: victory-trader
     env:
       MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -105,31 +105,30 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Restore cumulative research cache and checkpoints
+      - name: Restore small REST cache and Flat Files checkpoints
         uses: actions/cache/restore@v4
         with:
           path: |
             victory-trader/data/cache/massive
-            victory-trader/data/checkpoints
-          key: moneymaker-research-${{ runner.os }}-${{ github.run_id }}-${{ matrix.id }}
+            victory-trader/data/checkpoints-flatfiles
+          key: moneymaker-flatfiles-v03-${{ runner.os }}-${{ github.run_id }}-${{ matrix.id }}
           restore-keys: |
-            moneymaker-research-${{ runner.os }}-
+            moneymaker-flatfiles-v03-${{ runner.os }}-
 
-      - name: Validate API secret
+      - name: Validate Massive credentials
         shell: bash
         run: |
-          if [ -z "$MASSIVE_API_KEY" ]; then
-            echo "MASSIVE_API_KEY repository secret is not configured."
-            exit 1
-          fi
+          test -n "$MASSIVE_API_KEY" || { echo "MASSIVE_API_KEY is missing"; exit 1; }
+          test -n "$MASSIVE_S3_ACCESS_KEY" || { echo "MASSIVE_S3_ACCESS_KEY is missing"; exit 1; }
+          test -n "$MASSIVE_S3_SECRET_KEY" || { echo "MASSIVE_S3_SECRET_KEY is missing"; exit 1; }
 
       - name: Install MoneyMaker
         run: python -m pip install -e .
 
-      - name: Build resumable chunk
+      - name: Build resumable Flat Files chunk
         shell: bash
         run: |
-          mkdir -p data/events data/checkpoints artifacts data/cache/massive
+          mkdir -p data/events data/checkpoints-flatfiles artifacts data/cache/massive
           OUT="data/events/research-${{ matrix.id }}.parquet"
           MANIFEST="artifacts/manifest-${{ matrix.id }}.json"
           LOG="artifacts/build-${{ matrix.id }}.log"
@@ -137,9 +136,8 @@ jobs:
             "${{ matrix.start }}"
             "${{ matrix.end }}"
             --output "$OUT"
-            --checkpoint-dir data/checkpoints
+            --checkpoint-dir data/checkpoints-flatfiles
             --manifest "$MANIFEST"
-            --request-interval "${{ inputs.request_interval }}"
           )
           if [ -n "${{ inputs.max_candidates }}" ]; then
             echo "WARNING: max_candidates is DEBUG ONLY; this is not a full-universe research sample." \
@@ -149,7 +147,7 @@ jobs:
           if [ "${{ inputs.annotate_halts }}" = "true" ]; then
             ARGS+=(--annotate-halts)
           fi
-          moneymaker multi-day-dataset "${ARGS[@]}" | tee "$LOG"
+          python -m victory_trader.flatfile_runner "${ARGS[@]}" | tee "$LOG"
 
       - name: Audit chunk
         shell: bash
@@ -176,14 +174,14 @@ jobs:
             echo "No event rows in this chunk." > "artifacts/analysis-${{ matrix.id }}.txt"
           fi
 
-      - name: Save cumulative research cache and checkpoints
+      - name: Save resumable checkpoints and lightweight REST cache
         if: ${{ always() }}
         uses: actions/cache/save@v4
         with:
           path: |
             victory-trader/data/cache/massive
-            victory-trader/data/checkpoints
-          key: moneymaker-research-${{ runner.os }}-${{ github.run_id }}-${{ matrix.id }}
+            victory-trader/data/checkpoints-flatfiles
+          key: moneymaker-flatfiles-v03-${{ runner.os }}-${{ github.run_id }}-${{ matrix.id }}
 
       - name: Upload chunk artifact
         if: ${{ always() }}
