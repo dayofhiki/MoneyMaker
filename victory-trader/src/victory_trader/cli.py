@@ -25,7 +25,7 @@ from .analytics import (
 from .audit import audit_event_dataset
 from .config import load_settings, require_flatfile_credentials
 from .event_study import run_event_study
-from .exits import summarize_unresolved_exposure
+from .exposure_diagnostics import summarize_unresolved_exposure
 from .flatfiles import MassiveFlatFilesClient
 from .history import load_target_with_history
 from .market_dataset import build_market_event_dataset, save_dataset
