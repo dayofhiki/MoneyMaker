@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import time
 from dataclasses import dataclass
 from datetime import date, timedelta
@@ -56,6 +57,13 @@ def select_candidates(
     min_high_return_pct: float = 20.0,
     min_day_dollar_volume: float = 0.0,
 ) -> list[Candidate]:
+    """Find historical days that contained a qualifying momentum event.
+
+    The completed daily high is used only as an efficient historical discovery
+    filter. The returned order is ticker order, never outcome rank, so callers
+    cannot accidentally select the day's biggest eventual winners merely by
+    taking the first N rows.
+    """
     if min_price <= 0 or max_price <= min_price:
         raise ValueError("price bounds must satisfy 0 < min_price < max_price")
 
@@ -105,7 +113,32 @@ def select_candidates(
             )
         )
 
-    return sorted(candidates, key=lambda item: item.high_return_pct, reverse=True)
+    return sorted(candidates, key=lambda item: item.ticker)
+
+
+def limit_candidates_for_debug(
+    candidates: list[Candidate],
+    *,
+    day: date,
+    max_candidates: int | None,
+) -> list[Candidate]:
+    """Deterministically subsample candidates without looking at their outcome.
+
+    Production research should leave ``max_candidates`` unset and process the
+    full qualifying universe. This helper exists only for smoke/debug runs. The
+    ordering is a stable hash of trading day + ticker and does not use day high,
+    close, volume, or any forward return.
+    """
+    if max_candidates is None:
+        return candidates
+    if max_candidates <= 0:
+        raise ValueError("max_candidates must be positive when provided")
+
+    def rank(candidate: Candidate) -> str:
+        token = f"{day.isoformat()}:{candidate.ticker}".encode("utf-8")
+        return hashlib.sha256(token).hexdigest()
+
+    return sorted(candidates, key=rank)[:max_candidates]
 
 
 def grouped_daily(client: MassiveClient, day: date) -> dict:
@@ -151,9 +184,9 @@ def build_market_event_dataset(
     """Build one day's point-in-time momentum research dataset.
 
     Completed daily summaries are used only to discover historical event days.
-    Event features themselves are point-in-time. Halt annotations are optional
-    because Nasdaq's public feed has independent availability/coverage from
-    Massive and should never be silently confused with 'no halt'.
+    Event features themselves are point-in-time. ``max_candidates`` is a debug
+    subsample only; full research should leave it unset. Halt annotations are
+    optional because Nasdaq's public feed has independent availability/coverage.
     """
     target_payload = grouped_daily(client, day)
     if not _market_rows(target_payload):
@@ -174,8 +207,12 @@ def build_market_event_dataset(
         min_high_return_pct=min_high_return_pct,
         min_day_dollar_volume=min_day_dollar_volume,
     )
-    if max_candidates is not None:
-        candidates = candidates[:max_candidates]
+    discovered_candidate_count = len(candidates)
+    candidates = limit_candidates_for_debug(
+        candidates,
+        day=day,
+        max_candidates=max_candidates,
+    )
 
     split_tickers: set[str] = set()
     if exclude_split_days and candidates:
@@ -217,6 +254,8 @@ def build_market_event_dataset(
 
         study.insert(0, "trading_day", day.isoformat())
         study.insert(1, "previous_trading_day", previous_day.isoformat())
+        study["discovered_candidate_count"] = discovered_candidate_count
+        study["debug_candidate_limit"] = max_candidates
         study["day_high"] = candidate.day_high
         study["day_close"] = candidate.day_close
         study["day_volume"] = candidate.day_volume
@@ -280,7 +319,7 @@ def main() -> int:
     args = parser.parse_args()
 
     settings = load_settings()
-    client = MassiveClient(settings.massive_api_key)
+    client = MassiveClient(settings.massive_api_key, cache_dir=Path("data/cache/massive"))
     frame = build_market_event_dataset(
         client,
         args.day,
