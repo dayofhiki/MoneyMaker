@@ -34,7 +34,7 @@ def test_default_scenarios_use_actual_cents_not_hundredths_of_a_cent():
     assert light.min_half_spread_cents == pytest.approx(0.5)
     assert base.min_half_spread_cents == pytest.approx(1.0)
     assert stress.min_half_spread_cents == pytest.approx(2.0)
-    assert modeled_buy_fill(1.0, base) >= pytest.approx(1.01, rel=0, abs=0.01)
+    assert modeled_buy_fill(1.0, base) == pytest.approx(1.0125)
 
 
 def test_stress_scenario_is_harsher_than_light():
