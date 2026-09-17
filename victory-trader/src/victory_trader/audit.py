@@ -206,5 +206,9 @@ def audit_event_dataset(frame: pd.DataFrame, *, require_full_universe: bool = Tr
         summary.append(f"barrier_ambiguous_rate={float((statuses == 'ambiguous').mean()):.3f}")
         summary.append(f"barrier_stop_gap_rate={float((statuses == 'stop_gap').mean()):.3f}")
         summary.append(f"barrier_unresolved_missing_rate={float((statuses == 'unresolved_missing').mean()):.3f}")
+        summary.append(
+            "barrier_unresolved_session_close_rate="
+            f"{float((statuses == 'unresolved_session_close').mean()):.3f}"
+        )
 
     return AuditResult(tuple(issues), tuple(summary))
