@@ -52,7 +52,7 @@ def test_clock_window_does_not_turn_five_bars_into_more_than_five_minutes():
     bars = pd.DataFrame(
         [
             bar(ts(15, 9, 20), 9.0, 10_000),
-            bar(ts(15, 9, 28), 9.5, 20_000),
+            bar(ts(15, 9, 27), 9.5, 20_000),
             bar(ts(15, 9, 30), 10.0, 100),
             bar(ts(15, 9, 31), 11.0, 200),
             bar(ts(15, 9, 32), 12.0, 300),
@@ -62,7 +62,7 @@ def test_clock_window_does_not_turn_five_bars_into_more_than_five_minutes():
     features = extract_event_features(event, bars)
 
     assert features.volume_5m == pytest.approx(600.0)
-    assert features.trailing_return_5m_pct is None
+    assert features.trailing_return_5m_pct == pytest.approx((12.0 / 9.5 - 1.0) * 100.0)
 
 
 def test_historical_rvol_uses_prior_dates_at_same_clock_time():
