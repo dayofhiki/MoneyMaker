@@ -29,6 +29,14 @@ def test_low_price_minimum_cent_spread_matters():
     assert net_round_trip_return_pct(1.00, 0.0, scenario) < -1.9
 
 
+def test_default_scenarios_use_actual_cents_not_hundredths_of_a_cent():
+    light, base, stress = DEFAULT_EXECUTION_SCENARIOS
+    assert light.min_half_spread_cents == pytest.approx(0.5)
+    assert base.min_half_spread_cents == pytest.approx(1.0)
+    assert stress.min_half_spread_cents == pytest.approx(2.0)
+    assert modeled_buy_fill(1.0, base) >= pytest.approx(1.01, rel=0, abs=0.01)
+
+
 def test_stress_scenario_is_harsher_than_light():
     light, _, stress = DEFAULT_EXECUTION_SCENARIOS
     light_net = net_round_trip_return_pct(3.00, 5.0, light)
