@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
@@ -11,10 +12,31 @@ import requests
 
 
 @dataclass
+class MassiveClientStats:
+    cache_hits: int = 0
+    network_requests: int = 0
+    retries: int = 0
+    cache_writes: int = 0
+
+    def to_dict(self) -> dict[str, int]:
+        return {
+            "cache_hits": self.cache_hits,
+            "network_requests": self.network_requests,
+            "retries": self.retries,
+            "cache_writes": self.cache_writes,
+        }
+
+
+@dataclass
 class MassiveClient:
     api_key: str
     base_url: str = "https://api.massive.com"
     cache_dir: Path | None = None
+    request_interval_seconds: float = 0.0
+    max_retries: int = 4
+    retry_backoff_seconds: float = 1.0
+    stats: MassiveClientStats = field(default_factory=MassiveClientStats, init=False)
+    _last_network_request_at: float | None = field(default=None, init=False, repr=False)
 
     def _cache_path(self, path: str, params: dict[str, Any]) -> Path | None:
         if self.cache_dir is None:
@@ -32,9 +54,11 @@ class MassiveClient:
         if cache_path is None or not cache_path.exists():
             return None
         try:
-            return json.loads(cache_path.read_text(encoding="utf-8"))
+            payload = json.loads(cache_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             return None
+        self.stats.cache_hits += 1
+        return payload
 
     def _write_cache(self, cache_path: Path | None, payload: dict[str, Any]) -> None:
         if cache_path is None:
@@ -46,6 +70,25 @@ class MassiveClient:
             encoding="utf-8",
         )
         temporary.replace(cache_path)
+        self.stats.cache_writes += 1
+
+    def _throttle_network(self) -> None:
+        if self.request_interval_seconds <= 0 or self._last_network_request_at is None:
+            return
+        elapsed = time.monotonic() - self._last_network_request_at
+        remaining = self.request_interval_seconds - elapsed
+        if remaining > 0:
+            time.sleep(remaining)
+
+    @staticmethod
+    def _retry_after_seconds(response: requests.Response, fallback: float) -> float:
+        raw = getattr(response, "headers", {}).get("Retry-After")
+        if raw is None:
+            return fallback
+        try:
+            return max(float(raw), 0.0)
+        except (TypeError, ValueError):
+            return fallback
 
     def _get(
         self,
@@ -54,11 +97,12 @@ class MassiveClient:
         *,
         use_cache: bool = True,
     ) -> dict[str, Any]:
-        """GET JSON from Massive without ever putting the API key in the URL.
+        """GET JSON from Massive with secret-safe auth, caching, and bounded retries.
 
-        Historical research responses can be persisted under ``cache_dir``.
-        Cache keys contain only the request path and public query parameters,
-        never credentials. Only successful JSON responses are cached.
+        Rate limiting is applied only when a real network request is required.
+        Cache hits therefore return immediately. 401/403/other non-retryable 4xx
+        failures remain fatal; 429, 5xx, and transient request failures receive
+        bounded retry/backoff.
         """
         query = dict(params or {})
         cache_path = self._cache_path(path, query) if use_cache else None
@@ -66,16 +110,40 @@ class MassiveClient:
         if cached is not None:
             return cached
 
-        response = requests.get(
-            f"{self.base_url}{path}",
-            params=query,
-            headers={"Authorization": f"Bearer {self.api_key}"},
-            timeout=30,
-        )
-        response.raise_for_status()
-        payload = response.json()
-        self._write_cache(cache_path, payload)
-        return payload
+        url = f"{self.base_url}{path}"
+        for attempt in range(self.max_retries + 1):
+            self._throttle_network()
+            self._last_network_request_at = time.monotonic()
+            self.stats.network_requests += 1
+            try:
+                response = requests.get(
+                    url,
+                    params=query,
+                    headers={"Authorization": f"Bearer {self.api_key}"},
+                    timeout=30,
+                )
+            except (requests.Timeout, requests.ConnectionError):
+                if attempt >= self.max_retries:
+                    raise
+                self.stats.retries += 1
+                time.sleep(self.retry_backoff_seconds * (2**attempt))
+                continue
+
+            status = int(response.status_code)
+            if status == 429 or 500 <= status < 600:
+                if attempt >= self.max_retries:
+                    response.raise_for_status()
+                self.stats.retries += 1
+                fallback = self.retry_backoff_seconds * (2**attempt)
+                time.sleep(self._retry_after_seconds(response, fallback))
+                continue
+
+            response.raise_for_status()
+            payload = response.json()
+            self._write_cache(cache_path, payload)
+            return payload
+
+        raise RuntimeError("unreachable Massive request state")
 
     def previous_close(self, ticker: str) -> dict[str, Any]:
         # This endpoint means "latest previous close", so do not persist it.
@@ -85,19 +153,33 @@ class MassiveClient:
             use_cache=False,
         )
 
-    def minute_bars(self, ticker: str, day: date) -> dict[str, Any]:
-        return self.minute_bars_range(ticker, day, day)
+    def minute_bars(self, ticker: str, day: date, *, adjusted: bool = False) -> dict[str, Any]:
+        return self.minute_bars_range(ticker, day, day, adjusted=adjusted)
 
-    def minute_bars_range(self, ticker: str, start: date, end: date) -> dict[str, Any]:
+    def minute_bars_range(
+        self,
+        ticker: str,
+        start: date,
+        end: date,
+        *,
+        adjusted: bool = False,
+    ) -> dict[str, Any]:
         return self._get(
             f"/v2/aggs/ticker/{ticker.upper()}/range/1/minute/{start.isoformat()}/{end.isoformat()}",
-            {"adjusted": "true", "sort": "asc", "limit": 50000},
+            {"adjusted": str(adjusted).lower(), "sort": "asc", "limit": 50000},
         )
 
-    def daily_bars(self, ticker: str, start: date, end: date) -> dict[str, Any]:
+    def daily_bars(
+        self,
+        ticker: str,
+        start: date,
+        end: date,
+        *,
+        adjusted: bool = False,
+    ) -> dict[str, Any]:
         return self._get(
             f"/v2/aggs/ticker/{ticker.upper()}/range/1/day/{start.isoformat()}/{end.isoformat()}",
-            {"adjusted": "true", "sort": "asc", "limit": 5000},
+            {"adjusted": str(adjusted).lower(), "sort": "asc", "limit": 5000},
         )
 
     def ticker_details(self, ticker: str, day: date | None = None) -> dict[str, Any]:
@@ -117,7 +199,12 @@ class MassiveClient:
         )
 
     def historical_previous_close(self, ticker: str, day: date) -> float:
-        payload = self.daily_bars(ticker, day - timedelta(days=14), day - timedelta(days=1))
+        payload = self.daily_bars(
+            ticker,
+            day - timedelta(days=14),
+            day - timedelta(days=1),
+            adjusted=False,
+        )
         results = payload.get("results") or []
         if not results:
             raise ValueError(f"No prior daily bar found for {ticker.upper()} before {day}")
