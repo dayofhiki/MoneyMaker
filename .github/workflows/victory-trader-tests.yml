@@ -1,14 +1,17 @@
 name: MoneyMaker Tests
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'victory-trader/**'
       - '.github/workflows/victory-trader-tests.yml'
+      - '.github/workflows/victory-trader-research.yml'
   pull_request:
     paths:
       - 'victory-trader/**'
       - '.github/workflows/victory-trader-tests.yml'
+      - '.github/workflows/victory-trader-research.yml'
 
 jobs:
   test:
