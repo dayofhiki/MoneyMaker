@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from .events import CrossingEvent
+from .market_calendar import regular_session_bounds
 
 
 NEW_YORK = ZoneInfo("America/New_York")
@@ -61,22 +62,13 @@ def _minute_of_day(dt: datetime) -> int:
 
 
 def _clock_window(frame: pd.DataFrame, end_timestamp_ms: int, minutes: int) -> pd.DataFrame:
-    """Return bars whose minute starts fall in the last `minutes` clock minutes.
-
-    Missing aggregate bars remain missing; they do not stretch a five-minute
-    feature into "five observed bars" spanning a longer wall-clock interval.
-    """
     if minutes <= 0:
         raise ValueError("minutes must be positive")
     start = end_timestamp_ms - (minutes - 1) * MINUTE_MS
     return frame.loc[(frame["t"] >= start) & (frame["t"] <= end_timestamp_ms)]
 
 
-def _return_over_clock_window(
-    frame: pd.DataFrame,
-    end_timestamp_ms: int,
-    minutes: int,
-) -> float | None:
+def _return_over_clock_window(frame: pd.DataFrame, end_timestamp_ms: int, minutes: int) -> float | None:
     target = end_timestamp_ms - minutes * MINUTE_MS
     matches = frame.loc[frame["t"] == target, "c"]
     if len(matches) != 1:
@@ -106,12 +98,7 @@ def _volatility(frame: pd.DataFrame, end_timestamp_ms: int, minutes: int) -> flo
     return float(returns.std(ddof=1) * 100.0)
 
 
-def _volume_acceleration(
-    frame: pd.DataFrame,
-    end_timestamp_ms: int,
-    recent_minutes: int,
-    baseline_minutes: int = 20,
-) -> float | None:
+def _volume_acceleration(frame: pd.DataFrame, end_timestamp_ms: int, recent_minutes: int, baseline_minutes: int = 20) -> float | None:
     recent = _clock_window(frame, end_timestamp_ms, recent_minutes)
     recent_start = end_timestamp_ms - (recent_minutes - 1) * MINUTE_MS
     baseline_end = recent_start - MINUTE_MS
@@ -119,9 +106,6 @@ def _volume_acceleration(
     baseline = frame.loc[(frame["t"] >= baseline_start) & (frame["t"] <= baseline_end)]
     if recent.empty or baseline.empty:
         return None
-
-    # Missing one-minute aggregates represent no eligible aggregate volume for
-    # that minute. Divide by wall-clock minutes, not by the number of returned rows.
     recent_rate = float(pd.to_numeric(recent["v"], errors="coerce").fillna(0.0).sum()) / recent_minutes
     baseline_rate = float(pd.to_numeric(baseline["v"], errors="coerce").fillna(0.0).sum()) / baseline_minutes
     if baseline_rate <= 0:
@@ -135,42 +119,31 @@ def _volume_weighted_price(frame: pd.DataFrame) -> float | None:
     volume = pd.to_numeric(frame["v"], errors="coerce").fillna(0.0)
     if float(volume.sum()) <= 0:
         return None
-
     if "vw" in frame.columns:
         bar_vwap = pd.to_numeric(frame["vw"], errors="coerce")
         prices = bar_vwap.where(bar_vwap.notna(), pd.to_numeric(frame["c"], errors="coerce"))
     else:
         prices = pd.to_numeric(frame["c"], errors="coerce")
-
     valid = prices.notna() & volume.gt(0)
     if not valid.any():
         return None
     return float((prices[valid] * volume[valid]).sum() / volume[valid].sum())
 
 
-def _historical_rvol(
-    history_bars: pd.DataFrame | None,
-    event_dt: datetime,
-    current_cumulative_volume: float,
-    current_5m_volume: float,
-    max_days: int = 20,
-) -> tuple[float | None, float | None, int]:
+def _historical_rvol(history_bars: pd.DataFrame | None, event_dt: datetime, current_cumulative_volume: float, current_5m_volume: float, max_days: int = 20) -> tuple[float | None, float | None, int]:
     if history_bars is None or history_bars.empty:
         return None, None, 0
     if "t" not in history_bars.columns or "v" not in history_bars.columns:
         return None, None, 0
-
     history = history_bars.copy()
     history["_dt_et"] = history["t"].map(lambda x: timestamp_et(int(x)))
     history = history.loc[history["_dt_et"].map(lambda x: x.date() < event_dt.date())]
     if history.empty:
         return None, None, 0
-
     dates = sorted(history["_dt_et"].map(lambda x: x.date()).unique())[-max_days:]
     event_minute = _minute_of_day(event_dt)
     session_start_minute = PREMARKET_START.hour * 60 + PREMARKET_START.minute
     window_start = event_minute - 4
-
     cumulative_samples: list[float] = []
     window_samples: list[float] = []
     for trading_date in dates:
@@ -180,27 +153,19 @@ def _historical_rvol(
         if observed.empty:
             continue
         cumulative_samples.append(float(pd.to_numeric(observed["v"], errors="coerce").fillna(0.0).sum()))
-
         observed_minutes = observed["_dt_et"].map(_minute_of_day)
         recent = observed.loc[(observed_minutes >= window_start) & (observed_minutes <= event_minute)]
         window_samples.append(float(pd.to_numeric(recent["v"], errors="coerce").fillna(0.0).sum()))
-
     if not cumulative_samples:
         return None, None, 0
-
     average_cumulative = sum(cumulative_samples) / len(cumulative_samples)
     average_5m = sum(window_samples) / len(window_samples) if window_samples else 0.0
-
     cumulative_rvol = current_cumulative_volume / average_cumulative if average_cumulative > 0 else None
     five_min_rvol = current_5m_volume / average_5m if average_5m > 0 else None
     return cumulative_rvol, five_min_rvol, len(cumulative_samples)
 
 
-def extract_event_features(
-    event: CrossingEvent,
-    bars: pd.DataFrame,
-    history_bars: pd.DataFrame | None = None,
-) -> EventFeatures:
+def extract_event_features(event: CrossingEvent, bars: pd.DataFrame, history_bars: pd.DataFrame | None = None) -> EventFeatures:
     required = {"t", "o", "h", "l", "c", "v"}
     missing = required - set(bars.columns)
     if missing:
@@ -210,18 +175,24 @@ def extract_event_features(
     matches = frame.index[frame["t"] == event.timestamp_ms].tolist()
     if len(matches) != 1:
         raise ValueError("event timestamp must match exactly one bar")
-    event_idx = matches[0]
-    observed = frame.iloc[: event_idx + 1].copy()
+    observed = frame.iloc[: matches[0] + 1].copy()
 
     event_dt = timestamp_et(event.timestamp_ms)
-    local_time = event_dt.time().replace(tzinfo=None)
-    is_premarket = PREMARKET_START <= local_time < REGULAR_START
-    is_regular = REGULAR_START <= local_time < REGULAR_END
-    is_after_hours = REGULAR_END <= local_time < AFTER_HOURS_END
-
     same_date_mask = observed["t"].map(lambda x: timestamp_et(int(x)).date() == event_dt.date())
     observed = observed.loc[same_date_mask].reset_index(drop=True)
     event_idx = len(observed) - 1
+
+    bounds = regular_session_bounds(event_dt.date())
+    if bounds is None:
+        regular_open_dt = event_dt.replace(hour=9, minute=30, second=0, microsecond=0)
+        regular_close_dt = event_dt.replace(hour=16, minute=0, second=0, microsecond=0)
+    else:
+        regular_open_dt, regular_close_dt = bounds
+    premarket_start_dt = event_dt.replace(hour=4, minute=0, second=0, microsecond=0)
+    after_hours_end_dt = event_dt.replace(hour=20, minute=0, second=0, microsecond=0)
+    is_premarket = premarket_start_dt <= event_dt < regular_open_dt
+    is_regular = regular_open_dt <= event_dt < regular_close_dt
+    is_after_hours = regular_close_dt <= event_dt < after_hours_end_dt
 
     event_volume = float(observed.iloc[event_idx]["v"])
     cumulative_volume = float(pd.to_numeric(observed["v"], errors="coerce").fillna(0.0).sum())
@@ -229,19 +200,13 @@ def extract_event_features(
     volume_15m = float(pd.to_numeric(_clock_window(observed, event.timestamp_ms, 15)["v"], errors="coerce").fillna(0.0).sum())
     volume_30m = float(pd.to_numeric(_clock_window(observed, event.timestamp_ms, 30)["v"], errors="coerce").fillna(0.0).sum())
 
-    rvol_cumulative, rvol_5m, rvol_days = _historical_rvol(
-        history_bars,
-        event_dt,
-        cumulative_volume,
-        volume_5m,
-    )
+    rvol_cumulative, rvol_5m, rvol_days = _historical_rvol(history_bars, event_dt, cumulative_volume, volume_5m)
 
     minute_index = observed["t"].map(lambda x: _minute_of_day(timestamp_et(int(x))))
-    extended_start = PREMARKET_START.hour * 60 + PREMARKET_START.minute
-    regular_start = REGULAR_START.hour * 60 + REGULAR_START.minute
+    extended_start = 4 * 60
+    regular_start = regular_open_dt.hour * 60 + regular_open_dt.minute
     extended_observed = observed.loc[minute_index >= extended_start]
-    regular_observed = observed.loc[minute_index >= regular_start] if local_time >= REGULAR_START else observed.iloc[0:0]
-
+    regular_observed = observed.loc[minute_index >= regular_start] if event_dt >= regular_open_dt else observed.iloc[0:0]
     session_vwap = _volume_weighted_price(extended_observed)
     vwap_distance = None if session_vwap is None or session_vwap <= 0 else (event.price / session_vwap - 1.0) * 100.0
     regular_vwap = _volume_weighted_price(regular_observed)
@@ -250,10 +215,7 @@ def extract_event_features(
     high_to_event = float(pd.to_numeric(observed["h"], errors="coerce").max())
     hod_distance = None if high_to_event <= 0 else (event.price / high_to_event - 1.0) * 100.0
 
-    premarket_mask = minute_index.between(
-        PREMARKET_START.hour * 60 + PREMARKET_START.minute,
-        REGULAR_START.hour * 60 + REGULAR_START.minute - 1,
-    )
+    premarket_mask = minute_index.between(extended_start, regular_start - 1)
     premarket = observed.loc[premarket_mask]
     if not premarket.empty:
         pm_first = float(premarket.iloc[0]["o"])
@@ -264,8 +226,7 @@ def extract_event_features(
         premarket_return = None
         premarket_volume = 0.0
 
-    regular_open = event_dt.replace(hour=9, minute=30, second=0, microsecond=0)
-    minutes_from_open = (event_dt - regular_open).total_seconds() / 60.0 if local_time >= REGULAR_START else None
+    minutes_from_open = (event_dt - regular_open_dt).total_seconds() / 60.0 if event_dt >= regular_open_dt else None
 
     return EventFeatures(
         event_volume=event_volume,
