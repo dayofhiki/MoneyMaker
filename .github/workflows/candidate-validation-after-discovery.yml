@@ -1,0 +1,82 @@
+name: MoneyMaker Candidate v1 Validation
+
+on:
+  workflow_run:
+    workflows:
+      - MoneyMaker Edge Discovery
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  validate:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: victory-trader
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test frozen validator
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q
+
+      - name: Download newly enriched research dataset
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-edge-discovery-*
+          path: victory-trader/source-artifact
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Download locked March candidate rule
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-candidate-2026-03-v1
+          path: victory-trader/rule-artifact
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35288983942'
+
+      - name: Apply candidate v1 without refitting
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          DATASET="$(find source-artifact -name research-enriched.parquet -print -quit)"
+          RULE="$(find rule-artifact -name candidate-rule-v1.json -print -quit)"
+          test -n "$DATASET" || { echo "research-enriched.parquet not found"; exit 1; }
+          test -n "$RULE" || { echo "candidate-rule-v1.json not found"; exit 1; }
+          python -m victory_trader.candidate_validation "$DATASET" \
+            --rule-json "$RULE" \
+            --report artifacts/candidate-v1-external-validation.txt \
+            --evaluation-csv artifacts/candidate-v1-external-evaluation.csv \
+            --thresholds-csv artifacts/candidate-v1-external-thresholds.csv \
+            | tee artifacts/candidate-v1-external-validation.log
+
+      - name: Upload frozen candidate validation
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-candidate-v1-validation-${{ github.event.workflow_run.id }}
+          path: |
+            victory-trader/artifacts/candidate-v1-external-validation.txt
+            victory-trader/artifacts/candidate-v1-external-validation.log
+            victory-trader/artifacts/candidate-v1-external-evaluation.csv
+            victory-trader/artifacts/candidate-v1-external-thresholds.csv
+          if-no-files-found: error
+          retention-days: 90
