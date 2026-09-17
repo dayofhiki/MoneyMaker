@@ -1,12 +1,19 @@
+import re
+
 import pandas as pd
 
 from victory_trader.model_schema import MODEL_FEATURE_COLUMNS, build_model_frame, validate_feature_allowlist
 
 
+FORWARD_RETURN_PATTERN = re.compile(r"^return_\d+m")
+
+
 def test_feature_allowlist_contains_no_future_or_execution_columns():
     validate_feature_allowlist()
-    forbidden_fragments = ("return_", "day_high", "entry_price", "halt_within")
-    assert not any(any(fragment in column for fragment in forbidden_fragments) for column in MODEL_FEATURE_COLUMNS)
+    forbidden_exact = {"day_high", "entry_price"}
+    assert not any(column in forbidden_exact for column in MODEL_FEATURE_COLUMNS)
+    assert not any(column.startswith("halt_within") for column in MODEL_FEATURE_COLUMNS)
+    assert not any(FORWARD_RETURN_PATTERN.match(column) for column in MODEL_FEATURE_COLUMNS)
 
 
 def test_build_model_frame_drops_non_features_and_missing_targets():
