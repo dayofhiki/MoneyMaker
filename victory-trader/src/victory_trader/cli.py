@@ -9,9 +9,13 @@ from .analytics import (
     load_event_dataset,
     summarize_barriers,
     summarize_by_threshold,
+    summarize_cluster_uncertainty,
     summarize_cost_scenarios,
     summarize_excursions,
+    summarize_latency,
+    summarize_missingness,
     summarize_rvol,
+    summarize_sessions,
 )
 from .audit import audit_event_dataset
 from .config import load_settings
@@ -25,9 +29,13 @@ from .multi_day import build_multi_day_dataset
 CACHE_DIR = Path("data/cache/massive")
 
 
-def _client() -> MassiveClient:
+def _client(request_interval: float = 0.0) -> MassiveClient:
     settings = load_settings()
-    return MassiveClient(settings.massive_api_key, cache_dir=CACHE_DIR)
+    return MassiveClient(
+        settings.massive_api_key,
+        cache_dir=CACHE_DIR,
+        request_interval_seconds=request_interval,
+    )
 
 
 def check_api() -> int:
@@ -41,7 +49,6 @@ def event_study(ticker: str, day: date) -> int:
     client = _client()
     bars, history_bars = load_target_with_history(client, ticker, day)
     previous_close = client.historical_previous_close(ticker, day)
-
     result = run_event_study(
         ticker=ticker,
         bars=bars,
@@ -51,7 +58,6 @@ def event_study(ticker: str, day: date) -> int:
     if result.empty:
         print("No threshold crossing events found.")
         return 0
-
     print(f"Previous close: {previous_close:.4f}")
     print(result.to_string(index=False))
     return 0
@@ -68,7 +74,7 @@ def market_dataset(
     request_interval: float,
     annotate_halts: bool,
 ) -> int:
-    client = _client()
+    client = _client(request_interval)
     result = build_market_event_dataset(
         client,
         day,
@@ -77,18 +83,15 @@ def market_dataset(
         min_high_return_pct=min_high_return,
         min_day_dollar_volume=min_dollar_volume,
         max_candidates=max_candidates,
-        request_interval_seconds=request_interval,
         annotate_halts=annotate_halts,
     )
-
     if result.empty:
         print("No qualifying momentum events found.")
         return 0
-
     output_path = output or Path("data/events") / f"market_events_{day.isoformat()}.parquet"
     save_dataset(result, output_path)
     print(f"Saved {len(result)} event rows across {result['ticker'].nunique()} tickers to {output_path}")
-    print(result.head(20).to_string(index=False))
+    print(f"Massive stats: {client.stats.to_dict()}")
     return 0
 
 
@@ -103,8 +106,10 @@ def multi_day_dataset(
     max_candidates: int | None,
     request_interval: float,
     annotate_halts: bool,
+    checkpoint_dir: Path,
+    manifest: Path,
 ) -> int:
-    client = _client()
+    client = _client(request_interval)
     result, skipped = build_multi_day_dataset(
         client,
         start,
@@ -114,14 +119,13 @@ def multi_day_dataset(
         min_high_return_pct=min_high_return,
         min_day_dollar_volume=min_dollar_volume,
         max_candidates=max_candidates,
-        request_interval_seconds=request_interval,
         annotate_halts=annotate_halts,
+        checkpoint_dir=checkpoint_dir,
+        manifest_path=manifest,
     )
 
     if not result.empty:
-        output_path = output or Path("data/events") / (
-            f"market_events_{start.isoformat()}_{end.isoformat()}.parquet"
-        )
+        output_path = output or Path("data/events") / f"market_events_{start.isoformat()}_{end.isoformat()}.parquet"
         save_dataset(result, output_path)
         print(
             f"Saved {len(result)} event rows across {result['ticker'].nunique()} tickers "
@@ -131,9 +135,11 @@ def multi_day_dataset(
         print("No qualifying momentum events found in the requested range.")
 
     if skipped:
-        print(f"Skipped {len(skipped)} closed-market calendar days.")
+        print(f"Skipped {len(skipped)} closed/error calendar days.")
         for skipped_day, reason in skipped[:10]:
             print(f"  {skipped_day}: {reason}")
+    print(f"Manifest: {manifest}")
+    print(f"Massive stats: {client.stats.to_dict()}")
     return 0
 
 
@@ -150,13 +156,33 @@ def analyze_dataset(path: Path, horizon: int) -> int:
         print("Dataset is empty.")
         return 0
 
-    print("\n=== Continuation by threshold ===")
+    print("\n=== Executable continuation by threshold ===")
     print(summarize_by_threshold(frame).to_string(index=False))
 
     costs = summarize_cost_scenarios(frame, horizon_min=horizon)
     if not costs.empty:
         print(f"\n=== Gross vs execution-friction scenarios at +{horizon}m ===")
         print(costs.to_string(index=False))
+
+    uncertainty = summarize_cluster_uncertainty(frame, horizon_min=horizon, scenario="base")
+    if not uncertainty.empty:
+        print("\n=== Cluster-aware uncertainty (primary base endpoint) ===")
+        print(uncertainty.to_string(index=False))
+
+    latency = summarize_latency(frame, horizon_min=horizon, scenario="base")
+    if not latency.empty:
+        print("\n=== Entry-latency sensitivity ===")
+        print(latency.to_string(index=False))
+
+    sessions = summarize_sessions(frame, horizon_min=horizon, scenario="base")
+    if not sessions.empty:
+        print("\n=== Session-separated base-friction results ===")
+        print(sessions.to_string(index=False))
+
+    missingness = summarize_missingness(frame, horizon_min=horizon)
+    if not missingness.empty:
+        print("\n=== Entry/outcome availability diagnostics ===")
+        print(missingness.to_string(index=False))
 
     print("\n=== MFE / MAE by threshold ===")
     print(summarize_excursions(frame).to_string(index=False))
@@ -177,22 +203,24 @@ def _add_dataset_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--min-price", type=float, default=0.50)
     parser.add_argument("--max-price", type=float, default=20.0)
-    parser.add_argument("--min-high-return", type=float, default=20.0)
-    parser.add_argument("--min-dollar-volume", type=float, default=0.0)
+    parser.add_argument("--min-high-return", type=float, default=10.0)
+    parser.add_argument(
+        "--min-dollar-volume",
+        type=float,
+        default=0.0,
+        help="Reserved compatibility option. Values >0 are rejected because completed-day liquidity leaks future data.",
+    )
     parser.add_argument(
         "--max-candidates",
         type=int,
         default=None,
-        help=(
-            "Debug-only deterministic candidate subsample. Leave unset for unbiased full research; "
-            "selection never uses eventual return rank."
-        ),
+        help="Debug-only deterministic subsample. Leave unset for unbiased full research.",
     )
     parser.add_argument(
         "--request-interval",
         type=float,
         default=12.5,
-        help="Seconds between Massive requests; cached requests return immediately.",
+        help="Minimum seconds between real Massive network requests. Cache hits return immediately.",
     )
     parser.add_argument(
         "--annotate-halts",
@@ -202,7 +230,7 @@ def _add_dataset_options(parser: argparse.ArgumentParser) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(prog="victory-trader")
+    parser = argparse.ArgumentParser(prog="moneymaker")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("check-api", help="Check Massive API connectivity using AAPL previous close")
@@ -215,22 +243,20 @@ def main() -> int:
     dataset.add_argument("day", type=date.fromisoformat)
     _add_dataset_options(dataset)
 
-    multi = sub.add_parser("multi-day-dataset", help="Build a market event dataset across a date range")
+    multi = sub.add_parser("multi-day-dataset", help="Build/resume a market event dataset across a date range")
     multi.add_argument("start", type=date.fromisoformat)
     multi.add_argument("end", type=date.fromisoformat)
     _add_dataset_options(multi)
+    multi.add_argument("--checkpoint-dir", type=Path, default=Path("data/checkpoints"))
+    multi.add_argument("--manifest", type=Path, default=Path("artifacts/run-manifest.json"))
 
     audit = sub.add_parser("audit-dataset", help="Fail if a research dataset violates integrity invariants")
     audit.add_argument("path", type=Path)
-    audit.add_argument(
-        "--allow-debug-sample",
-        action="store_true",
-        help="Permit a debug candidate limit; full research should not use this.",
-    )
+    audit.add_argument("--allow-debug-sample", action="store_true")
 
-    analyze = sub.add_parser("analyze-dataset", help="Summarize continuation, costs, exits, and RVOL")
+    analyze = sub.add_parser("analyze-dataset", help="Summarize executable edge and robustness diagnostics")
     analyze.add_argument("path", type=Path)
-    analyze.add_argument("--horizon", type=int, default=5, help="Horizon used for cost/RVOL analysis")
+    analyze.add_argument("--horizon", type=int, default=5)
 
     args = parser.parse_args()
     if args.command == "check-api":
@@ -247,7 +273,7 @@ def main() -> int:
         return multi_day_dataset(
             args.start, args.end, args.output, args.min_price, args.max_price,
             args.min_high_return, args.min_dollar_volume, args.max_candidates,
-            args.request_interval, args.annotate_halts,
+            args.request_interval, args.annotate_halts, args.checkpoint_dir, args.manifest,
         )
     if args.command == "audit-dataset":
         return audit_dataset(args.path, args.allow_debug_sample)
