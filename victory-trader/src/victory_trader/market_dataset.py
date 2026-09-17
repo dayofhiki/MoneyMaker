@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
-from typing import Iterable
 
 import pandas as pd
 
@@ -13,6 +13,7 @@ from .config import load_settings
 from .event_study import DEFAULT_HORIZONS, run_event_study
 from .halts import annotate_frame_with_halts, fetch_nasdaq_halts
 from .history import load_target_with_history
+from .market_calendar import previous_us_equity_trading_day
 from .massive_client import MassiveClient
 from .universe import fetch_security_metadata, split_tickers_from_payload
 
@@ -138,7 +139,7 @@ def limit_candidates_for_debug(
         raise ValueError("max_candidates must be positive when provided")
 
     def rank(candidate: Candidate) -> str:
-        token = f"{day.isoformat()}:{candidate.ticker}".encode("utf-8")
+        token = f"{day.isoformat()}:{candidate.ticker}".encode()
         return hashlib.sha256(token).hexdigest()
 
     return sorted(candidates, key=rank)[:max_candidates]
@@ -159,15 +160,17 @@ def previous_market_payload(
     max_calendar_lookback: int = 10,
     request_interval_seconds: float = 0.0,
 ) -> tuple[date, dict]:
-    # request_interval_seconds remains accepted for backwards compatibility. Real
-    # throttling belongs inside MassiveClient and only occurs on network misses.
-    del request_interval_seconds
-    for offset in range(1, max_calendar_lookback + 1):
-        candidate_day = day - timedelta(days=offset)
-        payload = grouped_daily(client, candidate_day)
-        if _market_rows(payload):
-            return candidate_day, payload
-    raise ValueError(f"No prior market summary found within {max_calendar_lookback} days before {day}")
+    """Load the official prior U.S. equity trading day's grouped summary once."""
+    # Kept in the signature for backwards-compatible callers/tests. Calendar
+    # lookup replaces provider probing across weekends and holidays.
+    del max_calendar_lookback, request_interval_seconds
+    previous_day = previous_us_equity_trading_day(day)
+    payload = grouped_daily(client, previous_day)
+    if not _market_rows(payload):
+        raise ValueError(
+            f"No grouped market data returned for official previous trading day {previous_day}"
+        )
+    return previous_day, payload
 
 
 def build_market_event_dataset(
