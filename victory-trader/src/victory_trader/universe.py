@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 
+import requests
+
 from .massive_client import MassiveClient
 
 
@@ -56,8 +58,34 @@ def metadata_from_payload(payload: dict) -> SecurityMetadata:
     )
 
 
+def _missing_metadata(ticker: str) -> SecurityMetadata:
+    """Sentinel metadata that safely fails the research-universe predicate."""
+    return SecurityMetadata(
+        ticker=ticker.upper(),
+        name=None,
+        security_type=None,
+        market=None,
+        locale=None,
+        primary_exchange=None,
+        active=None,
+        market_cap=None,
+        shares_outstanding=None,
+    )
+
+
 def fetch_security_metadata(client: MassiveClient, ticker: str, day: date) -> SecurityMetadata:
-    return metadata_from_payload(client.ticker_details(ticker, day))
+    """Fetch point-in-time metadata; treat a 404 as an ineligible candidate.
+
+    Historical grouped aggregates can contain test/synthetic or otherwise
+    unresolvable symbols. One such symbol must not abort an entire trading day.
+    Other HTTP failures are still raised so real provider outages remain visible.
+    """
+    try:
+        return metadata_from_payload(client.ticker_details(ticker, day))
+    except requests.HTTPError as exc:
+        if exc.response is not None and exc.response.status_code == 404:
+            return _missing_metadata(ticker)
+        raise
 
 
 def split_tickers_from_payload(payload: dict) -> set[str]:
