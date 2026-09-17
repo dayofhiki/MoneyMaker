@@ -10,12 +10,17 @@ from .analytics import (
     summarize_barriers,
     summarize_by_threshold,
     summarize_cluster_uncertainty,
+    summarize_concentration,
     summarize_cost_scenarios,
     summarize_excursions,
     summarize_latency,
     summarize_missingness,
+    summarize_monthly_stability,
+    summarize_price_buckets,
     summarize_rvol,
     summarize_sessions,
+    summarize_tail_risk,
+    summarize_time_buckets,
 )
 from .audit import audit_event_dataset
 from .config import load_settings
@@ -150,52 +155,69 @@ def audit_dataset(path: Path, allow_debug_sample: bool) -> int:
     return 0 if result.ok else 1
 
 
+def _print_section(title: str, frame) -> None:
+    if frame is not None and not frame.empty:
+        print(f"\n=== {title} ===")
+        print(frame.to_string(index=False))
+
+
 def analyze_dataset(path: Path, horizon: int) -> int:
     frame = load_event_dataset(path)
     if frame.empty:
         print("Dataset is empty.")
         return 0
 
-    print("\n=== Executable continuation by threshold ===")
-    print(summarize_by_threshold(frame).to_string(index=False))
-
-    costs = summarize_cost_scenarios(frame, horizon_min=horizon)
-    if not costs.empty:
-        print(f"\n=== Gross vs execution-friction scenarios at +{horizon}m ===")
-        print(costs.to_string(index=False))
-
-    uncertainty = summarize_cluster_uncertainty(frame, horizon_min=horizon, scenario="base")
-    if not uncertainty.empty:
-        print("\n=== Cluster-aware uncertainty (primary base endpoint) ===")
-        print(uncertainty.to_string(index=False))
-
-    latency = summarize_latency(frame, horizon_min=horizon, scenario="base")
-    if not latency.empty:
-        print("\n=== Entry-latency sensitivity ===")
-        print(latency.to_string(index=False))
-
-    sessions = summarize_sessions(frame, horizon_min=horizon, scenario="base")
-    if not sessions.empty:
-        print("\n=== Session-separated base-friction results ===")
-        print(sessions.to_string(index=False))
-
-    missingness = summarize_missingness(frame, horizon_min=horizon)
-    if not missingness.empty:
-        print("\n=== Entry/outcome availability diagnostics ===")
-        print(missingness.to_string(index=False))
-
-    print("\n=== MFE / MAE by threshold ===")
-    print(summarize_excursions(frame).to_string(index=False))
-
-    barriers = summarize_barriers(frame)
-    if not barriers.empty:
-        print("\n=== Short TP / SL first-hit experiments ===")
-        print(barriers.to_string(index=False))
+    _print_section("Executable continuation by threshold", summarize_by_threshold(frame))
+    _print_section(
+        f"Gross vs execution-friction scenarios at +{horizon}m",
+        summarize_cost_scenarios(frame, horizon_min=horizon),
+    )
+    _print_section(
+        "Cluster-aware uncertainty (primary base endpoint)",
+        summarize_cluster_uncertainty(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Tail-risk diagnostics (primary base endpoint)",
+        summarize_tail_risk(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Ticker-day concentration diagnostics",
+        summarize_concentration(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Monthly stability",
+        summarize_monthly_stability(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Prior-close price buckets",
+        summarize_price_buckets(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Intraday time buckets",
+        summarize_time_buckets(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Entry-latency sensitivity",
+        summarize_latency(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Session labels",
+        summarize_sessions(frame, horizon_min=horizon, scenario="base"),
+    )
+    _print_section(
+        "Entry/outcome availability diagnostics",
+        summarize_missingness(frame, horizon_min=horizon),
+    )
+    _print_section("MFE / MAE by threshold", summarize_excursions(frame))
+    _print_section("Short TP / SL first-hit experiments", summarize_barriers(frame))
 
     if "rvol_cumulative_20d" in frame.columns:
-        print(f"\n=== RVOL buckets at +{horizon}m ===")
         rvol = summarize_rvol(frame, horizon_min=horizon)
-        print(rvol.to_string(index=False) if not rvol.empty else "No rows with historical RVOL yet.")
+        if rvol.empty:
+            print(f"\n=== RVOL buckets at +{horizon}m ===")
+            print("No rows with historical RVOL yet.")
+        else:
+            _print_section(f"RVOL buckets at +{horizon}m", rvol)
     return 0
 
 
@@ -265,15 +287,30 @@ def main() -> int:
         return event_study(args.ticker, args.day)
     if args.command == "market-dataset":
         return market_dataset(
-            args.day, args.output, args.min_price, args.max_price,
-            args.min_high_return, args.min_dollar_volume, args.max_candidates,
-            args.request_interval, args.annotate_halts,
+            args.day,
+            args.output,
+            args.min_price,
+            args.max_price,
+            args.min_high_return,
+            args.min_dollar_volume,
+            args.max_candidates,
+            args.request_interval,
+            args.annotate_halts,
         )
     if args.command == "multi-day-dataset":
         return multi_day_dataset(
-            args.start, args.end, args.output, args.min_price, args.max_price,
-            args.min_high_return, args.min_dollar_volume, args.max_candidates,
-            args.request_interval, args.annotate_halts, args.checkpoint_dir, args.manifest,
+            args.start,
+            args.end,
+            args.output,
+            args.min_price,
+            args.max_price,
+            args.min_high_return,
+            args.min_dollar_volume,
+            args.max_candidates,
+            args.request_interval,
+            args.annotate_halts,
+            args.checkpoint_dir,
+            args.manifest,
         )
     if args.command == "audit-dataset":
         return audit_dataset(args.path, args.allow_debug_sample)
