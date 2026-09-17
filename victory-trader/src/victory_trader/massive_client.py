@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qsl, urlparse
 
 import requests
 
@@ -105,6 +106,7 @@ class MassiveClient:
         bounded retry/backoff.
         """
         query = dict(params or {})
+        query.pop("apiKey", None)
         cache_path = self._cache_path(path, query) if use_cache else None
         cached = self._read_cache(cache_path)
         if cached is not None:
@@ -144,6 +146,16 @@ class MassiveClient:
             return payload
 
         raise RuntimeError("unreachable Massive request state")
+
+    def _get_next_url(self, next_url: str) -> dict[str, Any]:
+        """Follow a Massive pagination URL without ever forwarding credentials."""
+        parsed = urlparse(next_url)
+        expected_host = urlparse(self.base_url).netloc
+        if parsed.netloc and parsed.netloc != expected_host:
+            raise ValueError(f"unexpected Massive pagination host: {parsed.netloc}")
+        params = dict(parse_qsl(parsed.query, keep_blank_values=True))
+        params.pop("apiKey", None)
+        return self._get(parsed.path, params)
 
     def previous_close(self, ticker: str) -> dict[str, Any]:
         # This endpoint means "latest previous close", so do not persist it.
@@ -187,6 +199,40 @@ class MassiveClient:
         if day is not None:
             params["date"] = day.isoformat()
         return self._get(f"/v3/reference/tickers/{ticker.upper()}", params)
+
+    def reference_tickers(
+        self,
+        day: date,
+        *,
+        market: str = "stocks",
+        security_type: str = "CS",
+        active: bool = True,
+    ) -> list[dict[str, Any]]:
+        """Fetch the complete point-in-time ticker list using max-size pages.
+
+        One paginated daily universe request replaces one ticker-details request per
+        candidate. This preserves point-in-time taxonomy while dramatically reducing
+        network calls on rate-limited plans.
+        """
+        page = self._get(
+            "/v3/reference/tickers",
+            {
+                "date": day.isoformat(),
+                "market": market,
+                "type": security_type,
+                "active": str(active).lower(),
+                "limit": 1000,
+                "sort": "ticker",
+                "order": "asc",
+            },
+        )
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+        return rows
 
     def splits_on(self, day: date) -> dict[str, Any]:
         return self._get(
