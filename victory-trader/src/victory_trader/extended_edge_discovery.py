@@ -35,12 +35,26 @@ def _gross_alias(frame: pd.DataFrame, horizon_min: int) -> pd.DataFrame:
     return result
 
 
+def _availability_alias(frame: pd.DataFrame, horizon_min: int) -> pd.DataFrame:
+    gross = f"return_{horizon_min}m_pct"
+    if gross not in frame.columns or "entry_price" not in frame.columns:
+        raise ValueError("dataset missing entry/outcome availability columns")
+    result = frame.loc[pd.to_numeric(frame["entry_price"], errors="coerce").notna()].copy()
+    # 100 = exact-horizon outcome observed after an executable entry, 0 = unresolved.
+    result[f"return_{horizon_min}m_availability_net_return_pct"] = (
+        pd.to_numeric(result[gross], errors="coerce").notna().astype(float) * 100.0
+    )
+    return result
+
+
 def render_extended_edge_discovery(
     frame: pd.DataFrame,
     *,
     horizon_min: int = 5,
 ) -> str:
     gross_frame = _gross_alias(frame, horizon_min)
+    availability_frame = _availability_alias(frame, horizon_min)
+
     gross_screen = summarize_univariate_discovery(
         gross_frame,
         horizon_min=horizon_min,
@@ -65,6 +79,18 @@ def render_extended_edge_discovery(
         scenario="base",
         features=DISCOVERY_FEATURES,
     )
+    availability_screen = summarize_univariate_discovery(
+        availability_frame,
+        horizon_min=horizon_min,
+        scenario="availability",
+        features=DISCOVERY_FEATURES,
+    )
+    availability_holdout = summarize_chronological_feature_holdout(
+        availability_frame,
+        horizon_min=horizon_min,
+        scenario="availability",
+        features=DISCOVERY_FEATURES,
+    )
 
     return "\n".join(
         [
@@ -84,7 +110,14 @@ def render_extended_edge_discovery(
             "=== BASE-NET continuation: chronological 70/30 holdout ===",
             _render_table(net_holdout),
             "",
-            "Interpretation rule: a feature that is strong only in BASE-NET but weak in GROSS may be describing execution-cost mechanics rather than continuation alpha.",
+            "=== EXACT-HORIZON AVAILABILITY after entry: controlled screen ===",
+            _render_table(availability_screen),
+            "",
+            "=== EXACT-HORIZON AVAILABILITY after entry: chronological 70/30 holdout ===",
+            _render_table(availability_holdout),
+            "",
+            "Interpretation rule 1: a feature strong only in BASE-NET but weak in GROSS may describe execution-cost mechanics rather than continuation alpha.",
+            "Interpretation rule 2: a return signal that materially worsens exact-horizon availability requires unresolved-exposure stress before it can be trusted.",
         ]
     )
 
