@@ -1,8 +1,18 @@
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import pandas as pd
 import pytest
 
 from victory_trader.event_study import measure_event_outcome, run_event_study
 from victory_trader.events import CrossingEvent
+
+
+ET = ZoneInfo("America/New_York")
+
+
+def market_ts(hour: int, minute: int) -> int:
+    return int(datetime(2026, 9, 15, hour, minute, tzinfo=ET).timestamp() * 1000)
 
 
 def sample_bars() -> pd.DataFrame:
@@ -72,3 +82,45 @@ def test_run_event_study_detects_first_crossing_per_threshold_and_latency_column
     assert "delay1_return_1m_pct" in result.columns
     assert "delay2_return_1m_base_net_return_pct" in result.columns
     assert set(result["entry_model"]) == {"next_minute_open"}
+
+
+def test_regular_scope_ignores_premarket_only_crossing():
+    bars = pd.DataFrame(
+        [
+            {"t": market_ts(8, 0), "o": 10.0, "h": 12.5, "l": 10.0, "c": 12.0, "v": 100},
+            {"t": market_ts(9, 30), "o": 10.5, "h": 11.5, "l": 10.0, "c": 11.0, "v": 200},
+            {"t": market_ts(9, 31), "o": 11.0, "h": 11.2, "l": 10.8, "c": 11.1, "v": 200},
+        ]
+    )
+    result = run_event_study(
+        "TEST",
+        bars,
+        previous_close=10.0,
+        thresholds_pct=(20,),
+        horizons=(1,),
+        event_session_scope="regular",
+        require_regular_entry=True,
+    )
+    assert result.empty
+
+
+def test_last_regular_minute_signal_has_no_regular_entry():
+    bars = pd.DataFrame(
+        [
+            {"t": market_ts(15, 58), "o": 10.0, "h": 10.5, "l": 9.9, "c": 10.2, "v": 100},
+            {"t": market_ts(15, 59), "o": 10.2, "h": 12.2, "l": 10.2, "c": 12.0, "v": 500},
+            {"t": market_ts(16, 0), "o": 12.1, "h": 12.5, "l": 12.0, "c": 12.4, "v": 100},
+        ]
+    )
+    result = run_event_study(
+        "TEST",
+        bars,
+        previous_close=10.0,
+        thresholds_pct=(20,),
+        horizons=(1,),
+        event_session_scope="regular",
+        require_regular_entry=True,
+    )
+    assert len(result) == 1
+    assert result.iloc[0]["entry_price"] != result.iloc[0]["entry_price"]  # NaN
+    assert result.iloc[0]["tp2_sl1_status"] == "entry_unavailable"
