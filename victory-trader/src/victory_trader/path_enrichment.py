@@ -165,14 +165,14 @@ def _event_bar_features(
         }}
 
     row = event_bar.iloc[-1]
-    o = float(row["o"])
-    h = float(row["h"])
-    l = float(row["l"])
-    c = float(row["c"])
-    bar_range = max(h - l, 0.0)
-    signal_bar_range_pct = (bar_range / c) * 100.0 if c > 0 else None
-    signal_bar_body_pct = ((c / o) - 1.0) * 100.0 if o > 0 else None
-    signal_close_location = (c - l) / bar_range if bar_range > 0 else 0.5
+    bar_open = float(row["o"])
+    bar_high = float(row["h"])
+    bar_low = float(row["l"])
+    bar_close = float(row["c"])
+    bar_range = max(bar_high - bar_low, 0.0)
+    signal_bar_range_pct = (bar_range / bar_close) * 100.0 if bar_close > 0 else None
+    signal_bar_body_pct = ((bar_close / bar_open) - 1.0) * 100.0 if bar_open > 0 else None
+    signal_close_location = (bar_close - bar_low) / bar_range if bar_range > 0 else 0.5
 
     prior_start = event_timestamp_ms - 15 * MINUTE_MS
     prior = bars.loc[(bars["t"] >= prior_start) & (bars["t"] < event_timestamp_ms)]
