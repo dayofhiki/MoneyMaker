@@ -92,7 +92,7 @@ Primary v0.2 endpoint:
 
 - **5-minute, delay-0, base-friction-adjusted return**
 
-If the exact entry or exit minute required by the model is unavailable, the executable outcome is missing. A later bar is never silently substituted.
+If the exact entry or exit minute required by the model is unavailable, the executable outcome is missing. A later bar is never silently substituted. Formal v0.2 horizon outcomes must remain inside the official regular session; a requested holding horizon that would end after the close is left missing rather than silently switching to after-hours execution.
 
 Supporting outcomes include gross executable return, signal-close benchmark return, MFE/MAE, median, positive-return rate, latency sensitivity, missingness diagnostics, and tail-risk diagnostics.
 
@@ -112,7 +112,10 @@ Rules:
 - a bar touching TP and SL is `ambiguous`,
 - ambiguous rows are never assigned a favorable ordering,
 - a stop-market gap through the stop exits at the first observed bar open rather than the requested stop price,
-- if the requested timeout minute is not tradable/observable, the timeout outcome is unresolved rather than fabricated from an earlier close.
+- formal v0.2 barrier positions never drift silently into after-hours,
+- if the requested barrier horizon reaches the regular-session close first, the position is closed at the last observable regular-session bar close,
+- if that required regular-session close bar is unavailable, the result is `unresolved_session_close`,
+- if an exact non-session-close timeout minute is not tradable/observable, the timeout outcome is unresolved rather than fabricated from an earlier close.
 
 The unresolved/ambiguous rates are themselves reported. Before any barrier strategy is treated as executable, halt/resume and finer trade/quote data must be used to quantify unresolved tail outcomes.
 
@@ -165,7 +168,7 @@ Forbidden model inputs include:
 
 Official U.S. equity exchange-calendar data is used for holidays, previous trading-day lookup, regular-session boundaries, and early closes.
 
-Formal v0.2 signals and entries are regular-session only. Premarket data is retained as context. Premarket/after-hours event trading is a separate future research problem because it requires an unbiased market-wide extended-hours discovery source and different microstructure assumptions.
+Formal v0.2 signals, entries, and modeled holding horizons are regular-session only. Premarket data is retained as context. Premarket/after-hours event trading is a separate future research problem because it requires an unbiased market-wide extended-hours discovery source and different microstructure assumptions.
 
 ## 11. Missing bars and finalized historical aggregates
 
@@ -199,9 +202,11 @@ Required reporting includes:
 - unique trading-day count
 - mean and median
 - positive-return rate
+- 1%/5% lower-tail returns and 5% CVaR for the primary endpoint
 - ticker-day cluster bootstrap interval
 - trading-day cluster bootstrap interval
-- concentration by ticker/day/time period
+- concentration by ticker-day
+- monthly, price-bucket, and intraday-time stability
 
 A large raw row count cannot substitute for independent-cluster coverage.
 
@@ -250,6 +255,7 @@ A formal dataset must pass automated audit checks including:
 - explicit model allowlist complete and future-safe
 - non-overlapping session labels
 - positive observable prices
+- unresolved barrier outcomes explicitly reported rather than dropped silently
 
 ## 17. Research sequence
 
