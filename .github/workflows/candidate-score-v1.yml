@@ -1,12 +1,6 @@
 name: MoneyMaker Candidate Score v1
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'victory-trader/src/victory_trader/candidate_score.py'
-      - 'victory-trader/tests/test_candidate_score.py'
-      - '.github/workflows/candidate-score-v1.yml'
   workflow_dispatch:
     inputs:
       source_run_id:
