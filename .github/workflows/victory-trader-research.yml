@@ -12,11 +12,11 @@ on:
         required: true
         default: '2026-09-05'
       max_candidates:
-        description: 'Max momentum candidates per day (blank = all)'
+        description: 'DEBUG ONLY: deterministic candidates/day (blank = unbiased full universe)'
         required: false
-        default: '5'
+        default: ''
       request_interval:
-        description: 'Seconds between Massive API requests'
+        description: 'Seconds between uncached Massive API requests'
         required: true
         default: '12.5'
       annotate_halts:
@@ -42,6 +42,14 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Restore Massive research cache
+        uses: actions/cache@v4
+        with:
+          path: victory-trader/data/cache/massive
+          key: victory-trader-massive-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            victory-trader-massive-${{ runner.os }}-
+
       - name: Validate API secret
         shell: bash
         run: |
@@ -59,7 +67,7 @@ jobs:
       - name: Build research dataset
         shell: bash
         run: |
-          mkdir -p data/events artifacts
+          mkdir -p data/events artifacts data/cache/massive
           ARGS=(
             "${{ inputs.start_date }}"
             "${{ inputs.end_date }}"
@@ -67,6 +75,7 @@ jobs:
             --request-interval "${{ inputs.request_interval }}"
           )
           if [ -n "${{ inputs.max_candidates }}" ]; then
+            echo "WARNING: max_candidates is DEBUG ONLY and this run is not a full-universe research sample." | tee artifacts/sample-warning.txt
             ARGS+=(--max-candidates "${{ inputs.max_candidates }}")
           fi
           if [ "${{ inputs.annotate_halts }}" = "true" ]; then
@@ -92,5 +101,6 @@ jobs:
             victory-trader/data/events/research.parquet
             victory-trader/artifacts/build.log
             victory-trader/artifacts/analysis.txt
-          if-no-files-found: warn
+            victory-trader/artifacts/sample-warning.txt
+          if-no-files-found: ignore
           retention-days: 30
