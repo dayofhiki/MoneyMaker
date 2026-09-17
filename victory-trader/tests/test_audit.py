@@ -19,6 +19,8 @@ def valid_frame():
         "dataset_schema_version": "0.2",
         "source_prices_adjusted": False,
         "discovery_high_return_threshold_pct": 10.0,
+        "event_session_scope": "regular",
+        "regular_entry_required": True,
         "debug_candidate_limit": None,
         "security_type": "CS",
         "primary_exchange": "XNAS",
@@ -92,3 +94,13 @@ def test_adjusted_source_prices_fail():
     result = audit_event_dataset(frame)
     assert not result.ok
     assert any("split-adjusted" in issue for issue in result.issues)
+
+
+def test_extended_hours_signal_scope_fails_formal_audit():
+    frame = valid_frame()
+    frame["event_session_scope"] = "all"
+    frame["is_regular_session"] = False
+    frame["is_premarket"] = True
+    result = audit_event_dataset(frame)
+    assert not result.ok
+    assert any("regular event-session scope" in issue for issue in result.issues)
