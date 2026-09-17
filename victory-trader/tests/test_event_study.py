@@ -122,5 +122,5 @@ def test_last_regular_minute_signal_has_no_regular_entry():
         require_regular_entry=True,
     )
     assert len(result) == 1
-    assert result.iloc[0]["entry_price"] != result.iloc[0]["entry_price"]  # NaN
+    assert result.iloc[0]["entry_price"] is None
     assert result.iloc[0]["tp2_sl1_status"] == "entry_unavailable"
