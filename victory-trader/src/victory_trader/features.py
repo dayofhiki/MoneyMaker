@@ -17,6 +17,7 @@ PREMARKET_START = time(4, 0)
 REGULAR_START = time(9, 30)
 REGULAR_END = time(16, 0)
 AFTER_HOURS_END = time(20, 0)
+STANDARD_THRESHOLDS = (10.0, 20.0, 30.0, 50.0, 75.0, 100.0)
 
 
 @dataclass(frozen=True)
@@ -45,6 +46,10 @@ class EventFeatures:
     premarket_return_pct: float | None
     premarket_volume: float
     minutes_from_regular_open: float | None
+    minutes_since_10pct_cross: float | None
+    minutes_since_prior_threshold_cross: float | None
+    prior_15m_high_distance_pct: float | None
+    prior_15m_low_rebound_pct: float | None
     is_premarket: bool
     is_regular_session: bool
     is_after_hours: bool
@@ -130,6 +135,69 @@ def _volume_weighted_price(frame: pd.DataFrame) -> float | None:
     return float((prices[valid] * volume[valid]).sum() / volume[valid].sum())
 
 
+def _first_close_cross_timestamp(
+    frame: pd.DataFrame,
+    previous_close: float,
+    threshold_pct: float,
+) -> int | None:
+    if frame.empty or previous_close <= 0:
+        return None
+    target_price = previous_close * (1.0 + threshold_pct / 100.0)
+    tolerance = max(abs(target_price) * 1e-12, 1e-12)
+    closes = pd.to_numeric(frame["c"], errors="coerce")
+    crossed = frame.loc[closes + tolerance >= target_price]
+    if crossed.empty:
+        return None
+    return int(crossed.iloc[0]["t"])
+
+
+def _crossing_speed_features(
+    event: CrossingEvent,
+    observed: pd.DataFrame,
+) -> tuple[float | None, float | None]:
+    first_10 = _first_close_cross_timestamp(observed, event.previous_close, 10.0)
+    minutes_since_10 = (
+        (event.timestamp_ms - first_10) / MINUTE_MS if first_10 is not None else None
+    )
+
+    lower_thresholds = [value for value in STANDARD_THRESHOLDS if value < event.threshold_pct]
+    if not lower_thresholds:
+        return minutes_since_10, None
+    prior_threshold = max(lower_thresholds)
+    prior_cross = _first_close_cross_timestamp(
+        observed,
+        event.previous_close,
+        prior_threshold,
+    )
+    minutes_since_prior = (
+        (event.timestamp_ms - prior_cross) / MINUTE_MS
+        if prior_cross is not None
+        else None
+    )
+    return minutes_since_10, minutes_since_prior
+
+
+def _prior_15m_path_features(
+    observed: pd.DataFrame,
+    event: CrossingEvent,
+) -> tuple[float | None, float | None]:
+    start = event.timestamp_ms - 15 * MINUTE_MS
+    prior = observed.loc[
+        (observed["t"] >= start) & (observed["t"] < event.timestamp_ms)
+    ]
+    if prior.empty:
+        return None, None
+    prior_high = float(pd.to_numeric(prior["h"], errors="coerce").max())
+    prior_low = float(pd.to_numeric(prior["l"], errors="coerce").min())
+    high_distance = (
+        (event.price / prior_high - 1.0) * 100.0 if prior_high > 0 else None
+    )
+    low_rebound = (
+        (event.price / prior_low - 1.0) * 100.0 if prior_low > 0 else None
+    )
+    return high_distance, low_rebound
+
+
 def _historical_rvol(
     history_bars: pd.DataFrame | None,
     event_dt: datetime,
@@ -168,8 +236,6 @@ def _historical_rvol(
                 month=trading_date.month,
                 day=trading_date.day,
             )
-            # Do not compare a 15:00 normal-session event with a prior early-close
-            # date where 15:00 was already after-hours.
             if not (historical_bounds[0] <= historical_same_clock < historical_bounds[1]):
                 continue
 
@@ -277,6 +343,8 @@ def extract_event_features(
         if event_dt >= regular_open_dt
         else None
     )
+    minutes_since_10, minutes_since_prior = _crossing_speed_features(event, observed)
+    prior_high_distance, prior_low_rebound = _prior_15m_path_features(observed, event)
 
     return EventFeatures(
         event_volume=event_volume,
@@ -303,6 +371,10 @@ def extract_event_features(
         premarket_return_pct=premarket_return,
         premarket_volume=premarket_volume,
         minutes_from_regular_open=minutes_from_open,
+        minutes_since_10pct_cross=minutes_since_10,
+        minutes_since_prior_threshold_cross=minutes_since_prior,
+        prior_15m_high_distance_pct=prior_high_distance,
+        prior_15m_low_rebound_pct=prior_low_rebound,
         is_premarket=is_premarket,
         is_regular_session=is_regular,
         is_after_hours=is_after_hours,
