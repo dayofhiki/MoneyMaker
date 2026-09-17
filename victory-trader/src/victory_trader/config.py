@@ -36,3 +36,19 @@ def require_flatfile_credentials(settings: Settings) -> tuple[str, str]:
             "and MASSIVE_S3_SECRET_KEY."
         )
     return settings.massive_s3_access_key, settings.massive_s3_secret_key
+
+
+def load_flatfile_credentials() -> tuple[str, str]:
+    """Load only S3-compatible Flat Files credentials.
+
+    S3-only jobs such as enrichment should not require the REST API key.
+    """
+    load_dotenv()
+    access_key = os.getenv("MASSIVE_S3_ACCESS_KEY", "").strip()
+    secret_key = os.getenv("MASSIVE_S3_SECRET_KEY", "").strip()
+    if not access_key or not secret_key:
+        raise RuntimeError(
+            "Massive Flat Files credentials are missing. Set MASSIVE_S3_ACCESS_KEY "
+            "and MASSIVE_S3_SECRET_KEY."
+        )
+    return access_key, secret_key
