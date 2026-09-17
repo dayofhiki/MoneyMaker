@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import pandas as pd
 
 from .events import CrossingEvent
+from .features import timestamp_et
+from .market_calendar import regular_session_bounds
 
 
 DEFAULT_BARRIERS = ((2.0, 1.0), (3.0, 2.0), (5.0, 3.0), (10.0, 5.0))
@@ -44,17 +46,19 @@ def evaluate_barrier(
     max_horizon_minutes: int = 60,
     entry_timestamp_ms: int | None = None,
     entry_price: float | None = None,
+    regular_session_only: bool = False,
 ) -> BarrierOutcome:
     """Evaluate TP/SL using elapsed clock time and conservative gap handling.
-
-    By default the signal is known only after the event minute closes, so the
-    barrier becomes active at the next minute boundary. Callers may supply an
-    executable entry timestamp/price (for example, the next minute's open).
 
     A stop-market gap through the stop is filled at the observed bar open, not at
     the unattainable stop level. A gap through a take-profit remains conservatively
     filled at the target. If both high and low touch inside one OHLC minute, the
     ordering is unknowable and the result is ``ambiguous``.
+
+    Formal v0.2 research is regular-session-only. If a barrier position would run
+    past the close, it is forced out at the last regular bar close when observable.
+    Missing that bar is reported as ``unresolved_session_close`` rather than silently
+    switching to after-hours execution.
     """
     if take_profit_pct <= 0 or stop_loss_pct <= 0:
         raise ValueError("take-profit and stop-loss percentages must be positive")
@@ -78,7 +82,26 @@ def evaluate_barrier(
 
     tp_price = reference_price * (1.0 + take_profit_pct / 100.0)
     sl_price = reference_price * (1.0 - stop_loss_pct / 100.0)
-    timeout_bar_ts = effective_entry_ts + (max_horizon_minutes - 1) * MINUTE_MS
+    requested_timeout_bar_ts = effective_entry_ts + (max_horizon_minutes - 1) * MINUTE_MS
+    timeout_bar_ts = requested_timeout_bar_ts
+    forced_session_close = False
+
+    if regular_session_only:
+        entry_dt = timestamp_et(effective_entry_ts)
+        bounds = regular_session_bounds(entry_dt.date())
+        if bounds is None or not (bounds[0] <= entry_dt < bounds[1]):
+            return BarrierOutcome(
+                take_profit_pct,
+                stop_loss_pct,
+                "entry_unavailable",
+                None,
+                None,
+            )
+        last_regular_bar_ts = int(bounds[1].timestamp() * 1000) - MINUTE_MS
+        if timeout_bar_ts > last_regular_bar_ts:
+            timeout_bar_ts = last_regular_bar_ts
+            forced_session_close = True
+
     future = frame.loc[(frame["t"] >= effective_entry_ts) & (frame["t"] <= timeout_bar_ts)]
 
     for _, row in future.iterrows():
@@ -86,8 +109,6 @@ def evaluate_barrier(
         minute_number = int((row_ts - effective_entry_ts) // MINUTE_MS) + 1
         row_open = float(row["o"])
 
-        # Stop-market orders can gap through the requested stop. Model the first
-        # observable tradable price rather than granting a fictitious stop fill.
         if row_open <= sl_price:
             gap_return = (row_open / reference_price - 1.0) * 100.0
             return BarrierOutcome(
@@ -138,23 +159,17 @@ def evaluate_barrier(
 
     exact_timeout = future.loc[future["t"] == timeout_bar_ts]
     if len(exact_timeout) != 1:
-        # A halt/missing minute means a horizon exit could not actually be made at
-        # the requested time. Do not fabricate an exit using an earlier close.
-        return BarrierOutcome(
-            take_profit_pct,
-            stop_loss_pct,
-            "unresolved_missing",
-            None,
-            None,
-        )
+        status = "unresolved_session_close" if forced_session_close else "unresolved_missing"
+        return BarrierOutcome(take_profit_pct, stop_loss_pct, status, None, None)
 
     final_close = float(exact_timeout.iloc[0]["c"])
     timeout_return = (final_close / reference_price - 1.0) * 100.0
+    minutes_to_exit = int((timeout_bar_ts - effective_entry_ts) // MINUTE_MS) + 1
     return BarrierOutcome(
         take_profit_pct,
         stop_loss_pct,
-        "timeout",
-        max_horizon_minutes,
+        "session_close" if forced_session_close else "timeout",
+        minutes_to_exit,
         timeout_return,
     )
 
@@ -167,6 +182,7 @@ def evaluate_default_barriers(
     max_horizon_minutes: int = 60,
     entry_timestamp_ms: int | None = None,
     entry_price: float | None = None,
+    regular_session_only: bool = False,
 ) -> dict[str, str | int | float | None]:
     record: dict[str, str | int | float | None] = {}
     for take_profit_pct, stop_loss_pct in barriers:
@@ -178,6 +194,7 @@ def evaluate_default_barriers(
             max_horizon_minutes=max_horizon_minutes,
             entry_timestamp_ms=entry_timestamp_ms,
             entry_price=entry_price,
+            regular_session_only=regular_session_only,
         )
         record.update(outcome.to_record())
     return record
