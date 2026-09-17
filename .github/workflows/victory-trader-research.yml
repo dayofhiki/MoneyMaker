@@ -1,4 +1,4 @@
-name: Victory Trader Research
+name: MoneyMaker Research
 
 on:
   workflow_dispatch:
@@ -6,17 +6,21 @@ on:
       start_date:
         description: 'Start date (YYYY-MM-DD)'
         required: true
-        default: '2026-09-01'
+        default: '2026-04-01'
       end_date:
         description: 'End date (YYYY-MM-DD)'
         required: true
-        default: '2026-09-05'
+        default: '2026-04-30'
+      chunk_days:
+        description: 'Calendar days per bounded collection job'
+        required: true
+        default: '5'
       max_candidates:
         description: 'DEBUG ONLY: deterministic candidates/day (blank = unbiased full universe)'
         required: false
         default: ''
       request_interval:
-        description: 'Seconds between uncached Massive API requests'
+        description: 'Minimum seconds between real Massive network requests'
         required: true
         default: '12.5'
       annotate_halts:
@@ -26,9 +30,68 @@ on:
         default: true
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.chunks.outputs.matrix }}
+    steps:
+      - id: chunks
+        shell: bash
+        env:
+          START_DATE: ${{ inputs.start_date }}
+          END_DATE: ${{ inputs.end_date }}
+          CHUNK_DAYS: ${{ inputs.chunk_days }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from datetime import date, timedelta
+
+          start = date.fromisoformat(os.environ['START_DATE'])
+          end = date.fromisoformat(os.environ['END_DATE'])
+          chunk_days = int(os.environ['CHUNK_DAYS'])
+          if end < start:
+              raise SystemExit('end_date must be on or after start_date')
+          if chunk_days < 1 or chunk_days > 14:
+              raise SystemExit('chunk_days must be between 1 and 14')
+
+          chunks = []
+          cursor = start
+          while cursor <= end:
+              chunk_end = min(cursor + timedelta(days=chunk_days - 1), end)
+              chunk_id = f'{cursor.isoformat()}_{chunk_end.isoformat()}'
+              chunks.append({'start': cursor.isoformat(), 'end': chunk_end.isoformat(), 'id': chunk_id})
+              cursor = chunk_end + timedelta(days=1)
+          if len(chunks) > 200:
+              raise SystemExit('requested range creates more than 200 chunks; split the research run')
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as handle:
+              handle.write('matrix=' + json.dumps({'include': chunks}, separators=(',', ':')) + '\n')
+          PY
+
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+      - name: Test
+        run: pytest -q
+
   research:
+    needs: [prepare, test]
     runs-on: ubuntu-latest
     timeout-minutes: 330
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     defaults:
       run:
         working-directory: victory-trader
@@ -42,13 +105,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Restore Massive research cache
+      - name: Restore cumulative research cache and checkpoints
         uses: actions/cache@v4
         with:
-          path: victory-trader/data/cache/massive
-          key: victory-trader-massive-${{ runner.os }}-${{ github.run_id }}
+          path: |
+            victory-trader/data/cache/massive
+            victory-trader/data/checkpoints
+          key: moneymaker-research-${{ runner.os }}-${{ github.run_id }}-${{ matrix.id }}
           restore-keys: |
-            victory-trader-massive-${{ runner.os }}-
+            moneymaker-research-${{ runner.os }}-
 
       - name: Validate API secret
         shell: bash
@@ -58,55 +123,150 @@ jobs:
             exit 1
           fi
 
-      - name: Install Victory Trader
-        run: python -m pip install -e '.[dev]'
+      - name: Install MoneyMaker
+        run: python -m pip install -e .
 
-      - name: Run tests first
-        run: pytest -q
-
-      - name: Build research dataset
+      - name: Build resumable chunk
         shell: bash
         run: |
-          mkdir -p data/events artifacts data/cache/massive
+          mkdir -p data/events data/checkpoints artifacts data/cache/massive
+          OUT="data/events/research-${{ matrix.id }}.parquet"
+          MANIFEST="artifacts/manifest-${{ matrix.id }}.json"
+          LOG="artifacts/build-${{ matrix.id }}.log"
           ARGS=(
-            "${{ inputs.start_date }}"
-            "${{ inputs.end_date }}"
-            --output data/events/research.parquet
+            "${{ matrix.start }}"
+            "${{ matrix.end }}"
+            --output "$OUT"
+            --checkpoint-dir data/checkpoints
+            --manifest "$MANIFEST"
             --request-interval "${{ inputs.request_interval }}"
           )
           if [ -n "${{ inputs.max_candidates }}" ]; then
-            echo "WARNING: max_candidates is DEBUG ONLY and this run is not a full-universe research sample." | tee artifacts/sample-warning.txt
+            echo "WARNING: max_candidates is DEBUG ONLY; this is not a full-universe research sample." \
+              > "artifacts/sample-warning-${{ matrix.id }}.txt"
             ARGS+=(--max-candidates "${{ inputs.max_candidates }}")
           fi
           if [ "${{ inputs.annotate_halts }}" = "true" ]; then
             ARGS+=(--annotate-halts)
           fi
-          victory-trader multi-day-dataset "${ARGS[@]}" | tee artifacts/build.log
+          moneymaker multi-day-dataset "${ARGS[@]}" | tee "$LOG"
 
-      - name: Audit dataset integrity
+      - name: Audit chunk
         shell: bash
         run: |
-          AUDIT_ARGS=(data/events/research.parquet)
-          if [ -n "${{ inputs.max_candidates }}" ]; then
-            AUDIT_ARGS+=(--allow-debug-sample)
+          FILE="data/events/research-${{ matrix.id }}.parquet"
+          if [ ! -f "$FILE" ]; then
+            echo "No event rows in this chunk." > "artifacts/audit-${{ matrix.id }}.txt"
+            exit 0
           fi
-          victory-trader audit-dataset "${AUDIT_ARGS[@]}" | tee artifacts/audit.txt
+          ARGS=("$FILE")
+          if [ -n "${{ inputs.max_candidates }}" ]; then
+            ARGS+=(--allow-debug-sample)
+          fi
+          moneymaker audit-dataset "${ARGS[@]}" | tee "artifacts/audit-${{ matrix.id }}.txt"
 
-      - name: Analyze dataset
+      - name: Analyze chunk
         shell: bash
         run: |
-          victory-trader analyze-dataset data/events/research.parquet --horizon 5 \
-            | tee artifacts/analysis.txt
+          FILE="data/events/research-${{ matrix.id }}.parquet"
+          if [ -f "$FILE" ]; then
+            moneymaker analyze-dataset "$FILE" --horizon 5 \
+              | tee "artifacts/analysis-${{ matrix.id }}.txt"
+          else
+            echo "No event rows in this chunk." > "artifacts/analysis-${{ matrix.id }}.txt"
+          fi
 
-      - name: Upload research artifacts
+      - name: Upload chunk artifact
         uses: actions/upload-artifact@v4
         with:
-          name: victory-trader-${{ inputs.start_date }}-${{ inputs.end_date }}
+          name: moneymaker-chunk-${{ matrix.id }}
+          path: |
+            victory-trader/data/events/research-${{ matrix.id }}.parquet
+            victory-trader/artifacts/manifest-${{ matrix.id }}.json
+            victory-trader/artifacts/build-${{ matrix.id }}.log
+            victory-trader/artifacts/audit-${{ matrix.id }}.txt
+            victory-trader/artifacts/analysis-${{ matrix.id }}.txt
+            victory-trader/artifacts/sample-warning-${{ matrix.id }}.txt
+          if-no-files-found: ignore
+          retention-days: 90
+
+  aggregate:
+    needs: [prepare, research]
+    if: ${{ needs.research.result == 'success' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install MoneyMaker
+        run: python -m pip install -e .
+      - name: Download chunk artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-chunk-*
+          path: victory-trader/artifacts/chunks
+          merge-multiple: true
+      - name: Merge chunk datasets and manifests
+        shell: bash
+        run: |
+          mkdir -p data/events artifacts
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          root = Path('artifacts/chunks')
+          files = sorted(root.rglob('research-*.parquet'))
+          if files:
+              frames = [pd.read_parquet(path) for path in files]
+              result = pd.concat(frames, ignore_index=True)
+              result = result.sort_values(['trading_day', 'ticker', 'timestamp_ms', 'threshold_pct']).reset_index(drop=True)
+              if result.duplicated(['trading_day', 'ticker', 'timestamp_ms', 'threshold_pct']).any():
+                  raise SystemExit('duplicate event keys across research chunks')
+              result.to_parquet('data/events/research.parquet', index=False)
+              print(f'Merged {len(files)} chunk datasets into {len(result)} event rows')
+          else:
+              print('No event parquet files were produced by any chunk')
+
+          manifests = []
+          for path in sorted(root.rglob('manifest-*.json')):
+              manifests.append(json.loads(path.read_text(encoding='utf-8')))
+          Path('artifacts/combined-manifests.json').write_text(
+              json.dumps(manifests, indent=2, sort_keys=True), encoding='utf-8'
+          )
+          PY
+      - name: Audit aggregate
+        shell: bash
+        run: |
+          if [ ! -f data/events/research.parquet ]; then
+            echo "No aggregate event dataset." | tee artifacts/audit.txt
+            exit 0
+          fi
+          ARGS=(data/events/research.parquet)
+          if [ -n "${{ inputs.max_candidates }}" ]; then
+            ARGS+=(--allow-debug-sample)
+          fi
+          moneymaker audit-dataset "${ARGS[@]}" | tee artifacts/audit.txt
+      - name: Analyze aggregate
+        shell: bash
+        run: |
+          if [ -f data/events/research.parquet ]; then
+            moneymaker analyze-dataset data/events/research.parquet --horizon 5 | tee artifacts/analysis.txt
+          else
+            echo "No aggregate event dataset." > artifacts/analysis.txt
+          fi
+      - name: Upload final research artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-${{ inputs.start_date }}-${{ inputs.end_date }}
           path: |
             victory-trader/data/events/research.parquet
-            victory-trader/artifacts/build.log
             victory-trader/artifacts/audit.txt
             victory-trader/artifacts/analysis.txt
-            victory-trader/artifacts/sample-warning.txt
+            victory-trader/artifacts/combined-manifests.json
           if-no-files-found: ignore
-          retention-days: 30
+          retention-days: 90
