@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import pandas as pd
 
 from .events import CrossingEvent, detect_threshold_crossings
-from .execution_costs import DEFAULT_EXECUTION_SCENARIOS, add_execution_scenarios_to_record
+from .execution_costs import (
+    DEFAULT_EXECUTION_SCENARIOS,
+    add_execution_scenarios_to_record,
+)
 from .exits import DEFAULT_BARRIERS, evaluate_default_barriers
-from .features import extract_event_features
+from .features import extract_event_features, timestamp_et
+from .market_calendar import regular_session_bounds
 
 
 DEFAULT_HORIZONS = (1, 2, 5, 10, 15, 30, 60)
@@ -70,6 +74,19 @@ def _open_at(frame: pd.DataFrame, timestamp_ms: int) -> float | None:
     return float(values.iloc[0]) if len(values) == 1 else None
 
 
+def _is_regular_timestamp(timestamp_ms: int) -> bool:
+    dt = timestamp_et(timestamp_ms)
+    bounds = regular_session_bounds(dt.date())
+    return bounds is not None and bounds[0] <= dt < bounds[1]
+
+
+def _regular_detection_bars(frame: pd.DataFrame) -> pd.DataFrame:
+    if frame.empty:
+        return frame.copy()
+    mask = frame["t"].map(lambda value: _is_regular_timestamp(int(value)))
+    return frame.loc[mask].reset_index(drop=True)
+
+
 def _signal_close_returns(
     event: CrossingEvent,
     frame: pd.DataFrame,
@@ -92,14 +109,15 @@ def measure_event_outcome(
     horizons: Iterable[int] = DEFAULT_HORIZONS,
     *,
     entry_delay_minutes: int = 0,
+    require_regular_entry: bool = False,
 ) -> EventOutcome:
     """Measure executable outcomes from a delayed next-minute-open entry.
 
     A close-based event is observable only after its minute closes. Delay 0 therefore
     enters at the exact next minute's open; delay 1/2 wait one/two additional clock
     minutes. Missing entry bars mean the trade was not observable as executable and
-    all primary outcomes remain missing. Signal-close returns are retained only as an
-    optimistic research benchmark.
+    all primary outcomes remain missing. Formal v0.2 market-wide research also
+    requires the entry minute itself to remain inside the regular session.
     """
     if entry_delay_minutes < 0:
         raise ValueError("entry_delay_minutes must be non-negative")
@@ -116,6 +134,8 @@ def measure_event_outcome(
     signal_returns = _signal_close_returns(event, frame, requested)
     entry_ts = event.timestamp_ms + (entry_delay_minutes + 1) * MINUTE_MS
     entry_price = _open_at(frame, entry_ts)
+    if require_regular_entry and not _is_regular_timestamp(entry_ts):
+        entry_price = None
 
     if entry_price is None or entry_price <= 0:
         return EventOutcome(
@@ -239,17 +259,29 @@ def run_event_study(
     history_bars: pd.DataFrame | None = None,
     barriers: Iterable[tuple[float, float]] = DEFAULT_BARRIERS,
     entry_delays: Iterable[int] = DEFAULT_ENTRY_DELAYS,
+    *,
+    event_session_scope: str = "all",
+    require_regular_entry: bool = False,
 ) -> pd.DataFrame:
-    """Emit point-in-time features and executable, friction-adjusted outcomes."""
+    """Emit point-in-time features and executable, friction-adjusted outcomes.
+
+    Formal market-wide v0.2 research uses ``event_session_scope='regular'`` so the
+    grouped daily high is a complete discovery superset for the event family.
+    Extended-hours bars remain available for premarket context features.
+    """
     requested_horizons = tuple(int(h) for h in horizons)
     requested_barriers = tuple((float(tp), float(sl)) for tp, sl in barriers)
     delays = tuple(sorted({int(delay) for delay in entry_delays}))
     if 0 not in delays:
         raise ValueError("entry_delays must include 0 for the primary next-minute-open model")
+    if event_session_scope not in {"all", "regular"}:
+        raise ValueError("event_session_scope must be 'all' or 'regular'")
 
+    frame = _validate_bars(bars)
+    detection_bars = _regular_detection_bars(frame) if event_session_scope == "regular" else frame
     events = detect_threshold_crossings(
         ticker=ticker,
-        bars=bars,
+        bars=detection_bars,
         previous_close=previous_close,
         thresholds_pct=thresholds_pct,
     )
@@ -261,18 +293,19 @@ def run_event_study(
     for event in events:
         primary = measure_event_outcome(
             event,
-            bars,
+            frame,
             requested_horizons,
             entry_delay_minutes=0,
+            require_regular_entry=require_regular_entry,
         )
-        features = extract_event_features(event, bars, history_bars=history_bars)
+        features = extract_event_features(event, frame, history_bars=history_bars)
 
         if primary.entry_price is None or primary.entry_timestamp_ms is None:
             barriers_record = _entry_unavailable_barriers(requested_barriers)
         else:
             barriers_record = evaluate_default_barriers(
                 event,
-                bars,
+                frame,
                 barriers=requested_barriers,
                 max_horizon_minutes=max_horizon,
                 entry_timestamp_ms=primary.entry_timestamp_ms,
@@ -285,6 +318,8 @@ def run_event_study(
             barriers_record,
         )
         record = primary.to_record()
+        record["event_session_scope"] = event_session_scope
+        record["regular_entry_required"] = require_regular_entry
         feature_record = features.to_record()
         overlap = set(record) & set(feature_record)
         if overlap:
@@ -300,9 +335,10 @@ def run_event_study(
                 continue
             delayed = measure_event_outcome(
                 event,
-                bars,
+                frame,
                 requested_horizons,
                 entry_delay_minutes=delay,
+                require_regular_entry=require_regular_entry,
             )
             prefix = f"delay{delay}"
             record[f"{prefix}_entry_timestamp_ms"] = delayed.entry_timestamp_ms
