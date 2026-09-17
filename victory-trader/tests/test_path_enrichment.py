@@ -27,7 +27,7 @@ def ns(day: int, hour: int, minute: int) -> int:
 
 def test_enrichment_keeps_existing_results_and_adds_point_in_time_features():
     event_10_ms = ns(2, 9, 40) // 1_000_000
-    event_20_ms = ns(2, 9, 44) // 1_000_000
+    event_20_ms = ns(2, 9, 45) // 1_000_000
     events = pd.DataFrame(
         {
             "trading_day": ["2026-03-02", "2026-03-02"],
@@ -52,7 +52,7 @@ def test_enrichment_keeps_existing_results_and_adds_point_in_time_features():
             "transactions": 5.0,
         }
     ]
-    closes = [10.0 + 0.1 * i for i in range(14)] + [12.0]
+    closes = [10.0 + 0.1 * i for i in range(15)] + [12.0]
     for i, close in enumerate(closes):
         test_rows.append(
             {
@@ -68,7 +68,7 @@ def test_enrichment_keeps_existing_results_and_adds_point_in_time_features():
         )
 
     iwm_rows = []
-    for i in range(15):
+    for i in range(16):
         close = 100.0 + 0.1 * i
         iwm_rows.append(
             {
@@ -89,25 +89,32 @@ def test_enrichment_keeps_existing_results_and_adds_point_in_time_features():
     assert set(ENRICHMENT_FEATURE_COLUMNS).issubset(result.columns)
     assert result.loc[0, "minutes_since_10pct_cross"] == pytest.approx(0.0)
     assert pd.isna(result.loc[0, "minutes_since_prior_threshold_cross"])
-    assert result.loc[1, "minutes_since_10pct_cross"] == pytest.approx(4.0)
-    assert result.loc[1, "minutes_since_prior_threshold_cross"] == pytest.approx(4.0)
+    assert result.loc[1, "minutes_since_10pct_cross"] == pytest.approx(5.0)
+    assert result.loc[1, "minutes_since_prior_threshold_cross"] == pytest.approx(5.0)
+    assert result.loc[1, "threshold_overshoot_pct"] == pytest.approx(0.0)
     assert result.loc[1, "prior_15m_high_distance_pct"] == pytest.approx(
-        (12.0 / 11.4 - 1.0) * 100.0
+        (12.0 / 11.5 - 1.0) * 100.0
     )
     assert result.loc[1, "prior_15m_low_rebound_pct"] == pytest.approx(
         (12.0 / 9.9 - 1.0) * 100.0
     )
+    assert result.loc[1, "trend_efficiency_15m"] == pytest.approx(1.0)
     assert result.loc[1, "max_drawdown_since_10pct_pct"] == pytest.approx(0.0)
     assert result.loc[1, "signal_bar_range_pct"] == pytest.approx((0.2 / 12.0) * 100.0)
     assert result.loc[1, "signal_bar_body_pct"] == pytest.approx((12.0 / 11.95 - 1.0) * 100.0)
     assert result.loc[1, "signal_close_location"] == pytest.approx(0.5)
     assert result.loc[1, "transactions_5m"] == pytest.approx(50.0)
-    expected_dollar_volume = 100.0 * sum([11.0, 11.1, 11.2, 11.3, 12.0])
+    expected_dollar_volume = 100.0 * sum([11.1, 11.2, 11.3, 11.4, 12.0])
     assert result.loc[1, "dollar_volume_5m"] == pytest.approx(expected_dollar_volume)
     assert result.loc[1, "avg_trade_size_5m"] == pytest.approx(10.0)
     assert result.loc[1, "active_minute_fraction_15m"] == pytest.approx(1.0)
     assert result.loc[1, "regular_open_gap_pct"] == pytest.approx(-0.5)
     assert result.loc[1, "premarket_high_return_pct"] == pytest.approx(5.0)
+    assert result.loc[1, "premarket_high_distance_pct"] == pytest.approx(
+        (12.0 / 10.5 - 1.0) * 100.0
+    )
     assert result.loc[1, "runners_10pct_so_far"] == pytest.approx(1.0)
     assert result.loc[1, "runners_10pct_last_30m"] == pytest.approx(1.0)
-    assert result.loc[1, "iwm_return_since_open_pct"] == pytest.approx(1.4)
+    assert result.loc[1, "iwm_return_since_open_pct"] == pytest.approx(1.5)
+    assert result.loc[1, "iwm_return_15m_pct"] == pytest.approx(1.5)
+    assert result.loc[1, "iwm_volatility_15m_pct"] > 0
