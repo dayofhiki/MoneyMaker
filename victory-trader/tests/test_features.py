@@ -65,12 +65,12 @@ def test_clock_window_does_not_turn_five_bars_into_more_than_five_minutes():
     assert features.trailing_return_5m_pct == pytest.approx((12.0 / 9.5 - 1.0) * 100.0)
 
 
-def test_historical_rvol_uses_prior_dates_at_same_clock_time():
+def test_historical_rvol_uses_prior_trading_dates_at_same_clock_time():
     history = pd.DataFrame(
         [
-            bar(ts(13, 9, 30), 10.0, 100),
-            bar(ts(13, 9, 31), 10.0, 100),
-            bar(ts(13, 9, 32), 10.0, 100),
+            bar(ts(11, 9, 30), 10.0, 100),
+            bar(ts(11, 9, 31), 10.0, 100),
+            bar(ts(11, 9, 32), 10.0, 100),
             bar(ts(14, 9, 30), 10.0, 200),
             bar(ts(14, 9, 31), 10.0, 200),
             bar(ts(14, 9, 32), 10.0, 200),
