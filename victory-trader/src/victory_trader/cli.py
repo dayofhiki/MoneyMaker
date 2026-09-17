@@ -17,15 +17,16 @@ from .analytics import (
     summarize_missingness,
     summarize_monthly_stability,
     summarize_price_buckets,
-    summarize_rvol,
     summarize_sessions,
     summarize_tail_risk,
     summarize_time_buckets,
 )
 from .audit import audit_event_dataset
-from .config import load_settings
+from .config import load_settings, require_flatfile_credentials
 from .event_study import run_event_study
 from .exposure_diagnostics import summarize_unresolved_exposure
+from .feature_analytics import summarize_rvol_net
+from .flatfiles import MassiveFlatFilesClient
 from .history import load_target_with_history
 from .market_dataset import build_market_event_dataset, save_dataset
 from .massive_client import MassiveClient
@@ -48,6 +49,18 @@ def check_api() -> int:
     client = _client()
     payload = client.previous_close("AAPL")
     print(json.dumps(payload, indent=2))
+    return 0
+
+
+def check_flatfiles(day: date) -> int:
+    settings = load_settings()
+    access_key, secret_key = require_flatfile_credentials(settings)
+    client = MassiveFlatFilesClient(access_key, secret_key)
+    objects = client.check_stock_aggregate_access(day)
+    print("Massive Flat Files access: OK")
+    for obj in objects:
+        size_text = "unknown" if obj.size_bytes is None else str(obj.size_bytes)
+        print(f"  {obj.key} size_bytes={size_text}")
     return 0
 
 
@@ -217,12 +230,15 @@ def analyze_dataset(path: Path, horizon: int) -> int:
     _print_section("Short TP / SL first-hit experiments", summarize_barriers(frame))
 
     if "rvol_cumulative_20d" in frame.columns:
-        rvol = summarize_rvol(frame, horizon_min=horizon)
+        rvol = summarize_rvol_net(frame, horizon_min=horizon, scenario="base")
         if rvol.empty:
-            print(f"\n=== RVOL buckets at +{horizon}m ===")
+            print(f"\n=== RVOL buckets at +{horizon}m after base costs ===")
             print("No rows with historical RVOL yet.")
         else:
-            _print_section(f"RVOL buckets at +{horizon}m", rvol)
+            _print_section(
+                f"RVOL buckets at +{horizon}m after base costs",
+                rvol,
+            )
     return 0
 
 
@@ -262,6 +278,12 @@ def main() -> int:
 
     sub.add_parser("check-api", help="Check Massive API connectivity using AAPL previous close")
 
+    flatfiles = sub.add_parser(
+        "check-flatfiles",
+        help="Verify Massive S3 Flat Files credentials without downloading data",
+    )
+    flatfiles.add_argument("--day", type=date.fromisoformat, default=date(2026, 4, 1))
+
     study = sub.add_parser("event-study", help="Run the threshold event study for one ticker/day")
     study.add_argument("ticker", help="U.S. equity ticker, e.g. AAPL")
     study.add_argument("day", type=date.fromisoformat, help="Trading day in YYYY-MM-DD format")
@@ -288,6 +310,8 @@ def main() -> int:
     args = parser.parse_args()
     if args.command == "check-api":
         return check_api()
+    if args.command == "check-flatfiles":
+        return check_flatfiles(args.day)
     if args.command == "event-study":
         return event_study(args.ticker, args.day)
     if args.command == "market-dataset":

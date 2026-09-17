@@ -31,3 +31,84 @@ jobs:
         run: ruff check src tests --select E4,E7,E9,F
       - name: Test
         run: pytest -q
+
+  flatfiles-access:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install MoneyMaker
+        run: python -m pip install -e .
+      - name: Validate Flat Files secrets are injected
+        shell: bash
+        run: |
+          test -n "$MASSIVE_S3_ACCESS_KEY" || { echo "MASSIVE_S3_ACCESS_KEY is missing"; exit 1; }
+          test -n "$MASSIVE_S3_SECRET_KEY" || { echo "MASSIVE_S3_SECRET_KEY is missing"; exit 1; }
+      - name: Verify Massive Flat Files entitlement
+        run: moneymaker check-flatfiles --day 2026-04-01
+
+  flatfiles-pilot:
+    needs: [test, flatfiles-access]
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 1 && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install MoneyMaker
+        run: python -m pip install -e .
+      - name: Build 2026-04-01 from cold Flat Files
+        shell: bash
+        run: |
+          mkdir -p data/events data/checkpoints-flatfiles artifacts
+          START=$(date +%s)
+          python -m victory_trader.flatfile_runner \
+            2026-04-01 2026-04-01 \
+            --output data/events/flatfile-pilot.parquet \
+            --checkpoint-dir data/checkpoints-flatfiles \
+            --manifest artifacts/flatfile-pilot-manifest.json \
+            --annotate-halts \
+            | tee artifacts/flatfile-pilot-build.log
+          END=$(date +%s)
+          ELAPSED=$((END-START))
+          echo "elapsed_seconds=$ELAPSED" | tee artifacts/flatfile-pilot-benchmark.txt
+          ls -lh data/events/flatfile-pilot.parquet | tee -a artifacts/flatfile-pilot-benchmark.txt
+      - name: Audit Flat Files pilot
+        run: moneymaker audit-dataset data/events/flatfile-pilot.parquet | tee artifacts/flatfile-pilot-audit.txt
+      - name: Analyze Flat Files pilot
+        run: moneymaker analyze-dataset data/events/flatfile-pilot.parquet --horizon 5 | tee artifacts/flatfile-pilot-analysis.txt
+      - name: Upload Flat Files pilot artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-flatfiles-pilot-2026-04-01
+          path: |
+            victory-trader/data/events/flatfile-pilot.parquet
+            victory-trader/artifacts/flatfile-pilot-manifest.json
+            victory-trader/artifacts/flatfile-pilot-build.log
+            victory-trader/artifacts/flatfile-pilot-benchmark.txt
+            victory-trader/artifacts/flatfile-pilot-audit.txt
+            victory-trader/artifacts/flatfile-pilot-analysis.txt
+          if-no-files-found: ignore
+          retention-days: 30
