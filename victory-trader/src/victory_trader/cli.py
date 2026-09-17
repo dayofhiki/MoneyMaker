@@ -17,7 +17,6 @@ from .analytics import (
     summarize_missingness,
     summarize_monthly_stability,
     summarize_price_buckets,
-    summarize_rvol,
     summarize_sessions,
     summarize_tail_risk,
     summarize_time_buckets,
@@ -26,6 +25,7 @@ from .audit import audit_event_dataset
 from .config import load_settings, require_flatfile_credentials
 from .event_study import run_event_study
 from .exposure_diagnostics import summarize_unresolved_exposure
+from .feature_analytics import summarize_rvol_net
 from .flatfiles import MassiveFlatFilesClient
 from .history import load_target_with_history
 from .market_dataset import build_market_event_dataset, save_dataset
@@ -230,12 +230,15 @@ def analyze_dataset(path: Path, horizon: int) -> int:
     _print_section("Short TP / SL first-hit experiments", summarize_barriers(frame))
 
     if "rvol_cumulative_20d" in frame.columns:
-        rvol = summarize_rvol(frame, horizon_min=horizon)
+        rvol = summarize_rvol_net(frame, horizon_min=horizon, scenario="base")
         if rvol.empty:
-            print(f"\n=== RVOL buckets at +{horizon}m ===")
+            print(f"\n=== RVOL buckets at +{horizon}m after base costs ===")
             print("No rows with historical RVOL yet.")
         else:
-            _print_section(f"RVOL buckets at +{horizon}m", rvol)
+            _print_section(
+                f"RVOL buckets at +{horizon}m after base costs",
+                rvol,
+            )
     return 0
 
 
