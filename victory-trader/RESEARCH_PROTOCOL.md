@@ -1,14 +1,14 @@
-# Victory Trader US — Research Protocol v0.1
+# MoneyMaker — Research Protocol v0.2
 
-Status: **frozen before full-universe historical research**
+Status: **frozen before formal development-set collection**
 
-This document exists to reduce researcher degrees of freedom. Changes are allowed later, but every change must be versioned and must not retroactively redefine the untouched final holdout.
+This document limits researcher degrees of freedom. Any material change after formal collection begins requires a new protocol version. The untouched final holdout may never be redefined in response to its observed result.
 
 ## 1. Research objective
 
-Test whether low-priced U.S. common stocks that have already entered an extreme intraday momentum state contain short-lived, repeatable continuation that survives explicit execution-friction assumptions.
+Test whether low-priced U.S. common stocks that have already entered an extreme intraday momentum state contain short-lived, repeatable continuation that survives executable-entry assumptions, transaction-cost stress, clustering, and chronological out-of-sample validation.
 
-The system is not trying to predict the day's ultimate winner. The core question is whether a mechanical strategy can harvest short continuation segments after an observable threshold crossing while limiting time exposed to reversals, halts, and microstructure costs.
+The first goal is not a high backtest win rate. The goal is positive expectancy after realistic frictions with controlled downside tails. Win rate is a supporting diagnostic only.
 
 ## 2. Universe
 
@@ -17,13 +17,30 @@ Initial universe:
 - U.S. stocks market
 - common-stock type (`CS`)
 - primary exchange XNAS / XNYS / XASE
-- prior-session close from $0.50 through $20.00
+- prior-session **nominal/as-traded** close from $0.50 through $20.00
 - OTC excluded
 - same-day split events excluded
 
-The completed daily high may be used to efficiently discover historical dates/tickers that contained a threshold event. It must not be used as a model feature or to rank/truncate the production research sample.
+Universe selection uses unadjusted historical prices so later splits/reverse splits cannot retroactively change whether a stock belonged to the $0.50-$20 universe.
 
-## 3. Event definition
+Provider market-cap/share-count fields are excluded from the initial model allowlist until their publication-time semantics are verified. Identity/taxonomy metadata may still be used for common-stock/exchange validation.
+
+## 3. Historical candidate discovery
+
+The completed daily high may be used only to avoid downloading minute data for ticker-days that could not possibly contain a studied threshold event.
+
+The discovery threshold must be **less than or equal to the lowest event threshold under study**. With the v0.2 event family, discovery therefore defaults to +10%.
+
+Completed daily high/close/volume/dollar-volume:
+
+- may not rank or truncate the production sample,
+- may not be model features,
+- may not be production entry filters,
+- are not emitted into the model-facing event dataset.
+
+A debug candidate limit, when explicitly requested, uses deterministic date+ticker hashing only.
+
+## 4. Event definition
 
 First close-based crossing of each threshold during a trading date:
 
@@ -34,13 +51,29 @@ First close-based crossing of each threshold during a trading date:
 - +75%
 - +100%
 
-Reference price is the prior-session close.
+Reference price is the prior-session nominal close.
 
-An event is observable only after the crossing minute bar closes. All model features must use information at or before that timestamp.
+The event becomes observable only after the crossing minute closes.
 
-## 4. Primary outcomes
+## 5. Executable entry model
 
-Forward returns at exact clock-time horizons:
+Primary v0.2 entry:
+
+- signal: crossing minute close
+- primary entry: **exact next minute bar open**
+- if the exact next-minute bar is absent, the trade is marked not executable and primary outcomes are missing
+
+Latency sensitivity is pre-specified:
+
+- delay 0: next-minute open, primary
+- delay 1: one additional clock minute later
+- delay 2: two additional clock minutes later
+
+The signal-close return is retained only as an optimistic diagnostic benchmark and is not the primary strategy return.
+
+## 6. Primary outcomes
+
+Executable forward returns at exact holding horizons:
 
 - 1 minute
 - 2 minutes
@@ -50,108 +83,209 @@ Forward returns at exact clock-time horizons:
 - 30 minutes
 - 60 minutes
 
-If the exact future minute is unavailable, the outcome is missing. A later bar must not be substituted.
+Primary v0.2 endpoint:
 
-Primary short-horizon research endpoint for v0.1:
+- **5-minute, delay-0, base-friction-adjusted return**
 
-- **5-minute base-friction-adjusted return**
+If the exact entry or exit minute required by the model is unavailable, the executable outcome is missing. A later bar is never substituted.
 
-Supporting outcomes:
+Supporting outcomes include gross executable return, signal-close benchmark return, MFE/MAE, median, positive-return rate, latency sensitivity, session-specific results, and missingness diagnostics.
 
-- gross 5-minute return
-- 1/2/10/15/30/60-minute returns
-- MFE / MAE
-- positive-return rate
-- median return
+## 7. Short-exit experiments
 
-## 5. Pre-specified short-exit experiments
-
-The initial barrier family is frozen as:
+Frozen diagnostic barrier family:
 
 - TP +2% / SL -1%
 - TP +3% / SL -2%
 - TP +5% / SL -3%
 - TP +10% / SL -5%
 
-A 1-minute bar touching both TP and SL is `ambiguous` and is not assigned a favorable sequence.
+Rules:
 
-These four pairs are a diagnostic family, not permission to endlessly search arbitrary TP/SL combinations. Any expanded grid requires a new protocol version and validation discipline.
+- barriers begin only after the executable entry exists,
+- elapsed clock time determines the timeout window,
+- a bar touching TP and SL is `ambiguous`,
+- ambiguous rows are never assigned a favorable ordering,
+- a stop-market gap through the stop exits at the first observed bar open rather than the requested stop price,
+- if the requested timeout minute is not tradable/observable, the timeout outcome is unresolved rather than fabricated from an earlier close.
 
-## 6. Execution-friction sensitivity
+Any expanded TP/SL grid requires a new protocol version.
 
-The v0.1 friction scenarios are frozen as:
+## 8. Execution-friction sensitivity
 
-- light: 10 bps half-spread + 10 bps slippage, minimum half-spread 0.5 cent
-- base: 25 bps half-spread + 25 bps slippage, minimum half-spread 1 cent
-- stress: 75 bps half-spread + 75 bps slippage, minimum half-spread 2 cents
+Frozen scenarios:
 
-The **base** scenario is the primary v0.1 research scenario. Light and stress are sensitivity checks.
+- light: 10 bps half-spread + 10 bps adverse slippage, minimum half-spread 0.5 cent
+- base: 25 bps half-spread + 25 bps adverse slippage, minimum half-spread 1 cent
+- stress: 75 bps half-spread + 75 bps adverse slippage, minimum half-spread 2 cents
 
-These are assumptions, not claims about actual fills.
+The base scenario is primary. These are sensitivity assumptions, not claims about historical quoted spreads or broker fills.
 
-## 7. Point-in-time feature families
+A candidate edge must not depend on the light scenario alone. Quote/BBO or tick-level validation is required before live deployment.
 
-Allowed initial feature families:
+## 9. Point-in-time feature rules
+
+All model features are explicit opt-ins in `MODEL_FEATURE_COLUMNS`. Newly added dataset columns do not automatically become model inputs.
+
+Initial allowed families:
 
 - threshold level
-- event price / prior close
-- session label and minutes from regular open
-- cumulative and short-window volume
-- volume acceleration
+- signal price and prior close
+- session label and minutes from official regular open
+- event/cumulative/clock-window volume
+- clock-window volume acceleration
 - historical same-time RVOL
-- session VWAP distance
+- extended-session VWAP distance
+- regular-session-anchored VWAP distance
 - distance from high-of-day observed so far
-- trailing 5/15/30-minute return
-- trailing 5/15/30-minute volatility
+- exact-clock trailing 5/15/30-minute return
+- clock-window trailing volatility using consecutive minutes only
 - premarket return and volume
-- point-in-time market cap / shares outstanding when available
-- official halt annotations for outcome/risk analysis
+- common-stock/exchange taxonomy
 
-No feature may use the completed day's close/high/volume, future halt information, or future bars as an input to the entry decision.
+Forbidden model inputs include:
 
-## 8. Data partitions
+- completed-day high/close/volume/dollar-volume
+- future returns, MFE/MAE, TP/SL outcomes
+- executable entry price when scoring is intended before that entry
+- future halt information
+- ticker identity as an initial predictive feature
+- provider market cap/share-count fields until publication-time safety is established
 
-The September 2026 sample already used during engineering is designated **debug-only** and is excluded from formal validation claims.
+## 10. Sessions and exchange calendar
 
-Subject to provider historical availability, the initial frozen chronological partitions are:
+Official U.S. equity exchange-calendar data is used for holidays and regular-session early closes.
 
-- Development / exploratory research: **2024-10-01 through 2026-04-30**
+Premarket, regular, and after-hours results must be reported separately. They may not be assumed to share the same microstructure or execution quality merely because the same stress-cost function is applied.
+
+## 11. Missing bars and finalized historical aggregates
+
+A missing one-minute aggregate does not mean that a later bar may be substituted. Clock-time features and outcomes preserve the requested wall-clock window.
+
+Historical finalized one-minute bars may contain late/corrected trades that were not present in exactly the same form in real time. Historical 1-minute research is therefore a discovery/validation layer, not the final proof of live reproducibility.
+
+Any strategy that survives historical validation must subsequently survive raw trade/quote or realtime paper-trading validation.
+
+## 12. Data partitions
+
+September 2026 data already inspected during engineering remains debug-only.
+
+Initial chronological partitions:
+
+- Development / exploratory: **2024-10-01 through 2026-04-30**
 - Validation / walk-forward design: **2026-05-01 through 2026-06-30**
 - Final untouched holdout: **2026-07-01 through 2026-08-31**
-- Engineering/debug sample: **2026-09-01 onward**, not used as an untouched test
+- Engineering/debug: **2026-09-01 onward**
 
-The final holdout must not be queried for strategy selection, parameter tuning, feature selection, or threshold selection until a candidate strategy and evaluation procedure are frozen.
+Before querying validation/holdout for strategy selection, development data must show adequate independent ticker-day/event counts and market-regime coverage. If the validation/holdout windows are changed for sample-size reasons, the rule must be changed **before either period is inspected**.
 
-## 9. First full-universe research sequence
+## 13. Statistical dependence and uncertainty
 
-Before touching validation or holdout data:
+Multiple threshold rows from one ticker-day are not independent experiments.
 
-1. Run a full-universe two-week development slice to validate data quality and event counts.
-2. Expand development data in chronological chunks.
-3. Produce descriptive statistics without selecting a final strategy from one best-looking cell.
-4. Look for broad, stable neighborhoods rather than a single optimum.
-5. Freeze a candidate rule/model and evaluation procedure.
-6. Run chronological validation / walk-forward analysis.
-7. Only after that, evaluate the untouched final holdout once.
+Required reporting includes:
 
-## 10. Required integrity gates
+- raw event count
+- unique ticker-day cluster count
+- unique trading-day count
+- mean and median
+- positive-return rate
+- ticker-day cluster bootstrap interval
+- trading-day cluster bootstrap interval
+- concentration by ticker/day/time period
 
-A production research dataset must pass the automated dataset audit:
+A large raw row count cannot substitute for independent-cluster coverage.
+
+## 14. Multiple testing discipline
+
+Research must prefer broad stable neighborhoods to isolated best cells.
+
+No result is called robust merely because one combination of threshold, RVOL bucket, session, price bucket, or TP/SL looks strong. Candidate selection must account for parameter sensitivity, neighboring specifications, time stability, and the number of exploratory cuts performed.
+
+Once a candidate rule/model and evaluation procedure are frozen, validation and final holdout are chronological and untouched by further tuning.
+
+## 15. Data acquisition architecture
+
+Massive API responses are an expensive acquisition layer, not the research loop.
+
+Collection rules:
+
+- successful historical responses are cached without credentials,
+- cache hits do not incur API pacing sleeps,
+- 429 and transient 5xx/network failures use bounded retries/backoff,
+- authentication failures remain fatal,
+- collection is split into bounded chronological chunks,
+- daily checkpoints and manifests distinguish complete/no-event/closed/error states,
+- a completed checkpoint is reused instead of re-downloaded,
+- unexpected failures do not silently turn a partial dataset into a valid one.
+
+Research calculations, strategy changes, and ML experiments should operate on already-collected data whenever possible.
+
+## 16. Required dataset integrity gates
+
+A formal dataset must pass automated audit checks including:
 
 - no duplicate event keys
 - no debug candidate limit
-- required forward horizons present
-- gross and friction-adjusted missingness aligned
-- trailing-return features separated from future-return outcomes
-- positive entry/reference prices
-- unexpected API/code failures must stop the run rather than silently skip data
+- nominal/unadjusted universe provenance
+- discovery threshold no higher than the lowest event threshold
+- no completed-day/fundamental leakage columns
+- next-minute-open primary entry provenance
+- required exact-clock horizons
+- gross/net missingness alignment
+- no executable outcome without executable entry
+- latency sensitivity fields present
+- explicit model allowlist complete and future-safe
+- non-overlapping session labels
+- positive observable prices
 
-## 11. Interpretation rules
+## 17. Research sequence
 
-- Means must be accompanied by medians and sample sizes.
-- Win rate alone is insufficient.
-- Concentration in a few tickers/days must be examined.
-- High-threshold events with few observations are not treated as established effects.
-- Results must be checked across price buckets, time-of-day, market-cap/liquidity regimes, and time periods before being called robust.
-- A result that disappears under modest friction or neighboring parameters is not considered a durable edge.
-- `No edge found` is a valid research outcome.
+1. Finish engineering/debug tests.
+2. Run bounded full-universe development chunks and inspect manifests/data quality.
+3. Accumulate development history without inspecting validation/holdout.
+4. Produce descriptive and cluster-aware statistics.
+5. Establish a simple rule-based baseline.
+6. Investigate point-in-time feature predictive power and stable interactions.
+7. Introduce tabular ML only after a baseline phenomenon exists.
+8. Freeze candidate strategy/model and evaluation procedure.
+9. Perform chronological validation/walk-forward analysis.
+10. Evaluate final untouched holdout once.
+11. Validate finalists on finer trade/quote data and realtime paper trading.
+12. Build portfolio/broker mechanics before tiny live-money deployment.
+
+## 18. ML role
+
+Initial ML is an event-quality/edge estimator, not a universal stock-price oracle.
+
+Examples:
+
+- expected 5-minute base-friction-adjusted return after an observable event,
+- probability a defined TP is reached before a defined SL,
+- ranking simultaneous executable signals.
+
+Initial model families should be simple and auditable: regularized linear/logistic models and tree/boosting models. Random train/test splits are not permitted. Deep sequence models are deferred until finer trade/quote sequences justify them.
+
+Risk and execution controls always outrank an ML score.
+
+## 19. Portfolio/live requirements after an event-level edge exists
+
+Before paper/live claims, add:
+
+- simultaneous-signal allocation
+- position sizing
+- rules for later thresholds after an existing position
+- max positions/trades per day
+- daily loss stop and kill switch
+- capital/buying-power/settlement constraints
+- partial fills and order rejection
+- broker/API latency and reconnect/reconciliation behavior
+- halt/resume handling
+
+Event-study expectancy alone is not a tradable portfolio backtest.
+
+## 20. Interpretation
+
+`No edge found` is a valid successful research result.
+
+A candidate edge is credible only if it remains positive after primary friction, does not rely on a few ticker-days, is stable across nearby specifications and time segments, survives chronological validation/holdout, and later reproduces under finer execution data or realtime paper trading.
