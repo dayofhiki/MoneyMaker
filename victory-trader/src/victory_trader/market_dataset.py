@@ -15,7 +15,11 @@ from .halts import annotate_frame_with_halts, fetch_nasdaq_halts
 from .history import load_target_with_history
 from .market_calendar import previous_us_equity_trading_day
 from .massive_client import MassiveClient
-from .universe import fetch_security_metadata, split_tickers_from_payload
+from .universe import (
+    fetch_research_universe_metadata,
+    fetch_security_metadata,
+    split_tickers_from_payload,
+)
 
 
 DATASET_SCHEMA_VERSION = "0.2"
@@ -161,8 +165,6 @@ def previous_market_payload(
     request_interval_seconds: float = 0.0,
 ) -> tuple[date, dict]:
     """Load the official prior U.S. equity trading day's grouped summary once."""
-    # Kept in the signature for backwards-compatible callers/tests. Calendar
-    # lookup replaces provider probing across weekends and holidays.
     del max_calendar_lookback, request_interval_seconds
     previous_day = previous_us_equity_trading_day(day)
     payload = grouped_daily(client, previous_day)
@@ -226,6 +228,13 @@ def build_market_event_dataset(
     if exclude_split_days and candidates:
         split_tickers = split_tickers_from_payload(client.splits_on(day))
 
+    # Formal runs use Massive's point-in-time all-tickers endpoint once per day,
+    # paginated in batches of up to 1000. This replaces one metadata request per
+    # candidate. Lightweight mocks keep the old per-ticker fallback for tests.
+    metadata_by_ticker = None
+    if enforce_common_stock and candidates and hasattr(client, "reference_tickers"):
+        metadata_by_ticker = fetch_research_universe_metadata(client, day)
+
     frames: list[pd.DataFrame] = []
     for candidate in candidates:
         if candidate.ticker in split_tickers:
@@ -234,10 +243,16 @@ def build_market_event_dataset(
 
         metadata = None
         if enforce_common_stock:
-            metadata = fetch_security_metadata(client, candidate.ticker, day)
-            if not metadata.is_research_common_stock:
-                stats.metadata_excluded += 1
-                continue
+            if metadata_by_ticker is not None:
+                metadata = metadata_by_ticker.get(candidate.ticker)
+                if metadata is None or not metadata.is_research_common_stock:
+                    stats.metadata_excluded += 1
+                    continue
+            else:
+                metadata = fetch_security_metadata(client, candidate.ticker, day)
+                if not metadata.is_research_common_stock:
+                    stats.metadata_excluded += 1
+                    continue
 
         bars, history_bars = load_target_with_history(
             client,
@@ -272,9 +287,6 @@ def build_market_event_dataset(
         study["debug_candidate_limit"] = max_candidates
         study["split_day"] = False
         if metadata is not None:
-            # Identity/taxonomy only. Provider fundamentals such as historical market
-            # cap/shares are deliberately excluded until publication-time semantics
-            # are guaranteed for model use.
             study["security_type"] = metadata.security_type
             study["primary_exchange"] = metadata.primary_exchange
         frames.append(study)
