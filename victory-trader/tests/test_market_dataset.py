@@ -34,7 +34,15 @@ def test_select_candidates_filters_price_and_move():
 
     assert [item.ticker for item in result] == ["AAA"]
     assert result[0].high_return_pct == pytest.approx(30.0)
-    assert result[0].day_dollar_volume == pytest.approx(2_300_000.0)
+
+
+def test_completed_day_liquidity_filter_is_forbidden():
+    with pytest.raises(ValueError, match="completed-day dollar-volume"):
+        select_candidates(
+            grouped([{"T": "AAA", "c": 2.0}]),
+            grouped([{"T": "AAA", "h": 2.5, "c": 2.4, "v": 1000}]),
+            min_day_dollar_volume=1.0,
+        )
 
 
 def _candidate(ticker: str, high_return_pct: float) -> Candidate:
@@ -52,18 +60,8 @@ def _candidate(ticker: str, high_return_pct: float) -> Candidate:
 
 def test_debug_candidate_limit_does_not_depend_on_eventual_return_rank():
     trading_day = date(2026, 9, 15)
-    first = [
-        _candidate("AAA", 25.0),
-        _candidate("BBB", 500.0),
-        _candidate("CCC", 40.0),
-        _candidate("DDD", 200.0),
-    ]
-    second = [
-        _candidate("AAA", 900.0),
-        _candidate("BBB", 21.0),
-        _candidate("CCC", 700.0),
-        _candidate("DDD", 22.0),
-    ]
+    first = [_candidate("AAA", 25.0), _candidate("BBB", 500.0), _candidate("CCC", 40.0), _candidate("DDD", 200.0)]
+    second = [_candidate("AAA", 900.0), _candidate("BBB", 21.0), _candidate("CCC", 700.0), _candidate("DDD", 22.0)]
 
     chosen_first = limit_candidates_for_debug(first, day=trading_day, max_candidates=2)
     chosen_second = limit_candidates_for_debug(second, day=trading_day, max_candidates=2)
@@ -74,11 +72,7 @@ def test_debug_candidate_limit_does_not_depend_on_eventual_return_rank():
 
 def test_debug_candidate_limit_requires_positive_count():
     with pytest.raises(ValueError):
-        limit_candidates_for_debug(
-            [_candidate("AAA", 25.0)],
-            day=date(2026, 9, 15),
-            max_candidates=0,
-        )
+        limit_candidates_for_debug([_candidate("AAA", 25.0)], day=date(2026, 9, 15), max_candidates=0)
 
 
 class FakeClient:
@@ -88,9 +82,7 @@ class FakeClient:
         self.exchange = exchange
         self.market = {
             "2026-09-14": grouped([{"T": "AAA", "c": 2.00}]),
-            "2026-09-15": grouped(
-                [{"T": "AAA", "h": 3.20, "c": 2.80, "v": 1_000_000, "vw": 2.60}]
-            ),
+            "2026-09-15": grouped([{"T": "AAA", "h": 3.20, "c": 2.80, "v": 1_000_000, "vw": 2.60}]),
         }
 
     def _get(self, path, params=None):
@@ -125,6 +117,7 @@ class FakeClient:
                 {"t": 120_000, "o": 2.40, "h": 2.65, "l": 2.35, "c": 2.60, "v": 6000},
                 {"t": 180_000, "o": 2.60, "h": 3.05, "l": 2.55, "c": 3.00, "v": 8000},
                 {"t": 240_000, "o": 3.00, "h": 3.20, "l": 2.90, "c": 3.10, "v": 9000},
+                {"t": 300_000, "o": 3.10, "h": 3.15, "l": 3.00, "c": 3.05, "v": 7000},
             ]
         }
 
@@ -134,6 +127,7 @@ def test_build_market_event_dataset_end_to_end_without_network():
         FakeClient(),
         date(2026, 9, 15),
         thresholds_pct=(20, 30, 50),
+        min_high_return_pct=20,
         horizons=(1, 2),
         request_interval_seconds=0,
     )
@@ -143,25 +137,31 @@ def test_build_market_event_dataset_end_to_end_without_network():
     assert set(result["ticker"]) == {"AAA"}
     assert set(result["security_type"]) == {"CS"}
     assert set(result["primary_exchange"]) == {"XNAS"}
-    assert set(result["market_cap"]) == {50_000_000.0}
-    assert set(result["discovered_candidate_count"]) == {1}
+    assert "market_cap" not in result.columns
+    assert "day_high" not in result.columns
+    assert set(result["source_prices_adjusted"]) == {False}
+    assert set(result["discovery_high_return_threshold_pct"]) == {20.0}
     assert result["debug_candidate_limit"].isna().all()
     assert "return_1m_pct" in result.columns
+    assert "delay1_return_1m_pct" in result.columns
+
+
+def test_discovery_threshold_cannot_exceed_lowest_studied_event():
+    with pytest.raises(ValueError, match="future-selected"):
+        build_market_event_dataset(
+            FakeClient(),
+            date(2026, 9, 15),
+            thresholds_pct=(10, 20),
+            min_high_return_pct=20,
+            request_interval_seconds=0,
+        )
 
 
 def test_split_day_is_excluded():
-    result = build_market_event_dataset(
-        FakeClient(split=True),
-        date(2026, 9, 15),
-        request_interval_seconds=0,
-    )
+    result = build_market_event_dataset(FakeClient(split=True), date(2026, 9, 15), request_interval_seconds=0)
     assert result.empty
 
 
 def test_non_common_stock_is_excluded():
-    result = build_market_event_dataset(
-        FakeClient(security_type="ETF"),
-        date(2026, 9, 15),
-        request_interval_seconds=0,
-    )
+    result = build_market_event_dataset(FakeClient(security_type="ETF"), date(2026, 9, 15), request_interval_seconds=0)
     assert result.empty
