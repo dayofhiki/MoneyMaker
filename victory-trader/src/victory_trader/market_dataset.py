@@ -191,7 +191,7 @@ def build_market_event_dataset(
     annotate_halts: bool = False,
     build_stats: DayBuildStats | None = None,
 ) -> pd.DataFrame:
-    """Build one day's point-in-time momentum research dataset."""
+    """Build one day's point-in-time regular-session momentum research dataset."""
     del request_interval_seconds
     thresholds = tuple(sorted({float(value) for value in thresholds_pct}))
     if not thresholds:
@@ -256,6 +256,8 @@ def build_market_event_dataset(
             thresholds_pct=thresholds,
             horizons=horizons,
             history_bars=history_bars,
+            event_session_scope="regular",
+            require_regular_entry=True,
         )
         if study.empty:
             stats.no_events += 1
