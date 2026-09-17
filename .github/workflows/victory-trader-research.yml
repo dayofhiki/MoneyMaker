@@ -83,15 +83,20 @@ jobs:
           fi
           victory-trader multi-day-dataset "${ARGS[@]}" | tee artifacts/build.log
 
+      - name: Audit dataset integrity
+        shell: bash
+        run: |
+          AUDIT_ARGS=(data/events/research.parquet)
+          if [ -n "${{ inputs.max_candidates }}" ]; then
+            AUDIT_ARGS+=(--allow-debug-sample)
+          fi
+          victory-trader audit-dataset "${AUDIT_ARGS[@]}" | tee artifacts/audit.txt
+
       - name: Analyze dataset
         shell: bash
         run: |
-          if [ -f data/events/research.parquet ]; then
-            victory-trader analyze-dataset data/events/research.parquet --horizon 5 \
-              | tee artifacts/analysis.txt
-          else
-            echo "No dataset file was produced." | tee artifacts/analysis.txt
-          fi
+          victory-trader analyze-dataset data/events/research.parquet --horizon 5 \
+            | tee artifacts/analysis.txt
 
       - name: Upload research artifacts
         uses: actions/upload-artifact@v4
@@ -100,6 +105,7 @@ jobs:
           path: |
             victory-trader/data/events/research.parquet
             victory-trader/artifacts/build.log
+            victory-trader/artifacts/audit.txt
             victory-trader/artifacts/analysis.txt
             victory-trader/artifacts/sample-warning.txt
           if-no-files-found: ignore
