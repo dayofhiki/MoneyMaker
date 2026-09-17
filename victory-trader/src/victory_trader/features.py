@@ -11,9 +11,11 @@ from .events import CrossingEvent
 
 NEW_YORK = ZoneInfo("America/New_York")
 UTC = ZoneInfo("UTC")
+MINUTE_MS = 60_000
 PREMARKET_START = time(4, 0)
 REGULAR_START = time(9, 30)
 REGULAR_END = time(16, 0)
+AFTER_HOURS_END = time(20, 0)
 
 
 @dataclass(frozen=True)
@@ -30,6 +32,8 @@ class EventFeatures:
     rvol_history_days: int
     session_vwap: float | None
     vwap_distance_pct: float | None
+    regular_vwap: float | None
+    regular_vwap_distance_pct: float | None
     hod_distance_pct: float | None
     trailing_return_5m_pct: float | None
     trailing_return_15m_pct: float | None
@@ -56,27 +60,47 @@ def _minute_of_day(dt: datetime) -> int:
     return dt.hour * 60 + dt.minute
 
 
-def _window(frame: pd.DataFrame, end_idx: int, minutes: int) -> pd.DataFrame:
-    start = max(0, end_idx - minutes + 1)
-    return frame.iloc[start : end_idx + 1]
+def _clock_window(frame: pd.DataFrame, end_timestamp_ms: int, minutes: int) -> pd.DataFrame:
+    """Return bars whose minute starts fall in the last `minutes` clock minutes.
+
+    Missing aggregate bars remain missing; they do not stretch a five-minute
+    feature into "five observed bars" spanning a longer wall-clock interval.
+    """
+    if minutes <= 0:
+        raise ValueError("minutes must be positive")
+    start = end_timestamp_ms - (minutes - 1) * MINUTE_MS
+    return frame.loc[(frame["t"] >= start) & (frame["t"] <= end_timestamp_ms)]
 
 
-def _return_over_window(frame: pd.DataFrame, end_idx: int, minutes: int) -> float | None:
-    start_idx = end_idx - minutes
-    if start_idx < 0:
+def _return_over_clock_window(
+    frame: pd.DataFrame,
+    end_timestamp_ms: int,
+    minutes: int,
+) -> float | None:
+    target = end_timestamp_ms - minutes * MINUTE_MS
+    matches = frame.loc[frame["t"] == target, "c"]
+    if len(matches) != 1:
         return None
-    start_price = float(frame.iloc[start_idx]["c"])
+    start_price = float(matches.iloc[0])
     if start_price <= 0:
         return None
-    end_price = float(frame.iloc[end_idx]["c"])
+    end_matches = frame.loc[frame["t"] == end_timestamp_ms, "c"]
+    if len(end_matches) != 1:
+        return None
+    end_price = float(end_matches.iloc[0])
     return (end_price / start_price - 1.0) * 100.0
 
 
-def _volatility(frame: pd.DataFrame, end_idx: int, minutes: int) -> float | None:
-    window = _window(frame, end_idx, minutes + 1)
+def _volatility(frame: pd.DataFrame, end_timestamp_ms: int, minutes: int) -> float | None:
+    start = end_timestamp_ms - minutes * MINUTE_MS
+    window = frame.loc[(frame["t"] >= start) & (frame["t"] <= end_timestamp_ms)].copy()
     if len(window) < 3:
         return None
-    returns = pd.to_numeric(window["c"], errors="coerce").pct_change().dropna()
+    window = window.sort_values("t")
+    prices = pd.to_numeric(window["c"], errors="coerce")
+    returns = prices.pct_change()
+    consecutive = pd.to_numeric(window["t"], errors="coerce").diff().eq(MINUTE_MS)
+    returns = returns.loc[consecutive].dropna()
     if len(returns) < 2:
         return None
     return float(returns.std(ddof=1) * 100.0)
@@ -84,26 +108,30 @@ def _volatility(frame: pd.DataFrame, end_idx: int, minutes: int) -> float | None
 
 def _volume_acceleration(
     frame: pd.DataFrame,
-    end_idx: int,
+    end_timestamp_ms: int,
     recent_minutes: int,
     baseline_minutes: int = 20,
 ) -> float | None:
-    recent_start = max(0, end_idx - recent_minutes + 1)
-    recent = frame.iloc[recent_start : end_idx + 1]
-    baseline_end = recent_start
-    baseline_start = max(0, baseline_end - baseline_minutes)
-    baseline = frame.iloc[baseline_start:baseline_end]
+    recent = _clock_window(frame, end_timestamp_ms, recent_minutes)
+    recent_start = end_timestamp_ms - (recent_minutes - 1) * MINUTE_MS
+    baseline_end = recent_start - MINUTE_MS
+    baseline_start = baseline_end - (baseline_minutes - 1) * MINUTE_MS
+    baseline = frame.loc[(frame["t"] >= baseline_start) & (frame["t"] <= baseline_end)]
     if recent.empty or baseline.empty:
         return None
 
-    recent_rate = float(pd.to_numeric(recent["v"], errors="coerce").sum()) / len(recent)
-    baseline_rate = float(pd.to_numeric(baseline["v"], errors="coerce").sum()) / len(baseline)
+    # Missing one-minute aggregates represent no eligible aggregate volume for
+    # that minute. Divide by wall-clock minutes, not by the number of returned rows.
+    recent_rate = float(pd.to_numeric(recent["v"], errors="coerce").fillna(0.0).sum()) / recent_minutes
+    baseline_rate = float(pd.to_numeric(baseline["v"], errors="coerce").fillna(0.0).sum()) / baseline_minutes
     if baseline_rate <= 0:
         return None
     return recent_rate / baseline_rate
 
 
-def _session_vwap(frame: pd.DataFrame) -> float | None:
+def _volume_weighted_price(frame: pd.DataFrame) -> float | None:
+    if frame.empty:
+        return None
     volume = pd.to_numeric(frame["v"], errors="coerce").fillna(0.0)
     if float(volume.sum()) <= 0:
         return None
@@ -161,8 +189,7 @@ def _historical_rvol(
         return None, None, 0
 
     average_cumulative = sum(cumulative_samples) / len(cumulative_samples)
-    valid_window_samples = [value for value in window_samples if value >= 0]
-    average_5m = sum(valid_window_samples) / len(valid_window_samples) if valid_window_samples else 0.0
+    average_5m = sum(window_samples) / len(window_samples) if window_samples else 0.0
 
     cumulative_rvol = current_cumulative_volume / average_cumulative if average_cumulative > 0 else None
     five_min_rvol = current_5m_volume / average_5m if average_5m > 0 else None
@@ -190,7 +217,7 @@ def extract_event_features(
     local_time = event_dt.time().replace(tzinfo=None)
     is_premarket = PREMARKET_START <= local_time < REGULAR_START
     is_regular = REGULAR_START <= local_time < REGULAR_END
-    is_after_hours = local_time >= REGULAR_END
+    is_after_hours = REGULAR_END <= local_time < AFTER_HOURS_END
 
     same_date_mask = observed["t"].map(lambda x: timestamp_et(int(x)).date() == event_dt.date())
     observed = observed.loc[same_date_mask].reset_index(drop=True)
@@ -198,9 +225,9 @@ def extract_event_features(
 
     event_volume = float(observed.iloc[event_idx]["v"])
     cumulative_volume = float(pd.to_numeric(observed["v"], errors="coerce").fillna(0.0).sum())
-    volume_5m = float(pd.to_numeric(_window(observed, event_idx, 5)["v"], errors="coerce").fillna(0.0).sum())
-    volume_15m = float(pd.to_numeric(_window(observed, event_idx, 15)["v"], errors="coerce").fillna(0.0).sum())
-    volume_30m = float(pd.to_numeric(_window(observed, event_idx, 30)["v"], errors="coerce").fillna(0.0).sum())
+    volume_5m = float(pd.to_numeric(_clock_window(observed, event.timestamp_ms, 5)["v"], errors="coerce").fillna(0.0).sum())
+    volume_15m = float(pd.to_numeric(_clock_window(observed, event.timestamp_ms, 15)["v"], errors="coerce").fillna(0.0).sum())
+    volume_30m = float(pd.to_numeric(_clock_window(observed, event.timestamp_ms, 30)["v"], errors="coerce").fillna(0.0).sum())
 
     rvol_cumulative, rvol_5m, rvol_days = _historical_rvol(
         history_bars,
@@ -209,20 +236,26 @@ def extract_event_features(
         volume_5m,
     )
 
-    session_vwap = _session_vwap(observed)
+    minute_index = observed["t"].map(lambda x: _minute_of_day(timestamp_et(int(x))))
+    extended_start = PREMARKET_START.hour * 60 + PREMARKET_START.minute
+    regular_start = REGULAR_START.hour * 60 + REGULAR_START.minute
+    extended_observed = observed.loc[minute_index >= extended_start]
+    regular_observed = observed.loc[minute_index >= regular_start] if local_time >= REGULAR_START else observed.iloc[0:0]
+
+    session_vwap = _volume_weighted_price(extended_observed)
     vwap_distance = None if session_vwap is None or session_vwap <= 0 else (event.price / session_vwap - 1.0) * 100.0
+    regular_vwap = _volume_weighted_price(regular_observed)
+    regular_vwap_distance = None if regular_vwap is None or regular_vwap <= 0 else (event.price / regular_vwap - 1.0) * 100.0
 
     high_to_event = float(pd.to_numeric(observed["h"], errors="coerce").max())
     hod_distance = None if high_to_event <= 0 else (event.price / high_to_event - 1.0) * 100.0
 
-    premarket_rows = []
-    for idx, row in observed.iterrows():
-        dt = timestamp_et(int(row["t"]))
-        lt = dt.time().replace(tzinfo=None)
-        if PREMARKET_START <= lt < REGULAR_START:
-            premarket_rows.append(idx)
-    if premarket_rows:
-        premarket = observed.iloc[premarket_rows]
+    premarket_mask = minute_index.between(
+        PREMARKET_START.hour * 60 + PREMARKET_START.minute,
+        REGULAR_START.hour * 60 + REGULAR_START.minute - 1,
+    )
+    premarket = observed.loc[premarket_mask]
+    if not premarket.empty:
         pm_first = float(premarket.iloc[0]["o"])
         pm_last = float(premarket.iloc[-1]["c"])
         premarket_return = None if pm_first <= 0 else (pm_last / pm_first - 1.0) * 100.0
@@ -240,20 +273,22 @@ def extract_event_features(
         volume_5m=volume_5m,
         volume_15m=volume_15m,
         volume_30m=volume_30m,
-        volume_accel_1m_vs_prior20m=_volume_acceleration(observed, event_idx, 1, 20),
-        volume_accel_5m_vs_prior20m=_volume_acceleration(observed, event_idx, 5, 20),
+        volume_accel_1m_vs_prior20m=_volume_acceleration(observed, event.timestamp_ms, 1, 20),
+        volume_accel_5m_vs_prior20m=_volume_acceleration(observed, event.timestamp_ms, 5, 20),
         rvol_cumulative_20d=rvol_cumulative,
         rvol_5m_20d=rvol_5m,
         rvol_history_days=rvol_days,
         session_vwap=session_vwap,
         vwap_distance_pct=vwap_distance,
+        regular_vwap=regular_vwap,
+        regular_vwap_distance_pct=regular_vwap_distance,
         hod_distance_pct=hod_distance,
-        trailing_return_5m_pct=_return_over_window(observed, event_idx, 5),
-        trailing_return_15m_pct=_return_over_window(observed, event_idx, 15),
-        trailing_return_30m_pct=_return_over_window(observed, event_idx, 30),
-        volatility_5m_pct=_volatility(observed, event_idx, 5),
-        volatility_15m_pct=_volatility(observed, event_idx, 15),
-        volatility_30m_pct=_volatility(observed, event_idx, 30),
+        trailing_return_5m_pct=_return_over_clock_window(observed, event.timestamp_ms, 5),
+        trailing_return_15m_pct=_return_over_clock_window(observed, event.timestamp_ms, 15),
+        trailing_return_30m_pct=_return_over_clock_window(observed, event.timestamp_ms, 30),
+        volatility_5m_pct=_volatility(observed, event.timestamp_ms, 5),
+        volatility_15m_pct=_volatility(observed, event.timestamp_ms, 15),
+        volatility_30m_pct=_volatility(observed, event.timestamp_ms, 30),
         premarket_return_pct=premarket_return,
         premarket_volume=premarket_volume,
         minutes_from_regular_open=minutes_from_open,
