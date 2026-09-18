@@ -1,5 +1,5 @@
 {
-  "request_id": 20,
-  "operation": "state_breadth_ev_risk",
-  "note": "Test whether contemporaneous leave-one-out runner breadth improves State EV + Risk calibration across January-March 2026."
+  "request_id": 21,
+  "operation": "state_action_value",
+  "note": "Train direct base-net action values for 5m/10m/15m actions with affine train-only calibration and runner breadth; LOMO January-March 2026."
 }
