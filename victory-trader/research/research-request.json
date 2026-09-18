@@ -1,5 +1,5 @@
 {
-  "request_id": 42,
-  "operation": "state_robust_median_action_value",
-  "note": "Run the pre-registered State Robust Median Action Value v1.4 experiment on the unchanged January-March development state panels only."
+  "request_id": 43,
+  "operation": "state_pairwise_buy_wait",
+  "note": "Run the pre-registered State Pairwise Buy-Wait Preference v1.5 experiment on the unchanged January-March development panels only; no fresh month."
 }
