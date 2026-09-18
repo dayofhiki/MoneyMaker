@@ -15,6 +15,7 @@ jobs:
   request:
     runs-on: ubuntu-latest
     outputs:
+      operation: ${{ steps.read.outputs.operation }}
       start_date: ${{ steps.read.outputs.start_date }}
       end_date: ${{ steps.read.outputs.end_date }}
       chunk_days: ${{ steps.read.outputs.chunk_days }}
@@ -37,18 +38,25 @@ jobs:
               )
           )
 
-          required = ("request_id", "start_date", "end_date", "chunk_days", "annotate_halts")
+          operation = str(payload.get("operation", "research_month"))
+          required = ("request_id",)
+          if operation == "research_month":
+              required += ("start_date", "end_date", "chunk_days", "annotate_halts")
+          elif operation != "candidate_v2_development":
+              raise SystemExit(f"unsupported research operation: {operation}")
+
           missing = [key for key in required if key not in payload]
           if missing:
               raise SystemExit(f"research request missing keys: {missing}")
 
           values = {
+              "operation": operation,
               "request_id": str(payload["request_id"]),
-              "start_date": str(payload["start_date"]),
-              "end_date": str(payload["end_date"]),
-              "chunk_days": str(payload["chunk_days"]),
+              "start_date": str(payload.get("start_date", "")),
+              "end_date": str(payload.get("end_date", "")),
+              "chunk_days": str(payload.get("chunk_days", "")),
               "max_candidates": str(payload.get("max_candidates", "")),
-              "annotate_halts": "true" if bool(payload["annotate_halts"]) else "false",
+              "annotate_halts": "true" if bool(payload.get("annotate_halts", True)) else "false",
           }
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
               for key, value in values.items():
@@ -56,12 +64,14 @@ jobs:
           print(
               "Research request",
               values["request_id"],
+              values["operation"],
               values["start_date"],
               values["end_date"],
           )
           PY
 
   research:
+    if: ${{ needs.request.outputs.operation == 'research_month' }}
     needs: request
     uses: ./.github/workflows/victory-trader-research.yml
     with:
@@ -71,3 +81,85 @@ jobs:
       max_candidates: ${{ needs.request.outputs.max_candidates }}
       annotate_halts: ${{ needs.request.outputs.annotate_halts == 'true' }}
     secrets: inherit
+
+  candidate-v2-development:
+    if: ${{ needs.request.outputs.operation == 'candidate_v2_development' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test Candidate v2 research code
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_candidate_v2_research.py
+
+      - name: Download January enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-research-analysis-35309972523
+          path: victory-trader/dev-data/jan
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35312367550'
+
+      - name: Download February enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-edge-discovery-35290389374
+          path: victory-trader/dev-data/feb
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35291798289'
+
+      - name: Download March enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-enriched-2026-03-v05
+          path: victory-trader/dev-data/mar
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35284485307'
+
+      - name: Run leave-one-month-out Candidate v2 development
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          JAN="$(find dev-data/jan -name research-enriched.parquet -print -quit)"
+          FEB="$(find dev-data/feb -name research-enriched.parquet -print -quit)"
+          MAR="$(find dev-data/mar -name research-enriched.parquet -print -quit)"
+          test -n "$JAN" || { echo "January enriched dataset not found"; exit 1; }
+          test -n "$FEB" || { echo "February enriched dataset not found"; exit 1; }
+          test -n "$MAR" || { echo "March enriched dataset not found"; exit 1; }
+
+          python -m victory_trader.candidate_v2_research \
+            --dataset "2026-01=$JAN" \
+            --dataset "2026-02=$FEB" \
+            --dataset "2026-03=$MAR" \
+            --report artifacts/candidate-v2-development.txt \
+            --details-csv artifacts/candidate-v2-details.csv \
+            --summary-csv artifacts/candidate-v2-summary.csv \
+            | tee artifacts/candidate-v2-development.log
+
+      - name: Upload Candidate v2 development artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-candidate-v2-development-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/candidate-v2-development.txt
+            victory-trader/artifacts/candidate-v2-development.log
+            victory-trader/artifacts/candidate-v2-details.csv
+            victory-trader/artifacts/candidate-v2-summary.csv
+          if-no-files-found: error
+          retention-days: 90
