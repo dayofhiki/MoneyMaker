@@ -1,5 +1,5 @@
 {
-  "request_id": 26,
-  "operation": "state_entry_ranker",
-  "note": "Retry the unchanged pre-registered State Entry Ranker v0.3 after lowering only the implementation guard for calibration-pool size to 15."
+  "request_id": 27,
+  "operation": "state_wait_value",
+  "note": "Run the pre-registered State Wait Value v0.4 optimal-stopping experiment on the unchanged January-March development panels only."
 }
