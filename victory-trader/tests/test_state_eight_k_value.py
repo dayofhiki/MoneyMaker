@@ -6,6 +6,7 @@ import pandas as pd
 from victory_trader.state_eight_k_enrichment import (
     EIGHT_K_FEATURES,
     _feature_row,
+    fetch_eight_k_history,
 )
 from victory_trader.state_eight_k_value import (
     eight_k_action_feature_frame,
@@ -151,3 +152,52 @@ def test_eight_k_success_check_requires_all_rules():
         coverage,
         {"ci_low_pct": 0.1},
     )["all_pass"] is True
+
+
+def test_eight_k_history_uses_one_market_wide_query_and_maps_tickers():
+    class FakeClient:
+        def __init__(self):
+            self.calls = []
+
+        def eight_k_disclosures_market(
+            self,
+            *,
+            filing_date_gte,
+            filing_date_lte,
+        ):
+            self.calls.append((filing_date_gte, filing_date_lte))
+            return [
+                {
+                    "filing_date": "2026-01-05",
+                    "tickers": ["AAA", "AAA.A"],
+                    "accession_number": "a",
+                    "primary_category": "financial_results",
+                },
+                {
+                    "filing_date": "2026-01-06",
+                    "tickers": ["BBB"],
+                    "accession_number": "b",
+                    "primary_category": "capital_and_financing",
+                },
+                {
+                    "filing_date": "2026-01-07",
+                    "tickers": ["NOT_IN_PANEL"],
+                    "accession_number": "c",
+                    "primary_category": "risk_events",
+                },
+            ]
+
+    frame = pd.DataFrame(
+        {
+            "ticker": ["AAA", "BBB", "CCC"],
+            "trading_day": ["2026-01-10"] * 3,
+        }
+    )
+    client = FakeClient()
+    history, queried = fetch_eight_k_history({"2026-01": frame}, client)
+
+    assert len(client.calls) == 1
+    assert set(history) == {"AAA", "BBB"}
+    assert queried == {"AAA", "BBB", "CCC"}
+    assert history["AAA"][0]["_filing_day"] == date(2026, 1, 5)
+    assert history["BBB"][0]["_filing_day"] == date(2026, 1, 6)
