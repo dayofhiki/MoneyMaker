@@ -1,4 +1,4 @@
-name: MoneyMaker Edge Discovery
+name: MoneyMaker Research Analysis
 
 on:
   workflow_run:
@@ -92,6 +92,28 @@ jobs:
             --stability-csv artifacts/multi-horizon-stability.csv \
             | tee artifacts/multi-horizon-discovery.log
 
+      - name: Download locked March candidate v1 rule
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-candidate-2026-03-v1
+          path: victory-trader/rule-artifact
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35288983942'
+
+      - name: Apply frozen candidate v1 without refitting
+        shell: bash
+        run: |
+          RULE="$(find rule-artifact -name candidate-rule-v1.json -print -quit)"
+          test -n "$RULE" || { echo "candidate-rule-v1.json not found"; exit 1; }
+          python -m victory_trader.candidate_validation \
+            data/events/research-enriched.parquet \
+            --rule-json "$RULE" \
+            --report artifacts/candidate-v1-external-validation.txt \
+            --evaluation-csv artifacts/candidate-v1-external-evaluation.csv \
+            --thresholds-csv artifacts/candidate-v1-external-thresholds.csv \
+            | tee artifacts/candidate-v1-external-validation.log
+
       - name: Save reusable discovery Flat File cache
         if: ${{ always() }}
         uses: actions/cache/save@v4
@@ -103,7 +125,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: moneymaker-edge-discovery-${{ github.event.workflow_run.id }}
+          name: moneymaker-research-analysis-${{ github.event.workflow_run.id }}
           path: |
             victory-trader/data/events/research-enriched.parquet
             victory-trader/artifacts/enrichment.log
@@ -114,5 +136,9 @@ jobs:
             victory-trader/artifacts/multi-horizon-discovery.log
             victory-trader/artifacts/multi-horizon-details.csv
             victory-trader/artifacts/multi-horizon-stability.csv
+            victory-trader/artifacts/candidate-v1-external-validation.txt
+            victory-trader/artifacts/candidate-v1-external-validation.log
+            victory-trader/artifacts/candidate-v1-external-evaluation.csv
+            victory-trader/artifacts/candidate-v1-external-thresholds.csv
           if-no-files-found: warn
           retention-days: 90
