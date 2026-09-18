@@ -254,3 +254,33 @@ def test_short_volume_uses_date_bounds_and_paginates(monkeypatch):
     assert calls[0][1]["date.lte"] == "2026-01-10"
     assert calls[0][1]["sort"] == "date.asc"
     assert calls[1][1] == {"cursor": "next"}
+
+
+def test_short_volume_on_fetches_whole_market_for_exact_date(monkeypatch):
+    from datetime import date
+
+    calls = []
+    payloads = [
+        {
+            "results": [{"ticker": "AAA", "date": "2026-01-02"}],
+            "next_url": "https://api.massive.com/stocks/v1/short-volume?cursor=next",
+        },
+        {
+            "results": [{"ticker": "BBB", "date": "2026-01-02"}],
+        },
+    ]
+
+    def fake_get(url, *, params, headers, timeout):
+        calls.append((url, params))
+        return FakeResponse(payloads.pop(0))
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    rows = client.short_volume_on(date(2026, 1, 2))
+
+    assert [row["ticker"] for row in rows] == ["AAA", "BBB"]
+    assert calls[0][0].endswith("/stocks/v1/short-volume")
+    assert calls[0][1]["date"] == "2026-01-02"
+    assert calls[0][1]["sort"] == "ticker.asc"
+    assert "ticker" not in calls[0][1]
+    assert calls[1][1] == {"cursor": "next"}
