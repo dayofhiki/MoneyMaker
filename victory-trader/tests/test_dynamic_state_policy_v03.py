@@ -68,3 +68,20 @@ def test_one_position_policy_enters_and_exits_on_expected_value_decay():
     assert trades.iloc[0]["exit_reason"] == "expected_gross_nonpositive"
     assert not equity.empty
     assert trades.iloc[0]["position_fraction"] == 0.10
+
+
+def test_failure_state_obeys_minimum_hold_hysteresis():
+    row = pd.Series(
+        {
+            "c": 9.8,
+            "hod_distance_pct": -6.0,
+            "above_regular_vwap": False,
+            "predicted_mean_gross_10m_pct": 0.5,
+            "predicted_severe_mae_prob": 0.2,
+        }
+    )
+    assert _exit_signal(row, entry_reference=10.0, hold_minutes=2.0) is None
+    assert (
+        _exit_signal(row, entry_reference=10.0, hold_minutes=5.0)
+        == "failure_state"
+    )
