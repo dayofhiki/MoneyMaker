@@ -1,5 +1,5 @@
 {
-  "request_id": 13,
-  "operation": "nbbo_probe",
-  "note": "Retry historical NBBO execution probe after lint-only fix."
+  "request_id": 14,
+  "operation": "state_ev_risk",
+  "note": "Run State EV + Risk v0.1 on January-March 2026 state panels. Mean-EV alpha with separate severe-MAE risk model; no fresh month consumed."
 }
