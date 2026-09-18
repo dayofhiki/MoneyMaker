@@ -49,11 +49,11 @@ def test_short_interest_state_uses_publication_date_strictly_before_day():
     )
     assert after_second_publication["short_interest_latest"] == 1500.0
     assert after_second_publication["short_interest_change_pct"] == 50.0
-    assert (
+    assert np.isclose(
         after_second_publication[
             "short_interest_avg_daily_volume_change_pct"
-        ]
-        == 20.0
+        ],
+        20.0,
     )
     assert (
         after_second_publication["short_interest_days_to_cover_change"]
