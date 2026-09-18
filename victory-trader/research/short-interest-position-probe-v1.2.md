@@ -95,3 +95,34 @@ only if:
 
 If the probe fails, do not substitute settlement date for publication date or
 relax the publication rule based on January-March outcomes.
+
+
+## Result
+
+Workflow request 39 completed successfully.
+
+- sampled events: 75 across January-March 2026;
+- unique tickers: 71;
+- Massive requests: 71;
+- retries: 0.
+
+Coverage:
+
+| Month | Any publication-safe record | Two publication-safe records | Median publication age | Days-to-cover coverage |
+|---|---:|---:|---:|---:|
+| 2026-01 | 100% | 100% | 11 days | 100% |
+| 2026-02 | 100% | 100% | 10 days | 100% |
+| 2026-03 | 100% | 100% | 7 days | 100% |
+| Overall | 100% | 100% | 9 days | 100% |
+
+All pre-registered data-supply rules passed.
+
+## Decision
+
+Promote publication-safe FINRA short-interest position data into the
+pre-registered multi-source interaction branch.
+
+The next development experiment may use short interest only according to the
+official publication schedule. Settlement date by itself is not an availability
+timestamp, and same-publication-day records remain forbidden for intraday
+decisions.
