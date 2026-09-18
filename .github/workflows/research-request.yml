@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "sec_8k_probe"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -1852,5 +1852,90 @@ jobs:
             victory-trader/artifacts/state-short-volume-v09-enrichment.txt
             victory-trader/artifacts/state-short-volume-v09-enrichment.log
             victory-trader/artifacts/state-short-volume-v09-enrichment-coverage.csv
+          if-no-files-found: error
+          retention-days: 90
+
+
+  sec-8k-probe:
+    if: ${{ needs.request.outputs.operation == 'sec_8k_probe' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test 8-K supply probe
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_massive_client.py tests/test_sec_8k_supply_probe.py tests/test_candidate_v2_research.py tests/test_candidate_v2_entry_research.py
+
+      - name: Download January enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-research-analysis-35309972523
+          path: victory-trader/dev-data/jan
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35312367550'
+
+      - name: Download February enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-edge-discovery-35290389374
+          path: victory-trader/dev-data/feb
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35291798289'
+
+      - name: Download March enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-enriched-2026-03-v05
+          path: victory-trader/dev-data/mar
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35284485307'
+
+      - name: Probe strictly prior SEC 8-K disclosures
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          JAN="$(find dev-data/jan -name research-enriched.parquet -print -quit)"
+          FEB="$(find dev-data/feb -name research-enriched.parquet -print -quit)"
+          MAR="$(find dev-data/mar -name research-enriched.parquet -print -quit)"
+          test -n "$JAN" || { echo "January enriched dataset not found"; exit 1; }
+          test -n "$FEB" || { echo "February enriched dataset not found"; exit 1; }
+          test -n "$MAR" || { echo "March enriched dataset not found"; exit 1; }
+
+          python -m victory_trader.sec_8k_supply_probe \
+            --dataset "2026-01=$JAN" \
+            --dataset "2026-02=$FEB" \
+            --dataset "2026-03=$MAR" \
+            --report artifacts/sec-8k-supply-probe-v01.txt \
+            --events-csv artifacts/sec-8k-supply-probe-v01-events.csv \
+            --disclosures-csv artifacts/sec-8k-supply-probe-v01-disclosures.csv \
+            | tee artifacts/sec-8k-supply-probe-v01.log
+
+      - name: Upload 8-K supply probe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-sec-8k-supply-probe-v01-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/sec-8k-supply-probe-v01.txt
+            victory-trader/artifacts/sec-8k-supply-probe-v01.log
+            victory-trader/artifacts/sec-8k-supply-probe-v01-events.csv
+            victory-trader/artifacts/sec-8k-supply-probe-v01-disclosures.csv
           if-no-files-found: error
           retention-days: 90
