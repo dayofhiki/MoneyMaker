@@ -1,5 +1,5 @@
 {
-  "request_id": 8,
-  "operation": "state_trader_research",
-  "note": "Build minute-by-minute runner state panels for January-March 2026 and run the pre-specified State Trader v0.1 discovery screen."
+  "request_id": 9,
+  "operation": "state_value_model",
+  "note": "Train and evaluate State Action-Value Model v0.1 with leave-one-month-out validation on January-March 2026 state panels."
 }
