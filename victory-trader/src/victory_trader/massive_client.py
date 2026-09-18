@@ -414,6 +414,40 @@ class MassiveClient:
             next_url = page.get("next_url")
         return rows
 
+    def short_interest_market(
+        self,
+        *,
+        settlement_date_gte: date | str | None = None,
+        settlement_date_lte: date | str | None = None,
+        limit: int = 50000,
+    ) -> list[dict[str, Any]]:
+        """Fetch historical FINRA short-interest records across the market."""
+        params: dict[str, Any] = {
+            "limit": int(limit),
+            "sort": "settlement_date.asc,ticker.asc",
+        }
+        if settlement_date_gte is not None:
+            params["settlement_date.gte"] = (
+                settlement_date_gte.isoformat()
+                if isinstance(settlement_date_gte, date)
+                else str(settlement_date_gte)
+            )
+        if settlement_date_lte is not None:
+            params["settlement_date.lte"] = (
+                settlement_date_lte.isoformat()
+                if isinstance(settlement_date_lte, date)
+                else str(settlement_date_lte)
+            )
+
+        page = self._get("/stocks/v1/short-interest", params)
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+        return rows
+
     def reference_tickers(
         self,
         day: date,
