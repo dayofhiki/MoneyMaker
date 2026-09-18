@@ -1,0 +1,9 @@
+{
+  "request_id": 0,
+  "start_date": "2026-02-01",
+  "end_date": "2026-02-28",
+  "chunk_days": "28",
+  "max_candidates": "",
+  "annotate_halts": true,
+  "note": "Template for assistant-triggered research. Increment request_id on each future run."
+}
