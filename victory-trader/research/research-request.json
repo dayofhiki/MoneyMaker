@@ -1,5 +1,5 @@
 {
-  "request_id": 30,
-  "operation": "state_rank_residual_fusion",
-  "note": "Run the pre-registered State Rank-Residual Fusion v0.7 experiment on the unchanged January-March development panels only."
+  "request_id": 31,
+  "operation": "state_log_growth",
+  "note": "Run the pre-registered State Log-Growth Action Value v0.8 experiment on the unchanged January-March development panels only."
 }
