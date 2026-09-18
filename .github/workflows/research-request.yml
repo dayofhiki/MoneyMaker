@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -278,4 +278,132 @@ jobs:
             victory-trader/artifacts/catalyst-supply-probe.log
             victory-trader/artifacts/catalyst-supply-probe.csv
           if-no-files-found: error
+          retention-days: 90
+
+  state-trader-research:
+    if: ${{ needs.request.outputs.operation == 'state_trader_research' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test state trader modules
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_state_panel.py tests/test_state_discovery.py
+
+      - name: Restore reusable Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-state-v01-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-state-v01-${{ runner.os }}-
+            moneymaker-discovery-v05-${{ runner.os }}-
+
+      - name: Download January enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-research-analysis-35309972523
+          path: victory-trader/dev-data/jan
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35312367550'
+
+      - name: Download February enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-edge-discovery-35290389374
+          path: victory-trader/dev-data/feb
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35291798289'
+
+      - name: Download March enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-enriched-2026-03-v05
+          path: victory-trader/dev-data/mar
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35284485307'
+
+      - name: Build January runner state panel
+        shell: bash
+        run: |
+          mkdir -p data/state artifacts
+          SRC="$(find dev-data/jan -name research-enriched.parquet -print -quit)"
+          test -n "$SRC" || { echo "January enriched dataset not found"; exit 1; }
+          python -m victory_trader.state_panel "$SRC" \
+            --output data/state/state-2026-01.parquet \
+            | tee artifacts/state-panel-2026-01.log
+
+      - name: Build February runner state panel
+        shell: bash
+        run: |
+          SRC="$(find dev-data/feb -name research-enriched.parquet -print -quit)"
+          test -n "$SRC" || { echo "February enriched dataset not found"; exit 1; }
+          python -m victory_trader.state_panel "$SRC" \
+            --output data/state/state-2026-02.parquet \
+            | tee artifacts/state-panel-2026-02.log
+
+      - name: Build March runner state panel
+        shell: bash
+        run: |
+          SRC="$(find dev-data/mar -name research-enriched.parquet -print -quit)"
+          test -n "$SRC" || { echo "March enriched dataset not found"; exit 1; }
+          python -m victory_trader.state_panel "$SRC" \
+            --output data/state/state-2026-03.parquet \
+            | tee artifacts/state-panel-2026-03.log
+
+      - name: Run pre-specified state discovery
+        shell: bash
+        run: |
+          python -m victory_trader.state_discovery \
+            --dataset "2026-01=data/state/state-2026-01.parquet" \
+            --dataset "2026-02=data/state/state-2026-02.parquet" \
+            --dataset "2026-03=data/state/state-2026-03.parquet" \
+            --report artifacts/state-discovery-v01.txt \
+            --details-csv artifacts/state-discovery-details.csv \
+            --stability-csv artifacts/state-discovery-stability.csv \
+            | tee artifacts/state-discovery-v01.log
+
+      - name: Save reusable state Flat File cache
+        if: ${{ always() }}
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-state-v01-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Upload state trader research artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-state-trader-v01-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/data/state/state-2026-01.parquet
+            victory-trader/data/state/state-2026-02.parquet
+            victory-trader/data/state/state-2026-03.parquet
+            victory-trader/artifacts/state-panel-2026-01.log
+            victory-trader/artifacts/state-panel-2026-02.log
+            victory-trader/artifacts/state-panel-2026-03.log
+            victory-trader/artifacts/state-discovery-v01.txt
+            victory-trader/artifacts/state-discovery-v01.log
+            victory-trader/artifacts/state-discovery-details.csv
+            victory-trader/artifacts/state-discovery-stability.csv
+          if-no-files-found: warn
           retention-days: 90
