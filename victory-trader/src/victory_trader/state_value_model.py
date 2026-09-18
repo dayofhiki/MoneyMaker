@@ -155,12 +155,24 @@ def feature_frame(frame: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(data, index=frame.index)
 
 
-def _eligible(frame: pd.DataFrame, horizon: int) -> pd.Series:
+def _eligible(frame: pd.DataFrame, horizon: int | None = None) -> pd.Series:
+    """State eligibility using only information known at decision time.
+
+    The horizon argument is accepted for backward compatibility but deliberately
+    does not inspect future return labels or the next-minute entry price.
+    """
     return (
-        pd.to_numeric(frame["entry_price"], errors="coerce").notna()
+        pd.to_numeric(frame["c"], errors="coerce").notna()
         & pd.to_numeric(
             frame["active_minute_fraction_15m"], errors="coerce"
         ).ge(TRAIN_MIN_ACTIVE_FRACTION)
+    )
+
+
+def _label_eligible(frame: pd.DataFrame, horizon: int) -> pd.Series:
+    """Training-label availability. Never use this mask to decide live signals."""
+    return (
+        _eligible(frame)
         & pd.to_numeric(
             frame[f"buy_return_{horizon}m_pct"], errors="coerce"
         ).notna()
@@ -197,8 +209,9 @@ def train_fold_model(
     train: pd.DataFrame,
     horizon: int,
 ) -> FoldModel:
-    eligible = train.loc[_eligible(train, horizon)].copy()
-    fit, calibration = _chronological_fit_calibration_split(eligible)
+    scoreable = train.loc[_eligible(train)].copy()
+    fit_period, calibration = _chronological_fit_calibration_split(scoreable)
+    fit = fit_period.loc[_label_eligible(fit_period, horizon)].copy()
     fit = _sample_training_states(fit)
 
     X_fit_full = feature_frame(fit)
@@ -228,7 +241,7 @@ def train_fold_model(
     X_cal = feature_frame(calibration).reindex(columns=usable_columns)
     pred_gross = model.predict(X_cal)
     pred_base = _modeled_net_from_predicted_gross(
-        calibration["entry_price"],
+        calibration["c"],
         pred_gross,
         _base_scenario(),
     )
@@ -255,11 +268,6 @@ def _simulate_non_overlapping_trades(
         pd.to_numeric(scored["predicted_base_net_pct"], errors="coerce").ge(
             cutoff
         )
-        & pd.to_numeric(scored["entry_price"], errors="coerce").notna()
-        & pd.to_numeric(
-            scored[f"buy_return_{horizon}m_base_net_return_pct"],
-            errors="coerce",
-        ).notna()
     ].copy()
 
     if selected.empty:
@@ -272,6 +280,12 @@ def _simulate_non_overlapping_trades(
         for row in group.itertuples(index=False):
             state_t = int(row.t)
             if state_t < last_exit_t:
+                continue
+            entry_price = pd.to_numeric(
+                pd.Series([getattr(row, "entry_price", np.nan)]),
+                errors="coerce",
+            ).iloc[0]
+            if pd.isna(entry_price) or float(entry_price) <= 0:
                 continue
             trades.append(row._asdict())
             last_exit_t = state_t + horizon * MINUTE_MS
@@ -364,13 +378,13 @@ def run_lomo(monthly_frames: dict[str, pd.DataFrame]) -> tuple[pd.DataFrame, pd.
         for horizon in HORIZONS:
             fold = train_fold_model(train, horizon)
 
-            eligible = holdout.loc[_eligible(holdout, horizon)].copy()
+            eligible = holdout.loc[_eligible(holdout)].copy()
             X_holdout = feature_frame(eligible).reindex(
                 columns=fold.feature_columns
             )
             pred_gross = fold.model.predict(X_holdout)
             pred_base = _modeled_net_from_predicted_gross(
-                eligible["entry_price"],
+                eligible["c"],
                 pred_gross,
                 _base_scenario(),
             )
@@ -492,14 +506,14 @@ def summarize(details: pd.DataFrame) -> pd.DataFrame:
 def render_report(details: pd.DataFrame, stability: pd.DataFrame) -> str:
     return "\n".join(
         [
-            "=== MoneyMaker State Action-Value Model v0.1 ===",
+            "=== MoneyMaker State Action-Value Model v0.2 ===",
             "model=HistGradientBoostingRegressor(loss=absolute_error)",
             "features=point-in-time price/path/volume/liquidity/market-context state variables only",
-            "target=gross future return; predicted base-net computed separately from entry price and base execution model",
+            "target=gross future return; predicted base-net computed from current close and base execution model (no next-minute-price lookahead)",
             "validation=leave-one-month-out across already-seen January-March 2026",
             "calibration=chronological final 20% of the two training months",
             "training_density=every third post-cross minute to reduce serial duplication",
-            "policy_eval=score every held-out minute; one open position per ticker; re-entry allowed after fixed horizon exit",
+            "policy_eval=score every held-out minute without conditioning on future label availability; one open position per ticker; re-entry allowed after fixed horizon exit",
             "selection=top 5%, 2%, 1% predicted base-net based on training calibration only",
             "NOTE=this is development research, not an external proof or deployable policy",
             "",
