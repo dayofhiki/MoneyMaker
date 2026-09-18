@@ -1,5 +1,5 @@
 {
-  "request_id": 44,
-  "operation": "state_buy_wait_skip",
-  "note": "Run the pre-registered State BUY-WAIT-SKIP Policy v1.6 experiment on the unchanged January-March development panels only; no fresh month."
+  "request_id": 45,
+  "operation": "state_fitted_sequential_q",
+  "note": "Run the pre-registered State Fitted Sequential Action Value v1.7 experiment on unchanged January-March development panels only; no fresh month."
 }
