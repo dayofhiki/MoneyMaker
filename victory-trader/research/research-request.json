@@ -1,5 +1,5 @@
 {
-  "request_id": 45,
-  "operation": "state_fitted_sequential_q",
-  "note": "Run the pre-registered State Fitted Sequential Action Value v1.7 experiment on unchanged January-March development panels only; no fresh month."
+  "request_id": 46,
+  "operation": "state_calibrated_sequential_q",
+  "note": "Run preregistered v1.8 selected-tail calibration and raw-same-fit comparator on unchanged January-March development panels only; no fresh month, no posthoc gate relaxation."
 }
