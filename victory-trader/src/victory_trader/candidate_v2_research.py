@@ -63,21 +63,32 @@ def _favorable_percentile(value: float, reference: list[float]) -> float:
     return float(1.0 - rank / len(array))
 
 
-def _alpha_score_row(
-    row: pd.Series,
+def _alpha_scores_frame(
+    frame: pd.DataFrame,
     features: tuple[str, ...],
     references: dict[str, list[float]],
-) -> float:
-    scores = []
+) -> pd.Series:
+    if frame.empty:
+        return pd.Series(dtype=float, index=frame.index)
+
+    total = np.zeros(len(frame), dtype=float)
+    valid = np.ones(len(frame), dtype=bool)
     for feature in features:
-        value = pd.to_numeric(pd.Series([row.get(feature)]), errors="coerce").iloc[0]
-        if pd.isna(value):
-            return float("nan")
-        score = _favorable_percentile(float(value), references.get(feature, []))
-        if pd.isna(score):
-            return float("nan")
-        scores.append(score)
-    return float(np.mean(scores))
+        reference = np.asarray(references.get(feature, []), dtype=float)
+        if reference.size == 0:
+            return pd.Series(np.nan, index=frame.index, dtype=float)
+        values = pd.to_numeric(frame[feature], errors="coerce").to_numpy(dtype=float)
+        finite = np.isfinite(values)
+        component = np.zeros(len(frame), dtype=float)
+        if finite.any():
+            ranks = np.searchsorted(reference, values[finite], side="left")
+            component[finite] = 1.0 - ranks / reference.size
+        total += component
+        valid &= finite
+
+    scores = total / len(features)
+    scores[~valid] = np.nan
+    return pd.Series(scores, index=frame.index, dtype=float)
 
 
 def modeled_base_zero_return_cost_pct(entry_price: float) -> float:
@@ -120,10 +131,7 @@ def _fit_threshold_params(
         if len(references) != len(features):
             continue
 
-        scores = group.apply(
-            lambda row: _alpha_score_row(row, features, references),
-            axis=1,
-        ).dropna()
+        scores = _alpha_scores_frame(group, features, references).dropna()
         if len(scores) < MIN_TRAIN_ROWS_PER_THRESHOLD:
             continue
 
@@ -151,9 +159,22 @@ def apply_v2_config(
     out["candidate_v2_liquid"] = False
     out["candidate_v2_cost_ok"] = False
     out["candidate_v2_selected"] = False
-    out["base_zero_return_cost_pct"] = out["entry_price"].apply(
-        modeled_base_zero_return_cost_pct
-    )
+    prices = out["entry_price"].to_numpy(dtype=float)
+    finite_price = np.isfinite(prices) & (prices > 0)
+    cost = np.full(len(out), np.nan, dtype=float)
+    if finite_price.any():
+        p = prices[finite_price]
+        half_spread = np.maximum(
+            p * BASE_SCENARIO.half_spread_bps / 10_000.0,
+            BASE_SCENARIO.min_half_spread_cents / 100.0,
+        )
+        buy = p * (1.0 + BASE_SCENARIO.slippage_bps / 10_000.0) + half_spread
+        sell = np.maximum(
+            p * (1.0 - BASE_SCENARIO.slippage_bps / 10_000.0) - half_spread,
+            0.0,
+        )
+        cost[finite_price] = (1.0 - sell / buy) * 100.0
+    out["base_zero_return_cost_pct"] = cost
 
     for threshold_key, threshold_params in params.items():
         threshold = float(threshold_key)
@@ -163,10 +184,7 @@ def apply_v2_config(
 
         subset = out.loc[mask]
         references = threshold_params["alpha_references"]
-        scores = subset.apply(
-            lambda row: _alpha_score_row(row, features, references),
-            axis=1,
-        )
+        scores = _alpha_scores_frame(subset, features, references)
 
         liquid = pd.Series(True, index=subset.index)
         for feature, cut in threshold_params["liquidity_cuts"].items():
