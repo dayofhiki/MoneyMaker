@@ -132,3 +132,57 @@ known month-specific v0.9 failures.
 If the exact branch fails, do not tune the +0.50% gate, cross-sectional
 percentile thresholds, runner-count cutoffs, rolling windows, or feature subset
 on January-March outcomes.
+
+
+## Result
+
+Workflow request 36 completed successfully. The exact pre-registered branch
+failed decisively.
+
+### Month-by-month
+
+| Month | Policy | Trades | Base mean | Day-balanced | p05 | Stress mean | Severe-loss rate |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | baseline | 18 | -2.737% | -2.521% | -17.381% | -4.911% | 38.9% |
+| 2026-01 | absolute short-volume v0.9 | 24 | +1.245% | +2.861% | -11.842% | -0.983% | 20.8% |
+| 2026-01 | relative context v1.0 | 12 | -7.389% | -9.606% | -35.626% | -9.529% | 33.3% |
+| 2026-02 | baseline | 35 | +2.833% | +4.673% | -9.215% | +0.727% | 20.0% |
+| 2026-02 | absolute short-volume v0.9 | 22 | +1.213% | +0.992% | -9.102% | -0.817% | 27.3% |
+| 2026-02 | relative context v1.0 | 20 | -0.102% | -0.268% | -8.368% | -2.136% | 30.0% |
+| 2026-03 | baseline | 21 | +0.910% | -0.203% | -5.543% | -1.114% | 9.5% |
+| 2026-03 | absolute short-volume v0.9 | 25 | +0.384% | -0.551% | -7.617% | -1.794% | 12.0% |
+| 2026-03 | relative context v1.0 | 21 | -1.213% | +0.854% | -9.984% | -3.359% | 23.8% |
+
+Relative-context feature coverage was 100% in all three months, so the failure
+was not caused by missing comparison sets.
+
+Pooled day-balanced return for the relative branch was -1.490%, with a
+trading-day-cluster bootstrap 95% interval of [-5.061%, +1.606%].
+
+Common-episode comparisons were also unfavorable versus the exact v0.9 absolute
+branch:
+
+- January: -10.002 percentage points on 11 common episodes;
+- February: -1.223 points on 16 common episodes;
+- March: -0.250 points on 14 common episodes.
+
+### Pre-registered checks
+
+Only relative-context coverage passed. Trade count, positive monthly arithmetic
+return, positive monthly day-balanced return, improvement over baseline,
+tail/stress protection, and positive pooled bootstrap lower bound all failed.
+
+## Decision
+
+Retire the exact v1.0 contemporaneous-runner relative-short-volume branch.
+
+Do not tune runner-count cutoffs, percentile thresholds, relative transforms,
+feature subsets, or the +0.50% gate on January-March outcomes. Together, v0.9
+and v1.0 show that lagged FINRA short-volume contains information but the tested
+absolute and contemporaneous-relative formulations do not produce a robust
+cross-regime trading policy.
+
+Shift the next branch to a genuinely different causal information source rather
+than continuing to transform short-volume values. The already pre-registered
+8-K disclosure supply probe passed its data-availability criteria and is the
+next candidate.
