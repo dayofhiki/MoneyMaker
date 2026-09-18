@@ -77,3 +77,42 @@ Do not promote or consume a fresh month unless `rank_top25_cap1`:
 
 If it fails, do not tune the 75% gate on January-March. Retire this exact branch
 or change the information set.
+
+
+## Result
+
+Workflow run: https://github.com/dayofhiki/MoneyMaker/actions/runs/35349699710  
+Artifact: `moneymaker-state-entry-ranker-v03-26`
+
+The exact pre-registered branch failed its promotion rule.
+
+The relative rank model itself learned a reproducible out-of-month ordering signal:
+
+- 5-minute global Spearman: 0.068 to 0.083 across the three holdouts;
+- 10-minute global Spearman: 0.100 to 0.122;
+- 15-minute global Spearman: 0.122 to 0.150;
+- median within-episode Spearman was positive for every month and horizon;
+- 77% to 87% of evaluable ticker-day episodes had positive within-episode
+  Spearman, depending on month and horizon.
+
+However, the fixed train-only top-25% gate was too sparse for the pre-registered
+policy. `rank_top25_cap1` produced only 2, 11, and 6 trades in January,
+February, and March respectively, versus the required minimum of 15 trades in
+every month. The branch therefore fails before return-based promotion criteria
+are considered.
+
+The sparse selected samples had positive base-net means in all three months
+(+2.008%, +1.985%, +2.027%), but those values are not promotable evidence because
+the sample-size rule was fixed in advance and was not met. Common-episode return
+deltas were also mixed (-1.572%, -1.424%, +2.710%).
+
+## Decision
+
+- Retire the exact `rank_top25_cap1` branch.
+- Do not tune the 75th-percentile gate on January-March.
+- Retain the empirical finding that causal state history contains relative
+  entry-timing information.
+- Do not consume a fresh validation month.
+- Move to a new pre-registered optimal-stopping target that asks whether waiting
+  from the current state has positive expected value, rather than trying another
+  absolute rank-score cutoff.
