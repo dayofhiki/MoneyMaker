@@ -12,11 +12,7 @@ from .execution_costs import (
     modeled_buy_fill,
     modeled_sell_fill,
 )
-from .state_ev_risk_model import (
-    ENTRY_HORIZON,
-    score_states,
-    train_fold,
-)
+from .state_ev_risk_model import score_states, train_fold
 
 
 MINUTE_MS = 60_000
