@@ -472,3 +472,53 @@ def test_short_interest_market_omits_ticker_and_paginates(monkeypatch):
     assert calls[0][1]["settlement_date.gte"] == "2026-01-01"
     assert calls[0][1]["settlement_date.lte"] == "2026-01-31"
     assert calls[1][1] == {"cursor": "next"}
+
+
+def test_short_volume_market_omits_ticker_and_paginates(monkeypatch):
+    from datetime import date
+
+    calls = []
+    payloads = [
+        {
+            "results": [
+                {
+                    "ticker": "AAA",
+                    "date": "2026-01-02",
+                    "short_volume": 100,
+                    "total_volume": 200,
+                    "short_volume_ratio": 50.0,
+                }
+            ],
+            "next_url": "https://api.massive.com/stocks/v1/short-volume?cursor=next",
+        },
+        {
+            "results": [
+                {
+                    "ticker": "BBB",
+                    "date": "2026-01-03",
+                    "short_volume": 200,
+                    "total_volume": 400,
+                    "short_volume_ratio": 50.0,
+                }
+            ],
+        },
+    ]
+
+    def fake_get(url, *, params, headers, timeout):
+        calls.append((url, params))
+        return FakeResponse(payloads.pop(0))
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    rows = client.short_volume_market(
+        date_gte=date(2026, 1, 1),
+        date_lte=date(2026, 1, 31),
+    )
+
+    assert len(rows) == 2
+    assert calls[0][0].endswith("/stocks/v1/short-volume")
+    assert "ticker" not in calls[0][1]
+    assert calls[0][1]["limit"] == 50000
+    assert calls[0][1]["date.gte"] == "2026-01-01"
+    assert calls[0][1]["date.lte"] == "2026-01-31"
+    assert calls[1][1] == {"cursor": "next"}
