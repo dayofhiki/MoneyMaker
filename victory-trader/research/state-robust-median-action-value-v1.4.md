@@ -123,3 +123,71 @@ If the branch fails, do not tune the median gate, quantile, loss, calibration
 rule, model capacity, or external feature subset on January-March. The next
 branch must change the action/WAIT formulation rather than continue target or
 feature tweaking.
+
+
+## Result
+
+Workflow request 42 completed successfully. The exact pre-registered robust
+median branch failed development promotion.
+
+### Coverage
+
+Data coverage was sufficient and essentially identical to v1.3:
+
+- short-volume latest-prior coverage: 100% in January, February, and March;
+- publication-safe short-interest latest coverage: 98.71%, 98.94%, and 98.90%;
+- 8-K query completion: 100% every month;
+- short-interest query completion: 100% every month.
+
+### Trading result
+
+The primary policy `median_multi_source_cap1` generated zero trades in all
+three development months.
+
+No scoreable state in January, February, or March produced a highest calibrated
+conditional-median base-net prediction of at least +0.50% across the 5/10/15
+minute actions.
+
+The unchanged baseline remained:
+
+| Month | Baseline trades | Base mean | Day-balanced |
+|---|---:|---:|---:|
+| 2026-01 | 18 | -2.737% | -2.521% |
+| 2026-02 | 35 | +2.833% | +4.673% |
+| 2026-03 | 21 | +0.910% | -0.203% |
+
+Because the primary policy produced no trades, its pooled day-balanced estimate
+and bootstrap interval are undefined.
+
+Only the two external-data coverage criteria passed. All trading-performance
+criteria failed.
+
+## Interpretation
+
+This failure is materially different from v1.3.
+
+The squared-error mean-return model was willing to assign >+0.50% expected
+after-cost value to some states, but the robust conditional-median model was not
+willing to assign >+0.50% typical after-cost return to any state.
+
+That is consistent with a heavy-tailed payoff structure in which occasional
+large winners can lift conditional means while the typical outcome remains too
+small or negative after costs. It also explains why relative within-episode
+timing can be detectable without yielding a stable absolute +EV entry threshold.
+
+This does not prove that every conditional median is negative; it proves only
+that, under the exact pre-registered model and robust calibration, none reached
+the fixed +0.50% action hurdle.
+
+## Decision
+
+Retire the exact v1.4 robust-median +0.50% branch.
+
+Do not lower or tune the median gate, change the quantile, alter the robust
+calibration rule, or search feature subsets on January-March.
+
+The fixed multi-source information set remains available, but the next research
+branch must change the action/WAIT formulation rather than continue feature or
+target-threshold tuning.
+
+No fresh validation month was consumed.
