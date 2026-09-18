@@ -55,3 +55,8 @@ not a profitable abstention strategy. Do not tune the allowance or timing after
 inspection. If positive selection bias persists, add genuinely intraday/execution
 information or more development periods under a new protocol rather than rewriting
 class labels again.
+
+## Execution record (before complete outcomes)
+- Implementation passed full CI: 247 tests and Ruff critical checks, run 35387885404.
+- Request 46, run 35388012405 attempts 1 and 2: both completed January, then received a runner shutdown signal during the following fold. No Python model exception or complete outcome artifact was available. The cause of the shutdown is not established; do not treat an incomplete run as an economic model result.
+- Removed redundant full-panel references after train/calibration splitting and model fitting, explicitly collected completed-fold buffers, and added per-fold metrics/calibration logging. These execution-only changes do not alter model inputs, splits, predictions, seeds, cost assumptions or decision rules. A fresh request is required to execute this corrected revision.
