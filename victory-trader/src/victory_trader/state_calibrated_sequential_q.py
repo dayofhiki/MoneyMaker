@@ -181,6 +181,19 @@ def select_policy(cp, models):
     return pd.DataFrame(trades), paths
 
 
+def policy_bootstrap(trades):
+    selected = trades.loc[trades["policy"].eq(POLICY)] if "policy" in trades else pd.DataFrame()
+    daily = (selected.assign(_base=pd.to_numeric(selected["realized_base_net_return_pct"], errors="coerce"))
+             .groupby("trading_day")["_base"].mean().dropna()) if not selected.empty else pd.Series(dtype=float)
+    if len(daily) < 2:
+        return {"days": len(daily), "day_balanced_mean_pct": float(daily.mean()),
+                "ci_low_pct": np.nan, "ci_high_pct": np.nan,
+                "bootstrap_available": False,
+                "reason": "fewer than two independent evaluated trading days"}
+    return {**day_cluster_bootstrap(trades, policy=POLICY, samples=10000),
+            "bootstrap_available": True}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", action="append", type=base._parse_dataset, required=True)
@@ -230,7 +243,7 @@ def main():
     frames = {"details": pd.DataFrame(details), "trades": pd.concat(trades, ignore_index=True) if trades else pd.DataFrame(),
               "diagnostics": pd.DataFrame(diagnostics), "comparisons": pd.DataFrame(comparisons),
               "coverage": pd.DataFrame(coverage), "paths": pd.DataFrame(paths), "calibration": pd.DataFrame(calibration_rows)}
-    boot = day_cluster_bootstrap(frames["trades"], policy=POLICY, samples=10000)
+    boot = policy_bootstrap(frames["trades"])
     report = "=== Selected-tail calibrated sequential Q v1.8 ===\nAdaptive development only; no fresh month\n"
     for name in ("details", "calibration", "paths", "comparisons", "coverage", "diagnostics"):
         report += f"\n=== {name} ===\n" + frames[name].to_string(index=False) + "\n"
