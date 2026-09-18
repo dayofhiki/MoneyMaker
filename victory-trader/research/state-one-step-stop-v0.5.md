@@ -129,3 +129,49 @@ Do not promote or consume a fresh month unless one_step_stop_cap1:
 If this exact branch fails, do not tune the zero threshold or change the
 one-minute delay on January-March. Retire the branch or change the objective /
 information set.
+
+
+## Result
+
+Workflow run: https://github.com/dayofhiki/MoneyMaker/actions/runs/35353031154  
+Artifact: `moneymaker-state-one-step-stop-v05-28`
+
+The exact pre-registered branch failed.
+
+### Policy outcome
+
+| Month | Baseline base mean | One-step base mean | Baseline day-balanced | One-step day-balanced |
+|---|---:|---:|---:|---:|
+| 2026-01 | -2.737% | -2.977% | -2.521% | -2.665% |
+| 2026-02 | +2.833% | +1.241% | +4.673% | +1.095% |
+| 2026-03 | +0.910% | +0.849% | -0.203% | -0.320% |
+
+The one-step policy retained adequate sample size (18, 32, and 20 trades) but
+did not improve any month on the pre-registered day-balanced criterion. Pooled
+day-balanced base mean was -0.305% with a trading-day bootstrap 95% interval of
+[-3.480%, +2.599%].
+
+### Continuation diagnostic
+
+The one-minute delta target was nearly unpredictable over the full holdout state
+population. Spearman correlations by action horizon were only about 0.006 to
+0.013. In the EV-selected chosen-action pool the pooled Spearman remained
+positive in each month (0.091, 0.037, 0.072), but the signal was too weak to
+produce useful stopping behavior.
+
+The stopping policy usually entered at the same minute as the baseline. Among
+common episodes, the mean base-net delta versus baseline was -0.240%, -0.478%,
+and +0.009% for January, February, and March respectively.
+
+## Decision
+
+- Retire the exact one-step continuation branch.
+- Do not tune the zero threshold or one-minute delay on January-March.
+- Do not consume a fresh validation month.
+- Retain the contrast between this weak local-delta signal and the materially
+  stronger episode-normalized rank signal from v0.3. The useful timing
+  information appears to live on a broader within-episode relative scale rather
+  than in the next-minute derivative.
+- The next branch should reuse the episode-rank model itself but replace its
+  sparse absolute top-25% gate with a threshold-free causal stopping rule based
+  on the rank score trajectory.
