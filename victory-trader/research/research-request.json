@@ -1,5 +1,5 @@
 {
-  "request_id": 34,
-  "operation": "sec_8k_probe",
-  "note": "Run the pre-registered Historical 8-K Disclosure Supply Probe v0.1 on the unchanged January-March development candidate panels only."
+  "request_id": 35,
+  "operation": "relative_short_volume_context_probe",
+  "note": "Run the pre-registered Relative Short-Volume Context Probe v1.0 on the unchanged January-March development state panels only."
 }
