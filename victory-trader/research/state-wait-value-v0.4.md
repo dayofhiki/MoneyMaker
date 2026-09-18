@@ -130,3 +130,45 @@ Do not promote or consume a fresh month unless wait_value_cap1:
 
 If this branch fails, do not tune the wait threshold or the 15-minute window on
 January-March. Retire the exact branch or change the information set/objective.
+
+
+## Result
+
+Workflow run: https://github.com/dayofhiki/MoneyMaker/actions/runs/35352161041  
+Artifact: `moneymaker-state-wait-value-v04-27`
+
+The exact pre-registered branch failed. `wait_value_cap1` produced zero trades
+in every development month because no EV-qualified state had calibrated
+predicted wait advantage <= 0.
+
+This was not a failure to learn the target. Holdout diagnostics were strongly
+positive in the full state population:
+
+| Month | Rows | Spearman | Sign agreement | Realized wait-positive rate |
+|---|---:|---:|---:|---:|
+| 2026-01 | 386,141 | 0.441 | 85.6% | 85.6% |
+| 2026-02 | 319,175 | 0.448 | 84.9% | 84.9% |
+| 2026-03 | 365,963 | 0.425 | 85.2% | 85.2% |
+
+Inside the fixed EV-qualified pool, wait-value Spearman remained positive in
+all three holdouts: 0.596, 0.034, and 0.062. However, calibrated predicted wait
+advantage was positive for 100% of EV-qualified states in every month.
+
+The 15-minute target compares one current state with the maximum over many
+strictly-future states. That maximum creates a structural option-value /
+multiple-opportunity bias: about 85% of all labeled states truly have at least
+one better future state inside the window. A zero-threshold stopping rule is
+therefore effectively non-executable even when the model ranks the target.
+
+## Decision
+
+- Retire the exact 15-minute future-maximum wait-value branch.
+- Do not tune the zero threshold or the 15-minute window on January-March.
+- Retain the finding that the causal feature set predicts relative timing
+  opportunity out of month.
+- Do not consume a fresh validation month.
+- Change the objective from "best opportunity anywhere in the next 15 minutes"
+  to a one-step continuation comparison against the strictly next minute. This
+  removes the max-over-many-future-states bias and yields a semantic
+  buy-now-versus-wait-one-step decision that can be re-evaluated causally each
+  minute.
