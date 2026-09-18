@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import gc
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -191,8 +192,14 @@ def main():
     for month, holdout in monthly.items():
         train = pd.concat([f for m, f in monthly.items() if m != month], ignore_index=True)
         fit, cal = split_fit_calibration(train)
+        # Do not retain the full concat alongside its disjoint copied splits.
+        del train
+        gc.collect()
         corrected, records = train_chain(fit, cal)
         raw, _ = train_chain(fit)
+        # Q models retain only fitted estimators, not the full state panels.
+        del fit, cal
+        gc.collect()
         cp = checkpoints(holdout)
         earliest = [base._attempt_trade(r, decision_score=0.0) for _, r in cp[0].iterrows()]
         baseline = pd.DataFrame([r for r in earliest if r is not None])
@@ -216,6 +223,10 @@ def main():
         finite = np.isfinite(p)
         diagnostics.append({"month": month, "q0_buy_spearman": base._spearman(p[finite], y.loc[finite]) if finite.any() else np.nan})
         print(f"Finished holdout {month}", flush=True)
+        print(pd.DataFrame(details[-3:]).to_string(index=False), flush=True)
+        print(pd.DataFrame(records).to_string(index=False), flush=True)
+        del cp, corrected, raw
+        gc.collect()
     frames = {"details": pd.DataFrame(details), "trades": pd.concat(trades, ignore_index=True) if trades else pd.DataFrame(),
               "diagnostics": pd.DataFrame(diagnostics), "comparisons": pd.DataFrame(comparisons),
               "coverage": pd.DataFrame(coverage), "paths": pd.DataFrame(paths), "calibration": pd.DataFrame(calibration_rows)}
