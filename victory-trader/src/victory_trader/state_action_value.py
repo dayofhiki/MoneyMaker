@@ -444,7 +444,7 @@ def render_report(
             "=== MoneyMaker Direct Multi-Horizon Action Value v0.1 ===",
             "target=realized base-net return directly, not gross-return-minus-modeled-cost prediction",
             "actions=BUY_5M / BUY_10M / BUY_15M; choose the highest calibrated predicted base EV at every state",
-            "features=point-in-time state + current absolute price + contemporaneous leave-one-out runner breadth",
+            "features=point-in-time state + current absolute price + contemporaneous leave-one-out runner breadth + 36 causal ticker-local lag features",
             "training=train-only 0.5%/99.5% target winsorization; squared-error conditional-mean model",
             "calibration=train-month chronological 80/20 split with affine out-of-sample calibration",
             "evaluation=leave-one-month-out January-March 2026; non-overlapping repeated trades per ticker-day",
