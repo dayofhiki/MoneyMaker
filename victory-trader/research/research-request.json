@@ -1,5 +1,5 @@
 {
-  "request_id": 25,
+  "request_id": 26,
   "operation": "state_entry_ranker",
-  "note": "Run pre-registered causal episode-normalized State Entry Ranker v0.3 on January-March development panels only."
+  "note": "Retry the unchanged pre-registered State Entry Ranker v0.3 after lowering only the implementation guard for calibration-pool size to 15."
 }
