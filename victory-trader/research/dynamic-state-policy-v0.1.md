@@ -1,3 +1,11 @@
+# DEPRECATED: lookahead audit failure
+
+This v0.1 specification/result must not be used for strategy conclusions.
+The original implementation used the realized next-minute open to convert predicted
+gross return into a predicted base-net score and conditioned score eligibility on
+future label availability. Both are unavailable at decision time. The corrected
+policy is Dynamic State Policy v0.2.
+
 # Dynamic State Policy v0.1
 
 This policy is specified before viewing its January-March results.
