@@ -1,5 +1,5 @@
 {
-  "request_id": 12,
+  "request_id": 13,
   "operation": "nbbo_probe",
-  "note": "Measure historical NBBO spread and ask-to-bid execution on a stratified sample of leakage-safe Dynamic State Policy v0.2 trades."
+  "note": "Retry historical NBBO execution probe after lint-only fix."
 }
