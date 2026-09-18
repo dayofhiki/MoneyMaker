@@ -1,5 +1,5 @@
 {
-  "request_id": 5,
-  "operation": "candidate_v2_development",
-  "note": "Candidate v2 development plus exit and entry-timing studies on January-March 2026."
+  "request_id": 6,
+  "operation": "catalyst_probe",
+  "note": "Probe timestamp-safe news coverage and audit point-in-time ticker detail fields on frozen v2 signals."
 }
