@@ -1,0 +1,73 @@
+name: MoneyMaker Research Request
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/research-request.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      start_date: ${{ steps.read.outputs.start_date }}
+      end_date: ${{ steps.read.outputs.end_date }}
+      chunk_days: ${{ steps.read.outputs.chunk_days }}
+      max_candidates: ${{ steps.read.outputs.max_candidates }}
+      annotate_halts: ${{ steps.read.outputs.annotate_halts }}
+      request_id: ${{ steps.read.outputs.request_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = json.loads(
+              Path("victory-trader/research/research-request.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+
+          required = ("request_id", "start_date", "end_date", "chunk_days", "annotate_halts")
+          missing = [key for key in required if key not in payload]
+          if missing:
+              raise SystemExit(f"research request missing keys: {missing}")
+
+          values = {
+              "request_id": str(payload["request_id"]),
+              "start_date": str(payload["start_date"]),
+              "end_date": str(payload["end_date"]),
+              "chunk_days": str(payload["chunk_days"]),
+              "max_candidates": str(payload.get("max_candidates", "")),
+              "annotate_halts": "true" if bool(payload["annotate_halts"]) else "false",
+          }
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
+              for key, value in values.items():
+                  handle.write(f"{key}={value}\n")
+          print(
+              "Research request",
+              values["request_id"],
+              values["start_date"],
+              values["end_date"],
+          )
+          PY
+
+  research:
+    needs: request
+    uses: ./.github/workflows/victory-trader-research.yml
+    with:
+      start_date: ${{ needs.request.outputs.start_date }}
+      end_date: ${{ needs.request.outputs.end_date }}
+      chunk_days: ${{ needs.request.outputs.chunk_days }}
+      max_candidates: ${{ needs.request.outputs.max_candidates }}
+      annotate_halts: ${{ needs.request.outputs.annotate_halts == 'true' }}
+    secrets: inherit
