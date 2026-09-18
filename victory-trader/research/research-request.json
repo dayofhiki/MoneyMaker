@@ -1,5 +1,5 @@
 {
-  "request_id": 39,
-  "operation": "short_interest_probe",
-  "note": "Run the pre-registered publication-safe Historical Short-Interest Position Probe v1.2 on the unchanged January-March development candidate panels only."
+  "request_id": 40,
+  "operation": "state_multi_source_interaction",
+  "note": "Run the pre-registered State Multi-Source Interaction Action Value v1.3 experiment on the unchanged January-March development state panels only."
 }
