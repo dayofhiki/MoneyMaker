@@ -258,6 +258,38 @@ class MassiveClient:
             next_url = page.get("next_url")
         return rows
 
+    def short_volume(
+        self,
+        ticker: str,
+        *,
+        date_gte: date | str | None = None,
+        date_lte: date | str | None = None,
+        limit: int = 50_000,
+    ) -> list[dict[str, Any]]:
+        """Fetch historical FINRA daily short-volume records for a stock."""
+        params: dict[str, Any] = {
+            "ticker": ticker.upper(),
+            "limit": int(limit),
+            "sort": "date.asc",
+        }
+        if date_gte is not None:
+            params["date.gte"] = (
+                date_gte.isoformat() if isinstance(date_gte, date) else str(date_gte)
+            )
+        if date_lte is not None:
+            params["date.lte"] = (
+                date_lte.isoformat() if isinstance(date_lte, date) else str(date_lte)
+            )
+
+        page = self._get("/stocks/v1/short-volume", params)
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+        return rows
+
     def reference_tickers(
         self,
         day: date,
