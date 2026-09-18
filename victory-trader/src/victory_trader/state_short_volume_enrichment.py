@@ -137,25 +137,28 @@ def fetch_short_volume_history(
     start = min_day - timedelta(days=LOOKBACK_CALENDAR_DAYS)
     end = max_day - timedelta(days=1)
 
+    rows = client.short_volume_market(
+        date_gte=start,
+        date_lte=end,
+    )
+
     history: dict[str, list[dict[str, object]]] = defaultdict(list)
-    for current_day in _weekday_range(start, end):
-        rows = client.short_volume_on(current_day)
-        for row in rows:
-            ticker = str(row.get("ticker") or "").upper()
-            if ticker not in target_tickers:
-                continue
-            raw_date = row.get("date")
-            if not raw_date:
-                continue
-            record_day = pd.Timestamp(str(raw_date)).date()
-            if record_day != current_day:
-                raise ValueError(
-                    "short-volume date mismatch: "
-                    f"requested={current_day} returned={record_day}"
-                )
-            item = dict(row)
-            item["_record_day"] = record_day
-            history[ticker].append(item)
+    for row in rows:
+        ticker = str(row.get("ticker") or "").upper()
+        if ticker not in target_tickers:
+            continue
+        raw_date = row.get("date")
+        if not raw_date:
+            continue
+        record_day = pd.Timestamp(str(raw_date)).date()
+        if record_day < start or record_day > end:
+            raise ValueError(
+                "short-volume range violation: "
+                f"{record_day} not in [{start}, {end}]"
+            )
+        item = dict(row)
+        item["_record_day"] = record_day
+        history[ticker].append(item)
 
     for ticker in list(history):
         history[ticker].sort(key=lambda row: row["_record_day"])
