@@ -1,5 +1,5 @@
 {
-  "request_id": 22,
+  "request_id": 23,
   "operation": "state_action_value",
-  "note": "Retry direct multi-horizon action-value research after calibration-test fixture fix."
+  "note": "Evaluate direct multi-horizon action value with causal sequence lags on January-March development panels."
 }
