@@ -125,18 +125,21 @@ def _exit_signal(
         if unrealized_gross <= HARD_STOP_GROSS_PCT:
             return "hard_stop"
 
+    if hold_minutes >= MAX_HOLD_MINUTES:
+        return "max_hold"
+
+    # Only the hard stop may override the minimum hold. Structural/model
+    # deterioration is deliberately hysteretic to avoid paying round-trip
+    # friction on one-minute state flicker.
+    if hold_minutes < MIN_HOLD_MINUTES:
+        return None
+
     if (
         pd.notna(hod_distance)
         and float(hod_distance) <= -5.0
         and not above_vwap
     ):
         return "failure_state"
-
-    if hold_minutes >= MAX_HOLD_MINUTES:
-        return "max_hold"
-
-    if hold_minutes < MIN_HOLD_MINUTES:
-        return None
 
     if pd.notna(pred_gross) and float(pred_gross) <= 0.0:
         return "expected_gross_nonpositive"
@@ -567,7 +570,7 @@ def render_report(
 ) -> str:
     return "\n".join(
         [
-            "=== MoneyMaker Dynamic State Policy v0.3 ===",
+            "=== MoneyMaker Dynamic State Policy v0.3.1 ===",
             "entry=highest predicted 10m base EV across market, requiring EV gate and predicted severe-MAE probability <=50%",
             "positioning=one market-wide long position; 10% max allocation from 0.5% account-risk target and 5% hard stop",
             "hold=minimum 5m; after that continue while predicted 10m gross >0 and predicted severe-risk <60%",
