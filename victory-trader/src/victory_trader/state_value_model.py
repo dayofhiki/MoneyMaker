@@ -84,10 +84,6 @@ def _base_scenario():
     return next(s for s in DEFAULT_EXECUTION_SCENARIOS if s.name == "base")
 
 
-def _stress_scenario():
-    return next(s for s in DEFAULT_EXECUTION_SCENARIOS if s.name == "stress")
-
-
 def _modeled_net_from_predicted_gross(
     entry_price: pd.Series,
     predicted_gross_pct: np.ndarray,
@@ -371,18 +367,24 @@ def run_lomo(monthly_frames: dict[str, pd.DataFrame]) -> tuple[pd.DataFrame, pd.
             eligible["predicted_gross_pct"] = pred_gross
             eligible["predicted_base_net_pct"] = pred_base
 
-            sample = eligible[
-                [
-                    "trading_day",
-                    "ticker",
-                    "t",
-                    "entry_price",
-                    "predicted_gross_pct",
+            sample = (
+                eligible.nlargest(
+                    min(2000, len(eligible)),
                     "predicted_base_net_pct",
-                    f"buy_return_{horizon}m_pct",
-                    f"buy_return_{horizon}m_base_net_return_pct",
+                )[
+                    [
+                        "trading_day",
+                        "ticker",
+                        "t",
+                        "entry_price",
+                        "predicted_gross_pct",
+                        "predicted_base_net_pct",
+                        f"buy_return_{horizon}m_pct",
+                        f"buy_return_{horizon}m_base_net_return_pct",
+                    ]
                 ]
-            ].copy()
+                .copy()
+            )
             sample["month"] = holdout_month
             sample["horizon_min"] = horizon
             scored_samples.append(sample)
