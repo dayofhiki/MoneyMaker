@@ -1,5 +1,5 @@
 {
-  "request_id": 6,
+  "request_id": 7,
   "operation": "catalyst_probe",
-  "note": "Probe timestamp-safe news coverage and audit point-in-time ticker detail fields on frozen v2 signals."
+  "note": "Retry catalyst probe with month-spanning stratified samples and 6h/24h/72h windows."
 }
