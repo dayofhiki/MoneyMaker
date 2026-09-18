@@ -115,3 +115,52 @@ If this exact branch fails, do not tune the +0.50% gate, short-ratio thresholds,
 rolling-window lengths, or manually select a subset of the eight features using
 January-March outcomes. Retire the exact branch or change the information set /
 decision formulation.
+
+
+## Result
+
+Workflow request 33 completed successfully.
+
+Enrichment:
+
+- 2,177 tickers had FINRA short-volume history;
+- 95 whole-market daily requests, zero retries;
+- latest-prior short-volume ratio coverage was 100% in all three months;
+- five-record feature coverage was approximately 99.3%, 99.8%, and 99.5%;
+- twenty-record feature coverage was approximately 98.5%, 98.4%, and 98.3%.
+
+Policy results:
+
+| Month | Baseline base mean | Short-volume base mean | Baseline day-balanced | Short-volume day-balanced |
+|---|---:|---:|---:|---:|
+| 2026-01 | -2.737% | +1.245% | -2.521% | +2.861% |
+| 2026-02 | +2.833% | +1.213% | +4.673% | +0.992% |
+| 2026-03 | +0.910% | +0.384% | -0.203% | -0.551% |
+
+The short-volume branch produced at least 22 trades in every month and achieved a
+positive arithmetic base-net mean in all three months for the first time in this
+research sequence. However, it did not produce a positive day-balanced mean in
+March, did not improve the baseline day-balanced mean in every month, worsened
+some p05/stress metrics, and its pooled day-cluster bootstrap interval remained
+wide with a 95% lower bound of -1.508%.
+
+Pre-registered checks passed only:
+
+- enough trades every month;
+- positive base-net mean every month;
+- >=90% short-volume coverage every month.
+
+The exact branch therefore failed promotion.
+
+## Decision
+
+Retire the exact eight-feature `short_volume_ev_cap1` branch and do not tune its
+gate, rolling windows, or feature subset on January-March outcomes.
+
+Retain the factual finding that strictly lagged FINRA short-volume information is
+dense and materially changes out-of-month behavior, including flipping January
+from negative to positive while preserving positive arithmetic means in all
+three development months. Treat this as evidence that additional non-price
+information is worth investigating, not as a validated trading edge.
+
+Do not consume a fresh validation month yet.
