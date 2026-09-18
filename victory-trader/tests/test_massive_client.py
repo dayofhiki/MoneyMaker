@@ -330,3 +330,49 @@ def test_eight_k_disclosures_uses_strict_filing_date_bounds_and_paginates(monkey
     assert calls[0][1]["filing_date.gte"] == "2026-01-01"
     assert calls[0][1]["filing_date.lte"] == "2026-01-10"
     assert calls[1][1] == {"cursor": "next"}
+
+
+def test_eight_k_disclosures_market_omits_ticker_and_paginates(monkeypatch):
+    from datetime import date
+
+    calls = []
+    payloads = [
+        {
+            "results": [
+                {
+                    "filing_date": "2026-01-02",
+                    "tickers": ["AAA"],
+                    "primary_category": "financial_results",
+                }
+            ],
+            "next_url": "https://api.massive.com/stocks/filings/8-K/vX/disclosures?cursor=next",
+        },
+        {
+            "results": [
+                {
+                    "filing_date": "2026-01-03",
+                    "tickers": ["BBB"],
+                    "primary_category": "capital_and_financing",
+                }
+            ],
+        },
+    ]
+
+    def fake_get(url, *, params, headers, timeout):
+        calls.append((url, params))
+        return FakeResponse(payloads.pop(0))
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    rows = client.eight_k_disclosures_market(
+        filing_date_gte=date(2026, 1, 1),
+        filing_date_lte=date(2026, 1, 31),
+    )
+
+    assert len(rows) == 2
+    assert calls[0][0].endswith("/stocks/filings/8-K/vX/disclosures")
+    assert "tickers" not in calls[0][1]
+    assert calls[0][1]["filing_date.gte"] == "2026-01-01"
+    assert calls[0][1]["filing_date.lte"] == "2026-01-31"
+    assert calls[0][1]["limit"] == 1000
+    assert calls[1][1] == {"cursor": "next"}
