@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows:
       - MoneyMaker Research
+      - MoneyMaker Research Request
     types:
       - completed
 
