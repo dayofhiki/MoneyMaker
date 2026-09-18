@@ -1,5 +1,5 @@
 {
-  "request_id": 32,
-  "operation": "short_volume_probe",
-  "note": "Run the pre-registered Historical Short-Volume Supply Probe v0.1 on the unchanged January-March development candidate panels only."
+  "request_id": 33,
+  "operation": "state_short_volume_action_value",
+  "note": "Run the pre-registered State Short-Volume Action Value v0.9 experiment on the unchanged January-March development state panels only."
 }
