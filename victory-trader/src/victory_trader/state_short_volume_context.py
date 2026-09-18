@@ -40,27 +40,6 @@ def _leave_one_out_mean(
     return (numerator / denominator).where(denominator > 0)
 
 
-def _percentile_with_min_two(
-    values: pd.Series,
-    group_size: pd.Series,
-    keys: list[str],
-) -> pd.Series:
-    ranked = values.groupby(
-        [values.index.map(lambda idx: idx)],
-        sort=False,
-    )
-    del ranked
-    frame = pd.DataFrame(
-        {
-            "_value": pd.to_numeric(values, errors="coerce"),
-            "_group_size": group_size,
-        },
-        index=values.index,
-    )
-    # Caller supplies exact (day, timestamp) grouping via temporary columns.
-    raise RuntimeError("internal helper should not be called directly")
-
-
 def enrich_relative_short_volume_context(
     frame: pd.DataFrame,
 ) -> pd.DataFrame:
