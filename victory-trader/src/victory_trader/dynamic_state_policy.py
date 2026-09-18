@@ -75,8 +75,8 @@ def score_holdout(
 
     scored = holdout.copy()
 
-    eligible_10 = _eligible(scored, ENTRY_HORIZON)
-    eligible_5 = _eligible(scored, EXIT_HORIZON)
+    eligible_10 = _eligible(scored)
+    eligible_5 = _eligible(scored)
 
     scored["predicted_gross_10m_pct"] = np.nan
     scored["predicted_base_10m_pct"] = np.nan
@@ -88,7 +88,7 @@ def score_holdout(
         )
         pred10 = model_10.model.predict(X10)
         pred10_base = _modeled_net_from_predicted_gross(
-            scored.loc[eligible_10, "entry_price"],
+            scored.loc[eligible_10, "c"],
             pred10,
             _scenario("base"),
         )
@@ -223,9 +223,6 @@ def simulate_one_position(
                     pd.to_numeric(
                         minute_frame["predicted_base_10m_pct"], errors="coerce"
                     ).ge(entry_cutoff)
-                    & pd.to_numeric(
-                        minute_frame["entry_price"], errors="coerce"
-                    ).notna()
                 ].copy()
                 if not candidates.empty:
                     candidates = candidates.sort_values(
@@ -234,16 +231,19 @@ def simulate_one_position(
                         kind="stable",
                     )
                     row = candidates.iloc[0]
-                    entry_reference = float(row["entry_price"])
-                    position = {
-                        "ticker": str(row["ticker"]),
-                        "entry_decision_t": t,
-                        "entry_t": t + MINUTE_MS,
-                        "entry_reference_price": entry_reference,
-                        "entry_predicted_base_10m_pct": float(
-                            row["predicted_base_10m_pct"]
-                        ),
-                    }
+                    entry_reference = pd.to_numeric(
+                        pd.Series([row.get("entry_price")]), errors="coerce"
+                    ).iloc[0]
+                    if pd.notna(entry_reference) and float(entry_reference) > 0:
+                        position = {
+                            "ticker": str(row["ticker"]),
+                            "entry_decision_t": t,
+                            "entry_t": t + MINUTE_MS,
+                            "entry_reference_price": float(entry_reference),
+                            "entry_predicted_base_10m_pct": float(
+                                row["predicted_base_10m_pct"]
+                            ),
+                        }
 
         if position is not None:
             ticker = str(position["ticker"])
@@ -410,12 +410,12 @@ def run_lomo(
 def render_report(metrics_frame: pd.DataFrame) -> str:
     return "\n".join(
         [
-            "=== MoneyMaker Dynamic State Policy v0.1 ===",
-            "policy=one market-wide long position; entry on top-1% predicted 10m base score",
+            "=== MoneyMaker Dynamic State Policy v0.2 ===",
+            "policy=one market-wide long position; entry on top-1% predicted 10m base score computed only from decision-time information",
             "hold=continue while predicted 5m gross > 0",
             "exit=predicted 5m gross <=0 OR failure state OR 30m max hold",
             "execution=all normal decisions at exact next-minute open; session-close forced liquidation",
-            "validation=leave-one-month-out on already-seen Jan-Mar 2026",
+            "validation=leave-one-month-out on already-seen Jan-Mar 2026; no future-label or next-minute-price filtering in signal selection",
             "NOTE=pre-registered development policy; not external proof",
             "",
             metrics_frame.to_string(index=False),
