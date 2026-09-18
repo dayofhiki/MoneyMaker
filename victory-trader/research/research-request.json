@@ -1,5 +1,5 @@
 {
-  "request_id": 7,
-  "operation": "catalyst_probe",
-  "note": "Retry catalyst probe with month-spanning stratified samples and 6h/24h/72h windows."
+  "request_id": 8,
+  "operation": "state_trader_research",
+  "note": "Build minute-by-minute runner state panels for January-March 2026 and run the pre-specified State Trader v0.1 discovery screen."
 }
