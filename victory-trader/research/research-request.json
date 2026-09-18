@@ -1,5 +1,5 @@
 {
-  "request_id": 37,
+  "request_id": 38,
   "operation": "state_eight_k_action_value",
-  "note": "Run the pre-registered State 8-K Disclosure Action Value v1.1 experiment on the unchanged January-March development state panels only."
+  "note": "Rerun the pre-registered State 8-K Disclosure Action Value v1.1 experiment using equivalent market-wide 8-K retrieval on the unchanged January-March development state panels only."
 }
