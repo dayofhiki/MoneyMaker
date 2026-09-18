@@ -1,9 +1,5 @@
 {
-  "request_id": 1,
-  "start_date": "2026-01-01",
-  "end_date": "2026-01-31",
-  "chunk_days": "31",
-  "max_candidates": "",
-  "annotate_halts": true,
-  "note": "Frozen Candidate v1 external development check for January 2026. Do not refit candidate-v1 on this month."
+  "request_id": 2,
+  "operation": "candidate_v2_development",
+  "note": "Develop Candidate v2 on January-March 2026 using leave-one-month-out evaluation. Freeze only after a robust configuration is selected."
 }
