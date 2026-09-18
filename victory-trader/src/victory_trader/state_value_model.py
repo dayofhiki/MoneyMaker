@@ -53,6 +53,17 @@ RAW_FEATURES = (
     "cross_premarket_high_return_pct",
     "cross_premarket_high_distance_pct",
     "cross_regular_open_gap_pct",
+    "market_runner_count",
+    "market_other_runner_count",
+    "market_above_vwap_frac_other",
+    "market_new_hod_frac_other",
+    "market_reclaim_frac_other",
+    "market_trailing5_positive_frac_other",
+    "market_failure_frac_other",
+    "market_mean_trailing5_pct_other",
+    "market_mean_hod_distance_pct_other",
+    "market_mean_return_from_prev_pct_other",
+    "market_mean_volume_accel1_other",
 )
 
 BOOLEAN_FEATURES = (
