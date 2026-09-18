@@ -1,5 +1,5 @@
 {
-  "request_id": 35,
-  "operation": "relative_short_volume_context_probe",
-  "note": "Run the pre-registered Relative Short-Volume Context Probe v1.0 on the unchanged January-March development state panels only."
+  "request_id": 36,
+  "operation": "state_relative_short_volume_action_value",
+  "note": "Run the pre-registered State Relative Short-Volume Action Value v1.0 experiment on the unchanged January-March development state panels only."
 }
