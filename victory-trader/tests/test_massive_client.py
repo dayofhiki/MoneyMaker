@@ -133,3 +133,34 @@ def test_latest_previous_close_is_not_persistently_cached(tmp_path, monkeypatch)
 
     assert len(calls) == 2
     assert list(Path(tmp_path).glob("*.json")) == []
+
+
+def test_news_uses_timestamp_bounds_and_paginates(monkeypatch):
+    calls = []
+    payloads = [
+        {
+            "results": [{"id": "a", "published_utc": "2026-01-02T14:00:00Z"}],
+            "next_url": "https://api.massive.com/v2/reference/news?cursor=next",
+        },
+        {
+            "results": [{"id": "b", "published_utc": "2026-01-02T14:30:00Z"}],
+        },
+    ]
+
+    def fake_get(url, *, params, headers, timeout):
+        calls.append((url, params))
+        return FakeResponse(payloads.pop(0))
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    rows = client.news(
+        "AAPL",
+        published_gte="2026-01-01T15:00:00Z",
+        published_lte="2026-01-02T15:00:00Z",
+    )
+
+    assert [row["id"] for row in rows] == ["a", "b"]
+    assert calls[0][1]["ticker"] == "AAPL"
+    assert calls[0][1]["published_utc.gte"] == "2026-01-01T15:00:00Z"
+    assert calls[0][1]["published_utc.lte"] == "2026-01-02T15:00:00Z"
+    assert calls[1][1] == {"cursor": "next"}
