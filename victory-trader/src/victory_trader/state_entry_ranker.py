@@ -29,6 +29,7 @@ RANK_GATE_QUANTILE = 0.75
 EPISODE_KEYS = ["trading_day", "ticker"]
 MIN_EPISODE_LABELS = 8
 MIN_MONTH_TRADES = 15
+MIN_CALIBRATION_RANK_CANDIDATES = 15
 POLICIES = ("earliest_ev_cap1", "rank_top25_cap1")
 
 
@@ -164,8 +165,11 @@ def fit_rank_gate(
     candidates = pd.to_numeric(
         scored["predicted_rank_score"], errors="coerce"
     ).dropna()
-    if len(candidates) < 100:
-        raise ValueError("fewer than 100 calibration rank candidates")
+    if len(candidates) < MIN_CALIBRATION_RANK_CANDIDATES:
+        raise ValueError(
+            "fewer than 15 calibration rank candidates: "
+            f"observed {len(candidates)}"
+        )
     return float(candidates.quantile(RANK_GATE_QUANTILE))
 
 
