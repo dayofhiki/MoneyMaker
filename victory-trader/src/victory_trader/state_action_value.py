@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
 
+from .state_sequence_enrichment import SEQUENCE_FEATURES
 from .state_value_model import (
     MINUTE_MS,
     TRAIN_SAMPLE_EVERY_MINUTES,
@@ -46,6 +47,14 @@ def action_feature_frame(frame: pd.DataFrame) -> pd.DataFrame:
     result["log_previous_close"] = np.log(
         previous.where(previous > 0)
     )
+
+    for column in SEQUENCE_FEATURES:
+        if column in frame.columns:
+            result[column] = pd.to_numeric(frame[column], errors="coerce")
+        else:
+            result[column] = pd.Series(
+                np.nan, index=frame.index, dtype=float
+            )
     return result
 
 
