@@ -116,3 +116,69 @@ Do not promote or consume a fresh month unless `eight_k_ev_cap1` satisfies all:
 
 If the exact branch fails, do not tune the +0.50% gate, 30-day window, category
 subset, or category-specific thresholds using January-March outcomes.
+
+
+## Result
+
+Workflow request 37 completed successfully. Workflow request 38 repeated the
+same pre-registered experiment with an equivalent market-wide 8-K retrieval
+implementation. The two runs produced byte-equivalent metric tables for
+month-by-month results, summaries, comparisons, scoreable coverage, and
+enrichment coverage.
+
+The bulk implementation reduced Massive REST requests for enrichment from 2,177
+to 24 with zero retries while preserving identical feature coverage and trading
+results.
+
+### Enrichment
+
+Scoreable ticker-day query completion was 100% in all three months.
+
+| Month | Scoreable ticker-days | prior-30d 8-K prevalence | prior-7d prevalence |
+|---|---:|---:|---:|
+| 2026-01 | 2,751 | 42.06% | 16.25% |
+| 2026-02 | 2,413 | 42.11% | 16.70% |
+| 2026-03 | 2,761 | 40.71% | 16.70% |
+
+### Month-by-month policy result
+
+| Month | Policy | Trades | Base mean | Day-balanced | p05 | Stress mean | Severe-loss rate |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | baseline | 18 | -2.737% | -2.521% | -17.381% | -4.911% | 38.9% |
+| 2026-01 | 8-K | 9 | -7.954% | -9.204% | -35.634% | -10.012% | 44.4% |
+| 2026-02 | baseline | 35 | +2.833% | +4.673% | -9.215% | +0.727% | 20.0% |
+| 2026-02 | 8-K | 32 | -0.629% | +0.007% | -14.696% | -2.663% | 25.0% |
+| 2026-03 | baseline | 21 | +0.910% | -0.203% | -5.543% | -1.114% | 9.5% |
+| 2026-03 | 8-K | 25 | +0.018% | -0.235% | -14.944% | -2.043% | 20.0% |
+
+The 8-K branch also underperformed baseline on common ticker-day episodes in
+every month:
+
+- January: -4.554 percentage points across 8 common episodes;
+- February: -2.766 points across 25;
+- March: -2.724 points across 13.
+
+Pooled day-balanced return was -1.622%, with a trading-day-cluster bootstrap
+95% interval of [-4.511%, +0.695%].
+
+### Pre-registered checks
+
+Only 100% query-completion coverage passed. Trade-count sufficiency, positive
+monthly arithmetic return, positive monthly day-balanced return, improvement
+over baseline, tail/stress protection, and a positive bootstrap lower bound all
+failed.
+
+## Decision
+
+Retire the exact v1.1 8-K metadata augmentation branch.
+
+Do not tune the +0.50% gate, 30-day lookback, primary-category subset, or
+category thresholds on January-March outcomes. The result indicates that coarse
+recent-8-K metadata, despite good point-in-time coverage, does not stabilize the
+current action-value policy.
+
+Retain the optimized market-wide 8-K retrieval implementation because it is
+point-in-time equivalent to the ticker-by-ticker implementation and reduces
+network requests by roughly two orders of magnitude.
+
+Do not consume a fresh validation month yet.
