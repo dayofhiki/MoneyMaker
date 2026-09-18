@@ -1,5 +1,5 @@
 {
-  "request_id": 33,
-  "operation": "state_short_volume_action_value",
-  "note": "Run the pre-registered State Short-Volume Action Value v0.9 experiment on the unchanged January-March development state panels only."
+  "request_id": 34,
+  "operation": "sec_8k_probe",
+  "note": "Run the pre-registered Historical 8-K Disclosure Supply Probe v0.1 on the unchanged January-March development candidate panels only."
 }
