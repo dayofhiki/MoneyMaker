@@ -1,5 +1,5 @@
 {
-  "request_id": 43,
-  "operation": "state_pairwise_buy_wait",
-  "note": "Run the pre-registered State Pairwise Buy-Wait Preference v1.5 experiment on the unchanged January-March development panels only; no fresh month."
+  "request_id": 44,
+  "operation": "state_buy_wait_skip",
+  "note": "Run the pre-registered State BUY-WAIT-SKIP Policy v1.6 experiment on the unchanged January-March development panels only; no fresh month."
 }
