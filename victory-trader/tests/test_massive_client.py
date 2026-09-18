@@ -376,3 +376,53 @@ def test_eight_k_disclosures_market_omits_ticker_and_paginates(monkeypatch):
     assert calls[0][1]["filing_date.lte"] == "2026-01-31"
     assert calls[0][1]["limit"] == 1000
     assert calls[1][1] == {"cursor": "next"}
+
+
+def test_short_interest_uses_settlement_bounds_and_paginates(monkeypatch):
+    from datetime import date
+
+    calls = []
+    payloads = [
+        {
+            "results": [
+                {
+                    "ticker": "AAA",
+                    "settlement_date": "2026-01-15",
+                    "short_interest": 1000,
+                }
+            ],
+            "next_url": "https://api.massive.com/stocks/v1/short-interest?cursor=next",
+        },
+        {
+            "results": [
+                {
+                    "ticker": "AAA",
+                    "settlement_date": "2026-01-30",
+                    "short_interest": 1200,
+                }
+            ],
+        },
+    ]
+
+    def fake_get(url, *, params, headers, timeout):
+        calls.append((url, params))
+        return FakeResponse(payloads.pop(0))
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    rows = client.short_interest(
+        "aaa",
+        settlement_date_gte=date(2026, 1, 1),
+        settlement_date_lte=date(2026, 1, 31),
+    )
+
+    assert [row["settlement_date"] for row in rows] == [
+        "2026-01-15",
+        "2026-01-30",
+    ]
+    assert calls[0][0].endswith("/stocks/v1/short-interest")
+    assert calls[0][1]["ticker"] == "AAA"
+    assert calls[0][1]["settlement_date.gte"] == "2026-01-01"
+    assert calls[0][1]["settlement_date.lte"] == "2026-01-31"
+    assert calls[0][1]["sort"] == "settlement_date.asc"
+    assert calls[1][1] == {"cursor": "next"}
