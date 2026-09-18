@@ -344,6 +344,40 @@ class MassiveClient:
             next_url = page.get("next_url")
         return rows
 
+    def eight_k_disclosures_market(
+        self,
+        *,
+        filing_date_gte: date | str | None = None,
+        filing_date_lte: date | str | None = None,
+        limit: int = 1000,
+    ) -> list[dict[str, Any]]:
+        """Fetch classified SEC 8-K disclosures across the market."""
+        params: dict[str, Any] = {
+            "limit": int(limit),
+            "sort": "filing_date.asc",
+        }
+        if filing_date_gte is not None:
+            params["filing_date.gte"] = (
+                filing_date_gte.isoformat()
+                if isinstance(filing_date_gte, date)
+                else str(filing_date_gte)
+            )
+        if filing_date_lte is not None:
+            params["filing_date.lte"] = (
+                filing_date_lte.isoformat()
+                if isinstance(filing_date_lte, date)
+                else str(filing_date_lte)
+            )
+
+        page = self._get("/stocks/filings/8-K/vX/disclosures", params)
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+        return rows
+
     def reference_tickers(
         self,
         day: date,
