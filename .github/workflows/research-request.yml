@@ -103,7 +103,7 @@ jobs:
       - name: Test Candidate v2 research code
         run: |
           ruff check src tests --select E4,E7,E9,F
-          pytest -q tests/test_candidate_v2_research.py tests/test_candidate_v2_exit_research.py
+          pytest -q tests/test_candidate_v2_research.py tests/test_candidate_v2_exit_research.py tests/test_candidate_v2_entry_research.py
 
       - name: Download January enriched development data
         uses: actions/download-artifact@v4
@@ -167,6 +167,21 @@ jobs:
             --summary-csv artifacts/candidate-v2-exit-summary.csv \
             | tee artifacts/candidate-v2-exit-research.log
 
+      - name: Run Candidate v2 entry timing research
+        shell: bash
+        run: |
+          JAN="$(find dev-data/jan -name research-enriched.parquet -print -quit)"
+          FEB="$(find dev-data/feb -name research-enriched.parquet -print -quit)"
+          MAR="$(find dev-data/mar -name research-enriched.parquet -print -quit)"
+          python -m victory_trader.candidate_v2_entry_research \
+            --dataset "2026-01=$JAN" \
+            --dataset "2026-02=$FEB" \
+            --dataset "2026-03=$MAR" \
+            --report artifacts/candidate-v2-entry-research.txt \
+            --details-csv artifacts/candidate-v2-entry-details.csv \
+            --summary-csv artifacts/candidate-v2-entry-summary.csv \
+            | tee artifacts/candidate-v2-entry-research.log
+
       - name: Upload Candidate v2 development artifact
         uses: actions/upload-artifact@v4
         with:
@@ -180,5 +195,9 @@ jobs:
             victory-trader/artifacts/candidate-v2-exit-research.log
             victory-trader/artifacts/candidate-v2-exit-details.csv
             victory-trader/artifacts/candidate-v2-exit-summary.csv
+            victory-trader/artifacts/candidate-v2-entry-research.txt
+            victory-trader/artifacts/candidate-v2-entry-research.log
+            victory-trader/artifacts/candidate-v2-entry-details.csv
+            victory-trader/artifacts/candidate-v2-entry-summary.csv
           if-no-files-found: error
           retention-days: 90
