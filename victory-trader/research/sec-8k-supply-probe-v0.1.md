@@ -73,3 +73,33 @@ These are data-supply criteria only, not trading-performance criteria.
 If the probe passes, any later model branch must pre-register its filing feature
 set before looking at trading results. If it fails, do not widen the 30-day
 window or use same-day filings based on January-March outcomes.
+
+
+## Result
+
+Workflow request 34 completed successfully.
+
+- sampled events: 75 across January-March 2026;
+- unique tickers: 71;
+- retrieved disclosure rows: 88;
+- primary / secondary / tertiary category completeness: 100%.
+
+Coverage:
+
+| Month | 7-day filing coverage | 30-day filing coverage |
+|---|---:|---:|
+| 2026-01 | 20% | 40% |
+| 2026-02 | 28% | 48% |
+| 2026-03 | 20% | 44% |
+| Overall | 22.67% | 44% |
+
+All three pre-registered data-supply rules passed. The most frequent primary
+categories included capital_and_financing, leadership_and_governance,
+shareholder_activity, and strategic_transactions.
+
+## Decision
+
+Retain strictly prior 8-K disclosure metadata as a viable future information
+source. It is materially sparser than FINRA short-volume data, so do not mix it
+into the current relative-short-volume experiment. Any trading-model use must be
+pre-registered separately and must preserve the rule `filing_date < trading_day`.
