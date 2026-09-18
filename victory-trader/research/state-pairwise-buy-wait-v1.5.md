@@ -159,3 +159,95 @@ subset on January-March. The next branch must move to a more explicit sequential
 policy/value formulation rather than hand-tuning this pairwise rule.
 
 No fresh validation month may be consumed by this experiment.
+
+
+## Result
+
+Workflow request 43 completed successfully. The exact pre-registered pairwise
+BUY/WAIT branch failed development promotion.
+
+### Pairwise prediction
+
+The pairwise classifier was weak but directionally consistent out of month:
+
+| Month | Labeled rows | ROC AUC | Balanced accuracy | NOW positive rate |
+|---|---:|---:|---:|---:|
+| 2026-01 | 318,668 | 0.5083 | 0.5048 | 49.80% |
+| 2026-02 | 255,925 | 0.5106 | 0.5080 | 49.70% |
+| 2026-03 | 293,393 | 0.5108 | 0.5072 | 49.66% |
+
+Thus the relative five-minute timing comparison was learnable slightly better
+than chance in every month, but only by a small margin.
+
+### Trading result
+
+| Month | Policy | Trades | Gross mean | Base mean | Day-balanced | p05 | Stress mean |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | earliest eligible 10m | 2,097 | +0.114% | -1.339% | -1.348% | -6.721% | -3.505% |
+| 2026-01 | pairwise wait | 1,696 | +0.101% | -1.343% | -1.354% | -6.490% | -3.500% |
+| 2026-02 | earliest eligible 10m | 1,776 | -0.122% | -1.624% | -1.683% | -7.370% | -3.824% |
+| 2026-02 | pairwise wait | 1,646 | -0.064% | -1.556% | -1.584% | -7.062% | -3.752% |
+| 2026-03 | earliest eligible 10m | 2,057 | -0.018% | -1.563% | -1.554% | -6.694% | -3.797% |
+| 2026-03 | pairwise wait | 1,756 | +0.084% | -1.439% | -1.444% | -6.356% | -3.661% |
+
+The pooled pairwise day-balanced mean was -1.458%, with 95% day-cluster
+bootstrap interval [-1.579%, -1.339%].
+
+### Timing diagnostic
+
+Among common fillable episodes, the pairwise policy improved realized base-net
+return versus the first eligible entry by:
+
+- January: +0.166 percentage points;
+- February: +0.187 percentage points;
+- March: +0.186 percentage points.
+
+Most common episodes nevertheless entered at the same checkpoint:
+
+- January: 82.6% same, 11.1% delayed 5m, 6.3% delayed 10m;
+- February: 77.0% same, 19.4% delayed 5m, 3.6% delayed 10m;
+- March: 81.5% same, 13.8% delayed 5m, 4.6% delayed 10m.
+
+The policy also skipped baseline-only episodes whose realized baseline means
+were -0.753%, -0.300%, and -1.275% in January-March respectively. However,
+episodes fillable only after a pairwise BUY decision were also negative.
+
+### Pre-registered decision
+
+Passed:
+
+- monthly trade-count sufficiency;
+- pairwise AUC > 0.50 every month;
+- tail/stress protection versus earliest eligible entry;
+- external-data coverage.
+
+Failed:
+
+- positive arithmetic return every month;
+- positive day-balanced return every month;
+- day-balanced improvement versus the comparator every month (January missed
+  narrowly);
+- positive pooled bootstrap lower bound.
+
+## Interpretation
+
+The experiment confirms that the repeated relative-timing signal is real but
+small in economic magnitude under this formulation. Moving entries according
+to the learned five-minute preference improved common-episode returns by roughly
+0.17-0.19 percentage points, while broad 10-minute runner entries had near-zero
+gross mean and roughly 1.4-1.5 percentage points of modeled execution drag.
+
+The key failure is therefore not just choosing NOW versus WAIT. The policy still
+trades the less-bad action when both available actions have negative value.
+It lacks an explicit NO-TRADE/SKIP action.
+
+## Decision
+
+Retire the exact v1.5 pairwise BUY/WAIT branch.
+
+Do not tune the wait interval, hold horizon, checkpoint count, probability
+threshold, model capacity, or feature subset on January-March.
+
+The next branch may keep the same fixed 5-minute/10-minute geometry and frozen
+information set, but must formulate BUY, WAIT, and SKIP jointly as explicit
+actions. No fresh validation month was consumed.
