@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from victory_trader.state_value_model import (
+    _eligible,
     _simulate_non_overlapping_trades,
     feature_frame,
     train_fold_model,
@@ -19,6 +20,7 @@ def _training_frame() -> pd.DataFrame:
                     "trading_day": f"2026-01-{day:02d}",
                     "ticker": f"T{episode:03d}",
                     "t": day * 10_000_000 + episode * 100_000 + minute * 60_000,
+                    "c": 5.0 + quality,
                     "entry_price": 5.0 + quality,
                     "active_minute_fraction_15m": 1.0,
                     "minutes_since_10pct_cross": float(minute),
@@ -93,3 +95,22 @@ def test_non_overlapping_policy_allows_reentry_after_exit():
     )
     trades = _simulate_non_overlapping_trades(frame, horizon=5, cutoff=1.0)
     assert list(trades["t"]) == [0, 300_000]
+
+
+def test_scoring_eligibility_does_not_require_future_entry_or_label():
+    frame = _training_frame().head(3).copy()
+    frame["entry_price"] = np.nan
+    frame["buy_return_5m_pct"] = np.nan
+    mask = _eligible(frame, 5)
+    assert mask.all()
+
+
+def test_calibration_cutoffs_do_not_depend_on_future_entry_price():
+    frame = _training_frame()
+    first = train_fold_model(frame, 5)
+
+    changed = frame.copy()
+    changed["entry_price"] = changed["entry_price"] * 10.0
+    second = train_fold_model(changed, 5)
+
+    assert first.calibration_cutoffs == second.calibration_cutoffs
