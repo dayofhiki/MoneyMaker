@@ -66,31 +66,38 @@ def fetch_eight_k_history(
 
     start = min(trading_days) - timedelta(days=LOOKBACK_CALENDAR_DAYS)
     end = max(trading_days) - timedelta(days=1)
-    history: dict[str, list[dict[str, object]]] = defaultdict(list)
-    queried: set[str] = set()
+    rows = client.eight_k_disclosures_market(
+        filing_date_gte=start,
+        filing_date_lte=end,
+    )
 
-    for ticker in sorted(target_tickers):
-        rows = client.eight_k_disclosures(
-            ticker,
-            filing_date_gte=start,
-            filing_date_lte=end,
-        )
-        queried.add(ticker)
-        for row in rows:
-            day = _filing_day(row)
-            if day is None:
+    history: dict[str, list[dict[str, object]]] = defaultdict(list)
+    for row in rows:
+        day = _filing_day(row)
+        if day is None:
+            continue
+        if day < start or day > end:
+            raise ValueError(
+                "8-K global request date violation: "
+                f"{day} not in [{start}, {end}]"
+            )
+        tickers = row.get("tickers") or []
+        if not isinstance(tickers, list):
+            continue
+        for raw_ticker in tickers:
+            ticker = str(raw_ticker).upper()
+            if ticker not in target_tickers:
                 continue
-            if day < start or day > end:
-                raise ValueError(
-                    "8-K global request date violation: "
-                    f"{ticker} {day} not in [{start}, {end}]"
-                )
             item = dict(row)
             item["_filing_day"] = day
             history[ticker].append(item)
 
     for ticker in list(history):
         history[ticker].sort(key=lambda row: row["_filing_day"])
+
+    # The market-wide query covers every target ticker, including valid
+    # zero-filing cases. This set marks query completion, not filing presence.
+    queried = set(target_tickers)
     return dict(history), queried
 
 
