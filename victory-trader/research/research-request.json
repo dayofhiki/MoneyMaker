@@ -1,5 +1,5 @@
 {
-  "request_id": 28,
-  "operation": "state_one_step_stop",
-  "note": "Run the pre-registered State One-Step Stop v0.5 experiment on the unchanged January-March development panels only."
+  "request_id": 29,
+  "operation": "state_rank_turn",
+  "note": "Run the pre-registered State Rank-Turn Stop v0.6 experiment on the unchanged January-March development panels only."
 }
