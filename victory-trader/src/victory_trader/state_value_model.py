@@ -201,7 +201,15 @@ def train_fold_model(
     fit, calibration = _chronological_fit_calibration_split(eligible)
     fit = _sample_training_states(fit)
 
-    X_fit = feature_frame(fit)
+    X_fit_full = feature_frame(fit)
+    usable_columns = [
+        column
+        for column in X_fit_full.columns
+        if X_fit_full[column].notna().any()
+    ]
+    if not usable_columns:
+        raise ValueError("no usable state features in training fold")
+    X_fit = X_fit_full.loc[:, usable_columns]
     y_fit = pd.to_numeric(
         fit[f"buy_return_{horizon}m_pct"], errors="coerce"
     ).to_numpy(dtype=float)
@@ -217,7 +225,7 @@ def train_fold_model(
     )
     model.fit(X_fit, y_fit)
 
-    X_cal = feature_frame(calibration)
+    X_cal = feature_frame(calibration).reindex(columns=usable_columns)
     pred_gross = model.predict(X_cal)
     pred_base = _modeled_net_from_predicted_gross(
         calibration["entry_price"],
@@ -232,7 +240,7 @@ def train_fold_model(
     return FoldModel(
         horizon=horizon,
         model=model,
-        feature_columns=tuple(X_fit.columns),
+        feature_columns=tuple(usable_columns),
         calibration_cutoffs=calibration_cutoffs,
     )
 
@@ -357,7 +365,9 @@ def run_lomo(monthly_frames: dict[str, pd.DataFrame]) -> tuple[pd.DataFrame, pd.
             fold = train_fold_model(train, horizon)
 
             eligible = holdout.loc[_eligible(holdout, horizon)].copy()
-            X_holdout = feature_frame(eligible)
+            X_holdout = feature_frame(eligible).reindex(
+                columns=fold.feature_columns
+            )
             pred_gross = fold.model.predict(X_holdout)
             pred_base = _modeled_net_from_predicted_gross(
                 eligible["entry_price"],
