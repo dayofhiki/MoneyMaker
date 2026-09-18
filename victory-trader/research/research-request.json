@@ -1,5 +1,5 @@
 {
-  "request_id": 31,
-  "operation": "state_log_growth",
-  "note": "Run the pre-registered State Log-Growth Action Value v0.8 experiment on the unchanged January-March development panels only."
+  "request_id": 32,
+  "operation": "short_volume_probe",
+  "note": "Run the pre-registered Historical Short-Volume Supply Probe v0.1 on the unchanged January-March development candidate panels only."
 }
