@@ -9,7 +9,7 @@ from victory_trader.state_action_value import (
 
 
 def test_affine_calibration_recovers_simple_linear_relation():
-    prediction = np.array([0.0, 1.0, 2.0, 3.0])
+    prediction = np.linspace(-2.0, 3.0, 200)
     actual = 0.5 + 0.8 * prediction
     intercept, slope = _fit_affine_calibration(prediction, actual)
     assert abs(intercept - 0.5) < 1e-9
