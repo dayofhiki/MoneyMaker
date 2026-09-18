@@ -10,7 +10,7 @@ import pandas as pd
 
 from .config import load_flatfile_credentials
 from .execution_costs import DEFAULT_EXECUTION_SCENARIOS, ExecutionScenario
-from .flatfiles import MassiveFlatFileStore, MassiveFlatFilesClient, STOCKS_MINUTE_PREFIX
+from .flatfiles import MassiveFlatFileStore, MassiveFlatFilesClient
 from .market_calendar import regular_session_bounds
 
 
