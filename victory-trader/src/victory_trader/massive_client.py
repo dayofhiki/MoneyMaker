@@ -290,6 +290,25 @@ class MassiveClient:
             next_url = page.get("next_url")
         return rows
 
+    def short_volume_on(self, day: date | str) -> list[dict[str, Any]]:
+        """Fetch the whole-market FINRA short-volume file for one trade date."""
+        day_text = day.isoformat() if isinstance(day, date) else str(day)
+        page = self._get(
+            "/stocks/v1/short-volume",
+            {
+                "date": day_text,
+                "limit": 50_000,
+                "sort": "ticker.asc",
+            },
+        )
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+        return rows
+
     def reference_tickers(
         self,
         day: date,
