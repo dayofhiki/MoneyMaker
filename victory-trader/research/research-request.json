@@ -1,5 +1,5 @@
 {
-  "request_id": 14,
-  "operation": "state_ev_risk",
-  "note": "Run State EV + Risk v0.1 on January-March 2026 state panels. Mean-EV alpha with separate severe-MAE risk model; no fresh month consumed."
+  "request_id": 15,
+  "operation": "quote_flatfile_probe",
+  "note": "Check Massive S3 entitlement and object size for 2026-03-02 stock quote Flat File without downloading it."
 }
