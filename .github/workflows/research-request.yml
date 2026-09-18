@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation != "candidate_v2_development":
+          elif operation not in {"candidate_v2_development", "catalyst_probe"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -199,5 +199,83 @@ jobs:
             victory-trader/artifacts/candidate-v2-entry-research.log
             victory-trader/artifacts/candidate-v2-entry-details.csv
             victory-trader/artifacts/candidate-v2-entry-summary.csv
+          if-no-files-found: error
+          retention-days: 90
+
+  catalyst-probe:
+    if: ${{ needs.request.outputs.operation == 'catalyst_probe' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test catalyst dependencies
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_massive_client.py tests/test_candidate_v2_research.py tests/test_candidate_v2_entry_research.py
+
+      - name: Download January enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-research-analysis-35309972523
+          path: victory-trader/dev-data/jan
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35312367550'
+
+      - name: Download February enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-edge-discovery-35290389374
+          path: victory-trader/dev-data/feb
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35291798289'
+
+      - name: Download March enriched development data
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-enriched-2026-03-v05
+          path: victory-trader/dev-data/mar
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35284485307'
+
+      - name: Probe point-in-time news and ticker details
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          JAN="$(find dev-data/jan -name research-enriched.parquet -print -quit)"
+          FEB="$(find dev-data/feb -name research-enriched.parquet -print -quit)"
+          MAR="$(find dev-data/mar -name research-enriched.parquet -print -quit)"
+          python -m victory_trader.catalyst_supply_probe \
+            --dataset "2026-01=$JAN" \
+            --dataset "2026-02=$FEB" \
+            --dataset "2026-03=$MAR" \
+            --report artifacts/catalyst-supply-probe.txt \
+            --csv artifacts/catalyst-supply-probe.csv \
+            | tee artifacts/catalyst-supply-probe.log
+
+      - name: Upload catalyst probe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-catalyst-probe-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/catalyst-supply-probe.txt
+            victory-trader/artifacts/catalyst-supply-probe.log
+            victory-trader/artifacts/catalyst-supply-probe.csv
           if-no-files-found: error
           retention-days: 90
