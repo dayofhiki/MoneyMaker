@@ -1,5 +1,5 @@
 {
-  "request_id": 16,
+  "request_id": 17,
   "operation": "dynamic_state_policy_v03",
-  "note": "Run cost-aware Dynamic State Policy v0.3 on January-March 2026 state panels with EV-gated entries, minimum hold, hard stop, and 10% risk-sized allocation."
+  "note": "Retry Dynamic State Policy v0.3 after lint-only fix."
 }
