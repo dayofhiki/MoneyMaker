@@ -78,3 +78,31 @@ If the probe passes, the next branch may pre-register lagged short-volume
 features and test them in the existing leave-one-month-out framework. If it
 fails, do not tune the age window or select only tickers with available data
 using January-March outcomes.
+
+
+## Result
+
+Workflow request 32 completed successfully.
+
+Sample:
+
+- 75 candidate events across January-March 2026;
+- 71 unique tickers;
+- 75 REST requests, zero retries.
+
+Coverage:
+
+| Month | Sampled | prior <=1d | prior <=3d | prior <=7d | five-record coverage | median latest age | median 30d records |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2026-01 | 25 | 64.0% | 100.0% | 100.0% | 100.0% | 1 day | 19 |
+| 2026-02 | 25 | 84.0% | 96.0% | 100.0% | 100.0% | 1 day | 21 |
+| 2026-03 | 25 | 76.0% | 100.0% | 100.0% | 100.0% | 1 day | 21 |
+| Overall | 75 | 74.7% | 98.7% | 100.0% | 100.0% | 1 day | 20 |
+
+All three pre-registered coverage criteria passed.
+
+## Decision
+
+Promote lagged FINRA short-volume data from supply probe to a pre-registered
+model-feature branch. Preserve the strict rule that only records with
+`date < trading_day` may be used. Do not use same-day short volume.
