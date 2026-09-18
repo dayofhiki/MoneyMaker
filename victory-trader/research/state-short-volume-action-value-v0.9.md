@@ -164,3 +164,89 @@ three development months. Treat this as evidence that additional non-price
 information is worth investigating, not as a validated trading edge.
 
 Do not consume a fresh validation month yet.
+
+
+## Result
+
+Workflow request 33 completed successfully. The exact pre-registered branch
+failed promotion.
+
+### Data coverage
+
+Lagged FINRA short-volume enrichment was dense:
+
+- January: 602,356 rows / 3,862 ticker-days; latest-prior ratio coverage 100.0%;
+- February: 529,699 rows / 3,603 ticker-days; latest-prior ratio coverage 100.0%;
+- March: 604,665 rows / 4,089 ticker-days; latest-prior ratio coverage 100.0%;
+- five-record feature coverage was 99.28%, 99.77%, and 99.49%;
+- twenty-record feature coverage was 98.49%, 98.41%, and 98.28%.
+
+The enrichment used 95 Massive REST requests with zero retries and enforced
+`record_date < trading_day`.
+
+### Month-by-month policy result
+
+| Month | Policy | Trades | Base mean | Day-balanced | p05 | Stress mean | Severe loss rate | Worst day |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| 2026-01 | baseline | 18 | -2.737% | -2.521% | -17.381% | -4.911% | 38.9% | -36.154% |
+| 2026-01 | short-volume | 24 | +1.245% | +2.861% | -11.842% | -0.983% | 20.8% | -7.416% |
+| 2026-02 | baseline | 35 | +2.833% | +4.673% | -9.215% | +0.727% | 20.0% | -9.205% |
+| 2026-02 | short-volume | 22 | +1.213% | +0.992% | -9.102% | -0.817% | 27.3% | -9.205% |
+| 2026-03 | baseline | 21 | +0.910% | -0.203% | -5.543% | -1.114% | 9.5% | -27.603% |
+| 2026-03 | short-volume | 25 | +0.384% | -0.551% | -7.617% | -1.794% | 12.0% | -18.724% |
+
+The short-volume model is the first tested branch in this line to keep at least
+15 trades and a positive arithmetic base mean in all three development months.
+However, it did not achieve positive day-balanced return in March, did not
+improve the day-balanced baseline in February or March, and worsened tail/stress
+metrics in some months.
+
+Pooled day-balanced mean was +0.838%, but the day-cluster bootstrap 95% interval
+was [-1.508%, +3.374%].
+
+### Selection diagnostic
+
+The failure is strongly regime-dependent rather than a simple lack of signal.
+
+- January: the short-volume policy removed 4 baseline ticker-days whose baseline
+  mean was -4.990%; on 14 common ticker-days it improved realized return by
+  +4.874 percentage points on average.
+- February: it removed 15 baseline ticker-days whose baseline mean was +4.776%;
+  common-ticker-day realized return fell by 0.471 points on average.
+- March: it removed 15 baseline ticker-days whose baseline mean was near flat
+  (+0.017%); 19 added ticker-days were also near flat (+0.011%), while common
+  ticker-day realized return fell by 1.579 points on average.
+
+January's common-episode improvement is partly concentrated: one SXTC episode
+changed from -36.154% under the baseline entry to +14.383% under the augmented
+entry. Removing that single common-episode delta still leaves a positive average
+January common-episode improvement, but much smaller.
+
+### Pre-registered checks
+
+Passed:
+
+1. at least 15 trades every month;
+2. positive base-net mean every month;
+3. short-volume feature coverage at least 90% every month.
+
+Failed:
+
+1. positive day-balanced mean every month;
+2. day-balanced improvement over baseline every month;
+3. no worsening of p05/stress every month;
+4. pooled bootstrap lower bound above zero.
+
+## Decision
+
+Retire the exact v0.9 absolute-feature augmentation branch. Do not tune the
++0.50% entry gate, rolling windows, or feature subset on January-March.
+
+The result does not support discarding short-volume information entirely. It
+shows a material January risk-control effect but an opposite selection effect in
+February, consistent with a regime-dependent interpretation of the same
+short-volume values. Any next branch should therefore change the formulation,
+not threshold-tune v0.9. A defensible next question is whether short-volume
+features should be expressed relative to their contemporaneous market /
+small-cap-runner cross-section, or conditioned on an independently defined
+market regime, with the formulation pre-registered before outcomes are viewed.
