@@ -142,3 +142,84 @@ an explicit fitted sequential value / Bellman-style formulation rather than
 another hand-written action label.
 
 No fresh validation month is consumed here.
+
+
+## Result
+
+Workflow request 44 completed successfully. The exact pre-registered
+BUY-WAIT-SKIP classifier failed development promotion.
+
+### Holdout action prediction
+
+The true one-step action labels were heavily SKIP-dominated:
+
+- January: BUY 12.89%, WAIT 12.26%, SKIP 74.85%;
+- February: BUY 11.32%, WAIT 10.68%, SKIP 78.01%;
+- March: BUY 12.00%, WAIT 11.36%, SKIP 76.63%.
+
+The classifier collapsed almost completely to SKIP:
+
+- predicted SKIP rate: 99.76%, 99.72%, 99.86%;
+- predicted BUY rate: 0.22%, 0.26%, 0.12%;
+- predicted WAIT rate: approximately 0.02% in every month.
+
+Balanced accuracy was only 0.3350, 0.3356, and 0.3345. Although each value is
+numerically above 1/3, that criterion is not substantively informative here:
+BUY and WAIT recall were near zero while SKIP recall was approximately 99.9%.
+
+### Trading result
+
+| Month | Trades | Base mean | Day-balanced | p05 | Stress mean |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 18 | -0.904% | -0.930% | -7.632% | -2.828% |
+| 2026-02 | 26 | -1.503% | -0.918% | -7.507% | -3.416% |
+| 2026-03 | 17 | -1.412% | -2.544% | -9.756% | -3.336% |
+
+The pooled day-balanced mean was -1.350%, with 95% day-cluster bootstrap
+interval [-2.899%, +0.442%].
+
+Every executed policy trade occurred at the initial checkpoint. There were zero
+BUYs at +5 or +10 minutes. Therefore the branch did not learn a useful
+sequential WAIT policy; it mostly learned a dominant SKIP classifier plus a tiny
+set of immediate BUY predictions.
+
+### Pre-registered decision
+
+Passed mechanically:
+
+- monthly trade-count sufficiency;
+- balanced accuracy > 1/3 every month;
+- external-data coverage.
+
+Failed:
+
+- positive arithmetic return every month;
+- positive day-balanced return every month;
+- improvement over the earliest-entry comparator every month;
+- tail/stress protection every month;
+- positive pooled bootstrap lower bound.
+
+## Interpretation
+
+Adding SKIP solved the forced-trade problem only superficially. A single
+multiclass classifier turns the economic problem into a highly imbalanced class
+prediction task. The dominant SKIP class overwhelms BUY and WAIT, while the
+relative timing structure found in v1.5 is barely used.
+
+The next formulation should therefore model action values rather than action
+labels. In particular, WAIT should inherit the value of a learned future policy
+instead of being treated as a flat class.
+
+## Decision
+
+Retire exact v1.6.
+
+Do not tune class weights, class thresholds, checkpoint geometry, model
+capacity, or feature subsets on January-March.
+
+Proceed to a pre-registered fitted sequential action-value / Bellman-style
+branch with BUY, WAIT, and SKIP represented by values. Use cross-fitted
+continuation-policy targets inside the development folds to avoid training a
+WAIT target on an in-sample future-policy choice.
+
+No fresh validation month was consumed.
