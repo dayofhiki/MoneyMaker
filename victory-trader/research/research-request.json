@@ -1,5 +1,5 @@
 {
-  "request_id": 18,
-  "operation": "state_oracle",
-  "note": "Measure the non-tradable after-cost opportunity ceiling within 30/60/180 minutes after the first +10% cross on January-March state panels."
+  "request_id": 19,
+  "operation": "dynamic_state_policy_v03",
+  "note": "Run Dynamic State Policy v0.3.1 with hard-stop-only immediate exits and minimum 5-minute hysteresis for all structural/model exits."
 }
