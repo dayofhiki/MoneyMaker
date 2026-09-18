@@ -90,7 +90,7 @@ def aligned_values(destination, source, values):
     # Missing checkpoint means SKIP=0. Existing missing evaluation labels remain NaN.
     aligned = series.reindex(dest_index)
     missing = ~dest_index.isin(source_index)
-    result = aligned.to_numpy(dtype=float)
+    result = aligned.to_numpy(dtype=float, copy=True)
     result[missing] = 0.0
     return pd.Series(result, index=destination.index, dtype=float)
 
