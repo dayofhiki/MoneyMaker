@@ -24,6 +24,31 @@ on:
         required: true
         type: boolean
         default: true
+  workflow_call:
+    inputs:
+      start_date:
+        required: true
+        type: string
+      end_date:
+        required: true
+        type: string
+      chunk_days:
+        required: true
+        type: string
+      max_candidates:
+        required: false
+        type: string
+        default: ''
+      annotate_halts:
+        required: true
+        type: boolean
+    secrets:
+      MASSIVE_API_KEY:
+        required: true
+      MASSIVE_S3_ACCESS_KEY:
+        required: true
+      MASSIVE_S3_SECRET_KEY:
+        required: true
 
 jobs:
   prepare:
