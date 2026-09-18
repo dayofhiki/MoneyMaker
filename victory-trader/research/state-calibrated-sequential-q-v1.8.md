@@ -81,7 +81,7 @@ Rank correlations remain positive (+0.158775/+0.205299/+0.224540) while
 all raw selected-tail base means remain negative. This is not positive economic EV.
 
 BUY calibration samples covered 8-9 selected days and 21-66 rows depending
-on stage/fold. Their daily mean optimism was +0.874253% to +4.060765%.
+on stage/fold. Their daily mean optimism was +0.874253 to +4.060765 percentage points.
 The fixed corrections were 2.512765-7.560369 percentage points.
 Thus BUY was suppressed by measured optimism/uncertainty, not by failing the
 five-day requirement. Downstream BUY suppression yielded zero positive WAIT
@@ -124,3 +124,7 @@ alone. A subsequent separately preregistered protocol should:
   month is consumed.
 
 No fresh-month data or live/paper deployment was used or authorized in this run.
+
+Final implementation, including the reporting-only bootstrap guard, passed
+[CI 35389770345](https://github.com/dayofhiki/MoneyMaker/actions/runs/35389770345):
+250 tests and Ruff critical checks. No production deployment was made.
