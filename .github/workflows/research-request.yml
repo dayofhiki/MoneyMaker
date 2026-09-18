@@ -956,7 +956,7 @@ jobs:
       - name: Test direct multi-horizon action value
         run: |
           ruff check src tests --select E4,E7,E9,F
-          pytest -q tests/test_state_market_breadth.py tests/test_state_action_value.py
+          pytest -q tests/test_state_market_breadth.py tests/test_state_sequence_enrichment.py tests/test_state_action_value.py
 
       - name: Download State Trader v0.1 panels
         uses: actions/download-artifact@v4
@@ -967,10 +967,10 @@ jobs:
           repository: dayofhiki/MoneyMaker
           run-id: '35322182758'
 
-      - name: Add point-in-time market breadth
+      - name: Add point-in-time breadth and causal sequence features
         shell: bash
         run: |
-          mkdir -p data/state-action artifacts
+          mkdir -p data/state-action-breadth data/state-action artifacts
           JAN="$(find state-artifact -name state-2026-01.parquet -print -quit)"
           FEB="$(find state-artifact -name state-2026-02.parquet -print -quit)"
           MAR="$(find state-artifact -name state-2026-03.parquet -print -quit)"
@@ -979,10 +979,19 @@ jobs:
           test -n "$MAR" || { echo "March state panel not found"; exit 1; }
 
           python -m victory_trader.state_market_breadth "$JAN" \
-            --output data/state-action/state-2026-01.parquet
+            --output data/state-action-breadth/state-2026-01.parquet
           python -m victory_trader.state_market_breadth "$FEB" \
-            --output data/state-action/state-2026-02.parquet
+            --output data/state-action-breadth/state-2026-02.parquet
           python -m victory_trader.state_market_breadth "$MAR" \
+            --output data/state-action-breadth/state-2026-03.parquet
+          python -m victory_trader.state_sequence_enrichment \
+            data/state-action-breadth/state-2026-01.parquet \
+            --output data/state-action/state-2026-01.parquet
+          python -m victory_trader.state_sequence_enrichment \
+            data/state-action-breadth/state-2026-02.parquet \
+            --output data/state-action/state-2026-02.parquet
+          python -m victory_trader.state_sequence_enrichment \
+            data/state-action-breadth/state-2026-03.parquet \
             --output data/state-action/state-2026-03.parquet
 
       - name: Run direct multi-horizon action-value research
