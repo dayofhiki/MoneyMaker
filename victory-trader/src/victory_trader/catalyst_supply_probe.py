@@ -4,6 +4,7 @@ import argparse
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from .analytics import load_event_dataset
@@ -13,8 +14,8 @@ from .config import load_settings
 from .massive_client import MassiveClient
 
 
-SAMPLE_PER_MONTH = 10
-NEWS_WINDOW_HOURS = 24
+SAMPLE_PER_MONTH = 15
+NEWS_WINDOW_HOURS = 72
 
 
 def _iso_utc(timestamp_ms: int) -> str:
@@ -51,7 +52,12 @@ def _sample_signals(monthly_frames: dict[str, pd.DataFrame]) -> pd.DataFrame:
         selected = selected.sort_values(
             ["trading_day", "threshold_pct", "ticker", "timestamp_ms"],
             kind="stable",
-        ).head(SAMPLE_PER_MONTH)
+        ).reset_index(drop=True)
+        if len(selected) > SAMPLE_PER_MONTH:
+            positions = np.linspace(
+                0, len(selected) - 1, SAMPLE_PER_MONTH, dtype=int
+            )
+            selected = selected.iloc[positions].copy()
         pieces.append(selected)
     return pd.concat(pieces, ignore_index=True)
 
@@ -101,7 +107,18 @@ def run_probe(
                 "ticker": ticker,
                 "threshold_pct": float(event["threshold_pct"]),
                 "event_utc": _iso_utc(event_ms),
-                "news_count_24h": len(articles),
+                "news_count_72h": len(articles),
+                "news_count_24h": sum(
+                    1
+                    for article in articles
+                    if (
+                        event_dt
+                        - datetime.fromisoformat(
+                            str(article["published_utc"]).replace("Z", "+00:00")
+                        )
+                    ).total_seconds()
+                    <= 24 * 3600
+                ),
                 "news_count_6h": sum(
                     1
                     for article in articles
@@ -142,6 +159,7 @@ def render_report(frame: pd.DataFrame, client: MassiveClient) -> str:
 
     month_summary = (
         frame.assign(
+            has_news_72h=frame["news_count_72h"].gt(0),
             has_news_24h=frame["news_count_24h"].gt(0),
             has_news_6h=frame["news_count_6h"].gt(0),
             has_sentiment=(frame["positive_insights"] + frame["negative_insights"]).gt(0),
@@ -151,6 +169,7 @@ def render_report(frame: pd.DataFrame, client: MassiveClient) -> str:
         .groupby("month")
         .agg(
             sampled=("ticker", "size"),
+            news_72h_coverage=("has_news_72h", "mean"),
             news_24h_coverage=("has_news_24h", "mean"),
             news_6h_coverage=("has_news_6h", "mean"),
             sentiment_coverage=("has_sentiment", "mean"),
@@ -160,6 +179,7 @@ def render_report(frame: pd.DataFrame, client: MassiveClient) -> str:
         .reset_index()
     )
 
+    overall_72h = float(frame["news_count_72h"].gt(0).mean())
     overall_news = float(frame["news_count_24h"].gt(0).mean())
     overall_6h = float(frame["news_count_6h"].gt(0).mean())
     detail_market_cap = float(frame["details_market_cap"].notna().mean())
@@ -173,6 +193,7 @@ def render_report(frame: pd.DataFrame, client: MassiveClient) -> str:
             "trading_day",
             "ticker",
             "threshold_pct",
+            "news_count_72h",
             "news_count_24h",
             "news_count_6h",
             "positive_insights",
@@ -189,6 +210,7 @@ def render_report(frame: pd.DataFrame, client: MassiveClient) -> str:
             "=== MoneyMaker Catalyst / Supply Access Probe ===",
             f"sampled_events={len(frame)}",
             f"unique_tickers={frame['ticker'].nunique()}",
+            f"news_72h_coverage={overall_72h:.4f}",
             f"news_24h_coverage={overall_news:.4f}",
             f"news_6h_coverage={overall_6h:.4f}",
             f"market_cap_field_coverage={detail_market_cap:.4f}",
