@@ -1,5 +1,5 @@
 {
-  "request_id": 38,
-  "operation": "state_eight_k_action_value",
-  "note": "Rerun the pre-registered State 8-K Disclosure Action Value v1.1 experiment using equivalent market-wide 8-K retrieval on the unchanged January-March development state panels only."
+  "request_id": 39,
+  "operation": "short_interest_probe",
+  "note": "Run the pre-registered publication-safe Historical Short-Interest Position Probe v1.2 on the unchanged January-March development candidate panels only."
 }
