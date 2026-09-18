@@ -200,6 +200,35 @@ class MassiveClient:
             params["date"] = day.isoformat()
         return self._get(f"/v3/reference/tickers/{ticker.upper()}", params)
 
+    def quotes(
+        self,
+        ticker: str,
+        *,
+        timestamp_gte: int | str | None = None,
+        timestamp_lte: int | str | None = None,
+        limit: int = 50_000,
+        order: str = "asc",
+    ) -> list[dict[str, Any]]:
+        """Fetch historical NBBO quotes for a stock ticker."""
+        params: dict[str, Any] = {
+            "limit": int(limit),
+            "sort": "timestamp",
+            "order": order,
+        }
+        if timestamp_gte is not None:
+            params["timestamp.gte"] = timestamp_gte
+        if timestamp_lte is not None:
+            params["timestamp.lte"] = timestamp_lte
+
+        page = self._get(f"/v3/quotes/{ticker.upper()}", params)
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+        return rows
+
     def news(
         self,
         ticker: str,
