@@ -1,5 +1,5 @@
 {
-  "request_id": 23,
-  "operation": "state_action_value",
-  "note": "Evaluate direct multi-horizon action value with causal sequence lags on January-March development panels."
+  "request_id": 24,
+  "operation": "state_action_risk",
+  "note": "Evaluate the pre-registered 0.50% EV gate with causal sequence features, one-entry-per-ticker-day cap, and 20% severe-loss risk gate on January-March development panels."
 }
