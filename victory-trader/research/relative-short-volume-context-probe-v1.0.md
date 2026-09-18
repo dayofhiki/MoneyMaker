@@ -61,3 +61,26 @@ A model branch is allowed only if, in every month:
 3. the median contemporaneous runner count is at least 2.
 
 If this fails, do not loosen the coverage rule using January-March returns.
+
+
+## Result
+
+Workflow request 35 completed successfully.
+
+Scoreable-state coverage:
+
+| Month | Scoreable rows | Median contemporaneous runners | >=2 runners | Latest-ratio percentile coverage | Latest-ratio difference coverage |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 423,413 | 82 | 100.0% | 100.0% | 100.0% |
+| 2026-02 | 353,842 | 76 | 100.0% | 100.0% | 100.0% |
+| 2026-03 | 405,896 | 76 | 100.0% | 100.0% | 100.0% |
+
+Five-record relative features were also available on approximately 99.25%,
+99.77%, and 99.48% of scoreable rows.
+
+All pre-registered coverage conditions passed.
+
+## Decision
+
+Promote the exact eight relative/context features into a pre-registered model
+branch. Do not alter their definitions after viewing trading outcomes.
