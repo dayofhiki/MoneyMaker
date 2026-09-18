@@ -176,3 +176,66 @@ feature subset, short-interest thresholds, 8-K categories, or short-volume
 windows on January-March. Treat the combined-feature hypothesis as failed and
 move the next research branch to decision formulation rather than additional
 feature-family search.
+
+
+## Result
+
+Workflow request 41 completed successfully. The exact pre-registered
+multi-source interaction branch failed development promotion.
+
+### Coverage
+
+All external families were dense enough for the test:
+
+- short-volume latest-prior coverage: 100% in January, February, and March;
+- publication-safe short-interest latest coverage: 98.71%, 98.94%, and 98.90%;
+- 8-K query completion: 100% every month;
+- short-interest query completion: 100% every month.
+
+### Month-by-month
+
+| Month | Policy | Trades | Base mean | Day-balanced | p05 | Stress mean | Severe-loss rate | Worst day |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| 2026-01 | baseline | 18 | -2.737% | -2.521% | -17.381% | -4.911% | 38.9% | -36.154% |
+| 2026-01 | multi-source | 11 | +0.037% | +1.442% | -10.825% | -2.098% | 36.4% | -9.128% |
+| 2026-02 | baseline | 35 | +2.833% | +4.673% | -9.215% | +0.727% | 20.0% | -9.205% |
+| 2026-02 | multi-source | 15 | -0.479% | -0.666% | -9.792% | -2.556% | 26.7% | -10.582% |
+| 2026-03 | baseline | 21 | +0.910% | -0.203% | -5.543% | -1.114% | 9.5% | -27.603% |
+| 2026-03 | multi-source | 16 | -0.440% | +0.053% | -11.525% | -2.480% | 12.5% | -4.987% |
+
+Pooled multi-source day-balanced return was +0.120%, with a trading-day-cluster
+bootstrap 95% interval of [-2.131%, +2.417%].
+
+Only the two data-coverage criteria passed. Trade-count sufficiency, positive
+monthly arithmetic return, positive monthly day-balanced return, improvement
+over baseline every month, tail/stress protection, and positive bootstrap lower
+bound all failed.
+
+### Selection diagnostic
+
+The model did not merely make a stable conservative subset.
+
+- January removed 11 baseline-only ticker-days whose baseline mean was -1.676%,
+  but its 4 newly selected ticker-days also averaged -1.896%.
+- February removed 23 baseline-only ticker-days averaging +2.986% and added
+  3 ticker-days averaging -2.255%.
+- March removed 16 baseline-only ticker-days averaging -0.210% but added
+  11 ticker-days averaging -3.129%.
+
+This is consistent with unstable absolute action-value estimation rather than a
+missing-data problem.
+
+## Decision
+
+Retire the exact v1.3 squared-error multi-source interaction branch.
+
+Do not search external-feature subsets, interactions, thresholds, model
+capacities, or entry gates on January-March.
+
+The fixed multi-source information set remains frozen for the next branch so
+that the next experiment changes decision formulation rather than searching for
+more data. The next development question is whether a robust typical-outcome
+target, rather than squared-error expected-return regression, can use the same
+information more stably across regimes.
+
+Do not consume a fresh validation month.
