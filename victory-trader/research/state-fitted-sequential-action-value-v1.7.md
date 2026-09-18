@@ -169,3 +169,37 @@ remaining bottleneck is execution cost or state information rather than
 repeatedly rewriting the policy.
 
 No fresh validation month is consumed here.
+
+
+## Result and failure audit
+
+Request 45 completed; exact v1.7 failed promotion.
+
+| Month | Policy trades | Predicted selected Q | Gross | Base | Day-balanced |
+|---|---:|---:|---:|---:|---:|
+| January | 191 | +0.597% | +0.595% | -0.597% | -0.902% |
+| February | 130 | +0.537% | +0.157% | -1.012% | -1.169% |
+| March | 194 | +0.667% | +0.222% | -0.939% | -0.911% |
+
+Pooled day-balanced mean -0.988531%, day-cluster 95% interval
+[-1.522818%, -0.496704%]. This is affirmative negative economic evidence, not
+merely an inconclusive zero-crossing interval.
+
+BUY Spearman was +0.198/+0.224/+0.208, but WAIT Spearman
++0.077/-0.008/+0.064. Common-episode timing deltas were
++0.023/-0.103/+0.031 percentage points; almost all trades were immediate.
+Most improvement versus earliest entry was selection, not useful sequential timing.
+
+Across 515 policy trades gross mean was +0.343660%, modeled friction 1.174430%,
+and base mean -0.830770%. Above $10 there were 100 trades, gross +0.2548%,
+base -0.7428%. No post-hoc price gate solves this diagnosis.
+
+Observed failure: selected-tail predicted value is optimistic and gross movement
+does not pay unchanged costs. Hypotheses include sparse stage training,
+distribution shift, tail clipping, missing intraday information and winner's
+selection bias; these are not established causal explanations.
+
+Next v1.8 isolates train-only pessimistic selected-tail calibration. It keeps
+timing, features, cost scenarios and model hyperparameters fixed, and includes a
+raw-Q comparator trained on identical reduced fitting data. Zero-trade abstention
+will not count as edge or successful promotion. No fresh month was consumed.
