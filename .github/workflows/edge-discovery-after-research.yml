@@ -13,8 +13,37 @@ permissions:
   actions: read
 
 jobs:
+  probe:
+    runs-on: ubuntu-latest
+    outputs:
+      has_research_artifact: ${{ steps.check.outputs.has_research_artifact }}
+    steps:
+      - id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.paginate(
+              github.rest.actions.listWorkflowRunArtifacts,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: context.payload.workflow_run.id,
+                per_page: 100,
+              }
+            );
+            const finalResearch = artifacts.find(a =>
+              /^moneymaker-\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}$/.test(a.name)
+            );
+            core.setOutput("has_research_artifact", finalResearch ? "true" : "false");
+            core.info(
+              finalResearch
+                ? `Found final research artifact: ${finalResearch.name}`
+                : "No final research artifact; skipping Research Analysis."
+            );
+
   discover:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: probe
+    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.probe.outputs.has_research_artifact == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     defaults:
