@@ -1,5 +1,5 @@
 {
-  "request_id": 3,
+  "request_id": 4,
   "operation": "candidate_v2_development",
-  "note": "Retry Candidate v2 development after lint-only fix."
+  "note": "Candidate v2 development plus barrier exit study on January-March 2026."
 }
