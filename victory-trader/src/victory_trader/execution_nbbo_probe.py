@@ -290,7 +290,7 @@ def render_report(
         return "\n".join(
             [
                 "=== MoneyMaker Historical NBBO Probe ===",
-                f"status=UNAVAILABLE",
+                "status=UNAVAILABLE",
                 f"reason={authorization_error}",
                 f"Massive_client_stats={client.stats.to_dict()}",
                 "No execution conclusion was drawn from missing quote entitlement.",
