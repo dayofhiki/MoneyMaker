@@ -1,5 +1,5 @@
 {
-  "request_id": 21,
+  "request_id": 22,
   "operation": "state_action_value",
-  "note": "Train direct base-net action values for 5m/10m/15m actions with affine train-only calibration and runner breadth; LOMO January-March 2026."
+  "note": "Retry direct multi-horizon action-value research after calibration-test fixture fix."
 }
