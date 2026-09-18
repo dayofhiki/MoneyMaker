@@ -111,3 +111,55 @@ Do not promote or consume a fresh month unless rank_turn_cap1:
 
 If this exact branch fails, do not add score thresholds or tune a turn-size
 criterion on January-March.
+
+## Result
+
+Workflow run: https://github.com/dayofhiki/MoneyMaker/actions/runs/35354547577  
+Artifact: `moneymaker-state-rank-turn-v06-29`
+
+The exact pre-registered branch failed.
+
+### Policy outcome
+
+| Month | Baseline base mean | Rank-turn base mean | Baseline day-balanced | Rank-turn day-balanced | Rank-turn trades |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | -2.737% | -1.147% | -2.521% | -1.147% | 3 |
+| 2026-02 | +2.833% | +2.476% | +4.673% | +3.437% | 14 |
+| 2026-03 | +0.910% | +7.389% | -0.203% | +7.389% | 2 |
+
+The turn rule covered only 16.7%, 40.0%, and 9.5% of the baseline
+EV-qualified ticker-day episodes in January, February, and March. It therefore
+failed the minimum-15-trades requirement in every month.
+
+The pooled day-balanced mean was +3.093%, but the trading-day bootstrap 95%
+interval was [-2.535%, +9.923%], so the lower bound did not clear zero.
+
+### Rank diagnostic
+
+The underlying episode-rank model remained directionally useful in every
+holdout month and every action horizon. Global Spearman ranged from 0.068 to
+0.150, while median within-episode Spearman ranged from 0.108 to 0.237.
+
+Among common baseline/rank-turn episodes, delaying to the first causal turn
+improved mean realized base return by +1.378 percentage points in January but
+reduced it by -2.751 points in February. March had no common fillable episode.
+The evidence therefore does not support the first-turn rule itself.
+
+### Pre-registered checks
+
+Only the all-month/all-horizon positive-rank-Spearman criterion passed. The
+trade-count, all-month positive-return, all-month day-balanced improvement,
+tail/stress, and positive bootstrap-lower-bound requirements failed.
+
+## Decision
+
+- Retire the exact first-turn stopping branch.
+- Do not add a rank-score cutoff or tune a minimum turn size on January-March.
+- Do not consume a fresh validation month.
+- Preserve the episode-rank model as a useful predictive component: its
+  out-of-month ordering signal survived again.
+- Stop trying to convert that signal with another hand-written stopping rule.
+  The next branch should test whether the rank prediction can improve the
+  calibrated direct EV estimate itself, using cross-fitted training predictions
+  and no new absolute rank threshold.
+
