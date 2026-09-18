@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -538,5 +538,63 @@ jobs:
             victory-trader/artifacts/dynamic-state-policy-v02-metrics.csv
             victory-trader/artifacts/dynamic-state-policy-v02-trades.csv
             victory-trader/artifacts/dynamic-state-policy-v02-equity.csv
+          if-no-files-found: error
+          retention-days: 90
+
+  nbbo-probe:
+    if: ${{ needs.request.outputs.operation == 'nbbo_probe' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test NBBO probe
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_massive_client.py tests/test_execution_nbbo_probe.py
+
+      - name: Download Dynamic State Policy v0.2 trades
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-dynamic-state-policy-v02-11
+          path: victory-trader/dynamic-v02
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35338854045'
+
+      - name: Probe historical NBBO execution
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          TRADES="$(find dynamic-v02 -name dynamic-state-policy-v02-trades.csv -print -quit)"
+          test -n "$TRADES" || { echo "Dynamic v0.2 trades CSV not found"; exit 1; }
+          python -m victory_trader.execution_nbbo_probe "$TRADES" \
+            --report artifacts/nbbo-probe-v01.txt \
+            --details-csv artifacts/nbbo-probe-v01-details.csv \
+            --summary-csv artifacts/nbbo-probe-v01-summary.csv \
+            | tee artifacts/nbbo-probe-v01.log
+
+      - name: Upload NBBO probe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-nbbo-probe-v01-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/nbbo-probe-v01.txt
+            victory-trader/artifacts/nbbo-probe-v01.log
+            victory-trader/artifacts/nbbo-probe-v01-details.csv
+            victory-trader/artifacts/nbbo-probe-v01-summary.csv
           if-no-files-found: error
           retention-days: 90
