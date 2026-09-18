@@ -1,5 +1,5 @@
 {
-  "request_id": 10,
+  "request_id": 11,
   "operation": "dynamic_state_policy",
-  "note": "Run pre-registered Dynamic State Policy v0.1 on January-March 2026 with leave-one-month-out state models. One market-wide position, dynamic exit, re-entry allowed."
+  "note": "Run leakage-safe Dynamic State Policy v0.2 on January-March 2026. Score with decision-time information only; no future label or next-minute-price filtering."
 }
