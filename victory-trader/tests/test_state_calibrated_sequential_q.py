@@ -92,3 +92,30 @@ def test_wait_missing_checkpoint_terminates(monkeypatch):
     assert trades.empty
     assert paths["missing_checkpoint"] == 1
     assert paths["buy_attempts"] == 0
+
+
+def test_one_day_does_not_produce_degenerate_confidence_interval(monkeypatch):
+    def forbidden(*args, **kwargs):
+        raise AssertionError("one-day sample must not be bootstrapped")
+    monkeypatch.setattr(m, "day_cluster_bootstrap", forbidden)
+    trades = pd.DataFrame({"policy": [m.POLICY], "trading_day": ["a"],
+                           "realized_base_net_return_pct": [-3.8]})
+    result = m.policy_bootstrap(trades)
+    assert result["days"] == 1
+    assert not result["bootstrap_available"]
+    assert np.isnan(result["ci_low_pct"])
+    assert result["day_balanced_mean_pct"] == -3.8
+
+
+def test_zero_evaluated_days_have_no_bootstrap():
+    assert not m.policy_bootstrap(pd.DataFrame())["bootstrap_available"]
+    trades = pd.DataFrame({"policy": [m.POLICY], "trading_day": ["a"],
+                           "realized_base_net_return_pct": [np.nan]})
+    assert m.policy_bootstrap(trades)["days"] == 0
+
+
+def test_two_day_sample_preserves_existing_bootstrap_calculation():
+    trades = pd.DataFrame({"policy": [m.POLICY, m.POLICY], "trading_day": ["a", "b"],
+                           "realized_base_net_return_pct": [-1.0, 1.0]})
+    expected = m.day_cluster_bootstrap(trades, policy=m.POLICY, samples=10000)
+    assert m.policy_bootstrap(trades) == {**expected, "bootstrap_available": True}
