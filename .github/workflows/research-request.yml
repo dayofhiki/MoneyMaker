@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -791,5 +791,70 @@ jobs:
             victory-trader/artifacts/dynamic-state-policy-v03-trades.csv
             victory-trader/artifacts/dynamic-state-policy-v03-equity.csv
             victory-trader/artifacts/dynamic-state-policy-v03-summary.csv
+          if-no-files-found: error
+          retention-days: 90
+
+
+  state-oracle:
+    if: ${{ needs.request.outputs.operation == 'state_oracle' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test state opportunity oracle
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_state_oracle_diagnostic.py
+
+      - name: Download State Trader v0.1 panels
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-state-trader-v01-8
+          path: victory-trader/state-artifact
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35322182758'
+
+      - name: Run state opportunity oracle
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          JAN="$(find state-artifact -name state-2026-01.parquet -print -quit)"
+          FEB="$(find state-artifact -name state-2026-02.parquet -print -quit)"
+          MAR="$(find state-artifact -name state-2026-03.parquet -print -quit)"
+          test -n "$JAN" || { echo "January state panel not found"; exit 1; }
+          test -n "$FEB" || { echo "February state panel not found"; exit 1; }
+          test -n "$MAR" || { echo "March state panel not found"; exit 1; }
+
+          python -m victory_trader.state_oracle_diagnostic \
+            --dataset "2026-01=$JAN" \
+            --dataset "2026-02=$FEB" \
+            --dataset "2026-03=$MAR" \
+            --report artifacts/state-oracle-v01.txt \
+            --details-csv artifacts/state-oracle-v01-details.csv \
+            --summary-csv artifacts/state-oracle-v01-summary.csv \
+            | tee artifacts/state-oracle-v01.log
+
+      - name: Upload state opportunity oracle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-state-oracle-v01-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/state-oracle-v01.txt
+            victory-trader/artifacts/state-oracle-v01.log
+            victory-trader/artifacts/state-oracle-v01-details.csv
+            victory-trader/artifacts/state-oracle-v01-summary.csv
           if-no-files-found: error
           retention-days: 90
