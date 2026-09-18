@@ -507,7 +507,7 @@ jobs:
           repository: dayofhiki/MoneyMaker
           run-id: '35322182758'
 
-      - name: Run Dynamic State Policy v0.1
+      - name: Run Dynamic State Policy v0.2
         shell: bash
         run: |
           mkdir -p artifacts
@@ -522,21 +522,21 @@ jobs:
             --dataset "2026-01=$JAN" \
             --dataset "2026-02=$FEB" \
             --dataset "2026-03=$MAR" \
-            --report artifacts/dynamic-state-policy-v01.txt \
-            --metrics-csv artifacts/dynamic-state-policy-metrics.csv \
-            --trades-csv artifacts/dynamic-state-policy-trades.csv \
-            --equity-csv artifacts/dynamic-state-policy-equity.csv \
-            | tee artifacts/dynamic-state-policy-v01.log
+            --report artifacts/dynamic-state-policy-v02.txt \
+            --metrics-csv artifacts/dynamic-state-policy-v02-metrics.csv \
+            --trades-csv artifacts/dynamic-state-policy-v02-trades.csv \
+            --equity-csv artifacts/dynamic-state-policy-v02-equity.csv \
+            | tee artifacts/dynamic-state-policy-v02.log
 
       - name: Upload Dynamic State Policy artifact
         uses: actions/upload-artifact@v4
         with:
-          name: moneymaker-dynamic-state-policy-v01-${{ needs.request.outputs.request_id }}
+          name: moneymaker-dynamic-state-policy-v02-${{ needs.request.outputs.request_id }}
           path: |
-            victory-trader/artifacts/dynamic-state-policy-v01.txt
-            victory-trader/artifacts/dynamic-state-policy-v01.log
-            victory-trader/artifacts/dynamic-state-policy-metrics.csv
-            victory-trader/artifacts/dynamic-state-policy-trades.csv
-            victory-trader/artifacts/dynamic-state-policy-equity.csv
+            victory-trader/artifacts/dynamic-state-policy-v02.txt
+            victory-trader/artifacts/dynamic-state-policy-v02.log
+            victory-trader/artifacts/dynamic-state-policy-v02-metrics.csv
+            victory-trader/artifacts/dynamic-state-policy-v02-trades.csv
+            victory-trader/artifacts/dynamic-state-policy-v02-equity.csv
           if-no-files-found: error
           retention-days: 90
