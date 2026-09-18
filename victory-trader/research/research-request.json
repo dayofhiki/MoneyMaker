@@ -1,5 +1,5 @@
 {
-  "request_id": 9,
-  "operation": "state_value_model",
-  "note": "Train and evaluate State Action-Value Model v0.1 with leave-one-month-out validation on January-March 2026 state panels."
+  "request_id": 10,
+  "operation": "dynamic_state_policy",
+  "note": "Run pre-registered Dynamic State Policy v0.1 on January-March 2026 with leave-one-month-out state models. One market-wide position, dynamic exit, re-entry allowed."
 }
