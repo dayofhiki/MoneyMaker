@@ -164,3 +164,46 @@ def test_news_uses_timestamp_bounds_and_paginates(monkeypatch):
     assert calls[0][1]["published_utc.gte"] == "2026-01-01T15:00:00Z"
     assert calls[0][1]["published_utc.lte"] == "2026-01-02T15:00:00Z"
     assert calls[1][1] == {"cursor": "next"}
+
+
+def test_quotes_use_nanosecond_timestamp_bounds_and_paginate(monkeypatch):
+    calls = []
+    payloads = [
+        {
+            "results": [
+                {
+                    "bid_price": 4.99,
+                    "ask_price": 5.01,
+                    "sip_timestamp": 1760000000000000000,
+                }
+            ],
+            "next_url": "https://api.massive.com/v3/quotes/AAA?cursor=next",
+        },
+        {
+            "results": [
+                {
+                    "bid_price": 5.00,
+                    "ask_price": 5.02,
+                    "sip_timestamp": 1760000001000000000,
+                }
+            ],
+        },
+    ]
+
+    def fake_get(url, *, params, headers, timeout):
+        calls.append((url, params))
+        return FakeResponse(payloads.pop(0))
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    rows = client.quotes(
+        "AAA",
+        timestamp_gte=1760000000000000000,
+        timestamp_lte=1760000002000000000,
+    )
+
+    assert len(rows) == 2
+    assert calls[0][0].endswith("/v3/quotes/AAA")
+    assert calls[0][1]["timestamp.gte"] == 1760000000000000000
+    assert calls[0][1]["timestamp.lte"] == 1760000002000000000
+    assert calls[1][1] == {"cursor": "next"}
