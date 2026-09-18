@@ -1,5 +1,5 @@
 {
-  "request_id": 46,
+  "request_id": 47,
   "operation": "state_calibrated_sequential_q",
-  "note": "Run preregistered v1.8 selected-tail calibration and raw-same-fit comparator on unchanged January-March development panels only; no fresh month, no posthoc gate relaxation."
+  "note": "Execute unchanged preregistered v1.8 after redundant fold-memory references were removed. Request 46 attempts were incomplete runner-shutdown failures; no outcomes or parameters used for tuning. January-March adaptive development only; no fresh month."
 }
