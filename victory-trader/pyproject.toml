@@ -19,6 +19,7 @@ dependencies = [
   "numpy>=2.0",
   "scipy>=1.14",
   "scikit-learn>=1.5",
+  "scikit-learn>=1.5",
   "boto3>=1.40",
 ]
 
