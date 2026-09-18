@@ -200,6 +200,35 @@ class MassiveClient:
             params["date"] = day.isoformat()
         return self._get(f"/v3/reference/tickers/{ticker.upper()}", params)
 
+    def news(
+        self,
+        ticker: str,
+        *,
+        published_gte: str | None = None,
+        published_lte: str | None = None,
+        limit: int = 1000,
+    ) -> list[dict[str, Any]]:
+        """Fetch ticker-tagged news, optionally bounded by publication time."""
+        params: dict[str, Any] = {
+            "ticker": ticker.upper(),
+            "limit": int(limit),
+            "sort": "published_utc",
+            "order": "asc",
+        }
+        if published_gte is not None:
+            params["published_utc.gte"] = published_gte
+        if published_lte is not None:
+            params["published_utc.lte"] = published_lte
+
+        page = self._get("/v2/reference/news", params)
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+        return rows
+
     def reference_tickers(
         self,
         day: date,
