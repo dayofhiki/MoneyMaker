@@ -1,5 +1,5 @@
 {
-  "request_id": 2,
+  "request_id": 3,
   "operation": "candidate_v2_development",
-  "note": "Develop Candidate v2 on January-March 2026 using leave-one-month-out evaluation. Freeze only after a robust configuration is selected."
+  "note": "Retry Candidate v2 development after lint-only fix."
 }
