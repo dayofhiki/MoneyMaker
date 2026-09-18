@@ -1,5 +1,5 @@
 {
-  "request_id": 36,
-  "operation": "state_relative_short_volume_action_value",
-  "note": "Run the pre-registered State Relative Short-Volume Action Value v1.0 experiment on the unchanged January-March development state panels only."
+  "request_id": 37,
+  "operation": "state_eight_k_action_value",
+  "note": "Run the pre-registered State 8-K Disclosure Action Value v1.1 experiment on the unchanged January-March development state panels only."
 }
