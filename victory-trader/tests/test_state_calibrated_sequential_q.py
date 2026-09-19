@@ -177,3 +177,34 @@ def test_forward_rejects_mislabelled_future_dates():
                for m in ("2026-01", "2026-02", "2026-03")}
     with pytest.raises(ValueError, match="overlaps"):
         list(m.evaluation_folds(monthly, "forward"))
+
+
+def test_forward_month_bounds_keep_older_months_as_training_only():
+    monthly = {
+        month: pd.DataFrame({"trading_day": [month + "-15"]})
+        for month in (
+            "2025-09",
+            "2025-10",
+            "2025-11",
+            "2025-12",
+            "2026-01",
+            "2026-02",
+            "2026-03",
+        )
+    }
+    folds = list(
+        m.evaluation_folds(
+            monthly,
+            "forward",
+            evaluation_min_month="2026-01",
+            evaluation_max_month="2026-03",
+        )
+    )
+    assert [month for month, _, _ in folds] == [
+        "2026-01",
+        "2026-02",
+        "2026-03",
+    ]
+    assert folds[0][1] == ["2025-09", "2025-10", "2025-11", "2025-12"]
+    assert folds[1][1][-1] == "2026-01"
+    assert folds[2][1][-1] == "2026-02"
