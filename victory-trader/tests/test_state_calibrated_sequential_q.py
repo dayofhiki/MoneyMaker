@@ -119,3 +119,61 @@ def test_two_day_sample_preserves_existing_bootstrap_calculation():
                            "realized_base_net_return_pct": [-1.0, 1.0]})
     expected = m.day_cluster_bootstrap(trades, policy=m.POLICY, samples=10000)
     assert m.policy_bootstrap(trades) == {**expected, "bootstrap_available": True}
+
+
+def test_attempt_reasons_keep_overlapping_missing_flags():
+    row = pd.Series({"entry_price": np.nan, base.GROSS_COLUMN: np.nan})
+    d = m.attempt_diagnostic(row, 0, None)
+    assert d["evaluation_reason"] == "entry_missing"
+    assert d["gross_missing"] and d["base_missing"] and not d["legacy_evaluated"]
+
+
+def test_valid_entry_missing_exit_is_not_called_unfilled():
+    row = pd.Series({"entry_price": 5.0, base.GROSS_COLUMN: np.nan,
+                     base.TARGET_COLUMN: np.nan, base.STRESS_COLUMN: np.nan})
+    d = m.attempt_diagnostic(row, 5, None)
+    assert d["evaluation_reason"] == "gross_label_missing"
+    assert not d["entry_missing"]
+
+
+def test_attempt_reason_scenario_missing_and_nonfinite():
+    row = pd.Series({"entry_price": 5.0, base.GROSS_COLUMN: 1.0,
+                     base.TARGET_COLUMN: np.nan, base.STRESS_COLUMN: 0.0})
+    assert m.attempt_diagnostic(row, 0, None)["evaluation_reason"] == "scenario_label_missing"
+    row[base.TARGET_COLUMN] = np.inf
+    assert m.attempt_diagnostic(row, 0, {})["evaluation_reason"] == "return_nonfinite"
+    row["entry_price"] = 0
+    assert m.attempt_diagnostic(row, 0, None)["evaluation_reason"] == "entry_invalid"
+
+
+def test_audit_never_changes_attempts_or_falls_through(monkeypatch):
+    monkeypatch.setattr(m, "predict", lambda frame, model: frame[model].to_numpy(dtype=float))
+    row = {"trading_day": "a", "ticker": "AAA", "t": 0, "entry_price": 5.0,
+           base.GROSS_COLUMN: np.nan, base.TARGET_COLUMN: np.nan,
+           base.STRESS_COLUMN: np.nan, "buy": 2.0, "wait": 0.0}
+    cp = {stage: pd.DataFrame([row]) for stage in (0, 5, 10)}
+    models = {0: ("buy", "wait"), 5: ("buy", "wait"), 10: ("buy", None)}
+    original, counts = m.select_policy(cp, models)
+    ledger = []
+    audited, audited_counts = m.select_policy(cp, models, attempt_records=ledger)
+    pd.testing.assert_frame_equal(original, audited)
+    assert counts == audited_counts
+    assert len(ledger) == 1 and ledger[0]["evaluation_reason"] == "gross_label_missing"
+
+
+def test_forward_split_uses_only_past_months():
+    monthly = {m: pd.DataFrame({"trading_day": [m + "-15"]})
+               for m in ("2026-01", "2026-02", "2026-03")}
+    folds = list(m.evaluation_folds(monthly, "forward"))
+    assert len(folds) == 1
+    month, training, _ = folds[0]
+    assert month == "2026-03" and training == ["2026-01", "2026-02"]
+    assert len(list(m.evaluation_folds(monthly, "lomo"))) == 3
+
+
+def test_forward_rejects_mislabelled_future_dates():
+    import pytest
+    monthly = {m: pd.DataFrame({"trading_day": ["2026-03-15"]})
+               for m in ("2026-01", "2026-02", "2026-03")}
+    with pytest.raises(ValueError, match="overlaps"):
+        list(m.evaluation_folds(monthly, "forward"))
