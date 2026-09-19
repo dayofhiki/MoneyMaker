@@ -138,3 +138,12 @@ def test_summary_and_feasibility_pass_on_complete_probe():
     summary = summarize(pd.DataFrame(rows))
     checks = feasibility(summary, authorization_error=None)
     assert checks["all_pass"] is True
+
+
+def test_feasibility_handles_authorization_failure_without_summary():
+    checks = feasibility(
+        pd.DataFrame(),
+        authorization_error="historical NBBO authorization failed with HTTP 403",
+    )
+    assert checks["historical_quote_authorization"] is False
+    assert checks["all_pass"] is False
