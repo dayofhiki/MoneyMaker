@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "sec_8k_probe"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "historical_state_build_v20", "sec_8k_probe"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -3429,5 +3429,151 @@ jobs:
             victory-trader/artifacts/causal-nbbo-liquidity-v19.log
             victory-trader/artifacts/causal-nbbo-liquidity-v19-details.csv
             victory-trader/artifacts/causal-nbbo-liquidity-v19-summary.csv
+          if-no-files-found: error
+          retention-days: 90
+
+
+  historical-state-build-v20:
+    if: ${{ needs.request.outputs.operation == 'historical_state_build_v20' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify state builders
+        run: |
+          python -m pip install -e '.[dev]'
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_state_panel.py tests/test_state_market_breadth.py tests/test_state_sequence_enrichment.py
+
+      - name: Download preregistered Sep-Dec 2025 event dataset
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-2025-09-01-2025-12-31
+          path: victory-trader/historical-events-v20
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35439783818'
+
+      - name: Restore reusable aggregate Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-historical-state-v20-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-state-v01-${{ runner.os }}-
+            moneymaker-discovery-v05-${{ runner.os }}-
+
+      - name: Split events by preregistered development month
+        shell: bash
+        run: |
+          mkdir -p data/historical-events-v20 data/historical-state-v20 data/historical-breadth-v20 data/historical-final-v20 artifacts
+          SRC="$(find historical-events-v20 -name research.parquet -print -quit)"
+          test -n "$SRC" || { echo "Sep-Dec 2025 research.parquet not found"; exit 1; }
+          SRC="$SRC" python - <<'PY'
+          import os
+          from pathlib import Path
+          import pandas as pd
+
+          src = Path(os.environ["SRC"])
+          frame = pd.read_parquet(src)
+          required = {"trading_day", "ticker", "timestamp_ms", "threshold_pct", "previous_close"}
+          missing = required - set(frame.columns)
+          if missing:
+              raise SystemExit(f"historical event dataset missing state keys: {sorted(missing)}")
+          months = ("2025-09", "2025-10", "2025-11", "2025-12")
+          seen = set(frame["trading_day"].astype(str).str[:7])
+          unexpected = sorted(seen - set(months))
+          if unexpected:
+              raise SystemExit(f"unexpected months in historical event dataset: {unexpected}")
+          summary = []
+          for month in months:
+              part = frame.loc[frame["trading_day"].astype(str).str.startswith(month)].copy()
+              if part.empty:
+                  raise SystemExit(f"no event rows for {month}")
+              path = Path("data/historical-events-v20") / f"events-{month}.parquet"
+              part.to_parquet(path, index=False, compression="zstd")
+              summary.append({
+                  "month": month,
+                  "event_rows": len(part),
+                  "event_tickers": part["ticker"].astype(str).nunique(),
+                  "trading_days": part["trading_day"].astype(str).nunique(),
+              })
+          pd.DataFrame(summary).to_csv("artifacts/historical-v20-event-summary.csv", index=False)
+          print(pd.DataFrame(summary).to_string(index=False))
+          PY
+
+      - name: Build September-December causal state panels
+        shell: bash
+        run: |
+          set -euo pipefail
+          for MONTH in 2025-09 2025-10 2025-11 2025-12; do
+            echo "=== Building $MONTH state panel ==="
+            python -m victory_trader.state_panel               "data/historical-events-v20/events-$MONTH.parquet"               --output "data/historical-state-v20/state-$MONTH.parquet"               | tee "artifacts/historical-v20-state-$MONTH.log"
+
+            python -m victory_trader.state_market_breadth               "data/historical-state-v20/state-$MONTH.parquet"               --output "data/historical-breadth-v20/state-$MONTH.parquet"
+
+            python -m victory_trader.state_sequence_enrichment               "data/historical-breadth-v20/state-$MONTH.parquet"               --output "data/historical-final-v20/state-$MONTH.parquet"
+          done
+
+      - name: Audit historical state panels
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+
+          rows = []
+          for month in ("2025-09", "2025-10", "2025-11", "2025-12"):
+              path = Path("data/historical-final-v20") / f"state-{month}.parquet"
+              frame = pd.read_parquet(path)
+              if frame.empty:
+                  raise SystemExit(f"empty final state panel: {month}")
+              if frame.duplicated(["trading_day", "ticker", "t"]).any():
+                  raise SystemExit(f"duplicate state key: {month}")
+              rows.append({
+                  "month": month,
+                  "state_rows": len(frame),
+                  "runner_episodes": frame[["trading_day", "ticker"]].drop_duplicates().shape[0],
+                  "trading_days": frame["trading_day"].nunique(),
+                  "first_day": str(frame["trading_day"].min()),
+                  "last_day": str(frame["trading_day"].max()),
+              })
+          result = pd.DataFrame(rows)
+          result.to_csv("artifacts/historical-v20-state-summary.csv", index=False)
+          print(result.to_string(index=False))
+          PY
+
+      - name: Save reusable aggregate Flat File cache
+        if: ${{ always() }}
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-historical-state-v20-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Upload historical state development artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-historical-state-v20-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/data/historical-final-v20/state-2025-09.parquet
+            victory-trader/data/historical-final-v20/state-2025-10.parquet
+            victory-trader/data/historical-final-v20/state-2025-11.parquet
+            victory-trader/data/historical-final-v20/state-2025-12.parquet
+            victory-trader/artifacts/historical-v20-event-summary.csv
+            victory-trader/artifacts/historical-v20-state-summary.csv
+            victory-trader/artifacts/historical-v20-state-*.log
           if-no-files-found: error
           retention-days: 90
