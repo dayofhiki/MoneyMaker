@@ -1,5 +1,5 @@
 {
-  "request_id": 51,
-  "operation": "causal_nbbo_liquidity_probe",
-  "note": "Retry unchanged preregistered v1.9 causal NBBO probe after reporting-only empty-summary fix; no quote-window, sampling, feature, or feasibility rule changed."
+  "request_id": 52,
+  "operation": "quote_flatfile_probe",
+  "note": "Read-only probe of existing Massive stock quote Flat File entitlement after REST historical NBBO returned HTTP 403. Do not download the file, change subscription, or access fresh validation data."
 }
