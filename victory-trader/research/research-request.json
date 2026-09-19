@@ -1,5 +1,9 @@
 {
-  "request_id": 52,
-  "operation": "quote_flatfile_probe",
-  "note": "Read-only probe of existing Massive stock quote Flat File entitlement after REST historical NBBO returned HTTP 403. Do not download the file, change subscription, or access fresh validation data."
+  "request_id": 53,
+  "operation": "research_month",
+  "start_date": "2025-09-01",
+  "end_date": "2025-12-31",
+  "chunk_days": 31,
+  "annotate_halts": true,
+  "note": "Acquire the preregistered Sep-Dec 2025 full-universe development expansion only. No debug candidate cap and no fresh 2026 validation month."
 }
