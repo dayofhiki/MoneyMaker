@@ -1,5 +1,5 @@
 {
-  "request_id": 47,
+  "request_id": 48,
   "operation": "state_calibrated_sequential_q",
-  "note": "Execute unchanged preregistered v1.8 after redundant fold-memory references were removed. Request 46 attempts were incomplete runner-shutdown failures; no outcomes or parameters used for tuning. January-March adaptive development only; no fresh month."
+  "note": "Frozen v1.8 all-BUY evaluation ledger audit plus past-only March development audit; unchanged decisions, costs, labels, no fresh month or live deployment."
 }
