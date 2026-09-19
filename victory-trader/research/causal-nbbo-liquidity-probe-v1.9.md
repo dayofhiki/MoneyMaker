@@ -111,3 +111,32 @@ Report monthly and pooled:
 - counts by missing reason.
 
 No fresh validation month is consumed.
+
+
+## Result — request 51
+
+The reporting-only retry completed successfully and established the data-access
+result without changing any preregistered probe rule.
+
+- Historical `/v3/quotes/{ticker}` request: HTTP 403.
+- Network requests before stop: 1.
+- No quote observation was admitted.
+- All four feasibility criteria failed because historical quote authorization
+  is unavailable under the currently configured REST entitlement.
+- No quote coverage, spread, depth or return statistic was inferred from the
+  authorization failure.
+
+Request 50 had already encountered the same empty-result path but crashed while
+formatting an empty summary. Request 51 changed only that reporting path and is
+the authoritative result.
+
+## Decision
+
+Do not impute NBBO, use after-target quotes as causal features, relax quote-age
+rules, or purchase/change a data plan automatically.
+
+Check existing quote Flat File entitlement read-only. If it is also unavailable,
+retire the NBBO-enrichment branch under current entitlements and move to a
+different causal information source / broader development protocol.
+
+No fresh validation month was consumed.
