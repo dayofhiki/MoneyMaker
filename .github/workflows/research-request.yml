@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "sec_8k_probe"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "sec_8k_probe"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -3356,5 +3356,78 @@ jobs:
         with:
           name: moneymaker-position-ledger-${{ needs.request.outputs.request_id }}
           path: victory-trader/artifacts/position-ledger
+          if-no-files-found: error
+          retention-days: 90
+
+
+  causal-nbbo-liquidity-probe:
+    if: ${{ needs.request.outputs.operation == 'causal_nbbo_liquidity_probe' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and test causal NBBO probe
+        run: |
+          python -m pip install -e '.[dev]'
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_massive_client.py tests/test_causal_nbbo_liquidity_probe.py
+
+      - name: Download frozen request-48 attempts
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-state-calibrated-sequential-q-v18-48
+          path: victory-trader/nbbo-attempts
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35436142509'
+
+      - name: Restore causal NBBO REST cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-rest-causal-nbbo
+          key: moneymaker-causal-nbbo-v19-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-causal-nbbo-v19-${{ runner.os }}-
+
+      - name: Probe strictly causal NBBO liquidity and execution observations
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          ATTEMPTS="$(find nbbo-attempts -name state-calibrated-sequential-q-v18-attempts.csv -print -quit)"
+          test -n "$ATTEMPTS" || { echo "request-48 attempts CSV not found"; exit 1; }
+          python -m victory_trader.causal_nbbo_liquidity_probe "$ATTEMPTS" \
+            --report artifacts/causal-nbbo-liquidity-v19.txt \
+            --details-csv artifacts/causal-nbbo-liquidity-v19-details.csv \
+            --summary-csv artifacts/causal-nbbo-liquidity-v19-summary.csv \
+            | tee artifacts/causal-nbbo-liquidity-v19.log
+
+      - name: Save causal NBBO REST cache
+        if: ${{ always() }}
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-rest-causal-nbbo
+          key: moneymaker-causal-nbbo-v19-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Upload causal NBBO probe artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: moneymaker-causal-nbbo-liquidity-v19-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/causal-nbbo-liquidity-v19.txt
+            victory-trader/artifacts/causal-nbbo-liquidity-v19.log
+            victory-trader/artifacts/causal-nbbo-liquidity-v19-details.csv
+            victory-trader/artifacts/causal-nbbo-liquidity-v19-summary.csv
           if-no-files-found: error
           retention-days: 90
