@@ -177,7 +177,8 @@ def main():
         month, path = spec.split('=', 1)
         panel = pd.read_parquet(path, columns=['ticker', 't', 'o', 'c'])
         selected = attempts.loc[attempts.month.astype(str).eq(month)]
-        for policy, group in selected.groupby('policy'):
+        for policy in sorted(attempts.policy.unique()):
+            group = selected.loc[selected.policy.eq(policy)]
             for scenario in DEFAULT_EXECUTION_SCENARIOS:
                 records, summary, curve = replay(group, panel, scenario)
                 summary.update(month=month, policy=policy)

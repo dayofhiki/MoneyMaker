@@ -1,5 +1,5 @@
 {
-  "request_id": 48,
-  "operation": "state_calibrated_sequential_q",
-  "note": "Frozen v1.8 all-BUY evaluation ledger audit plus past-only March development audit; unchanged decisions, costs, labels, no fresh month or live deployment."
+  "request_id": 49,
+  "operation": "position_ledger_audit",
+  "note": "Frozen request48 decisions, pending exits and capital accounting; existing Jan-Mar panels and unchanged cost scenarios; no new training/data."
 }
