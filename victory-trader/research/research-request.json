@@ -1,5 +1,5 @@
 {
-  "request_id": 49,
-  "operation": "position_ledger_audit",
-  "note": "Frozen request48 decisions, pending exits and capital accounting; existing Jan-Mar panels and unchanged cost scenarios; no new training/data."
+  "request_id": 50,
+  "operation": "causal_nbbo_liquidity_probe",
+  "note": "Run preregistered v1.9 strictly causal historical NBBO liquidity/execution feasibility probe on frozen request-48 raw_same_fit attempts only; no fresh month and no policy tuning."
 }
