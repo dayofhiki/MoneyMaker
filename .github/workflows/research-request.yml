@@ -3254,14 +3254,35 @@ jobs:
             --comparisons-csv artifacts/state-calibrated-sequential-q-v18-comparisons.csv \
             --coverage-csv artifacts/state-calibrated-sequential-q-v18-scoreable-coverage.csv \
             --paths-csv artifacts/state-calibrated-sequential-q-v18-paths.csv \
+            --attempts-csv artifacts/state-calibrated-sequential-q-v18-attempts.csv \
             --calibration-csv artifacts/state-calibrated-sequential-q-v18-calibration.csv \
             | tee artifacts/state-calibrated-sequential-q-v18.log
+
+      - name: Run past-only March development audit
+        shell: bash
+        run: |
+          python -m victory_trader.state_calibrated_sequential_q --evaluation forward \
+            --dataset "2026-01=data/state-calq-final/state-2026-01.parquet" \
+            --dataset "2026-02=data/state-calq-final/state-2026-02.parquet" \
+            --dataset "2026-03=data/state-calq-final/state-2026-03.parquet" \
+            --report artifacts/state-calibrated-sequential-q-v18-forward.txt \
+            --details-csv artifacts/state-calibrated-sequential-q-v18-forward-details.csv \
+            --trades-csv artifacts/state-calibrated-sequential-q-v18-forward-trades.csv \
+            --diagnostics-csv artifacts/state-calibrated-sequential-q-v18-forward-diagnostics.csv \
+            --comparisons-csv artifacts/state-calibrated-sequential-q-v18-forward-comparisons.csv \
+            --coverage-csv artifacts/state-calibrated-sequential-q-v18-forward-scoreable-coverage.csv \
+            --paths-csv artifacts/state-calibrated-sequential-q-v18-forward-paths.csv \
+            --attempts-csv artifacts/state-calibrated-sequential-q-v18-forward-attempts.csv \
+            --calibration-csv artifacts/state-calibrated-sequential-q-v18-forward-calibration.csv \
+            | tee artifacts/state-calibrated-sequential-q-v18-forward.log
 
       - name: Upload fitted sequential Q artifact
         uses: actions/upload-artifact@v4
         with:
           name: moneymaker-state-calibrated-sequential-q-v18-${{ needs.request.outputs.request_id }}
           path: |
+            victory-trader/artifacts/state-calibrated-sequential-q-v18-attempts.csv
+            victory-trader/artifacts/state-calibrated-sequential-q-v18-forward*
             victory-trader/artifacts/state-calibrated-sequential-q-v18.txt
             victory-trader/artifacts/state-calibrated-sequential-q-v18.log
             victory-trader/artifacts/state-calibrated-sequential-q-v18-details.csv
