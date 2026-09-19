@@ -218,10 +218,20 @@ def select_policy(cp, models, *, attempt_records=None):
     return pd.DataFrame(trades), paths
 
 
-def evaluation_folds(monthly, mode):
+def evaluation_folds(
+    monthly,
+    mode,
+    *,
+    evaluation_min_month=None,
+    evaluation_max_month=None,
+):
     """Forward audit uses only earlier months, with two training months minimum."""
     labels = sorted(monthly)
     for month in labels:
+        if evaluation_min_month is not None and month < evaluation_min_month:
+            continue
+        if evaluation_max_month is not None and month > evaluation_max_month:
+            continue
         training = [m for m in labels if m != month and (mode == "lomo" or m < month)]
         if mode == "forward" and len(training) < 2:
             continue
@@ -250,6 +260,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", action="append", type=base._parse_dataset, required=True)
     parser.add_argument("--evaluation", choices=("lomo", "forward"), default="lomo")
+    parser.add_argument("--evaluation-min-month")
+    parser.add_argument("--evaluation-max-month")
     parser.add_argument("--attempts-csv", type=Path)
     for name in ("report", "details", "trades", "diagnostics", "comparisons", "coverage", "paths", "calibration"):
         parser.add_argument("--" + name + ("" if name == "report" else "-csv"), type=Path, required=True)
@@ -257,7 +269,12 @@ def main():
     monthly = {label: pd.read_parquet(path) for label, path in args.dataset}
     details, trades, comparisons, coverage, paths, calibration_rows, diagnostics = [], [], [], [], [], [], []
     attempts, provenance = [], []
-    for month, training, holdout in evaluation_folds(monthly, args.evaluation):
+    for month, training, holdout in evaluation_folds(
+        monthly,
+        args.evaluation,
+        evaluation_min_month=args.evaluation_min_month,
+        evaluation_max_month=args.evaluation_max_month,
+    ):
         train = pd.concat([monthly[m] for m in training], ignore_index=True)
         fit, cal = split_fit_calibration(train)
         provenance.append({"month": month, "mode": args.evaluation,
