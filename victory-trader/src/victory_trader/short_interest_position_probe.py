@@ -14,6 +14,13 @@ from .short_volume_supply_probe import _sample_signals
 
 
 PUBLICATION_SCHEDULE: dict[date, date] = {
+    date(2025, 7, 31): date(2025, 8, 11),
+    date(2025, 8, 15): date(2025, 8, 26),
+    date(2025, 8, 29): date(2025, 9, 10),
+    date(2025, 9, 15): date(2025, 9, 24),
+    date(2025, 9, 30): date(2025, 10, 9),
+    date(2025, 10, 15): date(2025, 10, 24),
+    date(2025, 10, 31): date(2025, 11, 11),
     date(2025, 11, 14): date(2025, 11, 25),
     date(2025, 11, 28): date(2025, 12, 9),
     date(2025, 12, 15): date(2025, 12, 24),
