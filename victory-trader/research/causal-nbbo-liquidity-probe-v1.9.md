@@ -140,3 +140,21 @@ retire the NBBO-enrichment branch under current entitlements and move to a
 different causal information source / broader development protocol.
 
 No fresh validation month was consumed.
+
+
+### Existing Flat File entitlement check — request 52
+
+The repository's existing read-only quote Flat File probe also returned:
+
+`status=UNAVAILABLE`, `error_code=403`.
+
+Therefore both configured historical quote paths are unavailable:
+
+- REST historical NBBO: HTTP 403;
+- quote Flat File HEAD probe: HTTP 403.
+
+No subscription change or purchase was attempted.
+
+Under the frozen v1.9 decision rule, retire NBBO enrichment under current
+entitlements. Broaden chronological development support before selecting another
+policy; do not treat modeled spread reductions as observed execution evidence.
