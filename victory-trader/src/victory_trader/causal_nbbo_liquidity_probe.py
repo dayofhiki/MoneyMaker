@@ -385,8 +385,11 @@ def feasibility(
     *,
     authorization_error: str | None,
 ) -> dict[str, bool]:
-    months = summary.loc[summary["group"].ne("overall")].copy()
     authorization_ok = authorization_error is None
+    if summary.empty or "group" not in summary.columns:
+        months = pd.DataFrame()
+    else:
+        months = summary.loc[summary["group"].ne("overall")].copy()
     coverage_shape_ok = len(months) == 3
     decision_ok = bool(
         coverage_shape_ok
