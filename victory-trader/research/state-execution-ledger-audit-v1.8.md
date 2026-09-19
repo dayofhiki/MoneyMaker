@@ -44,3 +44,57 @@ Hourly read-only market/research status watch is enabled in the conversation.
 It reports material updates using available public observations and connected
 GitHub state. It is not a streaming feed, deployed model, auto-retrainer or
 order-execution service. No real-time fill or latency claim is made.
+
+## Completed result — request 48
+Run https://github.com/dayofhiki/MoneyMaker/actions/runs/35436142509 succeeded.
+Artifact 10582810251:
+sha256:23743477e822385dff3d494dbb7ed60de9a00857f0b99561bca2818d24da95dc.
+CI run 35436085196 passed Ruff and 259 tests before execution.
+
+| Raw policy month | Attempts | Evaluated | Missing entry | Valid entry, missing gross outcome |
+| --- | ---: | ---: | ---: | ---: |
+| January | 348 | 291 | 22 | 35 |
+| February | 175 | 134 | 13 | 28 |
+| March | 192 | 152 | 18 | 22 |
+| Total | 715 | 577 | 53 | 85 |
+
+All counts reconcile. The 85 gross-outcome-missing cases comprise 61.59% of
+138 omitted evaluations, and 11.89% of all raw BUY attempts. They are NOT
+confirmed unfilled orders. An entry bar exists but the fixed-horizon label is
+missing. Actual fills remain unobserved. Their P&L direction cannot be inferred.
+
+Raw evaluated trade counts and base means exactly reproduced request 47 at
+reported precision: 291/-0.915769%, 134/-0.743722%, 152/-0.650326%.
+Calibrated results likewise remain 0/1/0 trades; the February trade is -3.822639%.
+There was no profitable-model improvement in this instrumentation run.
+
+Forward provenance: fit 2026-01-02..2026-02-17, calibration
+2026-02-18..2026-02-27, evaluation 2026-03-02..2026-03-31.
+Forward March reproduces the same March LOMO fold, including 18 missing entries
+and 22 missing outcomes. This is a chronology-path check, not fresh evidence.
+
+## Concrete model-development priority after these observations
+The data builder uses next-minute open for entry and exact horizon close for
+the 10-minute label. A missing exact exit bar removes that outcome. Neither
+the current count nor the previous report tells us whether the absence comes
+from no trading, a halt, session boundary or a data-quality gap. Do not invent
+a reason or impute zero P&L.
+
+Before claiming continuous trading performance, implement a causal position
+ledger and outcome-label audit that:
+- records intended order, observed reference entry, pending exit, actual later
+  observations and unresolved status separately;
+- keeps an unresolved position and its committed capital outstanding instead
+  of deleting it, resetting cash or calling it unfilled;
+- distinguishes stale mark-to-market from realized sale, never retroactively
+  sells at a last available bar after discovering the future is missing;
+- uses observed information for eligibility, and future observations only for
+  training labels and evaluation;
+- blocks performance promotion whenever unaccounted entry/exit cases remain.
+
+Then fit and evaluate the continuous-entry/exit policy against this ledger
+using past-only data and unchanged cost scenarios. Separate estimated gross
+return, cost/observability uncertainty and account risk. A model re-fit using
+the current omitted-outcome sample alone is not an adequate fix.
+No live trading, new quote subscription, new validation month, or streaming
+scanner was enabled by this run. The hourly status watch remains read-only.
