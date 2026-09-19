@@ -1,5 +1,5 @@
 {
-  "request_id": 50,
+  "request_id": 51,
   "operation": "causal_nbbo_liquidity_probe",
-  "note": "Run preregistered v1.9 strictly causal historical NBBO liquidity/execution feasibility probe on frozen request-48 raw_same_fit attempts only; no fresh month and no policy tuning."
+  "note": "Retry unchanged preregistered v1.9 causal NBBO probe after reporting-only empty-summary fix; no quote-window, sampling, feature, or feasibility rule changed."
 }
