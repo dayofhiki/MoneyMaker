@@ -146,7 +146,42 @@ def train_chain(fit, calibration=None):
     return {0: (buy0, wait0), 5: (buy5, wait5), 10: (buy10, None)}, records
 
 
-def select_policy(cp, models):
+def attempt_diagnostic(row, stage, trade):
+    """Post-decision observation only; never a feature or action gate."""
+    values = {key: pd.to_numeric(pd.Series([row.get(key)]), errors="coerce").iloc[0]
+              for key in ("entry_price", base.GROSS_COLUMN, base.TARGET_COLUMN, base.STRESS_COLUMN)}
+    entry = values["entry_price"]
+    flags = {
+        "entry_missing": bool(pd.isna(entry)),
+        "entry_nonpositive": bool(pd.notna(entry) and entry <= 0),
+        "entry_nonfinite": bool(pd.notna(entry) and not np.isfinite(entry)),
+        "gross_missing": bool(pd.isna(values[base.GROSS_COLUMN])),
+        "base_missing": bool(pd.isna(values[base.TARGET_COLUMN])),
+        "stress_missing": bool(pd.isna(values[base.STRESS_COLUMN])),
+        "return_nonfinite": any(pd.notna(values[k]) and not np.isfinite(values[k])
+                                for k in (base.GROSS_COLUMN, base.TARGET_COLUMN, base.STRESS_COLUMN)),
+    }
+    # Mutually exclusive reason with full overlapping flags retained.
+    if flags["entry_missing"]:
+        reason = "entry_missing"
+    elif flags["entry_nonpositive"] or flags["entry_nonfinite"]:
+        reason = "entry_invalid"
+    elif flags["gross_missing"]:
+        reason = "gross_label_missing"
+    elif flags["base_missing"] or flags["stress_missing"]:
+        reason = "scenario_label_missing"
+    elif flags["return_nonfinite"]:
+        reason = "return_nonfinite"
+    else:
+        reason = "evaluated"
+    return {"trading_day": row.get("trading_day"), "ticker": row.get("ticker"),
+            "decision_t": row.get("t"), "checkpoint_min": stage,
+            "q_buy": row.get("_buy", 0.0), "q_wait": row.get("_wait", np.nan),
+            "evaluation_reason": reason, "legacy_evaluated": trade is not None,
+            **flags, **values}
+
+
+def select_policy(cp, models, *, attempt_records=None):
     # Batch inference once per model, not once per ticker-day.
     maps = {}
     for stage, frame in cp.items():
@@ -172,6 +207,8 @@ def select_policy(cp, models):
             if action == "BUY":
                 paths["buy_attempts"] += 1
                 trade = base._attempt_trade(row, decision_score=row["_buy"])
+                if attempt_records is not None:
+                    attempt_records.append(attempt_diagnostic(row, stage, trade))
                 if trade is None:
                     paths["unevaluated_attempts"] += 1
                 else:
@@ -179,6 +216,21 @@ def select_policy(cp, models):
                     trades.append(trade)
                 break
     return pd.DataFrame(trades), paths
+
+
+def evaluation_folds(monthly, mode):
+    """Forward audit uses only earlier months, with two training months minimum."""
+    labels = sorted(monthly)
+    for month in labels:
+        training = [m for m in labels if m != month and (mode == "lomo" or m < month)]
+        if mode == "forward" and len(training) < 2:
+            continue
+        holdout = monthly[month]
+        if mode == "forward":
+            last_training_day = max(monthly[m]["trading_day"].astype(str).max() for m in training)
+            if last_training_day >= holdout["trading_day"].astype(str).min():
+                raise ValueError("forward training overlaps or follows evaluation dates")
+        yield month, training, holdout
 
 
 def policy_bootstrap(trades):
@@ -197,14 +249,21 @@ def policy_bootstrap(trades):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", action="append", type=base._parse_dataset, required=True)
+    parser.add_argument("--evaluation", choices=("lomo", "forward"), default="lomo")
+    parser.add_argument("--attempts-csv", type=Path)
     for name in ("report", "details", "trades", "diagnostics", "comparisons", "coverage", "paths", "calibration"):
         parser.add_argument("--" + name + ("" if name == "report" else "-csv"), type=Path, required=True)
     args = parser.parse_args()
     monthly = {label: pd.read_parquet(path) for label, path in args.dataset}
     details, trades, comparisons, coverage, paths, calibration_rows, diagnostics = [], [], [], [], [], [], []
-    for month, holdout in monthly.items():
-        train = pd.concat([f for m, f in monthly.items() if m != month], ignore_index=True)
+    attempts, provenance = [], []
+    for month, training, holdout in evaluation_folds(monthly, args.evaluation):
+        train = pd.concat([monthly[m] for m in training], ignore_index=True)
         fit, cal = split_fit_calibration(train)
+        provenance.append({"month": month, "mode": args.evaluation,
+                           "fit_start": fit.trading_day.min(), "fit_end": fit.trading_day.max(),
+                           "cal_start": cal.trading_day.min(), "cal_end": cal.trading_day.max(),
+                           "eval_start": holdout.trading_day.min(), "eval_end": holdout.trading_day.max()})
         # Do not retain the full concat alongside its disjoint copied splits.
         del train
         gc.collect()
@@ -214,10 +273,21 @@ def main():
         del fit, cal
         gc.collect()
         cp = checkpoints(holdout)
-        earliest = [base._attempt_trade(r, decision_score=0.0) for _, r in cp[0].iterrows()]
+        earliest = []
+        for _, r in cp[0].iterrows():
+            trade = base._attempt_trade(r, decision_score=0.0)
+            earliest.append(trade)
+            attempts.append({"month": month, "policy": "earliest_eligible_10m_cap1",
+                             **attempt_diagnostic(r, 0, trade)})
         baseline = pd.DataFrame([r for r in earliest if r is not None])
-        adjusted, path = select_policy(cp, corrected)
-        raw_trades, raw_paths = select_policy(cp, raw)
+        adjusted_attempts, raw_attempts = [], []
+        adjusted, path = select_policy(cp, corrected, attempt_records=adjusted_attempts)
+        raw_trades, raw_paths = select_policy(cp, raw, attempt_records=raw_attempts)
+        for name, records_for_policy, counts in ((POLICY, adjusted_attempts, path),
+                                                ("raw_same_fit_cap1", raw_attempts, raw_paths)):
+            assert len(records_for_policy) == counts["buy_attempts"]
+            assert sum(not r["legacy_evaluated"] for r in records_for_policy) == counts["unevaluated_attempts"]
+            attempts.extend({"month": month, "policy": name, **r} for r in records_for_policy)
         coverage.append(_coverage_row(holdout, month))
         for policy, selected, counts in (("earliest_eligible_10m_cap1", baseline, {}),
                                          ("raw_same_fit_cap1", raw_trades, raw_paths),
@@ -245,6 +315,14 @@ def main():
               "coverage": pd.DataFrame(coverage), "paths": pd.DataFrame(paths), "calibration": pd.DataFrame(calibration_rows)}
     boot = policy_bootstrap(frames["trades"])
     report = "=== Selected-tail calibrated sequential Q v1.8 ===\nAdaptive development only; no fresh month\n"
+    report += f"evaluation={args.evaluation}; forward is also previously seen development, not fresh validation\n"
+    report += "\n=== Split provenance ===\n" + pd.DataFrame(provenance).to_string(index=False) + "\n"
+    attempt_frame = pd.DataFrame(attempts)
+    if not attempt_frame.empty:
+        summary = attempt_frame.groupby(["month", "policy", "evaluation_reason"], dropna=False).size().rename("attempts").reset_index()
+        report += "\n=== Attempt evaluation reasons (post-decision only) ===\n" + summary.to_string(index=False) + "\n"
+        if attempt_frame["entry_nonfinite"].any() or attempt_frame["return_nonfinite"].any():
+            report += "DATA QUALITY FAILURE: nonfinite values; no performance promotion allowed.\n"
     for name in ("details", "calibration", "paths", "comparisons", "coverage", "diagnostics"):
         report += f"\n=== {name} ===\n" + frames[name].to_string(index=False) + "\n"
     report += "\n=== Day-cluster bootstrap ===\n" + str(boot) + "\n"
@@ -252,6 +330,9 @@ def main():
     print(report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(report, encoding="utf-8")
+    if args.attempts_csv is not None:
+        args.attempts_csv.parent.mkdir(parents=True, exist_ok=True)
+        attempt_frame.to_csv(args.attempts_csv, index=False)
     for name, frame in frames.items():
         path = getattr(args, name + "_csv")
         path.parent.mkdir(parents=True, exist_ok=True)
