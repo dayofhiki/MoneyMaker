@@ -92,3 +92,30 @@ def test_short_interest_probe_success_rules():
         "has_published_record",
     ] = False
     assert success_check(frame)["all_pass"] is False
+
+
+def test_2025_development_publication_schedule_is_strictly_causal():
+    records = _prepare_ticker_history(
+        [
+            _row("2025-07-31", 900),
+            _row("2025-08-15", 1000),
+            _row("2025-08-29", 1100),
+            _row("2025-09-15", 1200),
+            _row("2025-09-30", 1300),
+            _row("2025-10-15", 1400),
+            _row("2025-10-31", 1500),
+        ]
+    )
+
+    # Publication on the same calendar day is not yet eligible by project rule.
+    sep10 = _eligible_history(records, date(2025, 9, 10))
+    assert [r["_settlement_day"] for r in sep10] == [
+        date(2025, 7, 31),
+        date(2025, 8, 15),
+    ]
+
+    sep11 = _eligible_history(records, date(2025, 9, 11))
+    assert sep11[-1]["_settlement_day"] == date(2025, 8, 29)
+
+    nov12 = _eligible_history(records, date(2025, 11, 12))
+    assert nov12[-1]["_settlement_day"] == date(2025, 10, 31)
