@@ -3579,7 +3579,7 @@ jobs:
           retention-days: 90
 
 
-expanded-history-features:
+  expanded-history-features:
     if: ${{ needs.request.outputs.operation == 'expanded_history_sequential_q' }}
     needs: request
     runs-on: ubuntu-latest
