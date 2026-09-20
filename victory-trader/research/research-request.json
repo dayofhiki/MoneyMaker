@@ -1,5 +1,5 @@
 {
-  "request_id": 57,
-  "operation": "expanded_history_sequential_q",
-  "note": "Retry the same preregistered sharded expanded-history v2.1 after fixing the missing monthly output directory. Same Sep 2025-Mar 2026 development data and Jan-Mar 2026 evaluation only; no new validation month, threshold tuning, brokerage action, or quote purchase."
+  "request_id": 58,
+  "operation": "expanded_history_monthly_q_v21",
+  "note": "Run only the preregistered Jan-Mar 2026 past-only sequential Q evaluations and account-ledger replay using the successful request 57 monthly feature checkpoints. No feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
 }
