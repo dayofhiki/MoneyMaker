@@ -1,5 +1,5 @@
 {
-  "request_id": 58,
+  "request_id": 59,
   "operation": "expanded_history_monthly_q_v21",
-  "note": "Run only the preregistered Jan-Mar 2026 past-only sequential Q evaluations and account-ledger replay using the successful request 57 monthly feature checkpoints. No feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
+  "note": "Retry the same preregistered Jan-Mar 2026 past-only sequential Q evaluations with periodic progress output, using request 57 feature checkpoints. No feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
 }
