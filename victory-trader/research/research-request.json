@@ -1,5 +1,5 @@
 {
-  "request_id": 59,
+  "request_id": 60,
   "operation": "expanded_history_monthly_q_v21",
-  "note": "Retry the same preregistered Jan-Mar 2026 past-only sequential Q evaluations with periodic progress output, using request 57 feature checkpoints. No feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
+  "note": "Run the same preregistered Jan-Mar 2026 past-only sequential Q evaluations serially to avoid parallel runner resource contention, using request 57 feature checkpoints. No feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
 }
