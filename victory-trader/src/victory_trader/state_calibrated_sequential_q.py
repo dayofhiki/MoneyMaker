@@ -9,14 +9,58 @@ import numpy as np
 import pandas as pd
 
 from . import state_fitted_sequential_q as base
-from .state_multi_source_value import _coverage_row
+from .state_multi_source_value import EXTERNAL_FEATURES, _coverage_row
 from .state_rank_turn import day_cluster_bootstrap
-from .state_value_model import _eligible
+from .state_sequence_enrichment import SEQUENCE_FEATURES
+from .state_value_model import (
+    BOOLEAN_FEATURES,
+    LOG_FEATURES,
+    RAW_FEATURES,
+    _eligible,
+)
 
 CALIBRATION_FRACTION = 0.20
 OPTIMISM_MULTIPLIER = 1.645
 MIN_CALIBRATION_DAYS = 5
 POLICY = "calibrated_sequential_q_cap1"
+
+MODEL_INPUT_COLUMNS = tuple(
+    dict.fromkeys(
+        [
+            *base.EPISODE_KEYS,
+            "t",
+            "c",
+            "previous_close",
+            "entry_price",
+            "active_minute_fraction_15m",
+            *RAW_FEATURES,
+            *BOOLEAN_FEATURES,
+            *LOG_FEATURES,
+            *SEQUENCE_FEATURES,
+            *EXTERNAL_FEATURES,
+            base.GROSS_COLUMN,
+            base.TARGET_COLUMN,
+            base.STRESS_COLUMN,
+            "eight_k_query_complete",
+            "short_interest_query_complete",
+            "short_ratio_latest_prior",
+            "short_interest_latest",
+        ]
+    )
+)
+
+
+def read_model_panel(path: str | Path) -> pd.DataFrame:
+    """Read only columns consumed by the frozen model and its audit outputs."""
+    available = set(pd.read_parquet(path, columns=[]).columns)
+    # Some parquet engines return an empty column list for columns=[]; inspect
+    # metadata without materializing row data when pyarrow is available.
+    if not available:
+        import pyarrow.parquet as pq
+
+        available = set(pq.ParquetFile(path).schema.names)
+    columns = [column for column in MODEL_INPUT_COLUMNS if column in available]
+    return pd.read_parquet(path, columns=columns)
 
 
 @dataclass(frozen=True)
@@ -266,7 +310,7 @@ def main():
     for name in ("report", "details", "trades", "diagnostics", "comparisons", "coverage", "paths", "calibration"):
         parser.add_argument("--" + name + ("" if name == "report" else "-csv"), type=Path, required=True)
     args = parser.parse_args()
-    monthly = {label: pd.read_parquet(path) for label, path in args.dataset}
+    monthly = {label: read_model_panel(path) for label, path in args.dataset}
     details, trades, comparisons, coverage, paths, calibration_rows, diagnostics = [], [], [], [], [], [], []
     attempts, provenance = [], []
     for month, training, holdout in evaluation_folds(
