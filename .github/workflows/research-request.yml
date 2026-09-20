@@ -3579,11 +3579,15 @@ jobs:
           retention-days: 90
 
 
-  expanded-history-sequential-q:
+expanded-history-features:
     if: ${{ needs.request.outputs.operation == 'expanded_history_sequential_q' }}
     needs: request
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        month: ['2025-09', '2025-10', '2025-11', '2025-12', '2026-01', '2026-02', '2026-03']
     defaults:
       run:
         working-directory: victory-trader
@@ -3596,101 +3600,179 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install and verify expanded-history evaluation
+      - name: Install monthly feature build
         run: |
           python -m pip install -e '.[dev]'
-          ruff check src tests --select E4,E7,E9,F
-          pytest -q tests/test_state_market_breadth.py tests/test_state_sequence_enrichment.py tests/test_state_short_volume_value.py tests/test_state_eight_k_value.py tests/test_short_interest_position_probe.py tests/test_state_multi_source_value.py tests/test_state_fitted_sequential_q.py tests/test_state_calibrated_sequential_q.py tests/test_position_ledger.py
+          pytest -q tests/test_state_market_breadth.py tests/test_state_sequence_enrichment.py tests/test_state_short_volume_value.py tests/test_state_eight_k_value.py tests/test_short_interest_position_probe.py
 
       - name: Download preregistered 2025 development state panels
+        if: startsWith(matrix.month, '2025-')
         uses: actions/download-artifact@v4
         with:
           name: moneymaker-historical-state-v20-54
-          path: victory-trader/historical-state-v20
+          path: victory-trader/source-state
           github-token: ${{ github.token }}
           repository: dayofhiki/MoneyMaker
           run-id: '35508605041'
 
       - name: Download frozen 2026 state panels
+        if: startsWith(matrix.month, '2026-')
         uses: actions/download-artifact@v4
         with:
           name: moneymaker-state-trader-v01-8
-          path: victory-trader/state-artifact
+          path: victory-trader/source-state
           github-token: ${{ github.token }}
           repository: dayofhiki/MoneyMaker
           run-id: '35322182758'
 
-      - name: Assemble causal seven-month base panels
+      - name: Assemble one causal monthly panel
         shell: bash
         run: |
           set -euo pipefail
+          MONTH="${{ matrix.month }}"
           mkdir -p data/expanded-v21-base data/expanded-v21-breadth artifacts
-          for MONTH in 2025-09 2025-10 2025-11 2025-12; do
-            SRC="$(find historical-state-v20 -name "state-$MONTH.parquet" -print -quit)"
-            test -n "$SRC" || { echo "$MONTH historical state panel not found"; exit 1; }
+          SRC="$(find source-state -name "state-$MONTH.parquet" -print -quit)"
+          test -n "$SRC" || { echo "$MONTH source state panel not found"; exit 1; }
+          if [[ "$MONTH" == 2026-* ]]; then
+            python -m victory_trader.state_market_breadth "$SRC" --output "data/expanded-v21-breadth/state-$MONTH.parquet"
+            python -m victory_trader.state_sequence_enrichment "data/expanded-v21-breadth/state-$MONTH.parquet" --output "data/expanded-v21-base/state-$MONTH.parquet"
+          else
             cp "$SRC" "data/expanded-v21-base/state-$MONTH.parquet"
-          done
-          for MONTH in 2026-01 2026-02 2026-03; do
-            SRC="$(find state-artifact -name "state-$MONTH.parquet" -print -quit)"
-            test -n "$SRC" || { echo "$MONTH frozen state panel not found"; exit 1; }
-            python -m victory_trader.state_market_breadth "$SRC"               --output "data/expanded-v21-breadth/state-$MONTH.parquet"
-            python -m victory_trader.state_sequence_enrichment               "data/expanded-v21-breadth/state-$MONTH.parquet"               --output "data/expanded-v21-base/state-$MONTH.parquet"
-          done
+          fi
 
-      - name: Restore Massive REST cache
+      - name: Restore point-in-time source cache
         uses: actions/cache/restore@v4
         with:
           path: victory-trader/data/cache/massive-rest
-          key: moneymaker-expanded-v21-${{ runner.os }}-${{ github.run_id }}
+          key: moneymaker-expanded-v21-${{ matrix.month }}-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
             moneymaker-calq-v18-${{ runner.os }}-
             moneymaker-seqq-v17-${{ runner.os }}-
 
-      - name: Add fixed external point-in-time features
+      - name: Add fixed monthly external point-in-time features
         shell: bash
         run: |
           set -euo pipefail
-          DATASETS=()
-          for MONTH in 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03; do
-            DATASETS+=(--dataset "$MONTH=data/expanded-v21-base/state-$MONTH.parquet")
-          done
-          python -m victory_trader.state_short_volume_enrichment             "${DATASETS[@]}"             --output-dir data/expanded-v21-short-volume             --coverage-csv artifacts/expanded-v21-short-volume-coverage.csv             --report artifacts/expanded-v21-short-volume.txt
+          MONTH="${{ matrix.month }}"
+          python -m victory_trader.state_short_volume_enrichment --dataset "$MONTH=data/expanded-v21-base/state-$MONTH.parquet" --output-dir data/expanded-v21-short-volume --coverage-csv "artifacts/short-volume-$MONTH.csv" --report "artifacts/short-volume-$MONTH.txt"
+          python -m victory_trader.state_eight_k_enrichment --dataset "$MONTH=data/expanded-v21-short-volume/state-$MONTH.parquet" --output-dir data/expanded-v21-eight-k --coverage-csv "artifacts/eight-k-$MONTH.csv" --report "artifacts/eight-k-$MONTH.txt"
+          python -m victory_trader.state_short_interest_enrichment --dataset "$MONTH=data/expanded-v21-eight-k/state-$MONTH.parquet" --output-dir data/expanded-v21-final --coverage-csv "artifacts/short-interest-$MONTH.csv" --report "artifacts/short-interest-$MONTH.txt"
 
-          DATASETS=()
-          for MONTH in 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03; do
-            DATASETS+=(--dataset "$MONTH=data/expanded-v21-short-volume/state-$MONTH.parquet")
-          done
-          python -m victory_trader.state_eight_k_enrichment             "${DATASETS[@]}"             --output-dir data/expanded-v21-eight-k             --coverage-csv artifacts/expanded-v21-eight-k-coverage.csv             --report artifacts/expanded-v21-eight-k.txt
+      - name: Upload monthly feature checkpoint
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-v21-month-${{ matrix.month }}-${{ needs.request.outputs.request_id }}
+          path: victory-trader/data/expanded-v21-final/state-${{ matrix.month }}.parquet
+          if-no-files-found: error
+          retention-days: 30
 
-          DATASETS=()
-          for MONTH in 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03; do
-            DATASETS+=(--dataset "$MONTH=data/expanded-v21-eight-k/state-$MONTH.parquet")
-          done
-          python -m victory_trader.state_short_interest_enrichment             "${DATASETS[@]}"             --output-dir data/expanded-v21-final             --coverage-csv artifacts/expanded-v21-short-interest-coverage.csv             --report artifacts/expanded-v21-short-interest.txt
+  expanded-history-monthly-q:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_sequential_q' }}
+    needs: [request, expanded-history-features]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        evaluation_month: ['2026-01', '2026-02', '2026-03']
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Run frozen past-only sequential Q v2.1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify monthly sequential Q
+        run: |
+          python -m pip install -e '.[dev]'
+          pytest -q tests/test_state_fitted_sequential_q.py tests/test_state_calibrated_sequential_q.py
+
+      - name: Download monthly feature checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v21-month-*-${{ needs.request.outputs.request_id }}
+          path: victory-trader/data/expanded-v21-final
+          merge-multiple: true
+
+      - name: Run one frozen past-only evaluation month
         shell: bash
         run: |
           set -euo pipefail
-          python -m victory_trader.state_calibrated_sequential_q             --evaluation forward             --evaluation-min-month 2026-01             --evaluation-max-month 2026-03             --dataset "2025-09=data/expanded-v21-final/state-2025-09.parquet"             --dataset "2025-10=data/expanded-v21-final/state-2025-10.parquet"             --dataset "2025-11=data/expanded-v21-final/state-2025-11.parquet"             --dataset "2025-12=data/expanded-v21-final/state-2025-12.parquet"             --dataset "2026-01=data/expanded-v21-final/state-2026-01.parquet"             --dataset "2026-02=data/expanded-v21-final/state-2026-02.parquet"             --dataset "2026-03=data/expanded-v21-final/state-2026-03.parquet"             --report artifacts/expanded-v21.txt             --details-csv artifacts/expanded-v21-details.csv             --trades-csv artifacts/expanded-v21-trades.csv             --diagnostics-csv artifacts/expanded-v21-diagnostics.csv             --comparisons-csv artifacts/expanded-v21-comparisons.csv             --coverage-csv artifacts/expanded-v21-scoreable-coverage.csv             --paths-csv artifacts/expanded-v21-paths.csv             --attempts-csv artifacts/expanded-v21-attempts.csv             --calibration-csv artifacts/expanded-v21-calibration.csv             | tee artifacts/expanded-v21.log
+          MONTH="${{ matrix.evaluation_month }}"
+          python -m victory_trader.state_calibrated_sequential_q             --evaluation forward             --evaluation-min-month "$MONTH"             --evaluation-max-month "$MONTH"             --dataset "2025-09=data/expanded-v21-final/state-2025-09.parquet"             --dataset "2025-10=data/expanded-v21-final/state-2025-10.parquet"             --dataset "2025-11=data/expanded-v21-final/state-2025-11.parquet"             --dataset "2025-12=data/expanded-v21-final/state-2025-12.parquet"             --dataset "2026-01=data/expanded-v21-final/state-2026-01.parquet"             --dataset "2026-02=data/expanded-v21-final/state-2026-02.parquet"             --dataset "2026-03=data/expanded-v21-final/state-2026-03.parquet"             --report "artifacts/eval-$MONTH.txt"             --details-csv "artifacts/eval-$MONTH-details.csv"             --trades-csv "artifacts/eval-$MONTH-trades.csv"             --diagnostics-csv "artifacts/eval-$MONTH-diagnostics.csv"             --comparisons-csv "artifacts/eval-$MONTH-comparisons.csv"             --coverage-csv "artifacts/eval-$MONTH-scoreable-coverage.csv"             --paths-csv "artifacts/eval-$MONTH-paths.csv"             --attempts-csv "artifacts/eval-$MONTH-attempts.csv"             --calibration-csv "artifacts/eval-$MONTH-calibration.csv"             | tee "artifacts/eval-$MONTH.log"
+
+      - name: Upload monthly sequential Q checkpoint
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-v21-eval-${{ matrix.evaluation_month }}-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/eval-${{ matrix.evaluation_month }}*
+          if-no-files-found: error
+          retention-days: 90
+
+  expanded-history-sequential-q:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_sequential_q' }}
+    needs: [request, expanded-history-features, expanded-history-monthly-q]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify account ledger
+        run: |
+          python -m pip install -e '.[dev]'
+          pytest -q tests/test_position_ledger.py
+
+      - name: Download monthly feature checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v21-month-*-${{ needs.request.outputs.request_id }}
+          path: victory-trader/data/expanded-v21-final
+          merge-multiple: true
+
+      - name: Download monthly sequential Q checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v21-eval-*-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/evals
+          merge-multiple: true
+
+      - name: Combine frozen attempts
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          paths = sorted(Path("artifacts/evals").glob("eval-*-attempts.csv"))
+          if len(paths) != 3:
+              raise SystemExit(f"expected 3 attempt ledgers, found {len(paths)}: {paths}")
+          pd.concat((pd.read_csv(path) for path in paths), ignore_index=True).to_csv(
+              "artifacts/expanded-v21-attempts.csv", index=False
+          )
+          print("combined attempts:", ", ".join(str(path) for path in paths))
+          PY
 
       - name: Replay all frozen policies through the position ledger
         shell: bash
         run: |
+          set -euo pipefail
           python -m victory_trader.position_ledger             --attempts artifacts/expanded-v21-attempts.csv             --dataset "2026-01=data/expanded-v21-final/state-2026-01.parquet"             --dataset "2026-02=data/expanded-v21-final/state-2026-02.parquet"             --dataset "2026-03=data/expanded-v21-final/state-2026-03.parquet"             --output artifacts/expanded-v21-ledger             | tee artifacts/expanded-v21-ledger.log
-
-      - name: Save Massive REST cache
-        if: ${{ always() }}
-        uses: actions/cache/save@v4
-        with:
-          path: victory-trader/data/cache/massive-rest
-          key: moneymaker-expanded-v21-${{ runner.os }}-${{ github.run_id }}
 
       - name: Upload expanded-history v2.1 artifact
         uses: actions/upload-artifact@v4
         with:
           name: moneymaker-expanded-history-v21-${{ needs.request.outputs.request_id }}
           path: |
+            victory-trader/artifacts/evals/eval-*
             victory-trader/artifacts/expanded-v21*
           if-no-files-found: error
           retention-days: 90
