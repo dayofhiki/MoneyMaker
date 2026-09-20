@@ -3701,6 +3701,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p artifacts
           MONTH="${{ matrix.evaluation_month }}"
           python -m victory_trader.state_calibrated_sequential_q             --evaluation forward             --evaluation-min-month "$MONTH"             --evaluation-max-month "$MONTH"             --dataset "2025-09=data/expanded-v21-final/state-2025-09.parquet"             --dataset "2025-10=data/expanded-v21-final/state-2025-10.parquet"             --dataset "2025-11=data/expanded-v21-final/state-2025-11.parquet"             --dataset "2025-12=data/expanded-v21-final/state-2025-12.parquet"             --dataset "2026-01=data/expanded-v21-final/state-2026-01.parquet"             --dataset "2026-02=data/expanded-v21-final/state-2026-02.parquet"             --dataset "2026-03=data/expanded-v21-final/state-2026-03.parquet"             --report "artifacts/eval-$MONTH.txt"             --details-csv "artifacts/eval-$MONTH-details.csv"             --trades-csv "artifacts/eval-$MONTH-trades.csv"             --diagnostics-csv "artifacts/eval-$MONTH-diagnostics.csv"             --comparisons-csv "artifacts/eval-$MONTH-comparisons.csv"             --coverage-csv "artifacts/eval-$MONTH-scoreable-coverage.csv"             --paths-csv "artifacts/eval-$MONTH-paths.csv"             --attempts-csv "artifacts/eval-$MONTH-attempts.csv"             --calibration-csv "artifacts/eval-$MONTH-calibration.csv"             | tee "artifacts/eval-$MONTH.log"
 
