@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "historical_state_build_v20", "expanded_history_sequential_q", "sec_8k_probe"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "historical_state_build_v20", "expanded_history_sequential_q", "expanded_history_monthly_q_v21", "sec_8k_probe"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -3667,8 +3667,8 @@ jobs:
           retention-days: 30
 
   expanded-history-monthly-q:
-    if: ${{ needs.request.outputs.operation == 'expanded_history_sequential_q' }}
-    needs: [request, expanded-history-features]
+    if: ${{ needs.request.outputs.operation == 'expanded_history_monthly_q_v21' }}
+    needs: request
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -3693,9 +3693,12 @@ jobs:
       - name: Download monthly feature checkpoints
         uses: actions/download-artifact@v4
         with:
-          pattern: moneymaker-expanded-v21-month-*-${{ needs.request.outputs.request_id }}
+          pattern: moneymaker-expanded-v21-month-*-57
           path: victory-trader/data/expanded-v21-final
           merge-multiple: true
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35511268929'
 
       - name: Run one frozen past-only evaluation month
         shell: bash
@@ -3714,8 +3717,8 @@ jobs:
           retention-days: 90
 
   expanded-history-sequential-q:
-    if: ${{ needs.request.outputs.operation == 'expanded_history_sequential_q' }}
-    needs: [request, expanded-history-features, expanded-history-monthly-q]
+    if: ${{ needs.request.outputs.operation == 'expanded_history_monthly_q_v21' }}
+    needs: [request, expanded-history-monthly-q]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     defaults:
@@ -3736,9 +3739,12 @@ jobs:
       - name: Download monthly feature checkpoints
         uses: actions/download-artifact@v4
         with:
-          pattern: moneymaker-expanded-v21-month-*-${{ needs.request.outputs.request_id }}
+          pattern: moneymaker-expanded-v21-month-*-57
           path: victory-trader/data/expanded-v21-final
           merge-multiple: true
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35511268929'
 
       - name: Download monthly sequential Q checkpoints
         uses: actions/download-artifact@v4
