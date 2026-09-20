@@ -1,9 +1,5 @@
 {
-  "request_id": 53,
-  "operation": "research_month",
-  "start_date": "2025-09-01",
-  "end_date": "2025-12-31",
-  "chunk_days": 31,
-  "annotate_halts": true,
-  "note": "Acquire the preregistered Sep-Dec 2025 full-universe development expansion only. No debug candidate cap and no fresh 2026 validation month."
+  "request_id": 54,
+  "operation": "historical_state_build_v20",
+  "note": "Build the preregistered Sep-Dec 2025 causal state, breadth, and sequence panels from request 53 only. No new validation month, threshold tuning, brokerage action, or quote purchase."
 }
