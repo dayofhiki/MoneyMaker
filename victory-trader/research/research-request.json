@@ -1,5 +1,5 @@
 {
-  "request_id": 55,
+  "request_id": 56,
   "operation": "expanded_history_sequential_q",
-  "note": "Run preregistered expanded-history past-only sequential Q v2.1 on Sep 2025-Mar 2026 development data, evaluate Jan-Mar 2026 only, and replay frozen decisions through the position ledger. No new validation month, threshold tuning, brokerage action, or quote purchase."
+  "note": "Retry the preregistered expanded-history past-only sequential Q v2.1 as monthly checkpoints after the hosted runner terminated the monolithic request. Same Sep 2025-Mar 2026 development data and Jan-Mar 2026 evaluation only; no new validation month, threshold tuning, brokerage action, or quote purchase."
 }
