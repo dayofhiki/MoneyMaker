@@ -1,7 +1,7 @@
 {
-  "request_id": 110,
+  "request_id": 112,
   "operation": "attention_market_replay_v01",
   "start_date": "2026-01-02",
   "end_date": "2026-01-09",
-  "note": "Phase 2E first multi-session development expansion. Preserve the exact request-109 partitioned replay semantics, score thresholds, WATCH/HOT capacities, point-in-time universe rules, split handling, regular-session boundaries, and +10% runner audit definition. Extend through the first six January 2026 trading sessions and inspect per-session as well as aggregate attention coverage, occupancy, churn, and data demand. Do not tune thresholds from these outcomes and do not claim profitability. April 2026 and later remain sealed."
+  "note": "Phase 2E artifact-only rerun after request 110 completed the full six-session computation but GitHub artifact finalization returned HTTP 403 on the ~99 MB full partition bundle. Preserve every frozen replay rule and date. Use the compact artifact path, retaining WATCH/HOT/POSITION focus rows, runner crossings, summary and log. No threshold, capacity, universe, outcome or policy change. April 2026 and later remain sealed."
 }
