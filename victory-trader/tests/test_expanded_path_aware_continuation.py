@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+import victory_trader.expanded_path_aware_continuation as v35
 from victory_trader.execution_costs import modeled_sell_fill
 from victory_trader.expanded_path_aware_continuation import (
     BASE_SCENARIO,
@@ -66,12 +67,17 @@ def test_exact_next_opens_and_entry_relative_path_are_causal():
     assert first["path_minutes_since_high"] == 0.0
 
 
-def test_path_features_are_model_inputs():
+def test_path_features_are_model_inputs(monkeypatch):
     state = _state([0, MINUTE_MS, 2 * MINUTE_MS, 3 * MINUTE_MS])
     anchors = pd.DataFrame(
         [{"trading_day": "2026-01-02", "ticker": "AAA", "t": 0}]
     )
     rows = build_continuation_rows(state, anchors)
+    monkeypatch.setattr(
+        v35,
+        "filing_semantic_split_supply_feature_frame",
+        lambda frame: pd.DataFrame(index=frame.index),
+    )
     features = continuation_feature_frame(rows)
     assert set(PATH_FEATURES).issubset(features.columns)
     assert features["path_entry_return_pct"].notna().all()
