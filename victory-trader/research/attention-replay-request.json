@@ -1,7 +1,7 @@
 {
-  "request_id": 109,
+  "request_id": 110,
   "operation": "attention_market_replay_v01",
   "start_date": "2026-01-02",
-  "end_date": "2026-01-05",
-  "note": "Phase 2D partitioned-replay parity run. Preserve the exact request-108 market slice, score thresholds, WATCH/HOT capacities, universe rules, split handling, regular-session boundaries, and outcome definitions. Run the new day-partitioned streaming path and verify partition production, chronological ordering, strict occupancy budgets, identical aggregate replay diagnostics, and bounded one-session memory semantics before expanding January. Coverage/resource audit only; do not tune thresholds or claim profitability. April 2026 and later remain sealed."
+  "end_date": "2026-01-09",
+  "note": "Phase 2E first multi-session development expansion. Preserve the exact request-109 partitioned replay semantics, score thresholds, WATCH/HOT capacities, point-in-time universe rules, split handling, regular-session boundaries, and +10% runner audit definition. Extend through the first six January 2026 trading sessions and inspect per-session as well as aggregate attention coverage, occupancy, churn, and data demand. Do not tune thresholds from these outcomes and do not claim profitability. April 2026 and later remain sealed."
 }
