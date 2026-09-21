@@ -8,7 +8,6 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
 
 from .expanded_fitted_optimal_stopping import (
-    BOOTSTRAP_SAMPLES,
     MAX_HOLD_MINUTES,
     MinuteStoppingModel,
     _attach_exit_now_base,
