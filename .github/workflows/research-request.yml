@@ -5466,3 +5466,53 @@ jobs:
             victory-trader/artifacts/expanded-v30*
           if-no-files-found: error
           retention-days: 90
+
+  expanded-history-adaptive-horizon-diagnostic-v31:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_adaptive_horizon_diagnostic_v31' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify adaptive-horizon diagnostic
+        run: |
+          python -m pip install -e '.[dev]'
+          pytest -q tests/test_expanded_adaptive_horizon_diagnostic.py
+
+      - name: Download frozen v3.0 result artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-expanded-history-v30-79
+          path: victory-trader/source-v30
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35582063146'
+
+      - name: Run frozen v3.1 adaptive-horizon diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          mapfile -t TRADES < <(find source-v30 -type f -name 'v30-*-trades.csv' | sort)
+          if [[ "${#TRADES[@]}" -ne 3 ]]; then
+            echo "expected exactly 3 v3.0 monthly trade files, found ${#TRADES[@]}"
+            printf '%s\n' "${TRADES[@]}"
+            exit 1
+          fi
+          python -m victory_trader.expanded_adaptive_horizon_diagnostic             "${TRADES[@]}"             --report artifacts/v31-report.txt             --horizon-csv artifacts/v31-horizons.csv             --path-csv artifacts/v31-paths.csv             | tee artifacts/v31.log
+
+      - name: Upload v3.1 diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-history-v31-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/v31*
+          if-no-files-found: error
+          retention-days: 90
