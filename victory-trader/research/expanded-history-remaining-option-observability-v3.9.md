@@ -233,3 +233,61 @@ frozen state and costs and evaluating only reached trajectories.
 No v3.9 result may be used to tune the 30-minute cap, fit-baseline definition,
 zero diagnostic boundary, lag grid, held-minute subset, phase subset or model
 capacity.
+
+## Result — request 97
+
+Authoritative workflow run: `35619699428`. All three strict past-only monthly
+jobs and the aggregate job completed successfully. April 2026 and later
+remained sealed.
+
+### Hindsight entry opportunity ceiling
+
+| Month | Valid entries | Oracle coverage | Day-balanced best BASE | 95% lower bound | Oracle BASE-positive rate | Mean best hold |
+|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | 616 | 100% | +3.192605% | +2.795954% | 66.88% | 11.40m |
+| 2026-02 | 497 | 100% | +2.621688% | +2.280493% | 70.22% | 13.23m |
+| 2026-03 | 613 | 100% | +3.114475% | +2.672905% | 64.76% | 13.08m |
+
+The frozen v3.3 gated entry population therefore contains substantial
+cost-positive movement inside the 30-minute window in every development month.
+v3.8 did not fail because the selected entries had no economically meaningful
+exit opportunity at all.
+
+This oracle is non-executable and is used only to establish the ceiling.
+
+### Remaining-option observability
+
+| Month | Target coverage | Global Spearman | Median same-minute Spearman | Positive minute groups | Selected day-balanced excess | Selected bootstrap lower |
+|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | 99.91% | +0.247181 | +0.239748 | 96.55% | +1.260901% | +0.920378% |
+| 2026-02 | 99.88% | +0.210845 | +0.205364 | 96.55% | +1.172865% | +0.714959% |
+| 2026-03 | 99.84% | +0.232110 | +0.236728 | 100.00% | +1.572089% | +1.153482% |
+
+The result survives the fit-only held-minute baseline correction. Therefore the
+signal is not merely the trivial fact that earlier states have more future time
+available.
+
+Rows with predicted excess remaining value above the frozen semantic zero
+boundary had realized remaining option value around +3.07%, +3.08%, and +3.39%
+in January-March. The selected excess over the same-minute fit baseline was
+positive with a positive trading-day bootstrap lower bound in every month.
+
+### Decision
+
+All eight preregistered conditions passed in all three months. The aggregate
+artifact printed:
+
+`PASS: preregister fitted optimal-stopping experiment`
+
+The evidence now separates the v3.8 failure:
+
+1. the current gated entries do contain enough intraday movement to overcome the
+   frozen BASE friction under substantially better exits;
+2. the existing causal path-transition state contains replicated information
+   about whether better exit opportunities remain;
+3. the one-step HOLD classifier was too myopic when recursively composed.
+
+Proceed to a separately preregistered fitted optimal-stopping experiment. Keep
+the v3.3 entry gate, v3.7 causal state/lag grid, BASE/LIGHT/STRESS execution
+assumptions and 30-minute safety cap frozen. Do not open April 2026+ yet.
+
