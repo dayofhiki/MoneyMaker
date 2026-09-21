@@ -4,6 +4,7 @@ import pandas as pd
 from victory_trader.state_entry_ranker import (
     _select_first_trades,
     episode_percentile_target,
+    evaluation_folds,
 )
 
 
@@ -124,3 +125,34 @@ def test_first_unfillable_signal_does_not_fall_through_to_future_state():
         rank_gate=0.75,
     )
     assert trades.empty
+
+
+def test_forward_folds_use_strictly_prior_months():
+    monthly = {
+        month: pd.DataFrame({"trading_day": [month + "-15"]})
+        for month in (
+            "2025-09",
+            "2025-10",
+            "2025-11",
+            "2025-12",
+            "2026-01",
+            "2026-02",
+            "2026-03",
+        )
+    }
+    folds = list(
+        evaluation_folds(
+            monthly,
+            "forward",
+            evaluation_min_month="2026-01",
+            evaluation_max_month="2026-03",
+        )
+    )
+    assert [month for month, _, _ in folds] == [
+        "2026-01",
+        "2026-02",
+        "2026-03",
+    ]
+    assert folds[0][1] == ["2025-09", "2025-10", "2025-11", "2025-12"]
+    assert folds[1][1][-1] == "2026-01"
+    assert folds[2][1][-1] == "2026-02"
