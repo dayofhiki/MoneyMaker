@@ -14,7 +14,6 @@ from .expanded_opportunity_shared_q import (
 )
 from .expanded_path_aware_continuation import (
     BOOTSTRAP_SAMPLES,
-    KEYS,
     PHASES,
     build_continuation_rows,
     continuation_feature_frame,
