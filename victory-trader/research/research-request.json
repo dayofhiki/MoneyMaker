@@ -1,5 +1,5 @@
 {
-  "request_id": 85,
+  "request_id": 86,
   "operation": "expanded_history_opportunity_shared_q_v33",
-  "note": "Run exact pre-registered v3.3 opportunity gate + shared action-value ranking with policy-level max-selection calibration on frozen September 2025-March 2026 data. April 2026+ sealed."
+  "note": "Retry exact pre-registered v3.3 after test-fixture isolation only. Same frozen September 2025-March 2026 data, policy and calibration; April 2026+ sealed."
 }
