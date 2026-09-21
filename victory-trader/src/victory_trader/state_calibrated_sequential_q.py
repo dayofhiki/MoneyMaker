@@ -384,7 +384,11 @@ def main():
             assert len(records_for_policy) == counts["buy_attempts"]
             assert sum(not r["legacy_evaluated"] for r in records_for_policy) == counts["unevaluated_attempts"]
             attempts.extend({"month": month, "policy": name, **r} for r in records_for_policy)
-        coverage.append(full_coverage.get(month, _coverage_row(holdout, month)))
+        coverage.append(
+            full_coverage[month]
+            if month in full_coverage
+            else _coverage_row(holdout, month)
+        )
         for policy, selected, counts in (("earliest_eligible_10m_cap1", baseline, {}),
                                          ("raw_same_fit_cap1", raw_trades, raw_paths),
                                          (POLICY, adjusted, path)):
