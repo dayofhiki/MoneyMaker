@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from victory_trader.attention_flatfile_replay import (
+    _rows_match,
     build_flatfile_scan_day,
     run_flatfile_attention_replay,
 )
@@ -311,3 +312,18 @@ def test_partitioned_replay_matches_monolithic_two_session_summary(tmp_path):
         "2026-01-02",
         "2026-01-05",
     ]
+
+
+def test_rows_match_tolerates_provider_price_rounding_only():
+    left = pd.Series(
+        {"o": 73.565, "h": 73.565, "l": 73.511306, "c": 73.565, "v": 1641.0}
+    )
+    rounded = pd.Series(
+        {"o": 73.565, "h": 73.565, "l": 73.5113, "c": 73.565, "v": 1641.0}
+    )
+    different_series = pd.Series(
+        {"o": 19.18, "h": 19.18, "l": 19.18, "c": 19.18, "v": 547.0}
+    )
+
+    assert _rows_match(left, rounded)
+    assert not _rows_match(left, different_series)
