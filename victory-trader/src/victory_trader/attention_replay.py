@@ -99,6 +99,11 @@ def build_market_scan_frame(
     )
     frame = frame.loc[valid].copy()
     frame["t"] = frame["t"].astype("int64")
+    # Massive minute aggregate timestamps are bar-start timestamps. The close,
+    # volume and transaction count become causally observable only once that
+    # minute has completed, so replay decisions occur one minute later.
+    frame["bar_start_t"] = frame["t"]
+    frame["t"] = frame["bar_start_t"] + MINUTE_MS
     frame["return_from_previous_close_pct"] = (
         frame["c"] / frame["previous_close"] - 1.0
     ) * 100.0
