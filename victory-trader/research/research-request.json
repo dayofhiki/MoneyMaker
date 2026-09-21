@@ -1,5 +1,5 @@
 {
-  "request_id": 87,
-  "operation": "expanded_history_opportunity_shared_q_v33",
-  "note": "Diagnostic-only rerun of exact frozen v3.3. Add raw shared-Q ranking diagnostics only; no model, threshold, policy, calibration, trade or promotion change. April 2026+ sealed."
+  "request_id": 88,
+  "operation": "expanded_history_one_step_continuation_v34",
+  "note": "Preregistered diagnostic only: first-anchor conceptual entry, causal post-entry states, exact next-open EXIT vs one-minute HOLD, BASE future sell friction only, 1-29 held minutes, strict past-only folds. No missing-bar fallback; April 2026+ sealed."
 }
