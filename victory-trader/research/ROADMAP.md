@@ -189,9 +189,15 @@ The audited outputs have no duplicate keys and respect the fixed WATCH 50/HOT
 10 budgets. Its coverage figures are not a threshold-tuning or profitability
 test.
 
-Phase 2C request 108 extends the unchanged replay through 2026-01-05 to verify
-session reset and repeat data integrity across two trading sessions before any
-broader January development replay.
+Phase 2C request 108 completed the unchanged replay through 2026-01-05.
+Across two trading sessions it preserved session reset, repeat data integrity,
+chronological ordering and the frozen WATCH 50 / HOT 10 capacity limits.
+
+Phase 2D replaces range-wide in-memory concatenation with day-partitioned
+streaming output. The replay semantics remain unchanged while memory is bounded
+to one trading session, which is the scaling prerequisite for longer January
+development runs. Request 109 validates the partitioned path on the same frozen
+two-session slice before expansion.
 
 ### Milestone 3 — policy integration
 
