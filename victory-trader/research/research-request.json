@@ -1,5 +1,5 @@
 {
-  "request_id": 74,
-  "operation": "expanded_history_supply_hurdle_ev_v27",
-  "note": "Operational rerun of pre-registered v2.7 after fixing artifact extraction path; reuse frozen D-1 supply anchors from request 73; no research rule changed; April 2026+ remains sealed."
+  "request_id": 75,
+  "operation": "point_in_time_split_history_probe",
+  "note": "Run pre-registered split-history availability probe on frozen v2.7 development attempts only; January-March 2026 only; no realized-return conditioning; April 2026+ sealed."
 }
