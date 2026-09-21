@@ -214,3 +214,72 @@ Interpret failure as follows:
   or SELL freedom be introduced.
 
 No fresh validation month is consumed here.
+
+
+## Operational rerun and result — request 74
+
+Request 73 did not produce a v2.7 model result. Its D-1 supply enrichment
+completed successfully, but the monthly jobs extracted the artifact under
+`data/v27-supply/data/v27-supply/` while the model expected
+`data/v27-supply/`, so all three folds failed immediately with
+FileNotFoundError before fitting or scoring.
+
+Request 74 changed only artifact extraction/reuse. It reused the exact frozen
+request-73 supply-anchor artifact and changed no research rule, feature,
+threshold, cost, horizon, fold, or validation access.
+
+Workflow run 35572787484 completed successfully. April 2026 and later remained
+sealed.
+
+### Supply ordering
+
+| Month | Baseline hurdle Spearman | Supply hurdle Spearman | Baseline selected BASE | Supply selected BASE |
+|---|---:|---:|---:|---:|
+| 2026-01 | 0.1227 | 0.1390 | -1.614% | -1.171% |
+| 2026-02 | 0.1525 | 0.1554 | -3.932% | -1.707% |
+| 2026-03 | 0.1332 | 0.1232 | -3.014% | -6.058% |
+
+The supply representation preserved positive broad hurdle ordering in every
+month and modestly improved it in January and February, but not March.
+
+### Primary trading result
+
+| Month | Evaluated trades | Gross mean | BASE mean | Day-balanced BASE | Bootstrap 95% low |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 36 | -0.119% | -1.171% | -0.769% | -2.521% |
+| 2026-02 | 5 | -0.057% | -1.707% | -1.707% | -4.688% |
+| 2026-03 | 4 | -5.114% | -6.058% | -6.058% | -11.350% |
+
+The exact selected tail was gross-negative in all three months. January and
+February were substantially less negative than the frozen baseline hurdle
+selection, but the improvement did not replicate in March and never reached
+positive gross alpha.
+
+### Frozen account replay — primary BASE
+
+| Month | Attempts | Accepted/closed | Missing entry refs | BASE marked return | Complete accounting |
+|---|---:|---:|---:|---:|---|
+| 2026-01 | 39 | 39 / 39 | 0 | -5.102% | yes |
+| 2026-02 | 6 | 6 / 6 | 0 | -0.921% | yes |
+| 2026-03 | 6 | 5 / 5 | 1 | -3.126% | no |
+
+All promotion conditions requiring positive monthly return, sufficient trade
+count, positive bootstrap lower bound, and positive complete BASE account
+returns failed.
+
+## Decision
+
+Reject exact v2.7. Do not access April 2026 or later.
+
+Do not tune supply thresholds, feature subsets, the hurdle zero crossing,
+capacity, costs, horizon, or winsorization on January-March.
+
+The failure matches the pre-registered branch in which broad ordering remains
+positive but the selected tail is gross-negative. The model therefore still
+lacks causal state information that separates continuation from exhaustion.
+The next development work must add a genuinely different state source rather
+than another calibration or threshold intervention.
+
+The next independent availability probe will test strictly-prior corporate
+action history, beginning with reverse/forward split records, before any
+return-conditioned model is specified.
