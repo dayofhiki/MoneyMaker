@@ -1,7 +1,7 @@
 {
-  "request_id": 108,
+  "request_id": 109,
   "operation": "attention_market_replay_v01",
   "start_date": "2026-01-02",
   "end_date": "2026-01-05",
-  "note": "Phase 2C two-session infrastructure replay over the frozen 2026-01-02 through 2026-01-05 development slice. Preserve the exact Phase 2B data rules, duplicate resolution, default score thresholds, WATCH/HOT capacities, and regular-session boundaries. Verify session reset, collision-free per-day cache behavior, strict occupancy budgets, chronological ordering, and repeat data quality across both sessions. Audit coverage and data demand only; do not tune thresholds or claim profitability. April 2026 and later remain sealed."
+  "note": "Phase 2D partitioned-replay parity run. Preserve the exact request-108 market slice, score thresholds, WATCH/HOT capacities, universe rules, split handling, regular-session boundaries, and outcome definitions. Run the new day-partitioned streaming path and verify partition production, chronological ordering, strict occupancy budgets, identical aggregate replay diagnostics, and bounded one-session memory semantics before expanding January. Coverage/resource audit only; do not tune thresholds or claim profitability. April 2026 and later remain sealed."
 }
