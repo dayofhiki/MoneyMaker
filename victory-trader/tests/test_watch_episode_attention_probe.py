@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from victory_trader.second_path_attention_probe import (
     BASELINE_FEATURES,
@@ -57,7 +58,7 @@ def test_episode_target_excludes_nonfocus_terminal_decision():
         entry_close=10.0,
     )
 
-    assert peak == 10.0
+    assert peak == pytest.approx(10.0)
     assert runner is False
     assert points == 1
 
