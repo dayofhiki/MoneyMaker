@@ -1,5 +1,5 @@
 {
-  "request_id": 88,
+  "request_id": 89,
   "operation": "expanded_history_one_step_continuation_v34",
-  "note": "Preregistered diagnostic only: first-anchor conceptual entry, causal post-entry states, exact next-open EXIT vs one-minute HOLD, BASE future sell friction only, 1-29 held minutes, strict past-only folds. No missing-bar fallback; April 2026+ sealed."
+  "note": "Exact rerun of preregistered v3.4 after evaluation-only index reset and denominator assertion. Request 88 diagnostics invalidated by boolean-index alignment; no model, feature, label, threshold, fold or criterion change. April 2026+ sealed."
 }
