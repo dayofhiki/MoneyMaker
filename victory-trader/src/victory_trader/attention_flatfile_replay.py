@@ -123,12 +123,27 @@ def _rows_match(left: pd.Series, right: pd.Series) -> bool:
         right_value = pd.to_numeric(pd.Series([right[column]]), errors="coerce").iloc[0]
         if pd.isna(left_value) or pd.isna(right_value):
             return False
-        if not isclose(
-            float(left_value),
-            float(right_value),
-            rel_tol=1e-12,
-            abs_tol=1e-12,
-        ):
+        if column in {"o", "h", "l", "c"}:
+            # Flat File and REST aggregates occasionally differ only by
+            # provider serialization precision (for example 73.511306 versus
+            # 73.511300). Accept sub-micro-relative price rounding while still
+            # rejecting genuinely different duplicate price series.
+            matches = isclose(
+                float(left_value),
+                float(right_value),
+                rel_tol=1e-7,
+                abs_tol=1e-6,
+            )
+        else:
+            # Volume is integral in the source data and should match exactly
+            # apart from numeric representation.
+            matches = isclose(
+                float(left_value),
+                float(right_value),
+                rel_tol=1e-12,
+                abs_tol=1e-9,
+            )
+        if not matches:
             return False
     return True
 
