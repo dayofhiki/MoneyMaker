@@ -48,6 +48,41 @@ def test_vectorized_checkpoints_preserve_reference_geometry():
         pd.testing.assert_frame_equal(actual[offset], expected[offset])
 
 
+def test_compact_checkpoint_panel_preserves_model_geometry():
+    frame = pd.DataFrame(
+        {
+            "trading_day": ["2026-01-02"] * 20,
+            "ticker": ["AAA"] * 20,
+            "t": np.arange(20) * 60000,
+            "c": [5.0] * 20,
+            "active_minute_fraction_15m": [1.0] * 20,
+        }
+    )
+    expected = m.checkpoints(frame)
+    compact = m.compact_checkpoint_panel(frame)
+    assert len(compact) == sum(len(value) for value in expected.values())
+    actual = m.checkpoints(compact)
+    for offset in base.CHECKPOINT_OFFSETS:
+        pd.testing.assert_frame_equal(actual[offset], expected[offset])
+
+
+def test_read_model_panel_drops_unused_parquet_columns(tmp_path):
+    path = tmp_path / "panel.parquet"
+    pd.DataFrame(
+        {
+            "trading_day": ["2026-01-02"],
+            "ticker": ["AAA"],
+            "t": [0],
+            "c": [5.0],
+            "active_minute_fraction_15m": [1.0],
+            "unused_large_payload": ["x"],
+        }
+    ).to_parquet(path)
+    result = m.read_model_panel(path)
+    assert "unused_large_payload" not in result
+    assert {"trading_day", "ticker", "t", "c"}.issubset(result.columns)
+
+
 def test_missing_checkpoint_is_zero_but_missing_label_stays_nan():
     src = pd.DataFrame({"trading_day": ["a"], "ticker": ["AAA"]})
     dest = pd.DataFrame({"trading_day": ["a", "a"], "ticker": ["AAA", "BBB"]})
