@@ -107,3 +107,57 @@ subsets against these months. Treat minute-bar position-path state as
 insufficient for robust exit timing and move to a new information/target branch
 such as finer execution/microstructure observability or a different
 state-transition objective. April remains sealed either way.
+
+
+## Result — request 91
+
+Clean request 91 completed successfully after request 90 was discarded for
+test-fixture-only failures. The authoritative workflow run is
+`35606762542`. April 2026 and later remained sealed.
+
+### Frozen opportunity-gate result
+
+| Month | AUC | Policy increment | Day-balanced increment | 95% bootstrap lower | Coverage | Frozen pass |
+|---|---:|---:|---:|---:|---:|---|
+| 2026-01 | 0.529722 | +0.004341% | +0.006220% | -0.007768% | 95.8482% | no |
+| 2026-02 | 0.537858 | +0.013848% | +0.012911% | +0.002106% | 95.3192% | yes |
+| 2026-03 | 0.548022 | +0.024476% | +0.026299% | +0.017894% | 95.3550% | yes |
+
+The final combined artifact therefore printed:
+
+`FAIL: do not compose or tune recurrent policy`
+
+January failed only the frozen bootstrap-lower-bound condition. February and
+March passed all five conditions.
+
+### Interpretation
+
+The position-path intervention improved the continuation diagnostic materially
+without changing the v3.4 model, label, threshold, opportunity gate, execution
+friction or folds:
+
+- January AUC rose from 0.513626 to 0.529722 and day-balanced policy increment
+  from +0.001788% to +0.006220%, but the confidence interval still crossed zero.
+- February changed from a failed v3.4 day-balanced result (-0.000737%) and
+  negative bootstrap lower bound (-0.012388%) to +0.012911% with a positive
+  lower bound (+0.002106%).
+- March strengthened from +0.012311% day-balanced increment to +0.026299%, with
+  bootstrap lower bound +0.017894%.
+
+Thus explicit memory of the position since entry is useful state information.
+The remaining failure is monthly robustness, not absence of any continuation
+signal.
+
+Held-minute and phase breakdowns are descriptive only. They must not be used to
+post-hoc choose a holding-time or phase subset.
+
+## Decision
+
+Fail the v3.5 bridge exactly as preregistered because all three months did not
+pass. Do not compose or tune a recurrent policy from the v3.5 classifier.
+
+Retain the ten causal position-path features as a supported candidate state
+family. The next experiment changes the target/objective rather than selecting a
+v3.5 time bucket: test arithmetic expected one-step HOLD value with the same
+state, folds, execution label and opportunity gate. That branch was
+pre-registered as v3.6 before the March v3.5 outcome was inspected.
