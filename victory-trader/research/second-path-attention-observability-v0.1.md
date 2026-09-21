@@ -226,3 +226,39 @@ the causal information family or the target formulation. The next target
 should better match the final stateful trader than a fixed three-minute
 forecast and should use later, untouched January development sessions for
 evaluation.
+
+
+## Chosen next branch — discrete attention hazard
+
+Request 115 does not justify abandoning one-second information. Its pooled
+point estimates improved across rank correlation, MAE and top-quartile outcome,
+but the improvement was not stable by day and the absolute rank correlations
+remained weak.
+
+The next experiment will therefore change the target formulation rather than
+tune request-115 thresholds, horizon, feature list or hyperparameters.
+
+The planned target is a repeated discrete-time hazard for the existing runner
+event: while a ticker is in WATCH and has not yet crossed +10% from nominal
+prior close, estimate whether its **first +10% crossing occurs before the next
+minute decision**. This is an attention-state transition target, not a fixed
+holding-horizon return target.
+
+The experiment should compare:
+
+1. the current return-rank HOT ordering;
+2. a minute-only hazard model;
+3. the same hazard model plus the frozen request-115 one-second feature family.
+
+Use the already-consumed 2026-01-02 through 2026-01-09 sessions for fitting and
+later untouched January development sessions for evaluation. Expand the
+outcome-independent sample size in the new preregistration so the evaluation is
+not dominated by tens of rows. Operational evaluation should emphasize
+next-step runner-event capture under the finite HOT budget, PR-AUC and
+probability calibration, with per-day reporting.
+
+If the one-second hazard model is consistently better, it becomes a candidate
+HOT-priority signal and a later calibration phase can allow HOT capacity to
+remain partially empty when absolute urgency is low. If it is not better, the
+next branch should change the causal information family rather than retune the
+same second-path features.
