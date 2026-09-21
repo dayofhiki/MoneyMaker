@@ -13,8 +13,15 @@ from victory_trader.expanded_share_supply_enrichment import (
 
 
 @dataclass
+class FakeStats:
+    network_requests: int = 0
+    cache_hits: int = 0
+
+
+@dataclass
 class FakeClient:
     calls: list[tuple[str, date]]
+    stats: FakeStats
 
     def ticker_details(self, ticker: str, day: date):
         self.calls.append((ticker, day))
@@ -49,7 +56,7 @@ def test_enrichment_queries_only_execution_feasible_anchor():
             _row("BBB", dollar_volume=50_000),
         ]
     )
-    client = FakeClient(calls=[])
+    client = FakeClient(calls=[], stats=FakeStats())
 
     enriched = enrich_anchors(frame, client)
 
