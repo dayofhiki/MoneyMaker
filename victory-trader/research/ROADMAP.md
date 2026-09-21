@@ -1,0 +1,157 @@
+# MoneyMaker Research Roadmap
+
+## North Star
+
+MoneyMaker is not intended to become a fixed-horizon predictor or a collection of isolated backtest rules.
+
+The long-term target is a **stateful autonomous trader** that remains active while the market is open, continuously observes the market, dynamically allocates attention, chooses whether and when to enter, manages open positions as conditions evolve, and decides when to exit.
+
+The system should ultimately behave more like a skilled active surge-stock trader than a one-shot classifier.
+
+## Target Operating Loop
+
+```text
+MARKET
+  -> LOW-COST MARKET-WIDE SCAN
+  -> ATTENTION / WATCHLIST
+  -> HIGH-RESOLUTION MONITORING
+  -> ENTRY / ABSTAIN
+  -> POSITION MANAGEMENT
+  -> EXIT
+  -> WATCH AGAIN OR DROP
+  -> continue scanning
+```
+
+Capital allocation, risk controls, execution modeling, data quality checks, and persistent state surround this loop.
+
+## Design Principles
+
+### 1. Keep eyes on the whole market
+
+The system must maintain a low-cost view of the broad eligible market rather than operating only on a static preselected ticker list. The purpose of the broad scanner is to detect emerging opportunities early enough for deeper inspection.
+
+### 2. Allocate attention dynamically
+
+Ticker attention is a changing state, not a permanent watchlist.
+
+A ticker may move through states such as:
+
+```text
+SCAN -> WATCH -> HOT -> POSITION -> WATCH / DROP
+```
+
+New tickers must be able to enter the attention set at any time. Cooling tickers must lose attention so compute and capital can move elsewhere.
+
+### 3. Use adaptive observation resolution
+
+Do not process every ticker with the most expensive data and model.
+
+Use inexpensive, lower-resolution monitoring for the broad market, then increase temporal and market-microstructure resolution as a ticker becomes more relevant. Candidate resolutions include minute bars, multi-second bars, 1-second bars, trades, and NBBO quote events.
+
+The appropriate resolution should eventually depend on market state rather than being globally fixed.
+
+### 4. Treat abstention as an action
+
+A detected surge candidate is not automatically a trade.
+
+The entry layer must learn whether committing capital has positive economic value given only information available at that time. Doing nothing is a valid and important decision.
+
+### 5. Do not impose a fixed holding horizon
+
+Five-minute, ten-minute, fifteen-minute, or thirty-minute horizons may be useful research instruments, but they are not the final policy.
+
+The deployed trader should repeatedly observe the market and determine its own effective holding duration. A trade may deserve an exit after seconds or continued holding for much longer if the state supports it.
+
+### 6. Continue reasoning after entry
+
+Entry does not end inference.
+
+While a position is open, new price, volume, trade, quote, liquidity, and state information should continuously update the decision process. HOLD and EXIT are recurrent decisions. Re-entry may later become part of the same state machine.
+
+### 7. Optimize economic trading outcomes, not isolated predictive metrics
+
+AUC, correlation, classification accuracy, and one-step value estimates are diagnostics, not the final objective.
+
+The final evaluation must execute decisions sequentially and report economic outcomes including transaction/execution assumptions, trade distribution, drawdown, and synthetic account evolution.
+
+Research summaries should include the audit account convention and report:
+
+```text
+starting balance -> ending balance -> total return
+```
+
+These are backtest/audit results, never live-return forecasts.
+
+### 8. Make execution increasingly realistic
+
+Current LIGHT / BASE / STRESS execution costs are transparent scenarios, not claims about actual fills.
+
+Research should progressively replace coarse execution assumptions with empirical historical bid/ask information where available, including NBBO spread, quote freshness, and top-of-book depth for the intended order size. Market impact that cannot be identified from the available data must remain an explicit uncertainty.
+
+### 9. Enforce strict causality
+
+Every decision must use only information that would have been available at that timestamp.
+
+Training, calibration, model selection, and evaluation must respect chronology. Do not leak future information through labels, preprocessing, normalization, quote selection, or state construction.
+
+Do not repeatedly tune thresholds or hyperparameters against failed evaluation months until they pass.
+
+Sealed periods remain sealed until a preregistered research bridge justifies opening them.
+
+### 10. Expect edge decay
+
+No edge is assumed permanent.
+
+A mature system should monitor whether live or forward performance distributions depart materially from validated historical behavior. When confidence deteriorates, the system should be capable of reducing exposure or abstaining while the research pipeline investigates the change.
+
+### 11. Allocate scarce capital across simultaneous opportunities
+
+Eventually, BUY/NO-BUY decisions are insufficient.
+
+When multiple HOT candidates exist simultaneously, the trader must decide which opportunities deserve attention and capital, how much capital to allocate, and whether an existing position makes a new opportunity unattractive under portfolio-level risk constraints.
+
+### 12. Separate the trading policy from hard safety controls
+
+The deployment path is:
+
+```text
+backtest -> untouched forward validation -> paper trading -> constrained live trading
+```
+
+Live execution must have external controls the model cannot override, including position limits, daily loss limits, stale/bad-data handling, order-state reconciliation, and a kill switch.
+
+## Research Interpretation
+
+Every experiment should answer:
+
+1. **Which component of the final trader does this experiment improve?**
+2. **Is the experiment causal and chronologically honest?**
+3. **Does the result improve executable economic performance rather than only a proxy metric?**
+4. **What uncertainty remains before this component can be promoted?**
+
+A failed experiment is useful when it eliminates a hypothesis without contaminating sealed validation data.
+
+## Current Architectural Interpretation
+
+The work performed so far on opportunity detection, continuation, remaining option value, and recurrent exit decisions should be treated as components of the larger trader, not as the complete strategy.
+
+In particular, fixed minute-level experiments are stepping stones. They must not silently redefine the final objective into a fixed-horizon strategy.
+
+A likely mature architecture is hierarchical:
+
+- **Market scanner:** broad, cheap, continuous coverage.
+- **Attention manager:** dynamically promotes and demotes tickers.
+- **High-resolution observer:** seconds/ticks/NBBO for WATCH/HOT names.
+- **Entry/abstention policy:** commits capital only when justified.
+- **Position manager:** recurrent adaptive HOLD/EXIT decisions.
+- **Execution layer:** models and eventually submits realistic orders.
+- **Capital/risk layer:** coordinates simultaneous opportunities and hard limits.
+- **Monitoring/research layer:** detects degradation and supports edge renewal.
+
+## Success Criterion
+
+The goal is not to discover a backtest that happened to make money.
+
+Success means building a trader that, using only information genuinely available at each moment, can continuously observe the market, move its attention to developing opportunities, decide when not to trade, enter selectively, adapt its holding duration and exit to evolving conditions, account for realistic execution, and demonstrate repeatable positive economic value on genuinely unseen future periods.
+
+That criterion is the North Star for future MoneyMaker research.
