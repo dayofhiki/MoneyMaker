@@ -100,3 +100,22 @@ ordering remains positive but selected gross returns do not replicate, retire
 this news representation and test a different causal state source. If gross
 alpha replicates but BASE stays negative, execution-cost observability becomes
 the next bottleneck.
+
+## Completed result — request 78
+
+The preregistered run completed successfully and failed promotion:
+
+- January: 39 trades, gross +0.841%, BASE -0.192%, day-balanced -0.036%,
+  bootstrap 95% CI [-1.861%, +1.999%].
+- February: 12 trades, gross -1.463%, BASE -2.870%, day-balanced -2.456%,
+  bootstrap 95% CI [-5.499%, -0.259%].
+- March: 5 trades, gross -3.347%, BASE -4.309%, day-balanced -4.309%,
+  bootstrap 95% CI [-9.234%, +0.173%].
+
+Trade-weighted pooled BASE was -1.133%, worse than the v2.8 comparator's
+-0.874%. Only 13.2% of evaluation anchors had a provider-tagged article within
+72 hours. Forty-nine of 56 v2.9 selections overlapped v2.8, while the seven
+v2.9-only selections averaged about -2.25% BASE. Probability AUC changed by
+only +0.0016, +0.0001, and -0.0089 across the three months. The coarse news
+representation is retired without tuning its windows, sentiment mapping,
+feature subset, or decision boundary.
