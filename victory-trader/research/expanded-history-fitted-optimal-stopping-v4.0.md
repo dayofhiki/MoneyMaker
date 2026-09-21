@@ -271,3 +271,61 @@ If v4.0 fails:
   lags or model capacity on January-March.
 
 April remains sealed after any v4.0 development failure.
+
+## Result — request 98
+
+Authoritative workflow run: `35621981738`. All three strict past-only monthly
+jobs and the aggregate job completed successfully. April 2026 and later
+remained sealed.
+
+### Evaluation result
+
+| Month | v4.0 gross mean | v4.0 BASE mean | Day-balanced BASE | Mean hold | Median hold | v3.8 day-balanced BASE |
+|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | -0.771431% | -1.934389% | -1.913476% | 22.11m | 28m | -0.977244% |
+| 2026-02 | -0.518493% | -1.711643% | -1.833242% | 20.74m | 26m | -1.183378% |
+| 2026-03 | -0.197656% | -1.429082% | -1.352772% | 20.06m | 23m | -1.342825% |
+
+v4.0 failed to improve the executable recurrent policy. Matched day-balanced
+v4.0-minus-v3.8 differences were -0.931769%, -0.648499%, and -0.002104% in
+January-March, with bootstrap lower bounds below zero in every month.
+
+The primary BASE bootstrap intervals were entirely negative in every month:
+
+- January: [-2.518893%, -1.313563%]
+- February: [-2.477646%, -1.186578%]
+- March: [-1.901070%, -0.817953%]
+
+All three folds therefore failed the pre-registered economic and comparator
+conditions. The aggregate artifact printed:
+
+`FAIL: diagnose stopping capture versus entry value`
+
+### Diagnostic interpretation
+
+The failure direction is the opposite of v3.8. v3.8 exited too quickly, with
+median holding time one minute. v4.0 moved to the other extreme, with median
+holding times 28, 26, and 23 minutes.
+
+Fit diagnostics explain this behavior. At early holding minutes the backward
+fit targets averaged roughly +1.5 to +1.6 percentage points and the fitted
+models predicted HOLD on roughly 95%-97% of fit rows. Yet the chronologically
+later calibration trajectories were already BASE-negative before evaluation.
+
+Thus v3.9's remaining-option observability did not disappear. Rather, direct
+same-sample Bellman bootstrapping produced an optimistic downstream-value
+target that generalized poorly. The model repeatedly treated downstream values
+selected by models fitted on the same sample as if they were honest future
+policy values.
+
+### Decision
+
+Reject exact v4.0 and keep April sealed.
+
+Do not tune the zero HOLD boundary, per-minute thresholds, lag grid or 30-minute
+cap against this failure. The next branch is the separately preregistered v4.1
+honest stopping distillation experiment: fit the v4.0 teacher on the fit
+partition, evaluate its realized continuation value on the chronologically later
+calibration partition, and train the executable student only on those
+out-of-sample realized downstream targets.
+
