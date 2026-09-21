@@ -1,5 +1,5 @@
 {
-  "request_id": 86,
+  "request_id": 87,
   "operation": "expanded_history_opportunity_shared_q_v33",
-  "note": "Retry exact pre-registered v3.3 after test-fixture isolation only. Same frozen September 2025-March 2026 data, policy and calibration; April 2026+ sealed."
+  "note": "Diagnostic-only rerun of exact frozen v3.3. Add raw shared-Q ranking diagnostics only; no model, threshold, policy, calibration, trade or promotion change. April 2026+ sealed."
 }
