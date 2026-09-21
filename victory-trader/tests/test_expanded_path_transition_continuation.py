@@ -50,9 +50,10 @@ def test_path_transition_features_do_not_compress_missing_minutes():
     assert np.isnan(
         transitions.loc[2, "path_transition_1m_path_entry_return_pct"]
     )
-    # shift(2) points to t=0, which is exactly three minutes earlier, not 2m.
-    assert np.isnan(
-        transitions.loc[2, "path_transition_2m_path_entry_return_pct"]
+    # Exact lookup still finds the t-2m and t-3m rows even though t-1m is absent.
+    assert np.isclose(
+        transitions.loc[2, "path_transition_2m_path_entry_return_pct"],
+        1.0,
     )
     assert np.isclose(
         transitions.loc[2, "path_transition_3m_path_entry_return_pct"],
@@ -87,5 +88,5 @@ def test_transition_lag_coverage_reports_exact_timestamp_coverage():
 
     assert coverage.loc[1, "exact_lag_rows"] == 1
     assert np.isclose(coverage.loc[1, "exact_lag_coverage"], 1 / 3)
-    assert coverage.loc[2, "exact_lag_rows"] == 0
+    assert coverage.loc[2, "exact_lag_rows"] == 1
     assert coverage.loc[3, "exact_lag_rows"] == 1
