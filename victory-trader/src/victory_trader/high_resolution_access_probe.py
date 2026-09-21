@@ -40,13 +40,18 @@ def run_probe(
     ticker: str,
     day: date,
 ) -> dict[str, object]:
+    normalized_ticker = ticker.strip().upper()
+    if not normalized_ticker:
+        raise ValueError("ticker must not be blank")
     result: dict[str, object] = {
-        "ticker": ticker.upper(),
+        "ticker": normalized_ticker,
         "day": day.isoformat(),
     }
 
     try:
-        payload = rest_client.second_bars_range(ticker, day, day, adjusted=False)
+        payload = rest_client.second_bars_range(
+            normalized_ticker, day, day, adjusted=False
+        )
         rows = list(payload.get("results") or [])
         result["second_bars_rest"] = {
             "status": "AVAILABLE",
@@ -67,7 +72,7 @@ def run_probe(
     end_ns = start_ns + 10_000_000_000
     try:
         rows = rest_client.trades(
-            ticker,
+            normalized_ticker,
             timestamp_gte=start_ns,
             timestamp_lte=end_ns,
             limit=50_000,
