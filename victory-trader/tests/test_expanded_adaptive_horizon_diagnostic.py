@@ -7,6 +7,7 @@ from victory_trader.expanded_adaptive_horizon_diagnostic import (
     HORIZONS,
     PRIMARY_POLICY,
     horizon_summary,
+    load_trades,
     path_diagnostics,
 )
 
@@ -76,3 +77,36 @@ def test_horizon_summary_preserves_cost_decomposition() -> None:
     assert one["gross_mean_pct"] == pytest.approx(1.5)
     assert one["base_mean_pct"] == pytest.approx(0.5)
     assert one["modeled_base_cost_drag_mean_pct"] == pytest.approx(1.0)
+
+
+def test_load_trades_reattaches_frozen_state_labels(tmp_path) -> None:
+    trade = {
+        "policy": PRIMARY_POLICY,
+        "trading_day": "2026-01-02",
+        "ticker": "AAA",
+        "t": 1767364200000,
+        "buy_return_15m_pct": 2.0,
+        "buy_return_15m_base_net_return_pct": 1.0,
+        "buy_return_15m_stress_net_return_pct": 0.0,
+    }
+    trade_path = tmp_path / "v30-2026-01-trades.csv"
+    pd.DataFrame([trade]).to_csv(trade_path, index=False)
+
+    state = {
+        "trading_day": "2026-01-02",
+        "ticker": "AAA",
+        "t": 1767364200000,
+    }
+    for horizon in HORIZONS:
+        state[f"buy_return_{horizon}m_pct"] = float(horizon)
+        state[f"buy_return_{horizon}m_base_net_return_pct"] = float(horizon) - 1.0
+        state[f"buy_return_{horizon}m_stress_net_return_pct"] = float(horizon) - 2.0
+    state_path = tmp_path / "state-2026-01.parquet"
+    pd.DataFrame([state]).to_parquet(state_path, index=False)
+
+    loaded = load_trades([trade_path], [state_path])
+    assert len(loaded) == 1
+    assert loaded.iloc[0]["buy_return_1m_pct"] == pytest.approx(1.0)
+    assert loaded.iloc[0]["buy_return_30m_base_net_return_pct"] == pytest.approx(29.0)
+    # The already-recorded v3.0 15m outcome remains the source of truth.
+    assert loaded.iloc[0]["buy_return_15m_base_net_return_pct"] == pytest.approx(1.0)
