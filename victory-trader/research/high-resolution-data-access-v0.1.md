@@ -53,3 +53,21 @@ research layer.
   subscription automatically.
 
 No result from this probe is a profitability claim.
+
+## Result — request 113
+
+The read-only retry completed successfully after fixing only ticker
+normalization in the probe test.
+
+- REST one-second aggregates: **AVAILABLE**.
+  - AAPL on 2026-01-02 returned 18,379 one-second aggregate rows.
+- REST historical trades: **UNAVAILABLE**, HTTP 403.
+- trade Flat File HEAD: **UNAVAILABLE**, HTTP 403.
+- quote Flat File HEAD: **UNAVAILABLE**, HTTP 403.
+
+The earlier historical NBBO REST probe also returned HTTP 403. Therefore the
+next high-resolution research layer should use one-second aggregate bars under
+the existing entitlement and must not assume tick trades or NBBO are available.
+
+This is an information-access result only, not evidence of predictive edge or
+profitability.
