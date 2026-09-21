@@ -193,3 +193,31 @@ Interpret failure as follows:
   HOLD/SELL, horizon, or sizing freedom be introduced.
 
 No fresh validation month is consumed here.
+
+
+## Result — request 77
+
+Request 76 failed in tests because the synthetic fixture omitted full upstream
+anchor inputs; no model result was produced. Request 77 changed only that
+fixture and completed successfully with the frozen v2.8 design. April 2026 and
+later remained sealed.
+
+| Month | Evaluated trades | Gross mean | BASE mean | Day-balanced BASE | Bootstrap 95% low |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 47 | +1.007% | -0.036% | +0.289% | -1.475% |
+| 2026-02 | 10 | -1.297% | -2.741% | -2.377% | -5.240% |
+| 2026-03 | 4 | -5.114% | -6.058% | -6.058% | -11.350% |
+
+January showed a useful gross improvement, but it did not cover BASE friction,
+its bootstrap lower bound was negative, and its BASE ledger marked return was
+-1.151%. The effect did not replicate: February and March were gross-negative,
+sparse, and BASE-negative. March selected the exact same four evaluated trades
+as the v2.7 supply comparator.
+
+## Decision
+
+Reject exact v2.8. Do not access April 2026 or later. Do not tune split
+thresholds, feature subsets, lookback, EV boundary, costs, model capacity, or
+horizon on January-March. Split history did not provide a stable
+continuation-versus-exhaustion distinction. The next branch must use a genuinely
+different strictly-prior state source.
