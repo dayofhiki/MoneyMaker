@@ -97,3 +97,38 @@ January-March outcomes.
 
 If the probe fails, do not lower the coverage criteria or substitute present-day
 reference values based on these results.
+
+
+## Result — request 72
+
+Workflow run 35566495316 completed successfully with 75 deterministic
+development anchors, 25 from each of January-March 2026.
+
+The probe made 75 point-in-time ticker-details network requests with zero
+retries and no current-date fallback.
+
+| Month | Request success | Weighted shares | Share-class shares | Provider market cap | Implied market cap |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 100% | 100% | 92% | 100% | 100% |
+| 2026-02 | 100% | 100% | 92% | 100% | 100% |
+| 2026-03 | 100% | 100% | 96% | 100% | 100% |
+
+Every query used D-1 calendar day and therefore satisfied the strict-prior date
+check.
+
+All pre-registered supply criteria passed.
+
+The sampled supply ratios also spanned orders of magnitude, confirming that the
+source adds a materially different state axis rather than a near-constant
+identifier. Examples ranged from sub-0.1% five-minute market-cap turnover to
+multi-100% turnover in very small-share-count names.
+
+## Decision
+
+Proceed to a separately pre-registered development branch that augments the
+v2.6 execution-feasible first-anchor universe with point-in-time share-supply
+features.
+
+No January-March return outcome was used to choose a float/share threshold. The
+new branch will feed continuous causal supply variables into the model rather
+than hand-selecting a low-float subgroup.
