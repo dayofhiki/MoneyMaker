@@ -1,5 +1,5 @@
 {
-  "request_id": 79,
-  "operation": "expanded_history_filing_semantics_hurdle_ev_v30",
-  "note": "Run pre-registered v3.0 strictly-prior 8-K filing-semantics hurdle EV on frozen Sep 2025-Mar 2026 development data; April 2026+ sealed."
+  "request_id": 80,
+  "operation": "expanded_history_adaptive_horizon_diagnostic_v31",
+  "note": "Run pre-registered v3.1 adaptive-horizon diagnostic on frozen v3.0 January-March 2026 evaluated development trades; April 2026+ sealed."
 }
