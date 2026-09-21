@@ -4,7 +4,7 @@ from datetime import date, datetime, time
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-
+import pytest
 from victory_trader.attention_flatfile_replay import (
     build_flatfile_scan_day,
     run_flatfile_attention_replay,
@@ -16,19 +16,20 @@ ET = ZoneInfo("America/New_York")
 
 
 class FakeStore:
-    def __init__(self) -> None:
+    def __init__(self, previous: pd.DataFrame | None = None) -> None:
         self.day_calls: list[date] = []
         self.minute_calls: list[date] = []
         self.stats = FlatFileStoreStats()
+        self.previous = previous
 
     def day_aggregates(self, day: date) -> pd.DataFrame:
         self.day_calls.append(day)
-        return pd.DataFrame(
-            {
-                "ticker": ["AAA", "ETF", "SPLT", "PRICEY"],
-                "close": [10.0, 10.0, 10.0, 25.0],
-            }
-        )
+        if self.previous is not None:
+            return self.previous.copy()
+        return pd.DataFrame({
+            "ticker": ["AAA", "ETF", "SPLT", "PRICEY"],
+            "close": [10.0, 10.0, 10.0, 25.0],
+        })
 
     def minute_aggregates(self, day: date) -> pd.DataFrame:
         self.minute_calls.append(day)
@@ -156,3 +157,33 @@ def test_flatfile_range_runs_replay_and_reports_provenance():
     assert summary["attention_config"]["max_hot"] == 1
     assert summary["replay"]["runner_episodes"] == 1
     assert summary["days"][0]["previous_trading_day"] == "2025-12-31"
+
+
+def test_flatfile_adapter_collapses_only_identical_prior_close_duplicates():
+    previous = pd.DataFrame({
+        "ticker": ["AAA", " aaa ", "PRICEY"],
+        "close": [10.0, 10.0, 25.0],
+    })
+
+    scan, summary = build_flatfile_scan_day(
+        FakeStore(previous),
+        FakeRestClient(),
+        date(2026, 1, 2),
+    )
+
+    assert set(scan["ticker"]) == {"AAA"}
+    assert summary["duplicate_prior_rows_collapsed"] == 1
+
+
+def test_flatfile_adapter_rejects_conflicting_prior_close_duplicates():
+    previous = pd.DataFrame({
+        "ticker": ["AAA", "AAA", "PRICEY"],
+        "close": [10.0, 10.01, 25.0],
+    })
+
+    with pytest.raises(ValueError, match="conflicting closes.*AAA"):
+        build_flatfile_scan_day(
+            FakeStore(previous),
+            FakeRestClient(),
+            date(2026, 1, 2),
+        )

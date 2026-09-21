@@ -182,7 +182,7 @@ and audits runner capture plus observation-tier demand. Its input allowlist
 ignores outcome columns. See `chronological-market-replay-v0.1.md`.
 
 Phase 2B is implemented in `victory_trader.attention_flatfile_replay` and the
-`attention_market_replay_v01` Actions operation. Request 101 runs a frozen
+`attention_market_replay_v01` Actions operation. Dedicated request 103 runs a frozen
 2026-01-02 infrastructure smoke slice using complete Massive minute Flat Files,
 point-in-time universe metadata, prior-session nominal closes, and same-day
 split exclusion. Its result is not a threshold-tuning or profitability test.

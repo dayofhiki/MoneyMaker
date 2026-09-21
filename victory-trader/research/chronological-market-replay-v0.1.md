@@ -86,8 +86,13 @@ and score thresholds remain fixed before its runner-capture results are
 inspected. April 2026 and later remain sealed.
 
 `victory_trader.attention_flatfile_replay` now implements this adapter and the
-`attention_market_replay_v01` Actions operation. Request 101 freezes the first
+`attention_market_replay_v01` Actions operation. Dedicated request 103 freezes the first
 smoke slice to 2026-01-02 with default runtime settings. Its purpose is to
 verify end-to-end market coverage, taxonomy, split handling, chronological
 state evolution and artifact production. The one-day result must not be used
 to change score thresholds or claim profitability.
+
+The adapter collapses duplicate prior-close rows only when the normalized
+ticker and close agree. Conflicting close values fail the run. The workflow
+also propagates replay failures through `tee` and verifies all core outputs are
+non-empty before artifact upload.

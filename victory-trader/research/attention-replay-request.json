@@ -1,0 +1,7 @@
+{
+  "request_id": 103,
+  "operation": "attention_market_replay_v01",
+  "start_date": "2026-01-02",
+  "end_date": "2026-01-02",
+  "note": "Phase 2B infrastructure smoke replay on one frozen January development day. Use complete market-wide minute Flat Files, nominal prior close, point-in-time common-stock taxonomy, same-day split exclusion, regular-session rows, and the preregistered v0.1 momentum-percentile attention baseline. Collapse only value-identical duplicate prior-close rows and reject conflicting values. Keep default runtime thresholds and capacity fixed. Audit capture and data demand only; do not use this one-day result to tune thresholds or claim profitability. April 2026 and later remain sealed."
+}

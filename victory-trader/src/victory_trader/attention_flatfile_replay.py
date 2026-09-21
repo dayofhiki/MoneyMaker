@@ -34,6 +34,39 @@ FLATFILE_CACHE_DIR = Path("data/cache/massive-flatfiles")
 REST_CACHE_DIR = Path("data/cache/massive")
 
 
+def _prepare_prior_closes(
+    previous: pd.DataFrame,
+    eligible: set[str],
+    trading_day: date,
+) -> tuple[pd.DataFrame, int]:
+    """Normalize prior closes and collapse only value-identical duplicates."""
+
+    prior = previous.loc[:, ["ticker", "close"]].copy()
+    prior["ticker"] = prior["ticker"].astype(str).str.strip().str.upper()
+    prior["previous_close"] = pd.to_numeric(prior.pop("close"), errors="coerce")
+    prior = prior.loc[prior["ticker"].isin(eligible)].copy()
+
+    duplicate = prior.duplicated("ticker", keep=False)
+    if duplicate.any():
+        duplicate_values = prior.loc[duplicate]
+        distinct_counts = duplicate_values.groupby("ticker", sort=True)[
+            "previous_close"
+        ].nunique(dropna=False)
+        conflicting = distinct_counts.loc[distinct_counts.gt(1)].index.tolist()
+        if conflicting:
+            examples = conflicting[:10]
+            raise ValueError(
+                "prior-day Flat File has conflicting closes for duplicate "
+                f"tickers: {examples}"
+            )
+
+    before = len(prior)
+    prior = prior.drop_duplicates("ticker", keep="first").reset_index(drop=True)
+    prior["trading_day"] = trading_day.isoformat()
+    prior["eligible"] = True
+    return prior, before - len(prior)
+
+
 def build_flatfile_scan_day(
     store: MassiveFlatFileStore,
     rest_client: MassiveClient,
@@ -61,12 +94,11 @@ def build_flatfile_scan_day(
         if item.is_research_common_stock and ticker not in split_tickers
     }
 
-    prior = previous.loc[
-        previous["ticker"].astype(str).str.upper().isin(eligible),
-        ["ticker", "close"],
-    ].rename(columns={"close": "previous_close"})
-    prior["trading_day"] = day.isoformat()
-    prior["eligible"] = True
+    prior, duplicate_prior_rows_collapsed = _prepare_prior_closes(
+        previous,
+        eligible,
+        day,
+    )
 
     minutes = minutes.loc[
         minutes["ticker"].astype(str).str.upper().isin(eligible)
@@ -86,6 +118,7 @@ def build_flatfile_scan_day(
         "point_in_time_common_stocks": len(metadata),
         "eligible_after_exchange_type_split": len(eligible),
         "same_day_split_exclusions": len(split_tickers),
+        "duplicate_prior_rows_collapsed": duplicate_prior_rows_collapsed,
         "regular_minute_input_rows": len(minutes),
         "scan_rows": len(scan),
         "scan_symbols": int(scan["ticker"].nunique()) if not scan.empty else 0,

@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'victory-trader/research/research-request.json'
+      - 'victory-trader/research/attention-replay-request.json'
   workflow_dispatch:
     inputs:
       start_date:
@@ -54,7 +54,7 @@ jobs:
               request_id = os.environ["INPUT_REQUEST_ID"]
           else:
               payload = json.loads(
-                  Path("victory-trader/research/research-request.json").read_text(
+                  Path("victory-trader/research/attention-replay-request.json").read_text(
                       encoding="utf-8"
                   )
               )
@@ -109,6 +109,7 @@ jobs:
 
       - name: Replay frozen market-wide attention slice
         run: |
+          set -o pipefail
           mkdir -p artifacts
           python -m victory_trader.attention_flatfile_replay \
             "${{ needs.request.outputs.start_date }}" \
@@ -117,6 +118,9 @@ jobs:
             --trace-output artifacts/attention-market-trace-v01.parquet \
             --summary artifacts/attention-market-summary-v01.json \
             | tee artifacts/attention-market-replay-v01.log
+          test -s artifacts/attention-market-scan-v01.parquet
+          test -s artifacts/attention-market-trace-v01.parquet
+          test -s artifacts/attention-market-summary-v01.json
 
       - name: Save reusable Flat File cache
         if: always()
