@@ -148,7 +148,19 @@ same exact replay counts, capture rates, occupancy maxima, unique-symbol count
 and runner lead-time medians as the monolithic implementation.
 
 A parity test replays two sessions through both implementations and requires the
-partition contents and replay summary to match exactly. Request 109 reruns the
+partition contents and replay summary to match exactly. Request 109 reran the
 same frozen 2026-01-02 through 2026-01-05 slice through the partitioned path
-before expansion to a longer January development window. No score threshold,
-capacity, universe rule or outcome definition changes in this phase.
+and completed successfully. Its aggregate replay diagnostics exactly matched
+request 108: 2,113,347 trace rows, 655 runner episodes, 48.24% WATCH-or-better
+capture, 3.21% HOT/POSITION capture, WATCH 50 / HOT 10 peak occupancy, and one
+minute median WATCH lead. The output is now split into one scan and one trace
+Parquet partition per trading day.
+
+## Phase 2E — first multi-session development expansion
+
+Request 110 extends the unchanged partitioned replay through 2026-01-09,
+covering the first six January trading sessions. The new summary also retains
+per-session replay diagnostics so cross-day instability cannot be hidden by a
+single aggregate. The frozen score thresholds, capacities, universe rules,
+regular-session boundaries and +10% runner audit definition remain unchanged.
+This is still an attention coverage/resource study, not a profitability test.
