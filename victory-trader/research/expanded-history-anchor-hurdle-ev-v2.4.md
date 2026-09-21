@@ -295,3 +295,89 @@ Use the frozen diagnostics to decide the next intervention:
   rank and later HOLD/SELL freedom.
 
 No fresh validation month is consumed here.
+
+
+## Result — request 67
+
+Workflow run 35560790398 completed successfully after request 66 was rejected
+only by the workflow operation allowlist. Request 67 changed no research rule,
+model setting, data window, threshold, feature, cost assumption, or validation
+access.
+
+All three strict past-only monthly jobs and the frozen position-ledger replay
+completed. April 2026 and later were not accessed.
+
+### Holdout ordering and hurdle selection
+
+| Month | Win AUC | Win-mag Spearman | Loss-mag Spearman | Hurdle-EV Spearman | EV>0 selected rate |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 0.5956 | 0.4018 | 0.5095 | 0.1892 | 2.05% |
+| 2026-02 | 0.6723 | 0.3476 | 0.5661 | 0.2620 | 0.34% |
+| 2026-03 | 0.6293 | 0.3536 | 0.5153 | 0.2109 | 0.15% |
+
+The decomposition therefore learned repeatable broad out-of-month ordering:
+all three probability AUCs exceeded 0.50, both conditional magnitude heads
+ranked matching-sign payoff positively, and the combined hurdle EV ranked
+realized BASE return positively in every month.
+
+However the semantic EV>0 tail was extremely sparse and not calibrated as a
+cost-positive tail.
+
+### Primary trading result
+
+| Month | Evaluated trades | Gross mean | BASE mean | Day-balanced BASE | Predicted hurdle EV mean |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 42 | +0.810% | -0.320% | -0.432% | +0.467% |
+| 2026-02 | 6 | -0.858% | -2.288% | -1.851% | +0.507% |
+| 2026-03 | 3 | +0.490% | -0.519% | -0.519% | +0.276% |
+
+January and March retained positive gross alpha but failed to cover BASE
+friction. February failed before friction: the six evaluated EV-positive
+anchors had negative gross return despite a positive predicted hurdle EV.
+
+The pooled trading-day bootstrap lower bound was negative in every month:
+-1.668%, -5.563%, and -3.603% for January-March respectively.
+
+### Frozen account replay
+
+For hurdle_ev_15m_cap1 under BASE accounting:
+
+| Month | Attempts | Accepted/closed | Missing entry refs | BASE marked return | Complete accounting |
+|---|---:|---:|---:|---:|---|
+| 2026-01 | 56 | 50 / 50 | 6 | -2.135% | no |
+| 2026-02 | 13 | 8 / 8 | 5 | -2.370% | no |
+| 2026-03 | 4 | 3 / 3 | 1 | -0.156% | no |
+
+No unresolved exits remained, but missing entry references make all three
+primary-policy account replays incomplete. They also remained BASE-negative.
+
+External-data coverage passed the frozen thresholds in every month: short
+volume was 100%, publication-safe short interest was about 98.7%-98.9%, and
+8-K query completion was 100%.
+
+## Decision
+
+Reject exact v2.4. Do not access April 2026 or later.
+
+This is not a generic information failure. The broad hurdle score ranks future
+BASE return positively in all three months. The failure is concentrated in the
+absolute positive-EV tail:
+
+1. the tail is tiny and collapses from 42 evaluated trades in January to 6 and
+   3 in February/March;
+2. predicted positive EV is over-optimistic relative to realized BASE in every
+   month;
+3. January and March show useful gross selection but insufficient friction
+   coverage;
+4. February shows that the absolute tail can be wrong even before friction.
+
+Do not lower the zero EV threshold or retune any v2.4 head on these months.
+
+The next development work should diagnose calibration versus ranking explicitly.
+Because rank information survives while the zero crossing does not, the next
+branch should preserve the frozen hurdle score and test a strictly prior,
+pre-registered calibration of the final combined EV scale rather than changing
+the underlying features or opening HOLD/SELL freedom. If final-scale
+calibration still cannot produce a dense, cost-positive tail, the intervention
+should move to candidate-universe/state-information design rather than further
+threshold engineering.
