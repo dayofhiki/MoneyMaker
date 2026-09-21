@@ -124,9 +124,31 @@ Its +10% runner coverage was 53.44% at WATCH-or-better and 3.44% at
 HOT-or-position, with a five-minute median WATCH lead. These figures are an
 infrastructure baseline only and must not be used to tune v0.1 thresholds.
 
-## Phase 2C — requested
+## Phase 2C — completed
 
-Request 108 extends the frozen replay through 2026-01-05 without changing any
-score or capacity setting. The two-session run checks session reset, per-day
-cache isolation, repeat duplicate handling and strict occupancy budgets before
-the development window is expanded further.
+Request 108 completed the unchanged 2026-01-02 through 2026-01-05 replay across
+two regular sessions. The artifact contains 990,188 scan rows and 2,113,347
+trace rows over 780 regular-session timestamps. Both sessions preserved strict
+WATCH 50 / HOT 10 occupancy limits, chronological ordering, session reset and
+per-day duplicate resolution. The combined frozen infrastructure baseline
+captured 316 of 655 eventual +10% close-based crossings at WATCH-or-better
+(48.24%) and 21 at HOT/POSITION (3.21%). Median WATCH lead was one minute.
+These remain coverage/resource diagnostics only.
+
+The two-session artifact also exposed the next scaling constraint: concatenating
+all scan and trace frames in memory is appropriate for smoke tests but not for a
+month-scale market-wide replay.
+
+## Phase 2D — day-partitioned streaming replay
+
+`victory_trader.attention_partitioned_replay` writes each completed trading
+session immediately to separate scan and trace Parquet partitions, while
+retaining only one session in memory. Its incremental summary preserves the
+same exact replay counts, capture rates, occupancy maxima, unique-symbol count
+and runner lead-time medians as the monolithic implementation.
+
+A parity test replays two sessions through both implementations and requires the
+partition contents and replay summary to match exactly. Request 109 reruns the
+same frozen 2026-01-02 through 2026-01-05 slice through the partitioned path
+before expansion to a longer January development window. No score threshold,
+capacity, universe rule or outcome definition changes in this phase.
