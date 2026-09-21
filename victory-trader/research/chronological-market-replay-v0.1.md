@@ -68,7 +68,7 @@ Sessions use fresh attention state so prior-day HOT hysteresis cannot leak into
 the next opening scan. Open-position carry is not supported in this phase; the
 current research convention is regular-session liquidation.
 
-## Phase 2B — next
+## Phase 2B — implemented, smoke replay requested
 
 Add a Massive Flat Files adapter that:
 
@@ -84,3 +84,10 @@ Add a Massive Flat Files adapter that:
 The first run should be a bounded January development slice. Capacity settings
 and score thresholds remain fixed before its runner-capture results are
 inspected. April 2026 and later remain sealed.
+
+`victory_trader.attention_flatfile_replay` now implements this adapter and the
+`attention_market_replay_v01` Actions operation. Request 101 freezes the first
+smoke slice to 2026-01-02 with default runtime settings. Its purpose is to
+verify end-to-end market coverage, taxonomy, split handling, chronological
+state evolution and artifact production. The one-day result must not be used
+to change score thresholds or claim profitability.
