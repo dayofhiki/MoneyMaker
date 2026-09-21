@@ -4734,7 +4734,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: moneymaker-expanded-v27-supply-anchors-${{ needs.request.outputs.request_id }}
-          path: victory-trader/data/v27-supply
+          path: victory-trader
 
       - name: Run one strict past-only v2.7 month
         shell: bash
