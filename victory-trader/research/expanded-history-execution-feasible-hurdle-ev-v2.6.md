@@ -177,3 +177,72 @@ Interpret failure as follows:
   HOLD, or SELL freedom be introduced.
 
 No fresh validation month is consumed here.
+
+
+## Result — request 71
+
+Workflow run 35565799497 completed successfully after requests 69 and 70 were
+blocked only by an unused-import ruff failure. Request 71 changed no research
+rule, gate, model setting, data window, threshold, cost assumption, or validation
+access.
+
+All three strict past-only monthly jobs and the frozen position-ledger replay
+completed. April 2026 and later were not accessed.
+
+### Gate coverage and ordering
+
+| Month | Feasible anchor rate | Win AUC | Hurdle-EV Spearman |
+|---|---:|---:|---:|
+| 2026-01 | 56.31% | 0.5527 | 0.1227 |
+| 2026-02 | 49.81% | 0.6249 | 0.1525 |
+| 2026-03 | 50.60% | 0.5889 | 0.1332 |
+
+The structural gate removed roughly half of first anchors while preserving
+positive broad out-of-month hurdle ordering in every month.
+
+### Primary trading result
+
+| Month | Evaluated trades | Gross mean | BASE mean | Day-balanced BASE | Bootstrap 95% low |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 43 | -0.574% | -1.614% | -1.284% | -2.553% |
+| 2026-02 | 3 | -2.386% | -3.932% | -2.892% | -6.012% |
+| 2026-03 | 6 | -2.040% | -3.014% | -3.014% | -6.296% |
+
+The primary tail failed before friction in every month. The gate therefore did
+not convert the ranking signal into a cost-positive or even gross-positive
+selected process.
+
+The selected hurdle-EV means remained positive (+0.439%, +0.506%, +0.616%)
+while realized BASE means were sharply negative (-1.614%, -3.932%, -3.014%).
+This confirms that the absolute upper tail remains badly mis-scaled even after
+removing weak execution-feasibility candidates.
+
+### Frozen account replay — primary BASE
+
+| Month | Attempts | Accepted/closed | Missing entry refs | BASE marked return | Complete accounting |
+|---|---:|---:|---:|---:|---|
+| 2026-01 | 49 | 48 / 48 | 1 | -7.925% | no |
+| 2026-02 | 5 | 5 / 5 | 0 | -2.803% | yes |
+| 2026-03 | 8 | 7 / 7 | 1 | -1.243% | no |
+
+The promotion rule fails on trade count, monthly BASE return, day-balanced
+return, bootstrap lower bound, account return and accounting completeness.
+
+## Decision
+
+Reject exact v2.6. Do not access April 2026 or later.
+
+The pre-registered failure branch applies:
+
+- hurdle ordering stayed positive inside the gated universe;
+- selected gross alpha was negative in January, February and March.
+
+Therefore candidate/state information remains the bottleneck. Do not tune the
+three gate thresholds, hurdle zero crossing, model capacity, costs, horizon, or
+feature subset on these results.
+
+The next development branch must introduce genuinely new causal state
+information that can distinguish continuation from exhaustion at the first
+eligible anchor. Execution-feasibility filtering alone is retired as the primary
+intervention. Timing, HOLD and SELL freedom remain deferred until a replicating
+cost-positive entry process exists.
