@@ -1,5 +1,5 @@
 {
-  "request_id": 64,
-  "operation": "expanded_history_entry_ranker_v22",
-  "note": "Operational rerun of preregistered expanded-history entry-ranker v2.2 after request 63 produced no model outputs and exited 143. Use bounded-memory past-only loading that preserves full episode-rank labels before the frozen 3-minute cadence and leaves calibration/evaluation full resolution. No new validation month, threshold/model/cost changes, brokerage action, or quote purchase."
+  "request_id": 65,
+  "operation": "expanded_history_episode_viability_rank_v23",
+  "note": "Run preregistered expanded-history episode viability plus timing-rank v2.3 on frozen Jan-Mar 2026 development months with strictly earlier Sep 2025+ history. Use explicit multi-source causal features, 15m viability probability >=0.50, calibration 75th-percentile 15m rank gate, fixed costs, all-attempt ledger and frozen position accounting. No April 2026+ access, threshold tuning, quote purchase, brokerage action, or live deployment."
 }
