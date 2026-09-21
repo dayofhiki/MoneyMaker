@@ -1,5 +1,5 @@
 {
-  "request_id": 84,
-  "operation": "expanded_history_adaptive_hurdle_ev_v32",
-  "note": "Retry exact pre-registered v3.2 after report-output type fix only. Same frozen September 2025-March 2026 data and model; April 2026+ sealed."
+  "request_id": 85,
+  "operation": "expanded_history_opportunity_shared_q_v33",
+  "note": "Run exact pre-registered v3.3 opportunity gate + shared action-value ranking with policy-level max-selection calibration on frozen September 2025-March 2026 data. April 2026+ sealed."
 }
