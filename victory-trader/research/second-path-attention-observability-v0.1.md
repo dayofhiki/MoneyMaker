@@ -172,3 +172,57 @@ If the gate fails, do not tune the three-minute horizon, attention thresholds,
 sample selection or model hyperparameters against these same evaluation days.
 The next branch must use a genuinely different causal information family or
 target formulation.
+
+
+## Result — request 115
+
+Request 115 completed successfully and preserved the frozen causal protocol.
+
+Data audit:
+
+- 72 historical one-second REST requests, zero retries;
+- 72/72 sampled ticker-days returned non-empty one-second aggregates;
+- 234 eligible WATCH decision rows across 58 tickers;
+- one-second feature coverage: 100%;
+- median active seconds in the causal 60-second window: 8;
+- fit rows: 148 on 2026-01-02 through 2026-01-07 trading sessions;
+- evaluation rows: 86 on 2026-01-08 and 2026-01-09.
+
+Pooled evaluation:
+
+| Metric | Minute baseline | + one-second path |
+| --- | ---: | ---: |
+| Spearman | 0.032468 | 0.051782 |
+| MAE | 1.664410 | 1.627909 |
+| top prediction quartile realized 3m max return | +0.483345% | +1.038843% |
+
+Incremental pooled Spearman was +0.019314.
+
+By evaluation day:
+
+- 2026-01-08: Spearman 0.079989 -> 0.070897, incremental -0.009091;
+  MAE 1.461207 -> 1.411541; top-quartile realized target
+  +1.132487% -> +1.348525%.
+- 2026-01-09: Spearman -0.082326 -> 0.003163, incremental +0.085489;
+  MAE 1.877290 -> 1.854580; top-quartile realized target
+  -0.242064% -> +0.078662%.
+
+The preregistered information-value gate **fails** because extended Spearman was
+lower than baseline on 2026-01-08, even though pooled ranking, pooled MAE,
+pooled top-quartile outcome and all top-quartile day comparisons improved.
+
+## Interpretation
+
+The experiment does not justify promoting the frozen 60-second feature family
+into the attention policy. It also does not support the stronger conclusion
+that one-second paths are useless: the point estimates are directionally
+positive on several diagnostics but not stable across both evaluation days.
+
+Do not tune the three-minute horizon, feature list, sample count, model
+hyperparameters or attention thresholds against these evaluation results.
+
+Per the preregistered failure branch, the next experiment must change either
+the causal information family or the target formulation. The next target
+should better match the final stateful trader than a fixed three-minute
+forecast and should use later, untouched January development sessions for
+evaluation.
