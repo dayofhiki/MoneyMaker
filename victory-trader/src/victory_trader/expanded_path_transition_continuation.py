@@ -29,36 +29,76 @@ PATH_TRANSITION_LAGS = (1, 2, 3, 5, 8, 13)
 RANDOM_SEED = 20261043
 
 
-def _groupers(frame: pd.DataFrame) -> list[pd.Series]:
-    return [frame[key].astype(str) for key in KEYS]
+def _exact_lag_lookup(
+    frame: pd.DataFrame,
+    lag_minutes: int,
+) -> tuple[pd.Series, pd.DataFrame]:
+    """Look up the row at exactly t-lag, never merely lag rows earlier."""
+    if frame.duplicated(KEYS + ["t"]).any():
+        raise ValueError("path-transition rows must be unique by ticker-day/t")
+
+    left = frame.loc[:, KEYS + ["t"]].copy()
+    left["t"] = pd.to_numeric(left["t"], errors="coerce")
+    left["_row_order"] = np.arange(len(left))
+
+    right = frame.loc[:, KEYS + ["t"] + list(PATH_FEATURES)].copy()
+    right["t"] = (
+        pd.to_numeric(right["t"], errors="coerce")
+        + lag_minutes * MINUTE_MS
+    )
+    right["_exact_lag_present"] = True
+    rename = {column: f"_lag_{column}" for column in PATH_FEATURES}
+    right = right.rename(columns=rename)
+
+    merged = left.merge(
+        right,
+        on=KEYS + ["t"],
+        how="left",
+        sort=False,
+        validate="one_to_one",
+    ).sort_values("_row_order", kind="stable")
+
+    exact = (
+        merged["_exact_lag_present"]
+        .fillna(False)
+        .astype(bool)
+        .reset_index(drop=True)
+    )
+    lagged = pd.DataFrame(
+        {
+            column: pd.to_numeric(
+                merged[f"_lag_{column}"],
+                errors="coerce",
+            ).to_numpy()
+            for column in PATH_FEATURES
+        },
+        index=frame.index,
+    )
+    exact.index = frame.index
+    return exact, lagged
 
 
 def _exact_lag_mask(frame: pd.DataFrame, lag_minutes: int) -> pd.Series:
-    timestamp = pd.to_numeric(frame["t"], errors="coerce")
-    lagged_t = timestamp.groupby(_groupers(frame), sort=False).shift(lag_minutes)
-    return (timestamp - lagged_t).eq(lag_minutes * MINUTE_MS)
+    exact, _lagged = _exact_lag_lookup(frame, lag_minutes)
+    return exact
 
 
 def path_transition_features(frame: pd.DataFrame) -> pd.DataFrame:
     """Exact causal changes in the frozen v3.5 position-path state.
 
-    Row shifts are admitted only when the timestamp difference equals the
-    preregistered minute lag, so halts and missing bars are never compressed.
+    Each lag is matched by ticker/day and the literal timestamp t-k minutes.
+    Missing intermediate bars therefore neither compress nor invalidate a
+    longer exact lag when its target timestamp itself exists.
     """
-    result = pd.DataFrame(index=frame.index)
-    groupers = _groupers(frame)
-    timestamp = pd.to_numeric(frame["t"], errors="coerce")
-
+    data: dict[str, pd.Series] = {}
     for lag in PATH_TRANSITION_LAGS:
-        lagged_t = timestamp.groupby(groupers, sort=False).shift(lag)
-        exact = (timestamp - lagged_t).eq(lag * MINUTE_MS)
+        exact, lagged = _exact_lag_lookup(frame, lag)
         for column in PATH_FEATURES:
             current = pd.to_numeric(frame[column], errors="coerce")
-            lagged = current.groupby(groupers, sort=False).shift(lag)
-            result[f"path_transition_{lag}m_{column}"] = (
-                current - lagged
+            data[f"path_transition_{lag}m_{column}"] = (
+                current - lagged[column]
             ).where(exact)
-    return result
+    return pd.DataFrame(data, index=frame.index)
 
 
 def transition_feature_frame(frame: pd.DataFrame) -> pd.DataFrame:
