@@ -409,21 +409,59 @@ def _common_episode_comparison(
     }
 
 
-def run_lomo(
+def evaluation_folds(
     monthly_frames: dict[str, pd.DataFrame],
+    mode: str,
+    *,
+    evaluation_min_month: str | None = None,
+    evaluation_max_month: str | None = None,
+):
+    labels = sorted(monthly_frames)
+    for holdout_month in labels:
+        if evaluation_min_month is not None and holdout_month < evaluation_min_month:
+            continue
+        if evaluation_max_month is not None and holdout_month > evaluation_max_month:
+            continue
+        training_months = [
+            month
+            for month in labels
+            if month != holdout_month and (mode == "lomo" or month < holdout_month)
+        ]
+        if mode == "forward" and len(training_months) < 2:
+            continue
+        holdout = monthly_frames[holdout_month]
+        if mode == "forward":
+            last_training_day = max(
+                monthly_frames[month]["trading_day"].astype(str).max()
+                for month in training_months
+            )
+            if last_training_day >= holdout["trading_day"].astype(str).min():
+                raise ValueError(
+                    "forward training overlaps or follows evaluation dates"
+                )
+        yield holdout_month, training_months, holdout
+
+
+def run_evaluation(
+    monthly_frames: dict[str, pd.DataFrame],
+    *,
+    mode: str = "lomo",
+    evaluation_min_month: str | None = None,
+    evaluation_max_month: str | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     metric_rows: list[dict[str, object]] = []
     trade_frames: list[pd.DataFrame] = []
     diagnostic_frames: list[pd.DataFrame] = []
     comparisons: list[dict[str, object]] = []
 
-    for holdout_month, holdout in monthly_frames.items():
+    for holdout_month, training_months, holdout in evaluation_folds(
+        monthly_frames,
+        mode,
+        evaluation_min_month=evaluation_min_month,
+        evaluation_max_month=evaluation_max_month,
+    ):
         train = pd.concat(
-            [
-                frame
-                for month, frame in monthly_frames.items()
-                if month != holdout_month
-            ],
+            [monthly_frames[month] for month in training_months],
             ignore_index=True,
         )
         direct_models = {
@@ -478,6 +516,12 @@ def run_lomo(
         pd.concat(diagnostic_frames, ignore_index=True),
         pd.DataFrame(comparisons),
     )
+
+
+def run_lomo(
+    monthly_frames: dict[str, pd.DataFrame],
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    return run_evaluation(monthly_frames, mode="lomo")
 
 
 def summarize(details: pd.DataFrame) -> pd.DataFrame:
@@ -536,6 +580,8 @@ def render_report(
     summary: pd.DataFrame,
     diagnostics: pd.DataFrame,
     comparisons: pd.DataFrame,
+    *,
+    evaluation: str = "lomo",
 ) -> str:
     return "\n".join(
         [
@@ -545,7 +591,7 @@ def render_report(
             "rank_gate=train-only calibration score 75th percentile",
             "policies=first EV-qualified entry vs first EV+rank-qualified entry; one attempt per ticker-day",
             "features=point-in-time state + breadth + 36 causal ticker-local lags",
-            "evaluation=leave-one-month-out January-March 2026",
+            f"evaluation={evaluation}; forward uses strictly earlier months only",
             "NOTE=development diagnostic only; no fresh month consumed",
             "",
             "=== Cross-month summary ===",
@@ -577,6 +623,9 @@ def main() -> int:
     parser.add_argument(
         "--dataset", action="append", type=_parse_dataset, required=True
     )
+    parser.add_argument("--evaluation", choices=("lomo", "forward"), default="lomo")
+    parser.add_argument("--evaluation-min-month")
+    parser.add_argument("--evaluation-max-month")
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--details-csv", type=Path, required=True)
     parser.add_argument("--trades-csv", type=Path, required=True)
@@ -588,9 +637,20 @@ def main() -> int:
     monthly = {
         label: pd.read_parquet(path) for label, path in args.dataset
     }
-    details, trades, diagnostics, comparisons = run_lomo(monthly)
+    details, trades, diagnostics, comparisons = run_evaluation(
+        monthly,
+        mode=args.evaluation,
+        evaluation_min_month=args.evaluation_min_month,
+        evaluation_max_month=args.evaluation_max_month,
+    )
     summary = summarize(details)
-    report = render_report(details, summary, diagnostics, comparisons)
+    report = render_report(
+        details,
+        summary,
+        diagnostics,
+        comparisons,
+        evaluation=args.evaluation,
+    )
     print(report)
 
     for path in (
