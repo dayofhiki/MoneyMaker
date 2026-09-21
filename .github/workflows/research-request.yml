@@ -5485,6 +5485,7 @@ jobs:
       - name: Install and verify adaptive-horizon diagnostic
         run: |
           python -m pip install -e '.[dev]'
+          ruff check src tests --select E4,E7,E9,F
           pytest -q tests/test_expanded_adaptive_horizon_diagnostic.py
 
       - name: Download frozen v3.0 result artifact
@@ -5496,18 +5497,39 @@ jobs:
           repository: dayofhiki/MoneyMaker
           run-id: '35582063146'
 
+      - name: Download frozen January-March state panels
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-state-trader-v01-8
+          path: victory-trader/source-state
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35322182758'
+
       - name: Run frozen v3.1 adaptive-horizon diagnostic
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p artifacts
           mapfile -t TRADES < <(find source-v30 -type f -name 'v30-*-trades.csv' | sort)
+          mapfile -t STATES < <(find source-state -type f -name 'state-2026-0[123].parquet' | sort)
           if [[ "${#TRADES[@]}" -ne 3 ]]; then
             echo "expected exactly 3 v3.0 monthly trade files, found ${#TRADES[@]}"
             printf '%s\n' "${TRADES[@]}"
             exit 1
           fi
-          python -m victory_trader.expanded_adaptive_horizon_diagnostic             "${TRADES[@]}"             --report artifacts/v31-report.txt             --horizon-csv artifacts/v31-horizons.csv             --path-csv artifacts/v31-paths.csv             | tee artifacts/v31.log
+          if [[ "${#STATES[@]}" -ne 3 ]]; then
+            echo "expected exactly 3 frozen state panels, found ${#STATES[@]}"
+            printf '%s\n' "${STATES[@]}"
+            exit 1
+          fi
+          python -m victory_trader.expanded_adaptive_horizon_diagnostic \
+            "${TRADES[@]}" \
+            --state "${STATES[@]}" \
+            --report artifacts/v31-report.txt \
+            --horizon-csv artifacts/v31-horizons.csv \
+            --path-csv artifacts/v31-paths.csv \
+            | tee artifacts/v31.log
 
       - name: Upload v3.1 diagnostic artifact
         uses: actions/upload-artifact@v4
