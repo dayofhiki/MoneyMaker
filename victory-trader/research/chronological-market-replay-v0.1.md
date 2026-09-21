@@ -229,3 +229,20 @@ audit move by the same 60 seconds, the existing state sequence and relative
 lead-time arithmetic should remain unchanged. Request 114 repeats the frozen
 six-session January slice to verify that expectation before any second-level
 feature experiment is allowed to proceed.
+
+
+## Phase 2F result — request 114
+
+Request 114 completed successfully with the corrected bar-completion decision
+timestamps. As expected, the state sequence and aggregate coverage/resource
+diagnostics were unchanged from request 112 because every completed-minute
+observation and runner crossing moved by the same 60 seconds.
+
+The six-session causal baseline therefore remains 6,300,821 trace rows, 1,443
+runner crossings, 67.36% WATCH-or-better capture, 4.37% HOT/POSITION capture,
+three-minute median WATCH lead, zero-minute median HOT lead and strict WATCH 50
+/ HOT 10 occupancy.
+
+Future high-resolution research must use this bar-completion timestamp
+convention. Request 112 and earlier artifacts remain useful for count/state
+comparisons but their raw replay timestamps are superseded by request 114.
