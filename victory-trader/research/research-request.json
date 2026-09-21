@@ -1,5 +1,5 @@
 {
-  "request_id": 96,
-  "operation": "expanded_history_recurrent_path_policy_v38",
-  "note": "Preregistered v3.8 recurrent path composition after v3.7 passed all frozen bridge checks in Jan-Feb-Mar. Freeze v3.7 classifier/gate/features/1-2-3-5-8-13m exact lags/P(HOLD)>0.5; compose only reached states; full round-trip light/base/stress friction; explicit gap/halt first-subsequent-open exit; hard 30m safety cap; same-entry always-HOLD-to-30m comparator; account replay; April+ sealed."
+  "request_id": 97,
+  "operation": "expanded_history_remaining_option_observability_v39",
+  "note": "Preregistered v3.9 after v3.8 recurrent path failure. Diagnose whether frozen v3.3 gated entries contain cost-positive exits within 30m and whether frozen v3.7 causal path-transition state predicts remaining multi-minute option value after removing fit-only held-minute baseline. No feature/lag/gate/cap/cost tuning. April+ sealed."
 }
