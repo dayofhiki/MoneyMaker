@@ -158,9 +158,28 @@ Parquet partition per trading day.
 
 ## Phase 2E — first multi-session development expansion
 
-Request 110 extends the unchanged partitioned replay through 2026-01-09,
-covering the first six January trading sessions. The new summary also retains
-per-session replay diagnostics so cross-day instability cannot be hidden by a
-single aggregate. The frozen score thresholds, capacities, universe rules,
-regular-session boundaries and +10% runner audit definition remain unchanged.
-This is still an attention coverage/resource study, not a profitability test.
+Request 110 computed the unchanged partitioned replay through 2026-01-09,
+covering the first six January trading sessions. The replay itself completed
+successfully, but the GitHub run is marked failed because final artifact
+finalization returned HTTP 403 after uploading roughly 99 MB of full scan/trace
+partitions. This is an artifact-retention failure, not a replay-computation
+failure.
+
+The completed request-110 summary covered 6,300,821 trace rows and 1,443
+eventual +10% runner crossings. WATCH-or-better captured 972 crossings
+(67.36%), while HOT/POSITION captured 63 (4.37%). Median WATCH lead was three
+minutes and median HOT lead remained zero minutes. WATCH/HOT occupancy again
+reached the frozen 50/10 limits.
+
+Per-session WATCH-or-better capture varied materially: 53.44%, 43.28%, 89.55%,
+83.50%, 66.83% and 94.89% from January 2 through January 9 trading sessions.
+HOT/POSITION capture remained only 2.99% to 6.25%, with zero-minute median HOT
+lead on every session. These observations motivate new causal attention
+information rather than tuning the frozen score thresholds or capacities.
+
+To keep longer development runs durable, the workflow now compacts completed
+partitions before upload. It retains WATCH/HOT/POSITION focus rows, runner
+crossing rows, the exact replay summary and the log, while the full per-day
+partitions remain ephemeral workflow working data. Request 112 repeats the same
+six-session frozen computation only to verify compact artifact retention; it
+does not change any research rule.
