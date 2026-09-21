@@ -1,5 +1,5 @@
 {
-  "request_id": 95,
-  "operation": "expanded_history_path_transition_continuation_v37",
-  "note": "Clean v3.7 retry after request 94 failed in request-operation validation before any model job ran. Research specification unchanged: exact-timestamp 1/2/3/5/8/13m deltas for all ten frozen causal position-path features; same v3.5 classifier/gate/folds/geometry; April+ sealed."
+  "request_id": 96,
+  "operation": "expanded_history_recurrent_path_policy_v38",
+  "note": "Preregistered v3.8 recurrent path composition after v3.7 passed all frozen bridge checks in Jan-Feb-Mar. Freeze v3.7 classifier/gate/features/1-2-3-5-8-13m exact lags/P(HOLD)>0.5; compose only reached states; full round-trip light/base/stress friction; explicit gap/halt first-subsequent-open exit; hard 30m safety cap; same-entry always-HOLD-to-30m comparator; account replay; April+ sealed."
 }
