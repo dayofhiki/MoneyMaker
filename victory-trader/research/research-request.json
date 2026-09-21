@@ -1,5 +1,5 @@
 {
-  "request_id": 99,
-  "operation": "expanded_history_honest_stopping_distillation_v41",
-  "note": "Preregistered v4.1 after v4.0 failed Jan-Feb-Mar by overholding under same-sample Bellman targets. Freeze v3.3 gate, v3.7 causal state/lags, zero HOLD boundary, 30m cap and execution costs. Train exact v4.0 teacher on fit only; realize teacher continuation on chronological calibration; train student on honest out-of-sample hold-advantage targets; compare against v3.8, v4.0 and hold30. April+ sealed."
+  "request_id": 100,
+  "operation": "expanded_history_dual_horizon_patience_override_v42",
+  "note": "Preregistered v4.2 after v4.1 failed to beat v3.8. Preserve v3.8 short-horizon controller; when v3.8 would EXIT, use an honest Calibration-B override model with exactly two inputs: v3.7 short HOLD probability and v3.9 predicted excess remaining-option value. Override grants one minute only, then re-evaluate. Freeze costs, thresholds, lags and 30m cap. Report monthly and chained Jan-Mar synthetic account balances. April+ sealed."
 }
