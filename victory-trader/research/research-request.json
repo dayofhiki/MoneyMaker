@@ -1,5 +1,5 @@
 {
-  "request_id": 93,
-  "operation": "expanded_history_path_expected_continuation_v36",
-  "note": "Preregistered v3.6: same frozen v3.5 path-aware state/folds/geometry/opportunity gate and April+ seal; replace sign classification with arithmetic one-step expected-value regression plus fixed v1.8 selected-tail calibration allowance. No threshold/horizon/feature tuning. Public Actions recovery only; research specification unchanged."
+  "request_id": 94,
+  "operation": "expanded_history_path_transition_continuation_v37",
+  "note": "Preregistered v3.7: same frozen v3.5 one-step HOLD/EXIT classifier, opportunity gate, folds, geometry and April+ seal; add exact-timestamp 1/2/3/5/8/13m deltas for all ten causal position-path features. No threshold, horizon, lag subset, phase or capacity tuning."
 }
