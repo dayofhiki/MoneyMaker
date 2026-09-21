@@ -166,3 +166,64 @@ If it fails, retire this frozen one-second aggregate feature family as the next
 attention-model branch and move to a genuinely new causal information family,
 such as market-relative price/volume/transaction acceleration, without tuning
 v0.2 against the failed dates.
+
+
+## Result — request 116
+
+Request 116 completed successfully on the frozen chronology.
+
+Data audit:
+
+- 406 eligible WATCH-entry episodes across 238 tickers;
+- fit: 215 episodes on 2026-01-02 through 2026-01-09;
+- evaluation: 191 episodes on 2026-01-12 through 2026-01-16;
+- every evaluation session had 35-41 episode rows;
+- one-second feature coverage was 100%;
+- median active seconds in the causal 60-second window was 3;
+- 192 new one-second REST requests, 72 cache hits and zero retries.
+
+Pooled evaluation:
+
+| Metric | Minute baseline | + frozen one-second path |
+| --- | ---: | ---: |
+| Spearman | 0.146331 | 0.165876 |
+| MAE | 2.068391 | 2.100814 |
+| top-quartile realized episode peak return | +1.124908% | +1.182433% |
+
+Incremental pooled Spearman was +0.019545. Mean per-day incremental Spearman was
++0.010774 and the extended model was non-lower on four of five evaluation
+sessions.
+
+Per-day incremental Spearman:
+
+- 2026-01-12: +0.008846
+- 2026-01-13: +0.046046
+- 2026-01-14: -0.167418
+- 2026-01-15: +0.105851
+- 2026-01-16: +0.060546
+
+The preregistered information-value gate **fails** because pooled MAE worsened
+from 2.068391 to 2.100814 despite the positive pooled rank and top-quartile
+point estimates. The large 2026-01-14 rank deterioration is an additional
+stability warning.
+
+## Interpretation
+
+The adaptive episode target is materially healthier than the earlier fixed
+three-minute diagnostic: the minute-only baseline itself reached pooled
+Spearman 0.146331 on five fresh development sessions. This supports retaining
+the episode-value target family for the next attention experiment.
+
+The frozen one-second aggregate feature family, however, is not promoted. Two
+successive preregistered experiments produced small positive pooled rank
+increments but failed stability gates. Median one-second activity also fell to
+only three active seconds in the causal 60-second window in this broader
+episode sample, confirming that these hand-built short-window path descriptors
+are sparse for many small-cap WATCH names.
+
+Per the frozen failure branch, the next experiment keeps the adaptive
+WATCH-episode value target and fixed model family but replaces the one-second
+extension with a genuinely new causal information family:
+**market-relative price, volume and transaction acceleration from completed
+minute bars**. No request-116 evaluation day is reused to tune the retired
+one-second feature family.
