@@ -186,3 +186,74 @@ diagnostics to distinguish among three failure classes:
 
 The next branch must address the diagnosed bottleneck rather than optimize the
 failed v3.8 path against these same months.
+
+## Result — request 96
+
+Authoritative workflow run: `35616622156`. All three monthly recurrent-path
+jobs and the aggregate job completed successfully. April 2026 and later remained
+sealed.
+
+### Trade-level result
+
+| Month | Gated attempts | Completed | Recurrent gross mean | Recurrent BASE mean | Day-balanced BASE | 30m comparator BASE | Matched BASE improvement | Difference bootstrap 95% lower |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2026-01 | 628 | 616 | +0.196749% | -0.975018% | -0.977244% | -1.865322% | +0.886474% | -0.071683% |
+| 2026-02 | 510 | 497 | +0.049116% | -1.149194% | -1.183378% | -1.859543% | +0.698660% | +0.120153% |
+| 2026-03 | 619 | 613 | -0.095555% | -1.334468% | -1.342825% | -1.496426% | +0.147190% | -0.550331% |
+
+Completion coverage among valid entries was 100% in all three months. The
+recurrent policy beat the always-HOLD-to-30m day-balanced BASE comparator in all
+three months, but the matched improvement was bootstrap-robust only in February.
+
+### Recurrent path shape
+
+The frozen one-step classifier produced extremely short realized paths:
+
+| Month | Mean hold | Median | p90 | Maximum | Mean HOLD decisions |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 1.451m | 1m | 2m | 22m | 0.399 |
+| 2026-02 | 1.390m | 1m | 2m | 18m | 0.348 |
+| 2026-03 | 1.158m | 1m | 1m | 7m | 0.113 |
+
+Classifier EXIT was the terminal reason for 607/489/599 entries in
+January/February/March. Gap-delayed exits were only 9/8/14. Thus the short path
+is a model behavior, not primarily a missing-bar artifact.
+
+The BASE-positive trade rate was only 19.5%, 20.3%, and 17.0%. Gross return
+before full round-trip friction was already close to zero in all months, so the
+failure cannot be fixed merely by accounting presentation.
+
+### Account replay
+
+The recurrent BASE account marked returns were -37.01%, -37.72%, and -54.49%
+for January-March under the frozen $10,000/$1,000 audit convention. All accepted
+recurrent positions closed, but 12/13/6 gated attempts lacked the exact entry
+reference, so the frozen completeness rule also failed.
+
+These account returns are synthetic audit outputs, not live-capital forecasts.
+
+### Frozen decision
+
+v3.8 fails the development bridge in every month. The aggregate artifact printed:
+
+`FAIL: diagnose trajectory, friction, or execution/account bottleneck`
+
+The failure diagnosis has two components:
+
+1. **full round-trip economics**: recurrent gross mean is far below the roughly
+   one-percentage-point BASE friction burden for this cheap-stock universe;
+2. **one-step myopia**: despite robust v3.7 one-step ordering, recurrent
+   composition exits almost every position after one minute and the advantage
+   over a 30-minute hold is not robust in January or March.
+
+The v3.3 opportunity gate should not simply be threshold-tuned. It already
+showed replicated discrimination for whether some cost-positive 1/2/5/10/15/30
+minute path exists. The more immediate unanswered question is whether the
+v3.7 path-transition state can predict **remaining multi-minute continuation
+option value**, rather than only the sign of the next one-minute increment.
+
+The next experiment therefore changes the continuation target, not the v3.7
+features, lag grid, gate or threshold post hoc. It should first test
+multi-step remaining-value observability before implementing a more complex
+fitted optimal-stopping policy.
+
