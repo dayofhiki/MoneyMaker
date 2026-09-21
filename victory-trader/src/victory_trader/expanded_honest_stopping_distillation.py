@@ -10,7 +10,6 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 from .expanded_fitted_optimal_stopping import (
     MAX_HOLD_MINUTES,
     MinuteStoppingModel,
-    _attach_exit_now_base,
     _bootstrap_daily,
     _first_later_base_return,
     _forced_30m_base_return,
