@@ -51,9 +51,13 @@ def test_opportunity_target_uses_only_clock_feasible_actions() -> None:
     assert not target.iloc[0]
 
 
-def test_action_features_share_state_scale_and_encode_horizon() -> None:
+def test_action_features_share_state_scale_and_encode_horizon(monkeypatch) -> None:
     frame = pd.DataFrame(
         [{"minutes_from_regular_open": 10.0, "return_from_previous_close_pct": 12.0}]
+    )
+    monkeypatch.setattr(
+        "victory_trader.expanded_opportunity_shared_q._feature_frame",
+        lambda value: value.copy(),
     )
     features = _action_features(frame, 5)
     assert features.iloc[0]["action_horizon_min"] == pytest.approx(5.0)
