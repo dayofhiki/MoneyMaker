@@ -38,32 +38,83 @@ def _safe_quantile(values: pd.Series, q: float) -> float:
     return float(values.quantile(q)) if not values.empty else float("nan")
 
 
+JOIN_KEYS = ("trading_day", "ticker", "t")
+
+
+def _return_columns() -> tuple[str, ...]:
+    return tuple(
+        _return_column(horizon, scenario)
+        for horizon in HORIZONS
+        for scenario in ("gross", "base", "stress")
+    )
+
+
+def _normalize_join_keys(frame: pd.DataFrame) -> pd.DataFrame:
+    result = frame.copy()
+    result["trading_day"] = result["trading_day"].astype(str)
+    result["ticker"] = result["ticker"].astype(str)
+    result["t"] = pd.to_numeric(result["t"], errors="raise").astype("int64")
+    return result
+
+
+def _attach_state_labels(
+    frame: pd.DataFrame,
+    state_paths: list[Path],
+) -> pd.DataFrame:
+    if not state_paths:
+        return frame
+
+    needed = [column for column in _return_columns() if column not in frame.columns]
+    if not needed:
+        return frame
+
+    label_parts: list[pd.DataFrame] = []
+    for path in state_paths:
+        import pyarrow.parquet as pq
+
+        available = set(pq.ParquetFile(path).schema.names)
+        required = set(JOIN_KEYS) | set(needed)
+        missing = sorted(required - available)
+        if missing:
+            raise ValueError(f"state panel {path} missing v3.1 columns: {missing}")
+        label_parts.append(pd.read_parquet(path, columns=[*JOIN_KEYS, *needed]))
+
+    labels = _normalize_join_keys(pd.concat(label_parts, ignore_index=True))
+    if labels.duplicated(list(JOIN_KEYS)).any():
+        raise ValueError("duplicate state-panel keys in v3.1 label source")
+
+    left = _normalize_join_keys(frame)
+    merged = left.merge(
+        labels,
+        how="left",
+        on=list(JOIN_KEYS),
+        validate="many_to_one",
+        indicator=True,
+    )
+    unmatched = merged["_merge"].ne("both")
+    if unmatched.any():
+        examples = merged.loc[unmatched, list(JOIN_KEYS)].head(10).to_dict("records")
+        raise ValueError(f"v3.1 state-label join missed trade keys: {examples}")
+    return merged.drop(columns="_merge")
+
+
 def _validate(frame: pd.DataFrame) -> None:
-    required = {"policy", "trading_day", "ticker"}
-    for horizon in HORIZONS:
-        required.update(
-            {
-                _return_column(horizon, "gross"),
-                _return_column(horizon, "base"),
-                _return_column(horizon, "stress"),
-            }
-        )
+    required = {"policy", *JOIN_KEYS, *_return_columns()}
     missing = sorted(required - set(frame.columns))
     if missing:
         raise ValueError(f"v3.1 input missing required columns: {missing}")
 
 
-def load_trades(paths: list[Path]) -> pd.DataFrame:
+def load_trades(paths: list[Path], state_paths: list[Path] | None = None) -> pd.DataFrame:
     frames = [pd.read_csv(path) for path in paths]
     if not frames:
         raise ValueError("no v3.0 trade files supplied")
     frame = pd.concat(frames, ignore_index=True, sort=False)
-    _validate(frame)
     frame = frame.loc[frame["policy"].isin(POLICIES)].copy()
+    frame = _attach_state_labels(frame, state_paths or [])
+    _validate(frame)
     frame["month"] = frame["trading_day"].astype(str).str.slice(0, 7)
-    key = ["policy", "trading_day", "ticker"]
-    if "decision_t" in frame.columns:
-        key.append("decision_t")
+    key = ["policy", *JOIN_KEYS]
     duplicated = frame.duplicated(key, keep=False)
     if duplicated.any():
         raise ValueError(
@@ -274,12 +325,13 @@ def main() -> int:
         prog="python -m victory_trader.expanded_adaptive_horizon_diagnostic"
     )
     parser.add_argument("trades", nargs="+", type=Path)
+    parser.add_argument("--state", nargs="+", type=Path, default=[])
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--horizon-csv", type=Path, required=True)
     parser.add_argument("--path-csv", type=Path, required=True)
     args = parser.parse_args()
 
-    frame = load_trades(args.trades)
+    frame = load_trades(args.trades, args.state)
     horizons, paths, report = run_diagnostic(frame)
     print(report)
 
