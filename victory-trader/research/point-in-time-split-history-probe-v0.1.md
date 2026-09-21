@@ -90,3 +90,50 @@ If the probe fails, do not lower the prevalence threshold on January-March. Reti
 If the probe passes, pre-register exactly one v2.8 branch that adds continuous/categorical split-history features to the frozen v2.7 execution-feasible hurdle setup. No split threshold may be selected from January-March outcomes.
 
 No fresh validation month is consumed by this probe.
+
+
+## Result — request 75
+
+Workflow run 35573665550 completed successfully. The probe used exactly 75
+frozen execution-feasible first-anchor attempts from the completed v2.7
+development artifact, 25 from each of January-March 2026. No realized-return
+field was used in sampling or in any probe statistic.
+
+Massive client activity:
+
+- network requests: 75;
+- retries: 0;
+- cache writes: 75.
+
+### Coverage and support
+
+| Month | Sampled | Request success | Strict-prior rate | Any split 730d | Reverse split 730d | Reverse-split anchors |
+|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | 25 | 100% | 100% | 24% | 20% | 5 |
+| 2026-02 | 25 | 100% | 100% | 28% | 28% | 7 |
+| 2026-03 | 25 | 100% | 100% | 28% | 24% | 6 |
+
+Eighteen of 75 sampled anchors had at least one reverse split in the strictly
+prior 730-day window.
+
+### Pre-registered go/no-go
+
+All criteria passed:
+
+1. request success was >=95% in every month;
+2. every persisted execution date was strictly before its anchor trading day;
+3. reverse-split support was 18/75, above the fixed minimum of 10;
+4. every month had at least two reverse-split anchors.
+
+## Decision
+
+Proceed to one separately pre-registered v2.8 development branch.
+
+The branch will keep the frozen v2.7 execution-feasible first-anchor universe,
+hurdle decomposition, cost model, 15-minute horizon, zero-EV action boundary,
+strictly-past folds, and supply-state features. It will add only a fixed set of
+continuous/categorical split-history state variables derived strictly from
+events before each anchor day.
+
+No split threshold or subgroup will be selected from January-March outcomes.
+April 2026 and later remain sealed.
