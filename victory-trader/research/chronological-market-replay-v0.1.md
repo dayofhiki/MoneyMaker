@@ -209,3 +209,23 @@ these figures are an infrastructure baseline rather than a validated attention
 model. The next research problem is improving causal WATCH-to-HOT prioritization
 with genuinely new intraday information rather than tuning these frozen
 thresholds.
+
+
+## Phase 2F — causal minute-completion timestamp correction
+
+A timestamp audit before second-level enrichment found that Massive minute
+aggregate timestamps are bar-start timestamps, while the v0.1 scanner consumes
+that bar's close, volume and transaction count. Those values are not fully
+observable at the bar start.
+
+The scan builder now preserves the provider timestamp as `bar_start_t` and
+sets the replay decision timestamp to:
+
+`decision_t = bar_start_t + 60,000 ms`.
+
+This is a causality correction, not a score, threshold, capacity, universe or
+outcome change. Because every completed-minute observation and its +10% crossing
+audit move by the same 60 seconds, the existing state sequence and relative
+lead-time arithmetic should remain unchanged. Request 114 repeats the frozen
+six-session January slice to verify that expectation before any second-level
+feature experiment is allowed to proceed.
