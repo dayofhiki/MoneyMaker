@@ -1,5 +1,5 @@
 {
-  "request_id": 89,
-  "operation": "expanded_history_one_step_continuation_v34",
-  "note": "Exact rerun of preregistered v3.4 after evaluation-only index reset and denominator assertion. Request 88 diagnostics invalidated by boolean-index alignment; no model, feature, label, threshold, fold or criterion change. April 2026+ sealed."
+  "request_id": 90,
+  "operation": "expanded_history_path_aware_continuation_v35",
+  "note": "Preregistered v3.5 after corrected v3.4 request 89: unchanged folds, label, model, threshold, opportunity gate, costs and bridge criterion; add only causal entry-relative position-path state. April 2026+ remains sealed."
 }
