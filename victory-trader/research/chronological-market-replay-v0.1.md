@@ -183,3 +183,29 @@ crossing rows, the exact replay summary and the log, while the full per-day
 partitions remain ephemeral workflow working data. Request 112 repeats the same
 six-session frozen computation only to verify compact artifact retention; it
 does not change any research rule.
+
+## Phase 2E compact artifact validation — request 112
+
+Request 112 successfully reran the unchanged six-session 2026-01-02 through
+2026-01-09 replay and preserved the exact request-110 aggregate diagnostics.
+
+The compact retention path reduced the durable artifact to 758,513 bytes while
+preserving 140,400 WATCH/HOT/POSITION focus rows, all 1,443 runner crossing
+rows, the complete summary and execution log. This removes artifact size as the
+immediate scaling bottleneck without changing replay semantics.
+
+The six-session baseline remains:
+
+- 6,300,821 total trace rows;
+- 1,443 +10% close-based runner crossings;
+- 972 WATCH-or-better captures, 67.36%;
+- 63 HOT/POSITION captures, 4.37%;
+- median WATCH lead 3 minutes;
+- median HOT lead 0 minutes;
+- WATCH/HOT occupancy maxima 50/10.
+
+Because the current score is only same-timestamp cross-sectional return rank,
+these figures are an infrastructure baseline rather than a validated attention
+model. The next research problem is improving causal WATCH-to-HOT prioritization
+with genuinely new intraday information rather than tuning these frozen
+thresholds.
