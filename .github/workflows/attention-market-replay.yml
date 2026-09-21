@@ -96,7 +96,7 @@ jobs:
       - name: Test attention replay layers
         run: |
           ruff check src tests --select E4,E7,E9,F
-          pytest -q tests/test_attention_runtime.py tests/test_attention_replay.py tests/test_attention_flatfile_replay.py
+          pytest -q tests/test_attention_runtime.py tests/test_attention_replay.py tests/test_attention_flatfile_replay.py tests/test_attention_artifact_compaction.py
 
       - name: Restore reusable Flat File cache
         uses: actions/cache/restore@v4
@@ -121,6 +121,13 @@ jobs:
           find artifacts/attention-market-scan-v01 -name '*.parquet' -print -quit | grep -q .
           find artifacts/attention-market-trace-v01 -name '*.parquet' -print -quit | grep -q .
           test -s artifacts/attention-market-summary-v01.json
+          python -m victory_trader.attention_artifact_compaction \
+            --scan-dir artifacts/attention-market-scan-v01 \
+            --trace-dir artifacts/attention-market-trace-v01 \
+            --focus-output artifacts/attention-market-focus-v01.parquet \
+            --runner-output artifacts/attention-market-runners-v01.parquet
+          test -s artifacts/attention-market-focus-v01.parquet
+          test -s artifacts/attention-market-runners-v01.parquet
 
       - name: Save reusable Flat File cache
         if: always()
@@ -134,8 +141,8 @@ jobs:
         with:
           name: moneymaker-attention-market-replay-v01-${{ needs.request.outputs.request_id }}
           path: |
-            victory-trader/artifacts/attention-market-scan-v01/
-            victory-trader/artifacts/attention-market-trace-v01/
+            victory-trader/artifacts/attention-market-focus-v01.parquet
+            victory-trader/artifacts/attention-market-runners-v01.parquet
             victory-trader/artifacts/attention-market-summary-v01.json
             victory-trader/artifacts/attention-market-replay-v01.log
           if-no-files-found: error
