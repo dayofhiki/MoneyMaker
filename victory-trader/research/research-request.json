@@ -1,5 +1,5 @@
 {
-  "request_id": 75,
-  "operation": "point_in_time_split_history_probe",
-  "note": "Run pre-registered split-history availability probe on frozen v2.7 development attempts only; January-March 2026 only; no realized-return conditioning; April 2026+ sealed."
+  "request_id": 76,
+  "operation": "expanded_history_split_hurdle_ev_v28",
+  "note": "Run pre-registered v2.8 split-state hurdle EV on Sep 2025-Mar 2026 development only; strict past-only folds; April 2026+ sealed; no threshold or cost changes."
 }
