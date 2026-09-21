@@ -1,5 +1,5 @@
 {
-  "request_id": 91,
-  "operation": "expanded_history_path_aware_continuation_v35",
-  "note": "Clean rerun of preregistered v3.5 after test-fixture-only fixes. Research code, frozen folds, label, model, threshold, opportunity gate, costs, path feature family and bridge criterion unchanged. April 2026+ remains sealed."
+  "request_id": 92,
+  "operation": "expanded_history_path_expected_continuation_v36",
+  "note": "Preregistered v3.6: same frozen v3.5 path-aware state/folds/geometry/opportunity gate and April+ seal; replace sign classification with arithmetic one-step expected-value regression plus fixed v1.8 selected-tail calibration allowance. No threshold/horizon/feature tuning."
 }
