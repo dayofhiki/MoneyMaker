@@ -92,7 +92,9 @@ verify end-to-end market coverage, taxonomy, split handling, chronological
 state evolution and artifact production. The one-day result must not be used
 to change score thresholds or claim profitability.
 
-The adapter collapses duplicate prior-close rows only when the normalized
-ticker and close agree. Conflicting close values fail the run. The workflow
-also propagates replay failures through `tee` and verifies all core outputs are
+The adapter collapses duplicate prior-close rows when the normalized ticker
+and close agree. For conflicting candidates it queries the same provider's
+exact-date, unadjusted REST daily bar and accepts a candidate only when exactly
+one value matches; ambiguous or inconsistent cases fail. The workflow also
+propagates replay failures through `tee` and verifies all core outputs are
 non-empty before artifact upload.

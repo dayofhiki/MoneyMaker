@@ -111,6 +111,21 @@ class FakeRestClient:
         del day
         return {"results": [{"ticker": "SPLT"}]}
 
+    def daily_bars(self, ticker, start, end, *, adjusted=False):
+        del ticker, start, end, adjusted
+        raise AssertionError("daily REST fallback was not expected")
+
+
+class ResolvingRestClient(FakeRestClient):
+    def __init__(self, close: float) -> None:
+        self.close = close
+
+    def daily_bars(self, ticker, start, end, *, adjusted=False):
+        assert ticker == "AAA"
+        assert start == end == date(2025, 12, 31)
+        assert adjusted is False
+        return {"results": [{"c": self.close}]}
+
 
 def _config() -> AttentionConfig:
     return AttentionConfig(
@@ -176,15 +191,32 @@ def test_flatfile_adapter_collapses_only_identical_prior_close_duplicates():
     assert summary["duplicate_prior_rows_collapsed"] == 1
 
 
-def test_flatfile_adapter_rejects_conflicting_prior_close_duplicates():
+def test_flatfile_adapter_resolves_conflict_with_exact_date_rest_bar():
     previous = pd.DataFrame({
         "ticker": ["AAA", "AAA", "PRICEY"],
         "close": [10.0, 10.01, 25.0],
     })
 
-    with pytest.raises(ValueError, match="conflicting closes.*AAA"):
+    scan, summary = build_flatfile_scan_day(
+        FakeStore(previous),
+        ResolvingRestClient(10.01),
+        date(2026, 1, 2),
+    )
+
+    assert set(scan["previous_close"]) == {10.01}
+    assert summary["duplicate_prior_rows_collapsed"] == 1
+    assert summary["conflicting_prior_tickers_resolved"] == 1
+
+
+def test_flatfile_adapter_rejects_conflict_without_unique_rest_match():
+    previous = pd.DataFrame({
+        "ticker": ["AAA", "AAA", "PRICEY"],
+        "close": [10.0, 10.01, 25.0],
+    })
+
+    with pytest.raises(ValueError, match="could not resolve conflicting"):
         build_flatfile_scan_day(
             FakeStore(previous),
-            FakeRestClient(),
+            ResolvingRestClient(12.0),
             date(2026, 1, 2),
         )

@@ -6,6 +6,7 @@ import argparse
 import json
 from dataclasses import asdict
 from datetime import date
+from math import isclose
 from pathlib import Path
 
 import pandas as pd
@@ -38,8 +39,10 @@ def _prepare_prior_closes(
     previous: pd.DataFrame,
     eligible: set[str],
     trading_day: date,
-) -> tuple[pd.DataFrame, int]:
-    """Normalize prior closes and collapse only value-identical duplicates."""
+    previous_day: date,
+    rest_client: MassiveClient,
+) -> tuple[pd.DataFrame, int, int]:
+    """Normalize duplicate closes, using exact-date REST bars for conflicts."""
 
     diagnostic_columns = [
         column
@@ -50,6 +53,7 @@ def _prepare_prior_closes(
     prior["ticker"] = prior["ticker"].astype(str).str.strip().str.upper()
     prior["previous_close"] = pd.to_numeric(prior.pop("close"), errors="coerce")
     prior = prior.loc[prior["ticker"].isin(eligible)].copy()
+    before = len(prior)
 
     duplicate = prior.duplicated("ticker", keep=False)
     if duplicate.any():
@@ -58,27 +62,58 @@ def _prepare_prior_closes(
             "previous_close"
         ].nunique(dropna=False)
         conflicting = distinct_counts.loc[distinct_counts.gt(1)].index.tolist()
-        if conflicting:
-            examples = conflicting[:10]
+    else:
+        conflicting = []
+
+    resolved = 0
+    for ticker in conflicting:
+        payload = rest_client.daily_bars(
+            ticker,
+            previous_day,
+            previous_day,
+            adjusted=False,
+        )
+        results = list(payload.get("results") or [])
+        rest_closes = [
+            float(item["c"])
+            for item in results
+            if item.get("c") is not None
+        ]
+        candidates = prior.loc[
+            prior["ticker"].eq(ticker), "previous_close"
+        ].drop_duplicates().tolist()
+        matching = [
+            candidate
+            for candidate in candidates
+            if any(
+                isclose(candidate, rest_close, rel_tol=1e-12, abs_tol=1e-12)
+                for rest_close in rest_closes
+            )
+        ]
+        if len(results) != 1 or len(matching) != 1:
             details = (
-                duplicate_values.loc[
-                    duplicate_values["ticker"].isin(examples),
+                prior.loc[
+                    prior["ticker"].eq(ticker),
                     ["ticker", "previous_close", *diagnostic_columns],
                 ]
                 .sort_values(["ticker", *diagnostic_columns], kind="stable")
                 .to_dict("records")
             )
             raise ValueError(
-                "prior-day Flat File has conflicting closes for duplicate "
-                f"tickers: {details}"
+                "could not resolve conflicting prior-day Flat File closes "
+                f"from exact-date REST bar: rows={details}, "
+                f"rest_closes={rest_closes}"
             )
+        selected = matching[0]
+        remove = prior["ticker"].eq(ticker) & prior["previous_close"].ne(selected)
+        prior = prior.loc[~remove].copy()
+        resolved += 1
 
-    before = len(prior)
     prior = prior.drop_duplicates("ticker", keep="first").reset_index(drop=True)
     prior = prior.loc[:, ["ticker", "previous_close"]]
     prior["trading_day"] = trading_day.isoformat()
     prior["eligible"] = True
-    return prior, before - len(prior)
+    return prior, before - len(prior), resolved
 
 
 def build_flatfile_scan_day(
@@ -108,10 +143,16 @@ def build_flatfile_scan_day(
         if item.is_research_common_stock and ticker not in split_tickers
     }
 
-    prior, duplicate_prior_rows_collapsed = _prepare_prior_closes(
+    (
+        prior,
+        duplicate_prior_rows_collapsed,
+        conflicting_prior_tickers_resolved,
+    ) = _prepare_prior_closes(
         previous,
         eligible,
         day,
+        previous_day,
+        rest_client,
     )
 
     minutes = minutes.loc[
@@ -133,6 +174,7 @@ def build_flatfile_scan_day(
         "eligible_after_exchange_type_split": len(eligible),
         "same_day_split_exclusions": len(split_tickers),
         "duplicate_prior_rows_collapsed": duplicate_prior_rows_collapsed,
+        "conflicting_prior_tickers_resolved": conflicting_prior_tickers_resolved,
         "regular_minute_input_rows": len(minutes),
         "scan_rows": len(scan),
         "scan_symbols": int(scan["ticker"].nunique()) if not scan.empty else 0,
