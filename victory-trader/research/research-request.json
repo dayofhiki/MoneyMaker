@@ -1,5 +1,5 @@
 {
-  "request_id": 60,
+  "request_id": 61,
   "operation": "expanded_history_monthly_q_v21",
-  "note": "Run the same preregistered Jan-Mar 2026 past-only sequential Q evaluations serially to avoid parallel runner resource contention, using request 57 feature checkpoints. No feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
+  "note": "Rerun the same preregistered Jan-Mar 2026 past-only sequential Q evaluations after projecting Parquet inputs to model-required columns. Use request 57 feature checkpoints; no feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
 }
