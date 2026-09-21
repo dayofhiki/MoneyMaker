@@ -148,6 +148,46 @@ A likely mature architecture is hierarchical:
 - **Capital/risk layer:** coordinates simultaneous opportunities and hard limits.
 - **Monitoring/research layer:** detects degradation and supports edge renewal.
 
+## Implementation Milestones
+
+The roadmap is now being implemented as explicit, testable layers.
+
+### Milestone 1 — stateful attention runtime (implemented)
+
+`victory_trader.attention_runtime` provides the first executable orchestration
+boundary:
+
+- persistent `SCAN / WATCH / HOT / POSITION / DROP` ticker state;
+- bounded WATCH/HOT capacity with score-ranked reallocation;
+- hysteresis, missing-data aging, invalid-data DROP and rediscovery;
+- position pinning and one-cycle post-exit WATCH;
+- state-dependent grouped-minute, minute, second, and trades/NBBO feed plans;
+- monotonic-time guards and JSON-serializable checkpoint/restore.
+
+This milestone does not claim a validated attention score or a profitable
+policy. It separates orchestration from prediction so later research models
+cannot silently redefine the final architecture. See
+`hierarchical-attention-runtime-v0.1.md`.
+
+### Milestone 2 — chronological market replay (next)
+
+Build an offline adapter that replays historical market-wide batches through
+the runtime and measures coverage, promotion timing, tier occupancy, churn,
+and data/compute demand. Capacity studies must not use evaluation returns to
+tune score thresholds.
+
+### Milestone 3 — policy integration
+
+Connect causal attention scoring to SCAN/WATCH, entry/abstention to HOT, and
+the recurrent HOLD/EXIT controller to POSITION. Evaluate the full sequence
+rather than isolated rows.
+
+### Milestone 4 — execution, capital and safety integration
+
+Add portfolio allocation, empirical quote-aware execution, persistent order
+state, degradation monitoring, and external safety controls before any paper
+or constrained live deployment.
+
 ## Success Criterion
 
 The goal is not to discover a backtest that happened to make money.

@@ -4,6 +4,16 @@ MoneyMaker is a research platform for testing short-horizon momentum edges in lo
 
 The core design goal is not to manufacture an attractive backtest. It is to make false edges difficult to survive.
 
+The long-term architecture is a stateful trader, not a fixed-horizon
+classifier. The first orchestration layer is now implemented in
+`victory_trader.attention_runtime`: every broad-market scan can move tickers
+through `SCAN -> WATCH -> HOT -> POSITION -> WATCH/DROP`, reallocate finite
+high-resolution attention, and request progressively richer observation tiers.
+See `research/ROADMAP.md` and
+`research/hierarchical-attention-runtime-v0.1.md`. This runtime is research
+infrastructure; it is not evidence of a validated edge or permission for live
+execution.
+
 ## Current formal research scope
 
 - U.S. common stocks primarily listed on Nasdaq, NYSE, or NYSE American
