@@ -1,5 +1,5 @@
 {
-  "request_id": 98,
-  "operation": "expanded_history_fitted_optimal_stopping_v40",
-  "note": "Preregistered v4.0 after v3.9 passed all oracle-ceiling and remaining-value observability checks in Jan-Feb-Mar. Fit minute-specific backward BASE stopping advantage models on fit only; freeze v3.3 opportunity gate, v3.7 causal state and exact lags, zero HOLD boundary, 30m cap, execution costs. Compare reached trajectories against exact v3.8 recurrent policy and always-HOLD 30m. April+ sealed."
+  "request_id": 99,
+  "operation": "expanded_history_honest_stopping_distillation_v41",
+  "note": "Preregistered v4.1 after v4.0 failed Jan-Feb-Mar by overholding under same-sample Bellman targets. Freeze v3.3 gate, v3.7 causal state/lags, zero HOLD boundary, 30m cap and execution costs. Train exact v4.0 teacher on fit only; realize teacher continuation on chronological calibration; train student on honest out-of-sample hold-advantage targets; compare against v3.8, v4.0 and hold30. April+ sealed."
 }
