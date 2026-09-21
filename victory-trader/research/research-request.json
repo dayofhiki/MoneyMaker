@@ -1,5 +1,5 @@
 {
-  "request_id": 83,
+  "request_id": 84,
   "operation": "expanded_history_adaptive_hurdle_ev_v32",
-  "note": "Run pre-registered v3.2 adaptive multi-horizon hurdle EV on frozen September 2025-March 2026 development data. Reattach only frozen state-panel 1/2/5/10/15/30m labels to v3.0 semantic anchors. April 2026+ sealed."
+  "note": "Retry exact pre-registered v3.2 after report-output type fix only. Same frozen September 2025-March 2026 data and model; April 2026+ sealed."
 }
