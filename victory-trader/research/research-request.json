@@ -1,5 +1,5 @@
 {
-  "request_id": 61,
+  "request_id": 62,
   "operation": "expanded_history_monthly_q_v21",
-  "note": "Rerun the same preregistered Jan-Mar 2026 past-only sequential Q evaluations after projecting Parquet inputs to model-required columns. Use request 57 feature checkpoints; no feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
+  "note": "Run the same preregistered Jan-Mar 2026 past-only sequential Q evaluations with model-column projection and causal 0/5/10-minute checkpoint compaction. Use request 57 feature checkpoints; no feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
 }
