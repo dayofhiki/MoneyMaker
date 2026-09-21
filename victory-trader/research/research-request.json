@@ -1,5 +1,5 @@
 {
-  "request_id": 66,
+  "request_id": 67,
   "operation": "expanded_history_anchor_hurdle_ev_v24",
-  "note": "Run preregistered expanded-history anchor hurdle EV v2.4 on frozen Jan-Mar 2026 development months with strictly earlier Sep 2025+ history. Use the explicit multi-source causal feature frame for calibrated win probability plus conditional win/loss magnitude heads, fixed 15m BASE-net target, semantic hurdle_EV > 0 primary BUY rule, fixed costs, all-attempt ledger and frozen position accounting. No April 2026+ access, threshold tuning, feature subset search, quote purchase, brokerage action, or live deployment."
+  "note": "Operational retry of preregistered v2.4 after adding the new operation to the request allowlist. Protocol unchanged: frozen Jan-Mar 2026 development months, strictly earlier Sep 2025+ history, explicit multi-source causal feature frame for calibrated win probability plus conditional win/loss magnitude heads, fixed 15m BASE-net target, semantic hurdle_EV > 0 primary BUY rule, fixed costs, all-attempt ledger and frozen position accounting. No April 2026+ access, threshold tuning, feature subset search, quote purchase, brokerage action, or live deployment."
 }
