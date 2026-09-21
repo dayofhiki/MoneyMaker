@@ -139,6 +139,7 @@ def run_partitioned_flatfile_attention_replay(
     runtime_config = config or AttentionConfig()
     days: list[dict[str, int | str]] = []
     day_replays: list[dict[str, int | float | None]] = []
+    session_replays: list[dict[str, object]] = []
     unique_symbols: set[str] = set()
     watch_leads: list[float] = []
     hot_leads: list[float] = []
@@ -170,6 +171,7 @@ def run_partitioned_flatfile_attention_replay(
 
         day_replay = summarize_attention_replay(trace, scan)
         day_replays.append(day_replay)
+        session_replays.append({"trading_day": day_key, **day_replay})
         unique_symbols.update(
             trace["ticker"].astype(str).str.strip().str.upper().unique().tolist()
         )
@@ -202,6 +204,7 @@ def run_partitioned_flatfile_attention_replay(
             "from prior close"
         ),
         "days": days,
+        "session_replays": session_replays,
         "partitions": partitions,
         "replay": replay_summary,
         "flatfile_stats": store.stats.to_dict(),
