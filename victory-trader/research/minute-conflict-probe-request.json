@@ -1,0 +1,6 @@
+{
+  "request_id": 118,
+  "ticker": "TPC",
+  "day": "2026-01-20",
+  "note": "Read-only diagnostic for the request-117 Flat File minute conflict. Inspect only conflicting duplicate rows and the same-provider exact-date REST reference. Do not change model, universe, target, feature, threshold, or evaluation rules."
+}
