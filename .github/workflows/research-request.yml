@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "historical_state_build_v20", "expanded_history_sequential_q", "expanded_history_monthly_q_v21", "expanded_history_entry_ranker_v22", "expanded_history_episode_viability_rank_v23", "expanded_history_anchor_hurdle_ev_v24", "expanded_history_final_scale_hurdle_ev_v25", "expanded_history_execution_feasible_hurdle_ev_v26", "point_in_time_share_supply_probe", "sec_8k_probe"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "historical_state_build_v20", "expanded_history_sequential_q", "expanded_history_monthly_q_v21", "expanded_history_entry_ranker_v22", "expanded_history_episode_viability_rank_v23", "expanded_history_anchor_hurdle_ev_v24", "expanded_history_final_scale_hurdle_ev_v25", "expanded_history_execution_feasible_hurdle_ev_v26", "point_in_time_share_supply_probe", "expanded_history_supply_hurdle_ev_v27", "sec_8k_probe"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -4640,5 +4640,222 @@ jobs:
         with:
           name: moneymaker-share-supply-probe-${{ needs.request.outputs.request_id }}
           path: victory-trader/artifacts/share-supply-probe*
+          if-no-files-found: error
+          retention-days: 90
+
+
+  expanded-history-share-supply-enrichment-v27:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_supply_hurdle_ev_v27' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify v2.7 supply enrichment
+        run: |
+          python -m pip install -e '.[dev]'
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_expanded_share_supply_enrichment.py tests/test_expanded_supply_hurdle_ev.py
+
+      - name: Download frozen expanded-history feature checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v21-month-*-57
+          path: victory-trader/data/expanded-v21-final
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35511268929'
+
+      - name: Build D-1 point-in-time share-supply anchor checkpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts data/v27-supply
+          PYTHONUNBUFFERED=1 python -m victory_trader.expanded_share_supply_enrichment \
+            --dataset "2025-09=data/expanded-v21-final/state-2025-09.parquet" \
+            --dataset "2025-10=data/expanded-v21-final/state-2025-10.parquet" \
+            --dataset "2025-11=data/expanded-v21-final/state-2025-11.parquet" \
+            --dataset "2025-12=data/expanded-v21-final/state-2025-12.parquet" \
+            --dataset "2026-01=data/expanded-v21-final/state-2026-01.parquet" \
+            --dataset "2026-02=data/expanded-v21-final/state-2026-02.parquet" \
+            --dataset "2026-03=data/expanded-v21-final/state-2026-03.parquet" \
+            --output-dir data/v27-supply \
+            --coverage-csv artifacts/v27-supply-enrichment-coverage.csv \
+            --report artifacts/v27-supply-enrichment.txt
+
+      - name: Upload v2.7 share-supply anchor checkpoints
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-v27-supply-anchors-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/data/v27-supply/supply-anchors-*.parquet
+            victory-trader/artifacts/v27-supply-enrichment*
+          if-no-files-found: error
+          retention-days: 90
+
+  expanded-history-supply-hurdle-ev-v27-monthly:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_supply_hurdle_ev_v27' }}
+    needs: [request, expanded-history-share-supply-enrichment-v27]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        evaluation_month: ['2026-01', '2026-02', '2026-03']
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify v2.7 supply model
+        run: |
+          python -m pip install -e '.[dev]'
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_expanded_supply_hurdle_ev.py tests/test_position_ledger.py
+
+      - name: Download frozen v2.7 supply anchors
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-expanded-v27-supply-anchors-${{ needs.request.outputs.request_id }}
+          path: victory-trader/data/v27-supply
+
+      - name: Run one strict past-only v2.7 month
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          MONTH="${{ matrix.evaluation_month }}"
+          PYTHONUNBUFFERED=1 python -m victory_trader.expanded_supply_hurdle_ev \
+            --evaluation-month "$MONTH" \
+            --dataset "2025-09=data/v27-supply/supply-anchors-2025-09.parquet" \
+            --dataset "2025-10=data/v27-supply/supply-anchors-2025-10.parquet" \
+            --dataset "2025-11=data/v27-supply/supply-anchors-2025-11.parquet" \
+            --dataset "2025-12=data/v27-supply/supply-anchors-2025-12.parquet" \
+            --dataset "2026-01=data/v27-supply/supply-anchors-2026-01.parquet" \
+            --dataset "2026-02=data/v27-supply/supply-anchors-2026-02.parquet" \
+            --dataset "2026-03=data/v27-supply/supply-anchors-2026-03.parquet" \
+            --report "artifacts/v27-$MONTH.txt" \
+            --details-csv "artifacts/v27-$MONTH-details.csv" \
+            --trades-csv "artifacts/v27-$MONTH-trades.csv" \
+            --attempts-csv "artifacts/v27-$MONTH-attempts.csv" \
+            --diagnostics-csv "artifacts/v27-$MONTH-diagnostics.csv" \
+            --comparisons-csv "artifacts/v27-$MONTH-comparisons.csv" \
+            --coverage-csv "artifacts/v27-$MONTH-coverage.csv" \
+            --provenance-csv "artifacts/v27-$MONTH-provenance.csv"
+
+      - name: Upload monthly v2.7 checkpoint
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-v27-eval-${{ matrix.evaluation_month }}-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/v27-${{ matrix.evaluation_month }}*
+          if-no-files-found: error
+          retention-days: 90
+
+  expanded-history-supply-hurdle-ev-v27:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_supply_hurdle_ev_v27' }}
+    needs: [request, expanded-history-supply-hurdle-ev-v27-monthly]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify account ledger
+        run: |
+          python -m pip install -e '.[dev]'
+          pytest -q tests/test_position_ledger.py
+
+      - name: Download frozen expanded-history feature checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v21-month-*-57
+          path: victory-trader/data/expanded-v21-final
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35511268929'
+
+      - name: Download monthly v2.7 checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v27-eval-*-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/evals
+          merge-multiple: true
+
+      - name: Combine frozen v2.7 outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+
+          root = Path("artifacts/evals")
+          for suffix in (
+              "attempts",
+              "details",
+              "diagnostics",
+              "comparisons",
+              "coverage",
+              "provenance",
+              "trades",
+          ):
+              paths = sorted(root.glob(f"v27-*-{suffix}.csv"))
+              if len(paths) != 3:
+                  raise SystemExit(
+                      f"expected 3 {suffix} files, found {len(paths)}: {paths}"
+                  )
+              pd.concat(
+                  (pd.read_csv(path) for path in paths),
+                  ignore_index=True,
+              ).to_csv(
+                  f"artifacts/expanded-v27-{suffix}.csv",
+                  index=False,
+              )
+              print(suffix, ", ".join(str(path) for path in paths))
+          PY
+
+      - name: Replay all frozen v2.7 policies through position ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m victory_trader.position_ledger \
+            --attempts artifacts/expanded-v27-attempts.csv \
+            --dataset "2026-01=data/expanded-v21-final/state-2026-01.parquet" \
+            --dataset "2026-02=data/expanded-v21-final/state-2026-02.parquet" \
+            --dataset "2026-03=data/expanded-v21-final/state-2026-03.parquet" \
+            --output artifacts/expanded-v27-ledger \
+            | tee artifacts/expanded-v27-ledger.log
+
+      - name: Upload expanded-history v2.7 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-history-v27-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/evals/v27-*
+            victory-trader/artifacts/expanded-v27*
           if-no-files-found: error
           retention-days: 90
