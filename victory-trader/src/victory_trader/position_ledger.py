@@ -94,7 +94,10 @@ def replay(attempts, panel, scenario, *, initial_cash=INITIAL_CASH, budget=ORDER
                                      'mark_t': timestamp, 'record': data}
                 turnover += reserved
                 data.update(status='open_unresolved', entry_t=timestamp, quantity=qty)
-                target = int(data['decision_t']) + 10 * MINUTE
+                horizon = data.get('action_horizon_min', 10)
+                if not positive(horizon):
+                    raise ValueError('invalid action horizon')
+                target = int(data['decision_t']) + int(horizon) * MINUTE
                 data['scheduled_exit_bar_t'] = target
                 observed = bars.get(ticker, pd.DataFrame(columns=['t', 'o', 'c']))
                 exact = observed.loc[observed.t.eq(target)]

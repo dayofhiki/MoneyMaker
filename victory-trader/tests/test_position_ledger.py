@@ -69,6 +69,16 @@ class LedgerTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             replay(attempts(), bars([T, T], [10, 10]), ZERO)
 
+    def test_attempt_horizon_controls_scheduled_exit(self):
+        a = attempts()
+        a['action_horizon_min'] = 5
+        r, s, _ = replay(a, bars([T + 5 * MINUTE], [11]), ZERO)
+        self.assertEqual(s['closed'], 1)
+        self.assertEqual(
+            r.iloc[0].scheduled_exit_bar_t,
+            T + 5 * MINUTE,
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

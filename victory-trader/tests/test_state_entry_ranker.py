@@ -127,6 +127,27 @@ def test_first_unfillable_signal_does_not_fall_through_to_future_state():
     assert trades.empty
 
 
+def test_first_unfillable_signal_is_retained_in_attempt_audit():
+    frame = pd.DataFrame(
+        [
+            _row(0, rank_5m=0.9, entry_price=np.nan),
+            _row(1, rank_5m=0.95),
+        ]
+    )
+    attempts = []
+    trades = _select_first_trades(
+        frame,
+        policy="rank_top25_cap1",
+        rank_gate=0.75,
+        attempt_records=attempts,
+    )
+    assert trades.empty
+    assert len(attempts) == 1
+    assert attempts[0]["evaluation_reason"] == "entry_missing"
+    assert attempts[0]["decision_t"] == frame.iloc[0]["t"]
+    assert attempts[0]["action_horizon_min"] == 5
+
+
 def test_forward_folds_use_strictly_prior_months():
     monthly = {
         month: pd.DataFrame({"trading_day": [month + "-15"]})

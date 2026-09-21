@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import gc
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,7 +19,11 @@ from .state_action_value import (
     train_direct_ev_model,
 )
 from .state_action_risk import SEVERE_LOSS_PCT
+from .state_sequence_enrichment import SEQUENCE_FEATURES
 from .state_value_model import (
+    BOOLEAN_FEATURES,
+    LOG_FEATURES,
+    RAW_FEATURES,
     _chronological_fit_calibration_split,
     _eligible,
 )
@@ -31,6 +36,161 @@ MIN_EPISODE_LABELS = 8
 MIN_MONTH_TRADES = 15
 MIN_CALIBRATION_RANK_CANDIDATES = 15
 POLICIES = ("earliest_ev_cap1", "rank_top25_cap1")
+EXTERNAL_FEATURES = (
+    "short_ratio_latest_prior",
+    "short_ratio_mean5_prior",
+    "short_ratio_mean20_prior",
+    "short_ratio_latest_minus_mean5",
+    "short_ratio_mean5_minus_mean20",
+    "short_volume_latest_vs_mean5",
+    "finra_total_volume_latest_vs_mean5",
+    "short_volume_latest_age_days",
+    "eight_k_unique_filings_30d",
+    "eight_k_disclosures_30d",
+    "eight_k_has_filing_7d",
+    "eight_k_latest_filing_age_days",
+    "eight_k_distinct_primary_categories_30d",
+    "eight_k_primary_capital_and_financing_count_30d",
+    "eight_k_primary_leadership_and_governance_count_30d",
+    "eight_k_primary_shareholder_activity_count_30d",
+    "eight_k_primary_strategic_transactions_count_30d",
+    "eight_k_primary_financial_results_count_30d",
+    "eight_k_primary_operations_and_strategy_count_30d",
+    "eight_k_primary_risk_events_count_30d",
+    "eight_k_primary_regulatory_and_compliance_count_30d",
+    "short_interest_latest",
+    "short_interest_avg_daily_volume_latest",
+    "short_interest_days_to_cover_latest",
+    "short_interest_change_pct",
+    "short_interest_avg_daily_volume_change_pct",
+    "short_interest_days_to_cover_change",
+    "short_interest_publication_age_days",
+    "short_interest_reports_available",
+)
+
+MODEL_INPUT_COLUMNS = tuple(
+    dict.fromkeys(
+        [
+            *EPISODE_KEYS,
+            "t",
+            "c",
+            "previous_close",
+            "entry_price",
+            "active_minute_fraction_15m",
+            *RAW_FEATURES,
+            *BOOLEAN_FEATURES,
+            *LOG_FEATURES,
+            *SEQUENCE_FEATURES,
+            *EXTERNAL_FEATURES,
+            *(
+                column
+                for horizon in HORIZONS
+                for column in (
+                    f"buy_return_{horizon}m_pct",
+                    f"buy_return_{horizon}m_base_net_return_pct",
+                    f"buy_return_{horizon}m_stress_net_return_pct",
+                )
+            ),
+            "eight_k_query_complete",
+            "short_interest_query_complete",
+            "short_ratio_latest_prior",
+            "short_interest_latest",
+        ]
+    )
+)
+
+
+def read_model_panel(path: str | Path) -> pd.DataFrame:
+    """Project Parquet inputs to columns consumed by the frozen v2.2 audit."""
+    import pyarrow.parquet as pq
+
+    available = set(pq.ParquetFile(path).schema.names)
+    columns = [column for column in MODEL_INPUT_COLUMNS if column in available]
+    return pd.read_parquet(path, columns=columns)
+
+
+def _coverage_row(frame: pd.DataFrame, month: str) -> dict[str, object]:
+    scoreable = frame.loc[_eligible(frame)].copy()
+    ticker_days = scoreable[
+        [
+            "ticker",
+            "trading_day",
+            "eight_k_query_complete",
+            "short_interest_query_complete",
+        ]
+    ].drop_duplicates(["ticker", "trading_day"])
+    return {
+        "month": month,
+        "scoreable_rows": int(len(scoreable)),
+        "scoreable_ticker_days": int(len(ticker_days)),
+        "short_volume_latest_coverage": float(
+            pd.to_numeric(
+                scoreable["short_ratio_latest_prior"], errors="coerce"
+            )
+            .notna()
+            .mean()
+        ),
+        "short_interest_latest_coverage": float(
+            pd.to_numeric(
+                scoreable["short_interest_latest"], errors="coerce"
+            )
+            .notna()
+            .mean()
+        ),
+        "eight_k_query_complete_coverage": float(
+            pd.to_numeric(
+                ticker_days["eight_k_query_complete"], errors="coerce"
+            )
+            .eq(1.0)
+            .mean()
+        ),
+        "short_interest_query_complete_coverage": float(
+            pd.to_numeric(
+                ticker_days["short_interest_query_complete"],
+                errors="coerce",
+            )
+            .eq(1.0)
+            .mean()
+        ),
+    }
+
+
+def day_cluster_bootstrap(
+    trades: pd.DataFrame,
+    *,
+    policy: str,
+    samples: int = 10_000,
+) -> dict[str, float | int]:
+    selected = trades.loc[trades["policy"].eq(policy)].copy()
+    daily = (
+        selected.assign(
+            _base=pd.to_numeric(
+                selected["realized_base_net_return_pct"], errors="coerce"
+            )
+        )
+        .groupby("trading_day")["_base"]
+        .mean()
+        .dropna()
+        .to_numpy(dtype=float)
+    )
+    if len(daily) < 2:
+        return {
+            "days": int(len(daily)),
+            "day_balanced_mean_pct": float(np.mean(daily))
+            if len(daily)
+            else np.nan,
+            "ci_low_pct": np.nan,
+            "ci_high_pct": np.nan,
+        }
+    rng = np.random.default_rng(20261201)
+    indices = rng.integers(0, len(daily), size=(samples, len(daily)))
+    means = daily[indices].mean(axis=1)
+    return {
+        "days": int(len(daily)),
+        "day_balanced_mean_pct": float(daily.mean()),
+        "ci_low_pct": float(np.quantile(means, 0.025)),
+        "ci_high_pct": float(np.quantile(means, 0.975)),
+    }
 
 
 @dataclass(frozen=True)
@@ -201,6 +361,7 @@ def _select_first_trades(
     *,
     policy: str,
     rank_gate: float,
+    attempt_records: list[dict[str, object]] | None = None,
 ) -> pd.DataFrame:
     signals = scored.loc[
         _policy_signal_mask(scored, policy=policy, rank_gate=rank_gate)
@@ -229,7 +390,63 @@ def _select_first_trades(
             pd.Series([row.get(_target_column(horizon), np.nan)]),
             errors="coerce",
         ).iloc[0]
-        if pd.isna(entry) or float(entry) <= 0 or pd.isna(realized):
+        gross = pd.to_numeric(
+            pd.Series([row.get(f"buy_return_{horizon}m_pct", np.nan)]),
+            errors="coerce",
+        ).iloc[0]
+        stress = pd.to_numeric(
+            pd.Series(
+                [
+                    row.get(
+                        f"buy_return_{horizon}m_stress_net_return_pct",
+                        np.nan,
+                    )
+                ]
+            ),
+            errors="coerce",
+        ).iloc[0]
+        flags = {
+            "entry_missing": bool(pd.isna(entry)),
+            "entry_invalid": bool(
+                pd.notna(entry) and (not np.isfinite(entry) or entry <= 0)
+            ),
+            "gross_label_missing": bool(pd.isna(gross)),
+            "base_label_missing": bool(pd.isna(realized)),
+            "stress_label_missing": bool(pd.isna(stress)),
+            "return_nonfinite": bool(
+                any(
+                    pd.notna(value) and not np.isfinite(value)
+                    for value in (gross, realized, stress)
+                )
+            ),
+        }
+        if flags["entry_missing"]:
+            reason = "entry_missing"
+        elif flags["entry_invalid"]:
+            reason = "entry_invalid"
+        elif flags["gross_label_missing"]:
+            reason = "gross_label_missing"
+        elif flags["base_label_missing"] or flags["stress_label_missing"]:
+            reason = "scenario_label_missing"
+        elif flags["return_nonfinite"]:
+            reason = "return_nonfinite"
+        else:
+            reason = "evaluated"
+        if attempt_records is not None:
+            attempt_records.append(
+                {
+                    "trading_day": row.get("trading_day"),
+                    "ticker": row.get("ticker"),
+                    "decision_t": row.get("t"),
+                    "action_horizon_min": horizon,
+                    "entry_price": entry,
+                    "selected_predicted_base_ev_pct": selected_ev,
+                    "selected_predicted_rank_score": selected_rank,
+                    "evaluation_reason": reason,
+                    **flags,
+                }
+            )
+        if reason != "evaluated":
             # The first signal was the attempted entry. Do not use future label
             # availability to fall through to a later signal in the episode.
             continue
@@ -336,6 +553,12 @@ def _rank_diagnostics(
         target_rank = pd.to_numeric(
             labeled["_target_rank"], errors="coerce"
         )
+        direct_prediction = pd.to_numeric(
+            labeled[f"predicted_base_ev_{horizon}m_pct"], errors="coerce"
+        )
+        base_target = pd.to_numeric(
+            labeled[_target_column(horizon)], errors="coerce"
+        )
         episode_correlations = []
         for _, group in labeled.groupby(EPISODE_KEYS, sort=False):
             if len(group) < MIN_EPISODE_LABELS:
@@ -355,6 +578,9 @@ def _rank_diagnostics(
                 ),
                 "global_spearman": float(
                     prediction.corr(target_rank, method="spearman")
+                ),
+                "direct_ev_spearman": float(
+                    direct_prediction.corr(base_target, method="spearman")
                 ),
                 "episode_median_spearman": float(
                     np.median(episode_correlations)
@@ -448,11 +674,15 @@ def run_evaluation(
     mode: str = "lomo",
     evaluation_min_month: str | None = None,
     evaluation_max_month: str | None = None,
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    audit: bool = False,
+):
     metric_rows: list[dict[str, object]] = []
     trade_frames: list[pd.DataFrame] = []
     diagnostic_frames: list[pd.DataFrame] = []
     comparisons: list[dict[str, object]] = []
+    attempt_rows: list[dict[str, object]] = []
+    path_rows: list[dict[str, object]] = []
+    coverage_rows: list[dict[str, object]] = []
 
     for holdout_month, training_months, holdout in evaluation_folds(
         monthly_frames,
@@ -474,16 +704,38 @@ def run_evaluation(
         }
         rank_gate = fit_rank_gate(train, direct_models, rank_models)
         scored = score_entry_actions(holdout, direct_models, rank_models)
+        coverage_rows.append(_coverage_row(holdout, holdout_month))
         diagnostic_frames.append(
             _rank_diagnostics(scored, month=holdout_month)
         )
 
         selected: dict[str, pd.DataFrame] = {}
         for policy in POLICIES:
+            policy_attempts: list[dict[str, object]] = []
             trades = _select_first_trades(
                 scored,
                 policy=policy,
                 rank_gate=rank_gate,
+                attempt_records=policy_attempts,
+            )
+            attempt_rows.extend(
+                {"month": holdout_month, "policy": policy, **row}
+                for row in policy_attempts
+            )
+            path_rows.append(
+                {
+                    "month": holdout_month,
+                    "policy": policy,
+                    "attempted": len(policy_attempts),
+                    "evaluated": sum(
+                        row["evaluation_reason"] == "evaluated"
+                        for row in policy_attempts
+                    ),
+                    "unevaluable": sum(
+                        row["evaluation_reason"] != "evaluated"
+                        for row in policy_attempts
+                    ),
+                }
             )
             selected[policy] = trades
             metric_rows.append(
@@ -507,14 +759,24 @@ def run_evaluation(
                 month=holdout_month,
             )
         )
+        del train, direct_models, rank_models, scored
+        gc.collect()
 
-    return (
+    core = (
         pd.DataFrame(metric_rows),
         pd.concat(trade_frames, ignore_index=True)
         if trade_frames
         else pd.DataFrame(),
         pd.concat(diagnostic_frames, ignore_index=True),
         pd.DataFrame(comparisons),
+    )
+    if not audit:
+        return core
+    return (
+        *core,
+        pd.DataFrame(attempt_rows),
+        pd.DataFrame(path_rows),
+        pd.DataFrame(coverage_rows),
     )
 
 
@@ -632,16 +894,35 @@ def main() -> int:
     parser.add_argument("--summary-csv", type=Path, required=True)
     parser.add_argument("--diagnostics-csv", type=Path, required=True)
     parser.add_argument("--comparisons-csv", type=Path, required=True)
+    parser.add_argument("--attempts-csv", type=Path)
+    parser.add_argument("--paths-csv", type=Path)
+    parser.add_argument("--coverage-csv", type=Path)
     args = parser.parse_args()
 
-    monthly = {
-        label: pd.read_parquet(path) for label, path in args.dataset
-    }
-    details, trades, diagnostics, comparisons = run_evaluation(
+    dataset_paths = dict(args.dataset)
+    monthly: dict[str, pd.DataFrame] = {}
+    for label in sorted(dataset_paths):
+        if (
+            args.evaluation == "forward"
+            and args.evaluation_max_month is not None
+            and label > args.evaluation_max_month
+        ):
+            continue
+        monthly[label] = read_model_panel(dataset_paths[label])
+    (
+        details,
+        trades,
+        diagnostics,
+        comparisons,
+        attempts,
+        paths,
+        coverage,
+    ) = run_evaluation(
         monthly,
         mode=args.evaluation,
         evaluation_min_month=args.evaluation_min_month,
         evaluation_max_month=args.evaluation_max_month,
+        audit=True,
     )
     summary = summarize(details)
     report = render_report(
@@ -651,6 +932,40 @@ def main() -> int:
         comparisons,
         evaluation=args.evaluation,
     )
+    attempt_summary = (
+        attempts.groupby(
+            ["month", "policy", "evaluation_reason"], dropna=False
+        )
+        .size()
+        .rename("attempts")
+        .reset_index()
+        if not attempts.empty
+        else pd.DataFrame()
+    )
+    ranked = (
+        trades.loc[trades["policy"].eq("rank_top25_cap1")]
+        if not trades.empty
+        else pd.DataFrame()
+    )
+    bootstrap = (
+        day_cluster_bootstrap(
+            ranked,
+            policy="rank_top25_cap1",
+            samples=10_000,
+        )
+        if not ranked.empty and ranked["trading_day"].nunique() >= 2
+        else {
+            "bootstrap_available": False,
+            "reason": "fewer than two independent evaluated trading days",
+        }
+    )
+    report += "\n\n=== Attempt evaluation reasons ===\n"
+    report += attempt_summary.to_string(index=False)
+    report += "\n\n=== Attempt paths ===\n" + paths.to_string(index=False)
+    report += "\n\n=== External-data coverage ===\n"
+    report += coverage.to_string(index=False)
+    report += "\n\n=== Pooled trading-day bootstrap ===\n"
+    report += str(bootstrap)
     print(report)
 
     for path in (
@@ -660,14 +975,24 @@ def main() -> int:
         args.summary_csv,
         args.diagnostics_csv,
         args.comparisons_csv,
+        args.attempts_csv,
+        args.paths_csv,
+        args.coverage_csv,
     ):
-        path.parent.mkdir(parents=True, exist_ok=True)
+        if path is not None:
+            path.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(report + "\n", encoding="utf-8")
     details.to_csv(args.details_csv, index=False)
     trades.to_csv(args.trades_csv, index=False)
     summary.to_csv(args.summary_csv, index=False)
     diagnostics.to_csv(args.diagnostics_csv, index=False)
     comparisons.to_csv(args.comparisons_csv, index=False)
+    if args.attempts_csv is not None:
+        attempts.to_csv(args.attempts_csv, index=False)
+    if args.paths_csv is not None:
+        paths.to_csv(args.paths_csv, index=False)
+    if args.coverage_csv is not None:
+        coverage.to_csv(args.coverage_csv, index=False)
     return 0
 
 
