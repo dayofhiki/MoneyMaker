@@ -162,6 +162,38 @@ def test_missing_symbols_age_out_while_missing_positions_remain_pinned():
     assert twice_missing["POS"].reason == "position_feed_missing"
 
 
+def test_missing_grace_states_reserve_capacity_until_they_drop():
+    runtime = _runtime(max_watch=1, max_hot=1, drop_after_missed_batches=3)
+    first = runtime.step(
+        60_000,
+        [_evidence("HOT", 0.90), _evidence("WATCH", 0.70)],
+    )
+    assert first["HOT"].state is AttentionState.HOT
+    assert first["WATCH"].state is AttentionState.WATCH
+
+    second = runtime.step(
+        120_000,
+        [_evidence("NEW_HOT", 0.95), _evidence("NEW_WATCH", 0.75)],
+    )
+    assert second["HOT"].state is AttentionState.HOT
+    assert second["WATCH"].state is AttentionState.WATCH
+    assert second["NEW_HOT"].state is AttentionState.SCAN
+    assert second["NEW_WATCH"].state is AttentionState.SCAN
+
+    runtime.step(
+        180_000,
+        [_evidence("NEW_HOT", 0.95), _evidence("NEW_WATCH", 0.75)],
+    )
+    fourth = runtime.step(
+        240_000,
+        [_evidence("NEW_HOT", 0.95), _evidence("NEW_WATCH", 0.75)],
+    )
+    assert fourth["HOT"].state is AttentionState.DROP
+    assert fourth["WATCH"].state is AttentionState.DROP
+    assert fourth["NEW_HOT"].state is AttentionState.HOT
+    assert fourth["NEW_WATCH"].state is AttentionState.WATCH
+
+
 def test_runtime_rejects_duplicate_tickers_and_time_regression():
     runtime = _runtime()
     runtime.step(60_000, [_evidence("AAA", 0.50)])

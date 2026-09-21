@@ -183,8 +183,15 @@ class AttentionRuntime:
         hot_candidates = [
             item for item in ranked if desired[item.ticker][0] is AttentionState.HOT
         ]
+        reserved_hot = sum(
+            record.state is AttentionState.HOT
+            and ticker not in observed
+            and record.missed_batches + 1 < self.config.drop_after_missed_batches
+            for ticker, record in self._records.items()
+        )
+        available_hot = max(self.config.max_hot - reserved_hot, 0)
         selected_hot = {
-            item.ticker for item in hot_candidates[: self.config.max_hot]
+            item.ticker for item in hot_candidates[:available_hot]
         }
 
         watch_candidates = [
@@ -206,8 +213,15 @@ class AttentionRuntime:
                 item.ticker,
             )
         )
+        reserved_watch = sum(
+            record.state is AttentionState.WATCH
+            and ticker not in observed
+            and record.missed_batches + 1 < self.config.drop_after_missed_batches
+            for ticker, record in self._records.items()
+        )
+        available_watch = max(self.config.max_watch - reserved_watch, 0)
         selected_watch = {
-            item.ticker for item in watch_candidates[: self.config.max_watch]
+            item.ticker for item in watch_candidates[:available_watch]
         }
 
         for ticker, item in observed.items():
@@ -251,11 +265,28 @@ class AttentionRuntime:
             else:
                 record.reason = "observation_grace"
 
+        self._assert_capacity()
         self._last_timestamp_ms = timestamp_ms
         return {
             ticker: self._plan(record, timestamp_ms, rank_by_ticker.get(ticker))
             for ticker, record in sorted(self._records.items())
         }
+
+    def _assert_capacity(self) -> None:
+        watch = sum(
+            record.state is AttentionState.WATCH
+            for record in self._records.values()
+        )
+        hot = sum(
+            record.state is AttentionState.HOT
+            for record in self._records.values()
+        )
+        if watch > self.config.max_watch or hot > self.config.max_hot:
+            raise RuntimeError(
+                "attention capacity invariant violated: "
+                f"watch={watch}/{self.config.max_watch}, "
+                f"hot={hot}/{self.config.max_hot}"
+            )
 
     def _desired_state(
         self,

@@ -102,3 +102,8 @@ non-empty before artifact upload.
 The same rule applies to duplicate minute keys. A conflicting ticker is
 replaced by its exact-date, unadjusted REST minute series only after every
 conflicting timestamp matches exactly one Flat File candidate on OHLCV.
+
+Missing WATCH/HOT names retain their observation tier during the configured
+grace window and therefore reserve capacity until they return or DROP. This
+keeps the configured observation budgets strict even when the broad scan has
+intermittent bars.
