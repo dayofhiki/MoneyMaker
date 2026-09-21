@@ -261,3 +261,94 @@ Use the frozen diagnostics to decide between:
   cost-positive but concurrent candidate selection is the bottleneck.
 
 Do not add HOLD/SELL freedom until a cost-positive entry process replicates.
+
+
+## Result — request 65
+
+Workflow run 35553113572 completed successfully. All three strict past-only
+monthly jobs completed and the frozen position ledger replay produced final
+artifact `moneymaker-expanded-history-v23-65`.
+
+### Viability and timing diagnostics
+
+| Month | Viability AUC | Actual positive anchors | Predicted viable rate | 15m global rank Spearman | Episode-median rank Spearman |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 0.5956 | 24.63% | 0.54% | 0.1465 | 0.2655 |
+| 2026-02 | 0.6723 | 22.15% | 0.00% | 0.1331 | 0.2507 |
+| 2026-03 | 0.6336 | 24.72% | 0.00% | 0.1470 | 0.2446 |
+
+The episode model therefore learned meaningful out-of-month ordering in all
+three months. The within-episode timing signal also remained positive and
+strong, with positive episode-correlation rates of 87.5%, 86.3%, and 87.1%.
+
+However, chronological Platt calibration correctly kept the mean predicted
+positive probability near the roughly 22-25% base rate. No February or March
+anchor reached the fixed semantic 0.50 viability threshold.
+
+### Trading result
+
+| Month | Policy | Evaluated trades | Gross mean | BASE mean | Day-balanced BASE |
+|---|---|---:|---:|---:|---:|
+| Jan | earliest eligible | 2050 | -0.061% | -1.511% | -1.584% |
+| Jan | earliest viable | 11 | +0.312% | -0.817% | -0.497% |
+| Jan | viability + rank | 10 | +0.120% | -1.020% | -0.723% |
+| Feb | earliest eligible | 1756 | -0.383% | -1.880% | -1.965% |
+| Feb | earliest viable | 0 | n/a | n/a | n/a |
+| Feb | viability + rank | 0 | n/a | n/a | n/a |
+| Mar | earliest eligible | 2035 | -0.048% | -1.576% | -1.613% |
+| Mar | earliest viable | 0 | n/a | n/a | n/a |
+| Mar | viability + rank | 0 | n/a | n/a | n/a |
+
+In January, timing rank delayed or changed some viable entries but reduced
+common-episode realized BASE return by about 0.55 percentage points versus the
+first viable anchor. Thus a globally useful timing rank is not automatically
+useful inside the tiny high-viability tail.
+
+### Position ledger
+
+For the primary viability-rank policy:
+
+- January BASE: 10 attempts/accepted/closed, complete accounting, marked return
+  -1.0199%;
+- February: zero attempts, complete accounting, 0.0% marked return;
+- March: zero attempts, complete accounting, 0.0% marked return.
+
+Zero-trade months are not profitable evidence and cannot satisfy the promotion
+rule.
+
+The broad earliest-eligible policy remained strongly negative and often ended
+with unresolved capital because thousands of attempts contend for the fixed
+synthetic account. This does not alter the primary-policy failure.
+
+### Decision
+
+Reject exact v2.3. April 2026 and later remain sealed.
+
+The mandatory >=15 monthly trades, positive monthly BASE/day-balanced returns,
+positive bootstrap and positive BASE ledger-return criteria all failed.
+
+Do not lower the 0.50 probability threshold or rank gate on these results.
+
+## Diagnostic implication
+
+The new information is sharper than a generic "model is bad" conclusion:
+
+1. episode positive-return probability is predictably ordered out of month;
+2. within-episode entry quality is predictably ordered out of month;
+3. probability alone is not enough to establish positive expected value because
+   payoff magnitude is asymmetric;
+4. in January, even the highest calibrated-probability anchors had positive
+   gross mean but negative BASE mean;
+5. timing rank did not rescue that selected tail.
+
+The next separately frozen branch should therefore estimate the payoff
+distribution explicitly, decomposing:
+
+- P(BASE return > 0),
+- conditional positive-return magnitude,
+- conditional loss magnitude.
+
+A hurdle-style expected-value estimate can then test whether the model can
+identify episodes whose favorable payoff asymmetry, not merely win probability,
+covers the existing BASE friction. This is a new target decomposition, not a
+post-hoc lowering of the v2.3 gate.
