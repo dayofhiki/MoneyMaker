@@ -1,0 +1,7 @@
+{
+  "request_id": 117,
+  "operation": "market_relative_watch_value_v03",
+  "start_date": "2026-01-02",
+  "end_date": "2026-01-26",
+  "note": "Frozen market-relative WATCH episode-value experiment. Preserve Phase-2F causal minute-completion timestamps, v0.2 WATCH-episode construction, adaptive remaining_episode_peak_return_pct target, and fixed HGB hyperparameters. Use all eligible pre-runner WATCH-entry episodes. Fit 2026-01-02..2026-01-16 and evaluate untouched 2026-01-20..2026-01-26. Compare the request-116 minute baseline against the same model plus preregistered market-relative price/volume/transaction acceleration and market-regime features from completed minute bars. Do not reuse or tune the retired one-second feature family. No post-result tuning and April 2026+ remain sealed."
+}
