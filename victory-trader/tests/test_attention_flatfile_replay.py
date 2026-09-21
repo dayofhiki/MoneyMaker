@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 import pytest
+
 from victory_trader.attention_flatfile_replay import (
     build_flatfile_scan_day,
     run_flatfile_attention_replay,

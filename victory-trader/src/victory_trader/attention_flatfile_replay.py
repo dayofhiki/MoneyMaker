@@ -41,7 +41,12 @@ def _prepare_prior_closes(
 ) -> tuple[pd.DataFrame, int]:
     """Normalize prior closes and collapse only value-identical duplicates."""
 
-    prior = previous.loc[:, ["ticker", "close"]].copy()
+    diagnostic_columns = [
+        column
+        for column in ("window_start", "volume", "transactions")
+        if column in previous.columns
+    ]
+    prior = previous.loc[:, ["ticker", "close", *diagnostic_columns]].copy()
     prior["ticker"] = prior["ticker"].astype(str).str.strip().str.upper()
     prior["previous_close"] = pd.to_numeric(prior.pop("close"), errors="coerce")
     prior = prior.loc[prior["ticker"].isin(eligible)].copy()
@@ -55,13 +60,22 @@ def _prepare_prior_closes(
         conflicting = distinct_counts.loc[distinct_counts.gt(1)].index.tolist()
         if conflicting:
             examples = conflicting[:10]
+            details = (
+                duplicate_values.loc[
+                    duplicate_values["ticker"].isin(examples),
+                    ["ticker", "previous_close", *diagnostic_columns],
+                ]
+                .sort_values(["ticker", *diagnostic_columns], kind="stable")
+                .to_dict("records")
+            )
             raise ValueError(
                 "prior-day Flat File has conflicting closes for duplicate "
-                f"tickers: {examples}"
+                f"tickers: {details}"
             )
 
     before = len(prior)
     prior = prior.drop_duplicates("ticker", keep="first").reset_index(drop=True)
+    prior = prior.loc[:, ["ticker", "previous_close"]]
     prior["trading_day"] = trading_day.isoformat()
     prior["eligible"] = True
     return prior, before - len(prior)

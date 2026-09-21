@@ -5,8 +5,8 @@ import pandas as pd
 from victory_trader.flatfiles import (
     STOCKS_DAY_PREFIX,
     STOCKS_MINUTE_PREFIX,
-    MassiveFlatFileStore,
     MassiveFlatFilesClient,
+    MassiveFlatFileStore,
     stock_flatfile_key,
 )
 
@@ -115,3 +115,16 @@ def test_flatfile_store_converts_once_and_filters_local_parquet(tmp_path):
     assert store.stats.downloads == 1
     assert store.stats.parquet_writes == 1
     assert store.stats.cache_hits == 1
+
+
+def test_flatfile_store_cache_paths_are_distinct_for_each_day(tmp_path):
+    fake_client = FakeDownloadClient()
+    store = MassiveFlatFileStore(fake_client, tmp_path)
+
+    first = store.ensure_parquet(STOCKS_DAY_PREFIX, date(2026, 4, 1))
+    second = store.ensure_parquet(STOCKS_DAY_PREFIX, date(2026, 4, 2))
+
+    assert first.name == "2026-04-01.parquet"
+    assert second.name == "2026-04-02.parquet"
+    assert first != second
+    assert fake_client.downloads == 2

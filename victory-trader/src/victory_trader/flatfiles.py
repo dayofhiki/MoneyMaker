@@ -9,7 +9,6 @@ import pandas as pd
 from botocore.config import Config
 from botocore.exceptions import ClientError
 
-
 FLATFILES_ENDPOINT = "https://files.massive.com"
 FLATFILES_BUCKET = "flatfiles"
 STOCKS_MINUTE_PREFIX = "us_stocks_sip/minute_aggs_v1"
@@ -144,7 +143,10 @@ class MassiveFlatFileStore:
 
     def _paths(self, dataset_prefix: str, day: date) -> tuple[Path, Path]:
         stem = _cache_stem(self.cache_dir, dataset_prefix, day)
-        return stem.with_suffix(".csv.gz"), stem.with_suffix(".parquet")
+        return (
+            stem.parent / f"{stem.name}.csv.gz",
+            stem.parent / f"{stem.name}.parquet",
+        )
 
     def ensure_parquet(self, dataset_prefix: str, day: date) -> Path:
         raw_path, parquet_path = self._paths(dataset_prefix, day)
