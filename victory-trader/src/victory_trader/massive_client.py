@@ -516,6 +516,42 @@ class MassiveClient:
             next_url = page.get("next_url")
         return rows
 
+    def splits(
+        self,
+        ticker: str,
+        *,
+        execution_date_gte: date | str | None = None,
+        execution_date_lte: date | str | None = None,
+        limit: int = 1000,
+    ) -> list[dict[str, Any]]:
+        """Fetch historical split records for one stock ticker."""
+        params: dict[str, Any] = {
+            "ticker": ticker.upper(),
+            "limit": int(limit),
+            "sort": "execution_date.asc",
+        }
+        if execution_date_gte is not None:
+            params["execution_date.gte"] = (
+                execution_date_gte.isoformat()
+                if isinstance(execution_date_gte, date)
+                else str(execution_date_gte)
+            )
+        if execution_date_lte is not None:
+            params["execution_date.lte"] = (
+                execution_date_lte.isoformat()
+                if isinstance(execution_date_lte, date)
+                else str(execution_date_lte)
+            )
+
+        page = self._get("/stocks/v1/splits", params)
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+        return rows
+
     def splits_on(self, day: date) -> dict[str, Any]:
         return self._get(
             "/stocks/v1/splits",
