@@ -4107,3 +4107,164 @@ jobs:
             victory-trader/artifacts/expanded-v23*
           if-no-files-found: error
           retention-days: 90
+
+
+  expanded-history-anchor-hurdle-ev-monthly:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_anchor_hurdle_ev_v24' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        evaluation_month: ['2026-01', '2026-02', '2026-03']
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify anchor hurdle EV
+        run: |
+          python -m pip install -e '.[dev]'
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_expanded_anchor_hurdle_ev.py tests/test_position_ledger.py
+
+      - name: Download frozen expanded-history feature checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v21-month-*-57
+          path: victory-trader/data/expanded-v21-final
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35511268929'
+
+      - name: Run one strict past-only v2.4 month
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          MONTH="${{ matrix.evaluation_month }}"
+          PYTHONUNBUFFERED=1 python -m victory_trader.expanded_anchor_hurdle_ev \
+            --evaluation-month "$MONTH" \
+            --dataset "2025-09=data/expanded-v21-final/state-2025-09.parquet" \
+            --dataset "2025-10=data/expanded-v21-final/state-2025-10.parquet" \
+            --dataset "2025-11=data/expanded-v21-final/state-2025-11.parquet" \
+            --dataset "2025-12=data/expanded-v21-final/state-2025-12.parquet" \
+            --dataset "2026-01=data/expanded-v21-final/state-2026-01.parquet" \
+            --dataset "2026-02=data/expanded-v21-final/state-2026-02.parquet" \
+            --dataset "2026-03=data/expanded-v21-final/state-2026-03.parquet" \
+            --report "artifacts/v24-$MONTH.txt" \
+            --details-csv "artifacts/v24-$MONTH-details.csv" \
+            --trades-csv "artifacts/v24-$MONTH-trades.csv" \
+            --attempts-csv "artifacts/v24-$MONTH-attempts.csv" \
+            --diagnostics-csv "artifacts/v24-$MONTH-diagnostics.csv" \
+            --comparisons-csv "artifacts/v24-$MONTH-comparisons.csv" \
+            --coverage-csv "artifacts/v24-$MONTH-coverage.csv" \
+            --provenance-csv "artifacts/v24-$MONTH-provenance.csv"
+
+      - name: Upload monthly v2.4 checkpoint
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-v24-eval-${{ matrix.evaluation_month }}-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/v24-${{ matrix.evaluation_month }}*
+          if-no-files-found: error
+          retention-days: 90
+
+  expanded-history-anchor-hurdle-ev:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_anchor_hurdle_ev_v24' }}
+    needs: [request, expanded-history-anchor-hurdle-ev-monthly]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify account ledger
+        run: |
+          python -m pip install -e '.[dev]'
+          pytest -q tests/test_position_ledger.py
+
+      - name: Download frozen expanded-history feature checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v21-month-*-57
+          path: victory-trader/data/expanded-v21-final
+          merge-multiple: true
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35511268929'
+
+      - name: Download monthly v2.4 checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v24-eval-*-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/evals
+          merge-multiple: true
+
+      - name: Combine frozen v2.4 outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+
+          root = Path("artifacts/evals")
+          for suffix in (
+              "attempts",
+              "details",
+              "diagnostics",
+              "comparisons",
+              "coverage",
+              "provenance",
+              "trades",
+          ):
+              paths = sorted(root.glob(f"v24-*-{suffix}.csv"))
+              if len(paths) != 3:
+                  raise SystemExit(
+                      f"expected 3 {suffix} files, found {len(paths)}: {paths}"
+                  )
+              pd.concat(
+                  (pd.read_csv(path) for path in paths),
+                  ignore_index=True,
+              ).to_csv(
+                  f"artifacts/expanded-v24-{suffix}.csv",
+                  index=False,
+              )
+              print(suffix, ", ".join(str(path) for path in paths))
+          PY
+
+      - name: Replay all frozen v2.4 policies through position ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m victory_trader.position_ledger \
+            --attempts artifacts/expanded-v24-attempts.csv \
+            --dataset "2026-01=data/expanded-v21-final/state-2026-01.parquet" \
+            --dataset "2026-02=data/expanded-v21-final/state-2026-02.parquet" \
+            --dataset "2026-03=data/expanded-v21-final/state-2026-03.parquet" \
+            --output artifacts/expanded-v24-ledger \
+            | tee artifacts/expanded-v24-ledger.log
+
+      - name: Upload expanded-history v2.4 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-history-v24-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/evals/v24-*
+            victory-trader/artifacts/expanded-v24*
+          if-no-files-found: error
+          retention-days: 90
