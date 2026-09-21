@@ -33,6 +33,7 @@ from .universe import (
 
 FLATFILE_CACHE_DIR = Path("data/cache/massive-flatfiles")
 REST_CACHE_DIR = Path("data/cache/massive")
+MINUTE_VALUE_COLUMNS = ("o", "h", "l", "c", "v")
 
 
 def _prepare_prior_closes(
@@ -116,6 +117,118 @@ def _prepare_prior_closes(
     return prior, before - len(prior), resolved
 
 
+def _rows_match(left: pd.Series, right: pd.Series) -> bool:
+    for column in MINUTE_VALUE_COLUMNS:
+        left_value = pd.to_numeric(pd.Series([left[column]]), errors="coerce").iloc[0]
+        right_value = pd.to_numeric(pd.Series([right[column]]), errors="coerce").iloc[0]
+        if pd.isna(left_value) or pd.isna(right_value):
+            return False
+        if not isclose(
+            float(left_value),
+            float(right_value),
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            return False
+    return True
+
+
+def _prepare_minute_bars(
+    minutes: pd.DataFrame,
+    eligible: set[str],
+    day: date,
+    rest_client: MassiveClient,
+    open_ms: int,
+    close_ms: int,
+) -> tuple[pd.DataFrame, int, int]:
+    """Normalize minute rows and resolve conflicting ticker series via REST."""
+
+    frame = minutes.copy()
+    frame["ticker"] = frame["ticker"].astype(str).str.strip().str.upper()
+    frame["t"] = pd.to_numeric(frame["t"], errors="coerce")
+    frame = frame.loc[
+        frame["ticker"].isin(eligible)
+        & frame["t"].between(open_ms, close_ms - 1, inclusive="both")
+    ].copy()
+    frame["t"] = frame["t"].astype("int64")
+    before = len(frame)
+    keys = ["ticker", "t"]
+    duplicate_rows_collapsed = before - len(frame.drop_duplicates(keys))
+    duplicate = frame.duplicated(keys, keep=False)
+    conflicting_tickers: list[str] = []
+    conflicting_keys: list[tuple[str, int]] = []
+    if duplicate.any():
+        duplicate_rows = frame.loc[duplicate, [*keys, *MINUTE_VALUE_COLUMNS]]
+        distinct = duplicate_rows.groupby(keys, sort=True)[
+            list(MINUTE_VALUE_COLUMNS)
+        ].nunique(dropna=False)
+        conflicting_keys = [
+            (str(ticker), int(timestamp))
+            for ticker, timestamp in distinct.index[distinct.gt(1).any(axis=1)]
+        ]
+        conflicting_tickers = sorted({str(key[0]) for key in conflicting_keys})
+
+    resolved = 0
+    for ticker in conflicting_tickers:
+        payload = rest_client.minute_bars(ticker, day, adjusted=False)
+        rest = pd.DataFrame(payload.get("results") or [])
+        required = {"t", *MINUTE_VALUE_COLUMNS}
+        if rest.empty or not required.issubset(rest.columns):
+            raise ValueError(
+                f"could not resolve conflicting minute bars for {ticker}: "
+                "exact-date REST bars are empty or incomplete"
+            )
+        rest["t"] = pd.to_numeric(rest["t"], errors="coerce")
+        rest = rest.loc[
+            rest["t"].between(open_ms, close_ms - 1, inclusive="both")
+        ].copy()
+        rest["t"] = rest["t"].astype("int64")
+        if rest.empty or rest.duplicated("t").any():
+            raise ValueError(
+                f"could not resolve conflicting minute bars for {ticker}: "
+                "exact-date REST timestamps are empty or duplicated"
+            )
+
+        conflict_times = {
+            timestamp
+            for conflict_ticker, timestamp in conflicting_keys
+            if conflict_ticker == ticker
+        }
+        ticker_duplicates = frame.loc[
+            frame["ticker"].eq(ticker) & frame["t"].isin(conflict_times)
+        ]
+        rest_by_time = rest.set_index("t", drop=False)
+        for timestamp, candidates in ticker_duplicates.groupby("t", sort=True):
+            if timestamp not in rest_by_time.index:
+                raise ValueError(
+                    f"could not resolve conflicting minute bars for {ticker}: "
+                    f"REST bar missing at {timestamp}"
+                )
+            reference = rest_by_time.loc[timestamp]
+            matches = sum(
+                _rows_match(candidate, reference)
+                for _, candidate in candidates.iterrows()
+            )
+            if matches != 1:
+                raise ValueError(
+                    f"could not resolve conflicting minute bars for {ticker}: "
+                    f"expected one Flat File match at {timestamp}, found {matches}"
+                )
+
+        replacement = rest.loc[:, ["t", *MINUTE_VALUE_COLUMNS]].copy()
+        replacement["ticker"] = ticker
+        replacement["n"] = rest["n"] if "n" in rest.columns else pd.NA
+        frame = pd.concat(
+            [frame.loc[~frame["ticker"].eq(ticker)], replacement],
+            ignore_index=True,
+        )
+        resolved += 1
+
+    frame = frame.drop_duplicates(keys, keep="first").reset_index(drop=True)
+    frame["trading_day"] = day.isoformat()
+    return frame, duplicate_rows_collapsed, resolved
+
+
 def build_flatfile_scan_day(
     store: MassiveFlatFileStore,
     rest_client: MassiveClient,
@@ -155,15 +268,18 @@ def build_flatfile_scan_day(
         rest_client,
     )
 
-    minutes = minutes.loc[
-        minutes["ticker"].astype(str).str.upper().isin(eligible)
-        & pd.to_numeric(minutes["t"], errors="coerce").between(
-            open_ms,
-            close_ms - 1,
-            inclusive="both",
-        )
-    ].copy()
-    minutes["trading_day"] = day.isoformat()
+    (
+        minutes,
+        duplicate_minute_rows_collapsed,
+        conflicting_minute_tickers_resolved,
+    ) = _prepare_minute_bars(
+        minutes,
+        eligible,
+        day,
+        rest_client,
+        open_ms,
+        close_ms,
+    )
 
     scan = build_market_scan_frame(minutes, prior)
     return scan, {
@@ -175,6 +291,8 @@ def build_flatfile_scan_day(
         "same_day_split_exclusions": len(split_tickers),
         "duplicate_prior_rows_collapsed": duplicate_prior_rows_collapsed,
         "conflicting_prior_tickers_resolved": conflicting_prior_tickers_resolved,
+        "duplicate_minute_rows_collapsed": duplicate_minute_rows_collapsed,
+        "conflicting_minute_tickers_resolved": conflicting_minute_tickers_resolved,
         "regular_minute_input_rows": len(minutes),
         "scan_rows": len(scan),
         "scan_symbols": int(scan["ticker"].nunique()) if not scan.empty else 0,

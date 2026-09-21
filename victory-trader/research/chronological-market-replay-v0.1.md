@@ -98,3 +98,7 @@ exact-date, unadjusted REST daily bar and accepts a candidate only when exactly
 one value matches; ambiguous or inconsistent cases fail. The workflow also
 propagates replay failures through `tee` and verifies all core outputs are
 non-empty before artifact upload.
+
+The same rule applies to duplicate minute keys. A conflicting ticker is
+replaced by its exact-date, unadjusted REST minute series only after every
+conflicting timestamp matches exactly one Flat File candidate on OHLCV.

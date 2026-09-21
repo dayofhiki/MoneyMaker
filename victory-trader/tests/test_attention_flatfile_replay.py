@@ -127,6 +127,39 @@ class ResolvingRestClient(FakeRestClient):
         return {"results": [{"c": self.close}]}
 
 
+class DuplicateMinuteStore(FakeStore):
+    def minute_aggregates(self, day: date) -> pd.DataFrame:
+        frame = super().minute_aggregates(day)
+        duplicate = frame.loc[
+            frame["ticker"].eq("AAA")
+            & frame["t"].eq(frame.loc[frame["ticker"].eq("AAA"), "t"].iloc[0])
+        ].copy()
+        duplicate[["o", "h", "l", "c"]] = 99.0
+        return pd.concat([frame, duplicate], ignore_index=True)
+
+
+class MinuteResolvingRestClient(FakeRestClient):
+    def minute_bars(self, ticker, day, *, adjusted=False):
+        assert ticker == "AAA"
+        assert day == date(2026, 1, 2)
+        assert adjusted is False
+        start = datetime.combine(day, time(9, 30), tzinfo=ET)
+        return {
+            "results": [
+                {
+                    "t": int((start.timestamp() + minute * 60) * 1000),
+                    "o": close,
+                    "h": close,
+                    "l": close,
+                    "c": close,
+                    "v": 1_000,
+                    "n": 100,
+                }
+                for minute, close in enumerate([10.0, 10.6, 11.1])
+            ]
+        }
+
+
 def _config() -> AttentionConfig:
     return AttentionConfig(
         watch_enter_score=0.50,
@@ -220,3 +253,16 @@ def test_flatfile_adapter_rejects_conflict_without_unique_rest_match():
             ResolvingRestClient(12.0),
             date(2026, 1, 2),
         )
+
+
+def test_flatfile_adapter_resolves_conflicting_minute_series_with_rest():
+    scan, summary = build_flatfile_scan_day(
+        DuplicateMinuteStore(),
+        MinuteResolvingRestClient(),
+        date(2026, 1, 2),
+    )
+
+    assert len(scan) == 3
+    assert scan["c"].tolist() == [10.0, 10.6, 11.1]
+    assert summary["duplicate_minute_rows_collapsed"] == 1
+    assert summary["conflicting_minute_tickers_resolved"] == 1
