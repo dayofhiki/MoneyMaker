@@ -213,3 +213,67 @@ next intervention must change the causal intraday information or stopping
 target family, not tune zero thresholds or the 30-minute cap.
 
 April 2026+ remains sealed after any development failure.
+
+## Result — request 99
+
+Authoritative workflow run: `35623923057`. All three monthly jobs and the
+aggregate job completed successfully. April 2026 and later remained sealed.
+
+### Evaluation result
+
+| Month | v4.1 gross mean | v4.1 BASE mean | Day-balanced BASE | Mean hold | Median hold | v3.8 day-balanced BASE |
+|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | +0.127557% | -1.043485% | -1.047813% | 2.54m | 1m | -0.977244% |
+| 2026-02 | -0.027855% | -1.225487% | -1.227068% | 1.86m | 1m | -1.183378% |
+| 2026-03 | -0.115075% | -1.353732% | -1.362859% | 2.54m | 1m | -1.342825% |
+
+Matched day-balanced v4.1-minus-v3.8 differences were -0.070570%,
+-0.043690%, and -0.020035% in January-March. None had a positive bootstrap
+lower bound.
+
+The v4.1 primary BASE bootstrap intervals remained entirely negative:
+
+- January: [-1.231589%, -0.861648%]
+- February: [-1.405719%, -1.061734%]
+- March: [-1.545836%, -1.194999%]
+
+The aggregate artifact printed:
+
+`FAIL: diagnose residual stopping versus entry value`
+
+### Synthetic account replay
+
+Each monthly audit account resets to $10,000 with the unchanged $1,000 fixed
+fractional order budget. These are audit outputs, not deployment forecasts.
+
+| Month | BASE start | BASE ending balance | BASE return | Unresolved accepted positions |
+|---|---:|---:|---:|---:|
+| 2026-01 | $10,000.00 | $5,966.68 | -40.33% | 0 |
+| 2026-02 | $10,000.00 | $6,158.28 | -38.42% | 0 |
+| 2026-03 | $10,000.00 | $4,228.85 | -57.71% | 0 |
+
+Future research reports must include starting audit balance, ending audit
+balance and marked return alongside trade-level metrics.
+
+### Interpretation
+
+The honest-distillation intervention fixed the dominant v4.0 overholding
+failure. Mean holding time collapsed from roughly 20-22 minutes in v4.0 to
+roughly 2 minutes in v4.1, and v4.1 improved materially over v4.0 in January
+and February.
+
+However, v4.1 failed to improve the stronger executable baseline v3.8 in every
+month. The remaining-value information established by v3.9 therefore remains
+observable but is not captured well by a policy that distills the poor v4.0
+teacher's downstream behavior.
+
+The next experiment should keep v3.8 as the executable baseline and test a
+narrow patience override: only when v3.8 would EXIT, use the independently
+estimated v3.9 medium-horizon remaining-opportunity signal to decide whether
+one additional minute of patience is justified. This preserves v3.8's useful
+short-horizon decay controller while giving v3.9 exactly one role: rescuing
+premature exits.
+
+Do not tune v3.8's 0.5 threshold, v3.9's semantic zero boundary, the lag grid,
+or the 30-minute cap against request 99.
+
