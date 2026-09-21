@@ -1,5 +1,5 @@
 {
-  "request_id": 63,
+  "request_id": 64,
   "operation": "expanded_history_entry_ranker_v22",
-  "note": "Run preregistered expanded-history entry-ranker v2.2 on frozen Jan-Mar 2026 development months with strictly earlier training history. Use request 57 feature checkpoints and the fixed v0.3 EV/rank gates; record all attempts and replay the selected horizon through the account ledger. No new validation month, threshold tuning, brokerage action, or quote purchase."
+  "note": "Operational rerun of preregistered expanded-history entry-ranker v2.2 after request 63 produced no model outputs and exited 143. Use bounded-memory past-only loading that preserves full episode-rank labels before the frozen 3-minute cadence and leaves calibration/evaluation full resolution. No new validation month, threshold/model/cost changes, brokerage action, or quote purchase."
 }
