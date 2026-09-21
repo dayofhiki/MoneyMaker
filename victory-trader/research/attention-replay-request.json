@@ -1,7 +1,7 @@
 {
-  "request_id": 112,
+  "request_id": 114,
   "operation": "attention_market_replay_v01",
   "start_date": "2026-01-02",
   "end_date": "2026-01-09",
-  "note": "Phase 2E artifact-only rerun after request 110 completed the full six-session computation but GitHub artifact finalization returned HTTP 403 on the ~99 MB full partition bundle. Preserve every frozen replay rule and date. Use the compact artifact path, retaining WATCH/HOT/POSITION focus rows, runner crossings, summary and log. No threshold, capacity, universe, outcome or policy change. April 2026 and later remain sealed."
+  "note": "Phase 2F causal timestamp audit. Preserve request-112 score thresholds, capacities, universe rules, split handling, runner definition and compact artifact retention. The only semantic change is that each minute bar is acted on at bar_start_t + 60,000 ms because its close/volume/transactions are not known at bar start. Verify identical state/capture/count diagnostics with timestamps shifted causally. Do not tune any model parameter. April 2026 and later remain sealed."
 }
