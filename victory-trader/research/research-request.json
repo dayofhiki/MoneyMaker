@@ -1,5 +1,5 @@
 {
-  "request_id": 97,
-  "operation": "expanded_history_remaining_option_observability_v39",
-  "note": "Preregistered v3.9 after v3.8 recurrent path failure. Diagnose whether frozen v3.3 gated entries contain cost-positive exits within 30m and whether frozen v3.7 causal path-transition state predicts remaining multi-minute option value after removing fit-only held-minute baseline. No feature/lag/gate/cap/cost tuning. April+ sealed."
+  "request_id": 98,
+  "operation": "expanded_history_fitted_optimal_stopping_v40",
+  "note": "Preregistered v4.0 after v3.9 passed all oracle-ceiling and remaining-value observability checks in Jan-Feb-Mar. Fit minute-specific backward BASE stopping advantage models on fit only; freeze v3.3 opportunity gate, v3.7 causal state and exact lags, zero HOLD boundary, 30m cap, execution costs. Compare reached trajectories against exact v3.8 recurrent policy and always-HOLD 30m. April+ sealed."
 }
