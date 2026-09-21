@@ -1,0 +1,142 @@
+name: MoneyMaker Watch Episode Attention Probe
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/watch-episode-attention-request.json'
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: First development date
+        required: true
+        default: '2026-01-02'
+      end_date:
+        description: Last development date
+        required: true
+        default: '2026-01-16'
+      request_id:
+        description: Artifact request identifier
+        required: true
+        default: 'manual'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.read.outputs.enabled }}
+      start_date: ${{ steps.read.outputs.start_date }}
+      end_date: ${{ steps.read.outputs.end_date }}
+      request_id: ${{ steps.read.outputs.request_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_START: ${{ inputs.start_date }}
+          INPUT_END: ${{ inputs.end_date }}
+          INPUT_REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          if os.environ["EVENT_NAME"] == "workflow_dispatch":
+              enabled = True
+              start = os.environ["INPUT_START"]
+              end = os.environ["INPUT_END"]
+              request_id = os.environ["INPUT_REQUEST_ID"]
+          else:
+              payload = json.loads(
+                  Path("victory-trader/research/watch-episode-attention-request.json").read_text(
+                      encoding="utf-8"
+                  )
+              )
+              enabled = payload.get("operation") == "watch_episode_attention_value_v02"
+              start = str(payload.get("start_date", ""))
+              end = str(payload.get("end_date", ""))
+              request_id = str(payload.get("request_id", ""))
+          if enabled and (not start or not end or not request_id):
+              raise SystemExit("watch-episode request is incomplete")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as handle:
+              handle.write(f"enabled={'true' if enabled else 'false'}\n")
+              handle.write(f"start_date={start}\n")
+              handle.write(f"end_date={end}\n")
+              handle.write(f"request_id={request_id}\n")
+          PY
+
+  probe:
+    if: ${{ needs.request.outputs.enabled == 'true' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test adaptive attention research layer
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q             tests/test_watch_episode_attention_probe.py             tests/test_second_path_attention_probe.py             tests/test_attention_replay.py             tests/test_attention_flatfile_replay.py
+
+      - name: Restore market-wide Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-watch-episode-flatfiles-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-attention-v01-${{ runner.os }}-
+            moneymaker-state-v01-${{ runner.os }}-
+
+      - name: Restore one-second REST cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-watch-episode-rest-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-second-path-rest-${{ runner.os }}-
+            moneymaker-watch-episode-rest-${{ runner.os }}-
+
+      - name: Run frozen adaptive watch-episode probe
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.watch_episode_attention_probe             "${{ needs.request.outputs.start_date }}"             "${{ needs.request.outputs.end_date }}"             --dataset-output artifacts/watch-episode-attention-v02.parquet             --summary artifacts/watch-episode-attention-v02.json             | tee artifacts/watch-episode-attention-v02.log
+          test -s artifacts/watch-episode-attention-v02.parquet
+          test -s artifacts/watch-episode-attention-v02.json
+
+      - name: Save one-second REST cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-watch-episode-rest-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Upload adaptive attention audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-watch-episode-attention-v02-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/watch-episode-attention-v02.parquet
+            victory-trader/artifacts/watch-episode-attention-v02.json
+            victory-trader/artifacts/watch-episode-attention-v02.log
+          if-no-files-found: error
+          retention-days: 90
