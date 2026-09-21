@@ -1,7 +1,7 @@
 {
-  "request_id": 111,
+  "request_id": 113,
   "operation": "high_resolution_access_probe_v01",
   "ticker": "AAPL",
   "day": "2026-01-02",
-  "note": "Read-only entitlement probe for one-second aggregates, historical trades, trade Flat Files, and quote Flat Files under existing credentials. Do not purchase or change any subscription. No policy tuning or profitability inference. April 2026 and later remain sealed."
+  "note": "Retry the frozen read-only high-resolution entitlement probe after ticker normalization test fix. Check existing one-second aggregate, historical trades, trade Flat File HEAD, and quote Flat File HEAD access only. Do not purchase or change a subscription. No policy tuning or profitability inference. April 2026 and later remain sealed."
 }
