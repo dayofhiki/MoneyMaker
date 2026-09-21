@@ -36,6 +36,7 @@ MIN_EPISODE_LABELS = 8
 MIN_MONTH_TRADES = 15
 MIN_CALIBRATION_RANK_CANDIDATES = 15
 POLICIES = ("earliest_ev_cap1", "rank_top25_cap1")
+PRECOMPUTED_RANK_TARGET_PREFIX = "_precomputed_episode_rank_target_"
 EXTERNAL_FEATURES = (
     "short_ratio_latest_prior",
     "short_ratio_mean5_prior",
@@ -107,6 +108,118 @@ def read_model_panel(path: str | Path) -> pd.DataFrame:
     available = set(pq.ParquetFile(path).schema.names)
     columns = [column for column in MODEL_INPUT_COLUMNS if column in available]
     return pd.read_parquet(path, columns=columns)
+
+
+def _precomputed_rank_target_column(horizon: int) -> str:
+    return f"{PRECOMPUTED_RANK_TARGET_PREFIX}{horizon}m"
+
+
+def _forward_scoreable_days(
+    dataset_paths: dict[str, Path],
+    evaluation_month: str,
+) -> list[str]:
+    """Read only eligibility columns to reproduce the frozen 80/20 day split."""
+    days: set[str] = set()
+    for label in sorted(dataset_paths):
+        if label >= evaluation_month:
+            continue
+        minimal = pd.read_parquet(
+            dataset_paths[label],
+            columns=["trading_day", "c", "active_minute_fraction_15m"],
+        )
+        eligible = minimal.loc[_eligible(minimal), "trading_day"].astype(str)
+        days.update(eligible.unique().tolist())
+        del minimal, eligible
+        gc.collect()
+    result = sorted(days)
+    if len(result) < 2:
+        raise ValueError("not enough strictly-prior scoreable training days")
+    return result
+
+
+def _forward_fit_calibration_days(
+    dataset_paths: dict[str, Path],
+    evaluation_month: str,
+) -> tuple[set[str], set[str]]:
+    days = _forward_scoreable_days(dataset_paths, evaluation_month)
+    cut = max(1, int(len(days) * 0.80))
+    cut = min(cut, len(days) - 1)
+    return set(days[:cut]), set(days[cut:])
+
+
+def compact_forward_training_panel(
+    frame: pd.DataFrame,
+    *,
+    fit_days: set[str],
+    calibration_days: set[str],
+) -> pd.DataFrame:
+    """Preserve exact frozen fit/calibration semantics with bounded memory.
+
+    Fit-period episode ranks are computed on the full ticker-day trajectory
+    before the existing three-minute training cadence is applied. Calibration
+    rows remain unsampled because direct-EV affine calibration and the rank gate
+    use the full chronological calibration partition.
+    """
+    scoreable = frame.loc[_eligible(frame)].copy()
+    day = scoreable["trading_day"].astype(str)
+    fit_mask = day.isin(fit_days)
+    calibration_mask = day.isin(calibration_days)
+
+    fit_full = scoreable.loc[fit_mask].copy()
+    for horizon in HORIZONS:
+        column = _precomputed_rank_target_column(horizon)
+        fit_full[column] = np.nan
+        labeled_mask = _label_eligible(fit_full, horizon)
+        if labeled_mask.any():
+            labeled = fit_full.loc[labeled_mask]
+            fit_full.loc[labeled_mask, column] = episode_percentile_target(
+                labeled,
+                horizon,
+            ).to_numpy(dtype=float)
+
+    sampled_fit = _sample_training(fit_full)
+    calibration = scoreable.loc[calibration_mask].copy()
+    for horizon in HORIZONS:
+        column = _precomputed_rank_target_column(horizon)
+        if column not in calibration.columns:
+            calibration[column] = np.nan
+
+    compact = pd.concat([sampled_fit, calibration], ignore_index=True)
+    compact = compact.sort_values(
+        ["trading_day", "ticker", "t"],
+        kind="stable",
+    ).reset_index(drop=True)
+    return compact
+
+
+def load_forward_single_month_panels(
+    dataset_paths: dict[str, Path],
+    evaluation_month: str,
+) -> dict[str, pd.DataFrame]:
+    """Load a single forward fold without materializing every full past panel."""
+    if evaluation_month not in dataset_paths:
+        raise ValueError(f"evaluation month missing: {evaluation_month}")
+
+    fit_days, calibration_days = _forward_fit_calibration_days(
+        dataset_paths,
+        evaluation_month,
+    )
+    monthly: dict[str, pd.DataFrame] = {}
+    for label in sorted(dataset_paths):
+        if label > evaluation_month:
+            continue
+        panel = read_model_panel(dataset_paths[label])
+        if label < evaluation_month:
+            monthly[label] = compact_forward_training_panel(
+                panel,
+                fit_days=fit_days,
+                calibration_days=calibration_days,
+            )
+            del panel
+            gc.collect()
+        else:
+            monthly[label] = panel
+    return monthly
 
 
 def _coverage_row(frame: pd.DataFrame, month: str) -> dict[str, object]:
@@ -221,10 +334,17 @@ def train_episode_rank_model(
     scoreable = train.loc[_eligible(train)].copy()
     fit_period, _ = _chronological_fit_calibration_split(scoreable)
     labeled = fit_period.loc[_label_eligible(fit_period, horizon)].copy()
-    labeled["_episode_rank_target"] = episode_percentile_target(
-        labeled,
-        horizon,
-    )
+    precomputed = _precomputed_rank_target_column(horizon)
+    if precomputed in labeled.columns and labeled[precomputed].notna().any():
+        labeled["_episode_rank_target"] = pd.to_numeric(
+            labeled[precomputed],
+            errors="coerce",
+        )
+    else:
+        labeled["_episode_rank_target"] = episode_percentile_target(
+            labeled,
+            horizon,
+        )
     labeled = labeled.loc[labeled["_episode_rank_target"].notna()].copy()
     fit = _sample_training(labeled)
     if fit.empty:
@@ -900,15 +1020,25 @@ def main() -> int:
     args = parser.parse_args()
 
     dataset_paths = dict(args.dataset)
-    monthly: dict[str, pd.DataFrame] = {}
-    for label in sorted(dataset_paths):
-        if (
-            args.evaluation == "forward"
-            and args.evaluation_max_month is not None
-            and label > args.evaluation_max_month
-        ):
-            continue
-        monthly[label] = read_model_panel(dataset_paths[label])
+    if (
+        args.evaluation == "forward"
+        and args.evaluation_min_month is not None
+        and args.evaluation_min_month == args.evaluation_max_month
+    ):
+        monthly = load_forward_single_month_panels(
+            dataset_paths,
+            args.evaluation_min_month,
+        )
+    else:
+        monthly: dict[str, pd.DataFrame] = {}
+        for label in sorted(dataset_paths):
+            if (
+                args.evaluation == "forward"
+                and args.evaluation_max_month is not None
+                and label > args.evaluation_max_month
+            ):
+                continue
+            monthly[label] = read_model_panel(dataset_paths[label])
     (
         details,
         trades,
