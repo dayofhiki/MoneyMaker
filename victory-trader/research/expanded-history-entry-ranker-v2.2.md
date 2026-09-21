@@ -105,3 +105,18 @@ and pre-register a position-state HOLD/SELL model that includes entry price,
 unrealized P&L, time in position, available cash and the same causal market
 state. Adding SELL/HOLD before entry edge replication would increase
 data-mining freedom around a negative entry process.
+
+
+## Operational rerun note
+
+Request 63 (workflow run 35548309229) did not produce any v2.2 model result.
+All three monthly jobs terminated with exit code 143 while materializing and
+training from the expanded monthly panels. No monthly report or result artifact
+was produced, so no v2.2 outcome was inspected.
+
+The rerun changes only memory handling. Strictly-prior fit-period episode-rank
+targets are computed on the full ticker-day trajectory before retaining the
+already-frozen three-minute training cadence; the chronological calibration
+partition remains unsampled. The evaluation month remains full resolution.
+Model settings, gates, horizons, features, costs, date folds, and promotion
+criteria are unchanged.
