@@ -89,6 +89,15 @@ def checkpoints(frame: pd.DataFrame) -> dict[int, pd.DataFrame]:
     }
 
 
+def compact_checkpoint_panel(frame: pd.DataFrame) -> pd.DataFrame:
+    """Keep only the three causal decision rows consumed by the Q chain."""
+    by_stage = checkpoints(frame)
+    return pd.concat(
+        [by_stage[offset] for offset in base.CHECKPOINT_OFFSETS],
+        ignore_index=True,
+    )
+
+
 def split_fit_calibration(frame: pd.DataFrame):
     days = sorted(frame["trading_day"].astype(str).unique())
     cut = int(len(days) * (1 - CALIBRATION_FRACTION))
@@ -310,7 +319,33 @@ def main():
     for name in ("report", "details", "trades", "diagnostics", "comparisons", "coverage", "paths", "calibration"):
         parser.add_argument("--" + name + ("" if name == "report" else "-csv"), type=Path, required=True)
     args = parser.parse_args()
-    monthly = {label: read_model_panel(path) for label, path in args.dataset}
+    dataset_paths = dict(args.dataset)
+    labels = sorted(dataset_paths)
+    # A bounded forward job never needs months after its last evaluation month.
+    # Compact every loaded month to the exact 0/5/10-minute rows consumed by
+    # the frozen Q chain so full intraday panels do not accumulate in memory.
+    needed_labels = [
+        label
+        for label in labels
+        if args.evaluation != "forward"
+        or args.evaluation_max_month is None
+        or label <= args.evaluation_max_month
+    ]
+    monthly = {}
+    full_coverage = {}
+    for label in needed_labels:
+        panel = read_model_panel(dataset_paths[label])
+        if (
+            args.evaluation_min_month is None
+            or label >= args.evaluation_min_month
+        ) and (
+            args.evaluation_max_month is None
+            or label <= args.evaluation_max_month
+        ):
+            full_coverage[label] = _coverage_row(panel, label)
+        monthly[label] = compact_checkpoint_panel(panel)
+        del panel
+        gc.collect()
     details, trades, comparisons, coverage, paths, calibration_rows, diagnostics = [], [], [], [], [], [], []
     attempts, provenance = [], []
     for month, training, holdout in evaluation_folds(
@@ -349,7 +384,7 @@ def main():
             assert len(records_for_policy) == counts["buy_attempts"]
             assert sum(not r["legacy_evaluated"] for r in records_for_policy) == counts["unevaluated_attempts"]
             attempts.extend({"month": month, "policy": name, **r} for r in records_for_policy)
-        coverage.append(_coverage_row(holdout, month))
+        coverage.append(full_coverage.get(month, _coverage_row(holdout, month)))
         for policy, selected, counts in (("earliest_eligible_10m_cap1", baseline, {}),
                                          ("raw_same_fit_cap1", raw_trades, raw_paths),
                                          (POLICY, adjusted, path)):
