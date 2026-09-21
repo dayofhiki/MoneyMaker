@@ -118,7 +118,7 @@ For each January-March evaluation fold report at minimum:
 - recurrent exit-reason counts;
 - arithmetic gross/light/base/stress mean return;
 - day-balanced base return;
-- median, p05, positive-trade rate and severe-loss rate under BASE;
+- median, p05, positive-trade rate and severe-loss rate under BASE, with\n  severe loss fixed as BASE return <= -5.0%;
 - mean, median, p10, p90 and maximum holding minutes;
 - mean number of recurrent HOLD decisions;
 - same trade-return summaries for always-HOLD-to-30m;
