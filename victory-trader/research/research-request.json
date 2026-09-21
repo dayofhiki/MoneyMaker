@@ -1,5 +1,5 @@
 {
-  "request_id": 72,
-  "operation": "point_in_time_share_supply_probe",
-  "note": "Run the preregistered point-in-time share-supply availability probe on the completed v2.6 Jan-Mar development anchors. Sample 25 feasible earliest anchors per month without using outcomes, query Massive ticker details only at D-1 calendar day, and measure request/weighted-shares/share-class/implied-market-cap coverage. No April 2026+ access, no current-date fallback, no trading-model tuning or brokerage action."
+  "request_id": 73,
+  "operation": "expanded_history_supply_hurdle_ev_v27",
+  "note": "Run preregistered expanded-history point-in-time supply-state hurdle EV v2.7. Use only Sep 2025-Mar 2026 development data; April 2026+ remains sealed. First build D-1 Massive ticker-detail supply checkpoints only for exact v2.6 execution-feasible first anchors while retaining all first anchors for fold provenance. Then evaluate Jan/Feb/Mar strict past-only folds with the exact v2.4 three-head hurdle model on the v2.6 gated universe, comparing baseline features against the seven preregistered continuous supply features. Primary BUY rule is supply hurdle_EV > 0 at fixed 15m horizon. No supply thresholds, feature-subset tuning, timing rank, HOLD/SELL freedom, cost changes, brokerage actions, or current-date fallback."
 }
