@@ -24,6 +24,7 @@ def _state(times):
                 "h": o + 1.0,
                 "l": o - 0.5,
                 "c": o + 0.5,
+                "previous_close": 9.0,
                 "trailing_return_1m_pct": float(minute),
                 "hod_distance_pct": -float(minute),
                 "regular_vwap_distance_pct": float(minute),
