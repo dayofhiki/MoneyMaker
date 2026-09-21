@@ -1,5 +1,5 @@
 {
-  "request_id": 80,
+  "request_id": 81,
   "operation": "expanded_history_adaptive_horizon_diagnostic_v31",
-  "note": "Run pre-registered v3.1 adaptive-horizon diagnostic on frozen v3.0 January-March 2026 evaluated development trades; April 2026+ sealed."
+  "note": "Retry pre-registered v3.1 adaptive-horizon diagnostic after workflow operation allowlist fix; frozen v3.0 January-March 2026 evaluated development trades only; April 2026+ sealed."
 }
