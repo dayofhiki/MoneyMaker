@@ -10,6 +10,9 @@ from victory_trader.attention_flatfile_replay import (
     build_flatfile_scan_day,
     run_flatfile_attention_replay,
 )
+from victory_trader.attention_partitioned_replay import (
+    run_partitioned_flatfile_attention_replay,
+)
 from victory_trader.attention_runtime import AttentionConfig
 from victory_trader.flatfiles import FlatFileStoreStats
 
@@ -266,3 +269,45 @@ def test_flatfile_adapter_resolves_conflicting_minute_series_with_rest():
     assert scan["c"].tolist() == [10.0, 10.6, 11.1]
     assert summary["duplicate_minute_rows_collapsed"] == 1
     assert summary["conflicting_minute_tickers_resolved"] == 1
+
+
+def test_partitioned_replay_matches_monolithic_two_session_summary(tmp_path):
+    start = date(2026, 1, 2)
+    end = date(2026, 1, 5)
+
+    expected_scan, expected_trace, expected_summary = run_flatfile_attention_replay(
+        FakeStore(),
+        FakeRestClient(),
+        start,
+        end,
+        config=_config(),
+    )
+
+    scan_dir = tmp_path / "scan"
+    trace_dir = tmp_path / "trace"
+    actual_summary = run_partitioned_flatfile_attention_replay(
+        FakeStore(),
+        FakeRestClient(),
+        start,
+        end,
+        scan_dir=scan_dir,
+        trace_dir=trace_dir,
+        config=_config(),
+    )
+
+    actual_scan = pd.concat(
+        (pd.read_parquet(path) for path in sorted(scan_dir.rglob("*.parquet"))),
+        ignore_index=True,
+    )
+    actual_trace = pd.concat(
+        (pd.read_parquet(path) for path in sorted(trace_dir.rglob("*.parquet"))),
+        ignore_index=True,
+    )
+
+    pd.testing.assert_frame_equal(actual_scan, expected_scan)
+    pd.testing.assert_frame_equal(actual_trace, expected_trace)
+    assert actual_summary["replay"] == expected_summary["replay"]
+    assert [item["trading_day"] for item in actual_summary["partitions"]] == [
+        "2026-01-02",
+        "2026-01-05",
+    ]
