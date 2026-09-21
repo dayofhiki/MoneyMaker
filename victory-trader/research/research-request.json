@@ -1,5 +1,5 @@
 {
-  "request_id": 94,
+  "request_id": 95,
   "operation": "expanded_history_path_transition_continuation_v37",
-  "note": "Preregistered v3.7: same frozen v3.5 one-step HOLD/EXIT classifier, opportunity gate, folds, geometry and April+ seal; add exact-timestamp 1/2/3/5/8/13m deltas for all ten causal position-path features. No threshold, horizon, lag subset, phase or capacity tuning."
+  "note": "Clean v3.7 retry after request 94 failed in request-operation validation before any model job ran. Research specification unchanged: exact-timestamp 1/2/3/5/8/13m deltas for all ten frozen causal position-path features; same v3.5 classifier/gate/folds/geometry; April+ sealed."
 }
