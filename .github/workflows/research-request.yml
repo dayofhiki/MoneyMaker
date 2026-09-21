@@ -6230,6 +6230,11 @@ jobs:
     needs: request
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        evaluation_month: ['2026-01', '2026-02', '2026-03']
     defaults:
       run:
         working-directory: victory-trader
@@ -6273,11 +6278,12 @@ jobs:
           repository: dayofhiki/MoneyMaker
           run-id: '35322182758'
 
-      - name: Run strict past-only v3.6 months sequentially
+      - name: Run one strict past-only v3.6 month
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p artifacts
+          MONTH="${{ matrix.evaluation_month }}"
           args=()
           for M in 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03; do
             STATE="$(find source-state -name "state-$M.parquet" -print -quit)"
@@ -6285,26 +6291,25 @@ jobs:
             args+=(--anchor "$M=data/v32-adaptive/adaptive-anchors-$M.parquet")
             args+=(--state "$M=$STATE")
           done
-          for MONTH in 2026-01 2026-02 2026-03; do
-            PYTHONUNBUFFERED=1 python -m victory_trader.expanded_path_expected_continuation \
-              --evaluation-month "$MONTH" \
-              "${args[@]}" \
-              --report "artifacts/v36-$MONTH.txt" \
-              --diagnostics-csv "artifacts/v36-$MONTH-diagnostics.csv" \
-              --scored-csv "artifacts/v36-$MONTH-scored.csv" \
-              --bootstrap-csv "artifacts/v36-$MONTH-bootstrap.csv" \
-              --provenance-csv "artifacts/v36-$MONTH-provenance.csv" \
-              --success-csv "artifacts/v36-$MONTH-success.csv" \
-              | tee "artifacts/v36-$MONTH.log"
-          done
+          PYTHONUNBUFFERED=1 python -m victory_trader.expanded_path_expected_continuation \
+            --evaluation-month "$MONTH" \
+            "${args[@]}" \
+            --report "artifacts/v36-$MONTH.txt" \
+            --diagnostics-csv "artifacts/v36-$MONTH-diagnostics.csv" \
+            --scored-csv "artifacts/v36-$MONTH-scored.csv" \
+            --bootstrap-csv "artifacts/v36-$MONTH-bootstrap.csv" \
+            --provenance-csv "artifacts/v36-$MONTH-provenance.csv" \
+            --success-csv "artifacts/v36-$MONTH-success.csv" \
+            | tee "artifacts/v36-$MONTH.log"
 
-      - name: Upload v3.6 checkpoints
+      - name: Upload monthly v3.6 checkpoint
         uses: actions/upload-artifact@v4
         with:
-          name: moneymaker-expanded-v36-evals-${{ needs.request.outputs.request_id }}
-          path: victory-trader/artifacts/v36-*
+          name: moneymaker-expanded-v36-eval-${{ matrix.evaluation_month }}-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/v36-${{ matrix.evaluation_month }}*
           if-no-files-found: error
           retention-days: 90
+
   expanded-history-path-expected-continuation-v36:
     if: ${{ needs.request.outputs.operation == 'expanded_history_path_expected_continuation_v36' }}
     needs: [request, expanded-history-path-expected-continuation-v36-monthly]
@@ -6323,11 +6328,12 @@ jobs:
       - name: Install report dependencies
         run: python -m pip install -e '.[dev]'
 
-      - name: Download v3.6 checkpoints
+      - name: Download monthly v3.6 checkpoints
         uses: actions/download-artifact@v4
         with:
-          name: moneymaker-expanded-v36-evals-${{ needs.request.outputs.request_id }}
+          pattern: moneymaker-expanded-v36-eval-*-${{ needs.request.outputs.request_id }}
           path: victory-trader/artifacts/evals
+          merge-multiple: true
 
       - name: Combine frozen v3.6 outputs
         shell: bash
