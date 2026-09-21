@@ -111,15 +111,15 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p artifacts
-          python -m victory_trader.attention_flatfile_replay \
+          python -m victory_trader.attention_partitioned_replay \
             "${{ needs.request.outputs.start_date }}" \
             "${{ needs.request.outputs.end_date }}" \
-            --scan-output artifacts/attention-market-scan-v01.parquet \
-            --trace-output artifacts/attention-market-trace-v01.parquet \
+            --scan-dir artifacts/attention-market-scan-v01 \
+            --trace-dir artifacts/attention-market-trace-v01 \
             --summary artifacts/attention-market-summary-v01.json \
             | tee artifacts/attention-market-replay-v01.log
-          test -s artifacts/attention-market-scan-v01.parquet
-          test -s artifacts/attention-market-trace-v01.parquet
+          find artifacts/attention-market-scan-v01 -name '*.parquet' -print -quit | grep -q .
+          find artifacts/attention-market-trace-v01 -name '*.parquet' -print -quit | grep -q .
           test -s artifacts/attention-market-summary-v01.json
 
       - name: Save reusable Flat File cache
@@ -134,8 +134,8 @@ jobs:
         with:
           name: moneymaker-attention-market-replay-v01-${{ needs.request.outputs.request_id }}
           path: |
-            victory-trader/artifacts/attention-market-scan-v01.parquet
-            victory-trader/artifacts/attention-market-trace-v01.parquet
+            victory-trader/artifacts/attention-market-scan-v01/
+            victory-trader/artifacts/attention-market-trace-v01/
             victory-trader/artifacts/attention-market-summary-v01.json
             victory-trader/artifacts/attention-market-replay-v01.log
           if-no-files-found: error
