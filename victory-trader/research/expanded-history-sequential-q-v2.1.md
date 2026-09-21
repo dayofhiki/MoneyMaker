@@ -152,3 +152,72 @@ diagnostics to decide whether the next intervention is state information,
 execution protocol, candidate universe, or policy calibration. Do not tune this
 exact branch on the failed results.
 
+
+
+## Result
+
+Workflow request 62 completed successfully after the evaluation loader was
+changed to project Parquet inputs to model columns and retain only the causal
+0/5/10-minute checkpoints. The failed requests 60 and 61 exited with code 143
+while materializing full monthly panels. Request 61 proved that column
+projection alone was insufficient; checkpoint compaction then made all three
+monthly evaluations and the position-ledger replay complete. This isolates the
+operational failure to runner resource pressure from accumulated full panels,
+not an API, feature-join, date-leakage, or model exception.
+
+Run: https://github.com/dayofhiki/MoneyMaker/actions/runs/35547029321
+
+### Primary policy
+
+| Month | Evaluated trades | Base mean | Day-balanced base mean | Account base marked return | Accounting |
+|---|---:|---:|---:|---:|---|
+| 2026-01 | 2 | -1.699% | -1.699% | -0.340% | complete |
+| 2026-02 | 0 | n/a | n/a | 0.000% | complete, zero trades |
+| 2026-03 | 0 | n/a | n/a | 0.000% | incomplete: one unresolved attempt |
+
+The calibrated policy therefore failed the minimum-trade, positive-return,
+bootstrap, and account-promotion criteria. Zero trades are not profitable
+evidence.
+
+### Raw same-fit diagnostic
+
+| Month | Trades | Gross mean | Base mean | Day-balanced base mean | q0 Spearman |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 181 | -0.104% | -1.246% | -0.933% | 0.147 |
+| 2026-02 | 87 | +0.271% | -0.877% | -0.462% | 0.221 |
+| 2026-03 | 137 | +0.498% | -0.672% | -0.735% | 0.250 |
+
+More chronological history improved broad holdout ordering but did not create a
+stable cost-covering selected tail. Within raw BUY attempts, the highest
+predicted-Q quintile remained base-negative in January (-0.984%) and February
+(-1.446%); March was positive (+0.231%) but did not replicate across months.
+
+Raw BUY-attempt evaluation was also incomplete: 58/239, 39/126, and 39/176
+attempts were unevaluable in January-March, respectively. Missing entry
+references and missing ten-minute exit labels must remain explicit.
+
+### Calibration diagnosis
+
+The selected-tail optimism corrections ranged from 1.651 to 3.480 percentage
+points for BUY heads. Both WAIT heads had zero positive calibration
+predictions in every fold, so the frozen rule assigned infinite correction and
+disabled WAIT. The resulting policy was effectively conservative BUY-or-SKIP,
+not a useful repeated BUY/WAIT controller.
+
+### Data checks
+
+External-data coverage passed: short-volume latest-prior and 8-K query
+completion were 100% in every month; publication-safe short-interest coverage
+was 98.7%-98.9%. Date provenance remained strictly past-only.
+
+## Decision
+
+Fail v2.1 development promotion. Keep April 2026 and later validation sealed.
+
+Do not weaken the cost model, lower the zero action threshold, or reduce the
+optimism correction on these results. More history alone did not repair the
+unstable cost-covering tail. The next branch should test the previously observed
+within-episode entry-rank signal with the expanded chronological history and the
+already-fixed v0.3 gate. An explicit SELL/HOLD policy should only be evaluated
+after a replicating cost-positive entry policy exists; otherwise exit freedom
+would add degrees of freedom to a negative entry process.
