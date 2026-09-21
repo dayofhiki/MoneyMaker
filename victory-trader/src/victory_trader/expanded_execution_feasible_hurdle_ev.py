@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 
 from .expanded_anchor_hurdle_ev import (
-    HORIZON,
     POLICIES as V24_POLICIES,
     _metrics,
     calibration_diagnostics,
