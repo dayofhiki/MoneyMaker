@@ -201,6 +201,7 @@ def _diagnostic_row(frame: pd.DataFrame, *, month: str, pool: str, bucket: str) 
 
 
 def diagnostics(scored: pd.DataFrame, month: str) -> pd.DataFrame:
+    scored = scored.reset_index(drop=True)
     pools = {
         "all_anchors": pd.Series(True, index=scored.index),
         "opportunity_gate": pd.to_numeric(
@@ -220,8 +221,16 @@ def diagnostics(scored: pd.DataFrame, month: str) -> pd.DataFrame:
     rows = []
     for pool, pool_mask in pools.items():
         for bucket, bucket_mask in buckets.items():
-            rows.append(_diagnostic_row(scored.loc[pool_mask & bucket_mask], month=month, pool=pool, bucket=bucket))
-    return pd.DataFrame(rows)
+            mask = (pool_mask & bucket_mask).to_numpy(dtype=bool)
+            rows.append(_diagnostic_row(scored.loc[mask], month=month, pool=pool, bucket=bucket))
+    result = pd.DataFrame(rows)
+    overall = result.loc[
+        result["pool"].eq("all_anchors") & result["bucket"].eq("overall"),
+        "candidate_rows",
+    ]
+    if len(overall) != 1 or int(overall.iloc[0]) != len(scored):
+        raise AssertionError("diagnostic denominator differs from scored rows")
+    return result
 
 
 def day_bootstrap(scored: pd.DataFrame, month: str) -> pd.DataFrame:
@@ -266,9 +275,13 @@ def run_fold(anchor_paths: dict[str, Path], state_paths: dict[str, Path], evalua
             raise ValueError(f"missing state panel for {month}")
         sequence_parts.append(build_continuation_rows(pd.read_parquet(state_paths[month]), group))
     sequence = pd.concat(sequence_parts, ignore_index=True)
-    fit_rows = sequence.loc[sequence["_partition"].eq("fit")]
-    cal_rows = sequence.loc[sequence["_partition"].eq("calibration")]
-    eval_rows = sequence.loc[sequence["_partition"].eq("evaluation")].copy()
+    fit_rows = sequence.loc[sequence["_partition"].eq("fit")].reset_index(drop=True)
+    cal_rows = sequence.loc[
+        sequence["_partition"].eq("calibration")
+    ].reset_index(drop=True)
+    eval_rows = sequence.loc[
+        sequence["_partition"].eq("evaluation")
+    ].reset_index(drop=True)
     model = train_continuation_model(fit_rows, cal_rows)
     eval_rows["hold_probability"] = predict_continuation(eval_rows, model)
     diag = diagnostics(eval_rows, evaluation_month)
