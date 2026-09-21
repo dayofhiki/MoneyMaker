@@ -1,7 +1,7 @@
 {
-  "request_id": 117,
+  "request_id": 119,
   "operation": "market_relative_watch_value_v03",
   "start_date": "2026-01-02",
   "end_date": "2026-01-26",
-  "note": "Frozen market-relative WATCH episode-value experiment. Preserve Phase-2F causal minute-completion timestamps, v0.2 WATCH-episode construction, adaptive remaining_episode_peak_return_pct target, and fixed HGB hyperparameters. Use all eligible pre-runner WATCH-entry episodes. Fit 2026-01-02..2026-01-16 and evaluate untouched 2026-01-20..2026-01-26. Compare the request-116 minute baseline against the same model plus preregistered market-relative price/volume/transaction acceleration and market-regime features from completed minute bars. Do not reuse or tune the retired one-second feature family. No post-result tuning and April 2026+ remain sealed."
+  "note": "Exact retry of frozen request 117 after a data-resolver-only fix. Preserve start/end dates, fit/eval chronology, full eligible WATCH-entry population, adaptive episode target, baseline and market-relative feature lists, HGB hyperparameters, and promotion gate. The only change is accepting same-provider minute OHLC price differences consistent with sub-micro-relative serialization rounding while still requiring exact-like volume agreement and rejecting genuinely different duplicate series. No post-result tuning; April 2026+ remain sealed."
 }
