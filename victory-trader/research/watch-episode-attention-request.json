@@ -1,0 +1,7 @@
+{
+  "request_id": 116,
+  "operation": "watch_episode_attention_value_v02",
+  "start_date": "2026-01-02",
+  "end_date": "2026-01-16",
+  "note": "Frozen adaptive WATCH-episode attention-value experiment. Use Phase-2F causal minute-completion timestamps and unchanged AttentionConfig. Candidate episode begins only on nonfocus->WATCH, continues through WATCH/HOT until first SCAN/DROP or session end. Select 24 ticker-days/session by SHA256(day|ticker), at most first two eligible pre-runner WATCH-entry episodes/ticker-day. Fit 2026-01-02..01-09, evaluate untouched 2026-01-12..01-16. Predict remaining_episode_peak_return_pct using fixed request-115 minute baseline versus the same baseline plus frozen one-second features and identical HGB hyperparameters. No post-result tuning and April 2026+ remain sealed."
+}
