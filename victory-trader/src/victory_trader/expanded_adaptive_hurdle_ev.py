@@ -543,10 +543,14 @@ def run_fold(dataset_paths: dict[str, Path], evaluation_month: str):
             }
         ]
     )
-    bootstrap = day_cluster_bootstrap(
-        trades,
-        policy=PRIMARY,
-        samples=BOOTSTRAP_SAMPLES,
+    bootstrap = pd.DataFrame(
+        [
+            day_cluster_bootstrap(
+                trades,
+                policy=PRIMARY,
+                samples=BOOTSTRAP_SAMPLES,
+            )
+        ]
     )
     return (
         details,
