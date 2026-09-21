@@ -120,3 +120,59 @@ already-frozen three-minute training cadence; the chronological calibration
 partition remains unsampled. The evaluation month remains full resolution.
 Model settings, gates, horizons, features, costs, date folds, and promotion
 criteria are unchanged.
+
+
+## Partial executable result and retirement
+
+Request 64 (workflow run 35548915881) produced one complete monthly model
+artifact for February 2026. January and March terminated before producing model
+reports, so they are operationally incomplete and must not be interpreted as
+economic outcomes.
+
+The February result alone is sufficient to fail the exact pre-registered
+promotion rule:
+
+- earliest-EV policy: 5 evaluated trades, base mean -7.9763%;
+- rank-top25 policy: 2 BUY attempts, 1 evaluated trade, base return -2.4806%;
+- the other rank attempt had a missing gross label;
+- the rank policy therefore fails both the >=15 evaluated-trades requirement
+  and the positive-return requirement for February.
+
+The underlying relative timing signal remained positive:
+
+- 5m global rank Spearman 0.0762, episode-median 0.1111;
+- 10m global 0.1086, episode-median 0.1996;
+- 15m global 0.1347, episode-median 0.2415;
+- positive within-episode Spearman rates were 79.6%, 84.6%, and 86.4%.
+
+Thus finishing January and March cannot make this exact branch promotion-eligible.
+Do not spend additional runner resources merely to complete a branch that has
+already failed a mandatory monthly criterion.
+
+### Implementation audit note
+
+The v2.2 workflow checkpoints contain the frozen short-volume, 8-K and
+short-interest columns, but the implemented direct-EV and episode-rank models
+call the core `action_feature_frame`. Those external columns are therefore
+loaded but not consumed by the fitted models. Because the February output has
+already been inspected, adding them now would be a post-result model change,
+not an operational correction.
+
+Consequently v2.2 must not be cited as a test of the external multi-source
+features inside the entry ranker.
+
+## Decision
+
+Retire exact v2.2. April 2026 and later remain sealed.
+
+The next branch should preserve the repeatedly positive within-episode timing
+signal while removing the unstable absolute +0.50% EV scale gate. It should
+separate two causal questions:
+
+1. is this ticker-day episode likely to support a fixed cost-positive trade at
+   all?
+2. conditional on an eligible episode, when is the better causal entry?
+
+Any such branch must be separately pre-registered and must explicitly consume
+the frozen multi-source feature frame rather than relying on loaded-but-unused
+external columns.
