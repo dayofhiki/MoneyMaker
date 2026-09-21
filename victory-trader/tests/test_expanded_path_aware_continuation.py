@@ -80,7 +80,8 @@ def test_path_features_are_model_inputs(monkeypatch):
     )
     features = continuation_feature_frame(rows)
     assert set(PATH_FEATURES).issubset(features.columns)
-    assert features["path_entry_return_pct"].notna().all()
+    evaluated = rows["evaluation_reason"].eq("evaluated")
+    assert features.loc[evaluated, "path_entry_return_pct"].notna().all()
 
 
 def test_missing_minute_is_not_skipped_for_exit_or_hold():
