@@ -1,5 +1,5 @@
 {
-  "request_id": 69,
+  "request_id": 70,
   "operation": "expanded_history_execution_feasible_hurdle_ev_v26",
-  "note": "Run preregistered execution-feasible hurdle EV v2.6 on frozen Jan-Mar 2026 development months using strictly earlier Sep 2025+ history. Apply the fixed first-anchor execution-feasibility gate before fit/calibration/evaluation: dollar_volume_5m >= $100,000, transactions_5m >= 50, active_minute_fraction_15m >= 0.80; no later-anchor fallthrough. Retrain the exact v2.4 multi-source three-head hurdle model inside the gated universe and BUY only when hurdle_EV > 0. Keep fixed 15m horizon and cost/accounting conventions. No April 2026+ access, gate/threshold tuning, feature subset search, new external source, brokerage action, timing rank, HOLD/SELL freedom, or live deployment."
+  "note": "Operational retry of preregistered execution-feasible hurdle EV v2.6 after removing one unused import caught by ruff. Research protocol unchanged: frozen Jan-Mar 2026 development months, strictly earlier Sep 2025+ history, first-anchor gate dollar_volume_5m >= $100,000, transactions_5m >= 50, active_minute_fraction_15m >= 0.80, no later-anchor fallthrough, exact v2.4 three-head hurdle model retrained inside the gated universe, hurdle_EV > 0 primary rule, fixed 15m horizon and costs. No April 2026+ access or tuning."
 }
