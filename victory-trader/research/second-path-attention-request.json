@@ -1,0 +1,7 @@
+{
+  "request_id": 115,
+  "operation": "second_path_attention_observability_v01",
+  "start_date": "2026-01-02",
+  "end_date": "2026-01-09",
+  "note": "Frozen WATCH->HOT one-second information-value experiment. Use Phase-2F causal minute-completion timestamps. Sample 12 pre-crossing WATCH ticker-days per session by SHA256(day|ticker), first 8 eligible WATCH rows per selected ticker, query historical one-second aggregates once per ticker-day, and compare the fixed minute-only HistGradientBoostingRegressor against the same model plus frozen second-path features for future_max_3m_return_pct. First four trading sessions fit, final two evaluate. No threshold/horizon/hyperparameter tuning after results, no entry-policy claim, and April 2026 or later remain sealed."
+}
