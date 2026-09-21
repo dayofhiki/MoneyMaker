@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 
 from victory_trader.state_entry_ranker import (
+    _precomputed_rank_target_column,
     _select_first_trades,
+    compact_forward_training_panel,
     episode_percentile_target,
     evaluation_folds,
 )
@@ -177,3 +179,42 @@ def test_forward_folds_use_strictly_prior_months():
     assert folds[0][1] == ["2025-09", "2025-10", "2025-11", "2025-12"]
     assert folds[1][1][-1] == "2026-01"
     assert folds[2][1][-1] == "2026-02"
+
+
+
+def test_forward_compaction_preserves_full_episode_rank_before_sampling():
+    rows = []
+    for day in ("2025-12-01", "2025-12-02"):
+        count = 12 if day == "2025-12-01" else 4
+        for minute in range(count):
+            rows.append(
+                {
+                    "trading_day": day,
+                    "ticker": "AAA",
+                    "t": minute * 60_000,
+                    "c": 5.0,
+                    "active_minute_fraction_15m": 1.0,
+                    "minutes_since_10pct_cross": float(minute),
+                    "buy_return_5m_base_net_return_pct": float(minute),
+                    "buy_return_10m_base_net_return_pct": float(minute),
+                    "buy_return_15m_base_net_return_pct": float(minute),
+                }
+            )
+    frame = pd.DataFrame(rows)
+
+    compact = compact_forward_training_panel(
+        frame,
+        fit_days={"2025-12-01"},
+        calibration_days={"2025-12-02"},
+    )
+
+    fit = compact.loc[compact["trading_day"].eq("2025-12-01")].copy()
+    assert fit["minutes_since_10pct_cross"].tolist() == [0.0, 3.0, 6.0, 9.0]
+    expected = [1 / 12, 4 / 12, 7 / 12, 10 / 12]
+    observed = fit[_precomputed_rank_target_column(5)].tolist()
+    assert np.allclose(observed, expected)
+
+    calibration = compact.loc[
+        compact["trading_day"].eq("2025-12-02")
+    ]
+    assert len(calibration) == 4
