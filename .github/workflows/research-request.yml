@@ -42,7 +42,7 @@ jobs:
           required = ("request_id",)
           if operation == "research_month":
               required += ("start_date", "end_date", "chunk_days", "annotate_halts")
-          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "historical_state_build_v20", "expanded_history_sequential_q", "expanded_history_monthly_q_v21", "expanded_history_entry_ranker_v22", "expanded_history_episode_viability_rank_v23", "expanded_history_anchor_hurdle_ev_v24", "expanded_history_final_scale_hurdle_ev_v25", "expanded_history_execution_feasible_hurdle_ev_v26", "point_in_time_share_supply_probe", "expanded_history_supply_hurdle_ev_v27", "point_in_time_split_history_probe", "expanded_history_split_hurdle_ev_v28", "expanded_history_news_hurdle_ev_v29", "expanded_history_filing_semantics_hurdle_ev_v30", "expanded_history_adaptive_horizon_diagnostic_v31", "expanded_history_adaptive_hurdle_ev_v32", "expanded_history_opportunity_shared_q_v33", "expanded_history_one_step_continuation_v34", "expanded_history_path_aware_continuation_v35", "expanded_history_path_expected_continuation_v36", "expanded_history_path_transition_continuation_v37", "expanded_history_recurrent_path_policy_v38", "expanded_history_remaining_option_observability_v39", "expanded_history_fitted_optimal_stopping_v40", "expanded_history_honest_stopping_distillation_v41", "sec_8k_probe"}:
+          elif operation not in {"candidate_v2_development", "catalyst_probe", "state_trader_research", "state_value_model", "dynamic_state_policy", "nbbo_probe", "state_ev_risk", "quote_flatfile_probe", "dynamic_state_policy_v03", "state_oracle", "state_breadth_ev_risk", "state_action_value", "state_action_risk", "state_entry_ranker", "state_wait_value", "state_one_step_stop", "state_rank_turn", "state_rank_residual_fusion", "state_log_growth", "short_volume_probe", "state_short_volume_action_value", "relative_short_volume_context_probe", "state_relative_short_volume_action_value", "state_eight_k_action_value", "short_interest_probe", "state_multi_source_interaction", "state_robust_median_action_value", "state_pairwise_buy_wait", "state_buy_wait_skip", "state_fitted_sequential_q", "state_calibrated_sequential_q", "position_ledger_audit", "causal_nbbo_liquidity_probe", "historical_state_build_v20", "expanded_history_sequential_q", "expanded_history_monthly_q_v21", "expanded_history_entry_ranker_v22", "expanded_history_episode_viability_rank_v23", "expanded_history_anchor_hurdle_ev_v24", "expanded_history_final_scale_hurdle_ev_v25", "expanded_history_execution_feasible_hurdle_ev_v26", "point_in_time_share_supply_probe", "expanded_history_supply_hurdle_ev_v27", "point_in_time_split_history_probe", "expanded_history_split_hurdle_ev_v28", "expanded_history_news_hurdle_ev_v29", "expanded_history_filing_semantics_hurdle_ev_v30", "expanded_history_adaptive_horizon_diagnostic_v31", "expanded_history_adaptive_hurdle_ev_v32", "expanded_history_opportunity_shared_q_v33", "expanded_history_one_step_continuation_v34", "expanded_history_path_aware_continuation_v35", "expanded_history_path_expected_continuation_v36", "expanded_history_path_transition_continuation_v37", "expanded_history_recurrent_path_policy_v38", "expanded_history_remaining_option_observability_v39", "expanded_history_fitted_optimal_stopping_v40", "expanded_history_honest_stopping_distillation_v41", "expanded_history_dual_horizon_patience_override_v42", "sec_8k_probe"}:
               raise SystemExit(f"unsupported research operation: {operation}")
 
           missing = [key for key in required if key not in payload]
@@ -7207,6 +7207,226 @@ jobs:
           path: |
             victory-trader/artifacts/evals/v41-*
             victory-trader/artifacts/expanded-v41-*
+          if-no-files-found: error
+          retention-days: 90
+
+  expanded-history-dual-horizon-patience-override-v42-monthly:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_dual_horizon_patience_override_v42' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        evaluation_month: ['2026-01', '2026-02', '2026-03']
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and verify v4.2 dual-horizon policy
+        run: |
+          python -m pip install -e '.[dev]'
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_expanded_dual_horizon_patience_override.py tests/test_expanded_honest_stopping_distillation.py tests/test_expanded_recurrent_path_policy.py tests/test_expanded_remaining_option_observability.py tests/test_expanded_path_transition_continuation.py tests/test_expanded_path_aware_continuation.py
+
+      - name: Download frozen v3.2 anchors
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-expanded-v32-adaptive-anchors-84
+          path: victory-trader
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35596726252'
+
+      - name: Download frozen 2025 state panels
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-historical-state-v20-54
+          path: victory-trader/source-state
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35508605041'
+
+      - name: Download frozen 2026 state panels
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-state-trader-v01-8
+          path: victory-trader/source-state
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35322182758'
+
+      - name: Run one strict past-only v4.2 month
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          MONTH="${{ matrix.evaluation_month }}"
+          args=()
+          for M in 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03; do
+            STATE="$(find source-state -name "state-$M.parquet" -print -quit)"
+            test -n "$STATE" || { echo "$M state panel not found"; exit 1; }
+            args+=(--anchor "$M=data/v32-adaptive/adaptive-anchors-$M.parquet")
+            args+=(--state "$M=$STATE")
+          done
+          PYTHONUNBUFFERED=1 python -m victory_trader.expanded_dual_horizon_patience_override \
+            --evaluation-month "$MONTH" \
+            "${args[@]}" \
+            --report "artifacts/v42-$MONTH.txt" \
+            --trajectories-csv "artifacts/v42-$MONTH-trajectories.csv" \
+            --decisions-csv "artifacts/v42-$MONTH-decisions.csv" \
+            --summaries-csv "artifacts/v42-$MONTH-summaries.csv" \
+            --differences-csv "artifacts/v42-$MONTH-differences.csv" \
+            --bootstrap-csv "artifacts/v42-$MONTH-bootstrap.csv" \
+            --decision-diagnostics-csv "artifacts/v42-$MONTH-decision-diagnostics.csv" \
+            --exit-reasons-csv "artifacts/v42-$MONTH-exit-reasons.csv" \
+            --honest-target-csv "artifacts/v42-$MONTH-honest-target.csv" \
+            --override-training-csv "artifacts/v42-$MONTH-override-training.csv" \
+            --accounts-csv "artifacts/v42-$MONTH-accounts.csv" \
+            --provenance-csv "artifacts/v42-$MONTH-provenance.csv" \
+            --success-csv "artifacts/v42-$MONTH-success.csv" \
+            | tee "artifacts/v42-$MONTH.log"
+
+      - name: Upload monthly v4.2 checkpoint
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-v42-eval-${{ matrix.evaluation_month }}-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/v42-${{ matrix.evaluation_month }}*
+          if-no-files-found: error
+          retention-days: 90
+
+  expanded-history-dual-horizon-patience-override-v42:
+    if: ${{ needs.request.outputs.operation == 'expanded_history_dual_horizon_patience_override_v42' }}
+    needs: [request, expanded-history-dual-horizon-patience-override-v42-monthly]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install report dependencies
+        run: python -m pip install -e '.[dev]'
+
+      - name: Download monthly v4.2 checkpoints
+        uses: actions/download-artifact@v4
+        with:
+          pattern: moneymaker-expanded-v42-eval-*-${{ needs.request.outputs.request_id }}
+          path: victory-trader/artifacts/evals
+          merge-multiple: true
+
+      - name: Download frozen 2026 state panels for chained account
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-state-trader-v01-8
+          path: victory-trader/chained-state
+          github-token: ${{ github.token }}
+          repository: dayofhiki/MoneyMaker
+          run-id: '35322182758'
+
+      - name: Combine frozen v4.2 outputs and replay chained account
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          from victory_trader.expanded_recurrent_path_policy import account_replay
+
+          root = Path("artifacts/evals")
+          suffixes = (
+              "trajectories",
+              "decisions",
+              "summaries",
+              "differences",
+              "bootstrap",
+              "decision-diagnostics",
+              "exit-reasons",
+              "honest-target",
+              "override-training",
+              "accounts",
+              "provenance",
+              "success",
+          )
+          combined = {}
+          for suffix in suffixes:
+              paths = sorted(root.glob(f"v42-*-{suffix}.csv"))
+              if len(paths) != 3:
+                  raise SystemExit(
+                      f"expected 3 {suffix} files, found {len(paths)}"
+                  )
+              frame = pd.concat(
+                  (pd.read_csv(path) for path in paths),
+                  ignore_index=True,
+              )
+              frame.to_csv(
+                  f"artifacts/expanded-v42-{suffix}.csv",
+                  index=False,
+              )
+              combined[suffix] = frame
+
+          state_paths = sorted(Path("chained-state").rglob("state-2026-0[123].parquet"))
+          if len(state_paths) != 3:
+              raise SystemExit(
+                  f"expected Jan-Mar state panels, found {len(state_paths)}"
+              )
+          state = pd.concat(
+              (pd.read_parquet(path) for path in state_paths),
+              ignore_index=True,
+          )
+          chained = account_replay(
+              combined["trajectories"],
+              state,
+              "dual_horizon_patience_override_v42",
+              "2026-01_to_2026-03",
+          )
+          chained.to_csv(
+              "artifacts/expanded-v42-chained-account.csv",
+              index=False,
+          )
+
+          checks = combined["success"]
+          base = chained.loc[chained["scenario"].eq("base")]
+          if len(base) != 1:
+              raise SystemExit("expected one chained BASE account row")
+          base_row = base.iloc[0]
+          monthly_pass = bool(checks["all_frozen_checks_pass"].all())
+          chained_pass = bool(
+              base_row["ending_stale_marked_equity"] > 10000.0
+              and int(base_row["unresolved"]) == 0
+          )
+          decision = monthly_pass and chained_pass
+          Path("artifacts/expanded-v42-decision.txt").write_text(
+              "PASS: freeze v4.2 and preregister sealed April validation\n"
+              if decision
+              else "FAIL: diagnose patience override versus entry economics\n",
+              encoding="utf-8",
+          )
+          print(checks.to_string(index=False))
+          print("\n=== Chained Jan-Mar account ===")
+          print(chained.to_string(index=False))
+          print(Path("artifacts/expanded-v42-decision.txt").read_text())
+          PY
+
+      - name: Upload expanded-history v4.2 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-expanded-history-v42-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/evals/v42-*
+            victory-trader/artifacts/expanded-v42-*
           if-no-files-found: error
           retention-days: 90
 
