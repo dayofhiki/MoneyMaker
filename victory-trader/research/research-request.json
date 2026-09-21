@@ -1,5 +1,5 @@
 {
-  "request_id": 82,
-  "operation": "expanded_history_adaptive_horizon_diagnostic_v31",
-  "note": "Run pre-registered v3.1 adaptive-horizon diagnostic using frozen v3.0 selected trades joined to the original frozen January-March 2026 state-panel multi-horizon labels; April 2026+ sealed."
+  "request_id": 83,
+  "operation": "expanded_history_adaptive_hurdle_ev_v32",
+  "note": "Run pre-registered v3.2 adaptive multi-horizon hurdle EV on frozen September 2025-March 2026 development data. Reattach only frozen state-panel 1/2/5/10/15/30m labels to v3.0 semantic anchors. April 2026+ sealed."
 }
