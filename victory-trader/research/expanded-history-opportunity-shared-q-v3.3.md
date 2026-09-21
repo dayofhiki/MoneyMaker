@@ -164,3 +164,91 @@ raw-Q/chosen-return Spearman, selected-Q optimism and action mix. This amendment
 does not change a model, fit/calibration split, feature, action, threshold,
 correction, trade, promotion rule or April seal. Its output is descriptive only
 and cannot retroactively promote v3.3.
+
+## Result
+
+Requests 86 and 87 completed successfully. Request 86 ran the frozen policy;
+request 87 reproduced it exactly and added only the diagnostic amendment.
+
+Runs:
+
+- https://github.com/dayofhiki/MoneyMaker/actions/runs/35600153954
+- https://github.com/dayofhiki/MoneyMaker/actions/runs/35600997146
+
+### Frozen primary policy
+
+| Month | Evaluated trades | BASE mean | Day-balanced BASE | BASE account return | Accounting |
+|---|---:|---:|---:|---:|---|
+| 2026-01 | 0 | n/a | n/a | 0.000% | complete, zero trades |
+| 2026-02 | 0 | n/a | n/a | 0.000% | complete, zero trades |
+| 2026-03 | 1 | +3.870% | +3.870% | +0.387% | complete |
+
+This fails the frozen minimum-trade, three-month profitability, bootstrap and
+replication criteria. Zero trades are not evidence of profitability. April 2026
+and later remain sealed.
+
+### Opportunity gate
+
+| Month | AUC | Brier | Gate-positive rate |
+|---|---:|---:|---:|
+| 2026-01 | 0.645 | 0.235 | 40.5% |
+| 2026-02 | 0.698 | 0.220 | 42.4% |
+| 2026-03 | 0.673 | 0.224 | 44.3% |
+
+The gate replicated above-random opportunity discrimination in every month.
+This is the successful component of v3.3 and should be retained as a candidate
+state representation, not yet as a profitable entry rule.
+
+### Policy-level correction
+
+| Month | Selected calibration rows | Days | Mean daily optimism | Frozen correction |
+|---|---:|---:|---:|---:|
+| 2026-01 | 16 | 10 | +2.882% | 4.359% |
+| 2026-02 | 19 | 13 | +1.884% | 4.193% |
+| 2026-03 | 31 | 14 | +1.101% | 2.302% |
+
+The complete max-selection policy was strongly optimistic in calibration. The
+frozen upper-confidence correction therefore removed every evaluation trade in
+January and February and all but one in March.
+
+### Raw shared action ranking
+
+For the unchanged subset satisfying both frozen pre-correction conditions
+(`gate > 0.5` and `max raw shared Q > 0`):
+
+| Month | States / evaluated | Chosen BASE | Feasible oracle BASE | Regret | Exact-best | Any positive action | Q/return Spearman |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2026-01 | 30 / 28 | -1.812% | +3.452% | 5.264% | 21.4% | 71.4% | +0.193 |
+| 2026-02 | 30 / 27 | -1.686% | +2.126% | 3.813% | 7.4% | 77.8% | -0.205 |
+| 2026-03 | 17 / 16 | -0.237% | +3.117% | 3.355% | 18.8% | 87.5% | +0.347 |
+
+Thus the zero-trade outcome is not merely an overly conservative correction.
+Before correction, shared-Q selected tails were BASE-negative in all three
+months and action ordering was unstable. The model often detected a state with
+some profitable path but chose the wrong planned duration.
+
+Across all clock-feasible states the shared model also chose one minute 66.5%
+to 77.8% of the time and never chose two minutes. This removed v3.2's 30-minute
+max-scale bias but replaced it with a short-horizon bias rather than learning a
+stable relative action policy.
+
+## Decision
+
+Fail v3.3 development promotion. Retain the opportunity gate finding; reject
+both independent-head max EV and shared planned-horizon Q as trading policies.
+
+The next experiment should not tune the correction or horizon set. Test whether
+new causal state observed after entry contains one-step continuation information:
+
+1. enter conceptually at the frozen first anchor;
+2. after one minute, use the then-observable state to compare executable EXIT
+   now versus HOLD for one additional minute;
+3. model the incremental same-position advantage, treating entry cost as sunk
+   and retaining only future exit friction;
+4. repeat the diagnostic by time-since-entry and market phase;
+5. only if HOLD/EXIT ordering replicates across January-March should it be
+   composed into a recurrent one-minute policy with a forced maximum hold,
+   halt-aware accounting and no label fallback.
+
+This is the direct bridge from opportunity detection to the intended adaptive
+trader: ENTRY, observe new evidence, then repeatedly HOLD or EXIT.
