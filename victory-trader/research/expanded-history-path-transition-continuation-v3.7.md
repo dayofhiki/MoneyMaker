@@ -149,3 +149,44 @@ phase buckets or model capacity on January-March. Treat minute-level
 position-path transition state as insufficiently robust and move to a genuinely
 new intraday information source or a different transition target. April remains
 sealed either way.
+
+## Result — request 95
+
+Authoritative workflow run: `35612876119`. The clean request completed all
+three strict past-only monthly folds on the public GitHub Actions runners.
+April 2026 and later remained sealed.
+
+### Frozen opportunity-gate result
+
+| Month | AUC | Policy increment | Day-balanced increment | 95% bootstrap interval | Exact-reference coverage | Frozen pass |
+|---|---:|---:|---:|---:|---:|---|
+| 2026-01 | 0.544716 | +0.016652% | +0.018844% | [+0.003151%, +0.034705%] | 95.8482% | yes |
+| 2026-02 | 0.544527 | +0.025656% | +0.025549% | [+0.010545%, +0.040238%] | 95.3192% | yes |
+| 2026-03 | 0.555396 | +0.031810% | +0.033109% | [+0.022094%, +0.044402%] | 95.3550% | yes |
+
+All five preregistered checks passed in all three months. This is the first
+continuation branch in which January, February and March all clear the frozen
+bridge simultaneously.
+
+For context, the unchanged always-HOLD one-step mean in the same
+opportunity-gate rows was -0.034508%, -0.006837%, and -0.000645% in
+January-March. The classifier therefore did not merely inherit a generic
+one-minute continuation drift.
+
+Relative to v3.5, day-balanced policy value improved from
++0.006220/+0.012911/+0.026299% to
++0.018844/+0.025549/+0.033109%, while the January bootstrap lower bound moved
+from -0.007768% to +0.003151%. The intervention was only the preregistered
+exact-lag transition representation.
+
+### Decision
+
+Pass the v3.7 bridge exactly as preregistered. Freeze the v3.7 classifier
+family, causal path variables, 1/2/3/5/8/13-minute exact-lag grid,
+chronological folds, opportunity gate and strict P(HOLD)>0.5 rule.
+
+The next experiment must not tune the one-step classifier on these outcomes.
+It should compose the frozen signal into an executable recurrent trajectory and
+measure complete entry-to-exit returns under full round-trip execution costs,
+explicit missing/halt behavior, and account-level capital constraints.
+
