@@ -522,3 +522,72 @@ def test_short_volume_market_omits_ticker_and_paginates(monkeypatch):
     assert calls[0][1]["date.gte"] == "2026-01-01"
     assert calls[0][1]["date.lte"] == "2026-01-31"
     assert calls[1][1] == {"cursor": "next"}
+
+
+def test_second_bars_range_uses_one_second_aggregate_endpoint(monkeypatch):
+    from datetime import date
+
+    captured = {}
+
+    def fake_get(url, *, params, headers, timeout):
+        captured["url"] = url
+        captured["params"] = params
+        return FakeResponse({"results": []})
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    client.second_bars_range(
+        "aaa",
+        date(2026, 1, 2),
+        date(2026, 1, 2),
+    )
+
+    assert captured["url"].endswith(
+        "/v2/aggs/ticker/AAA/range/1/second/2026-01-02/2026-01-02"
+    )
+    assert captured["params"]["adjusted"] == "false"
+    assert captured["params"]["sort"] == "asc"
+    assert captured["params"]["limit"] == 50000
+
+
+def test_trades_use_nanosecond_timestamp_bounds_and_paginate(monkeypatch):
+    calls = []
+    payloads = [
+        {
+            "results": [
+                {
+                    "price": 5.01,
+                    "size": 100,
+                    "sip_timestamp": 1760000000000000000,
+                }
+            ],
+            "next_url": "https://api.massive.com/v3/trades/AAA?cursor=next",
+        },
+        {
+            "results": [
+                {
+                    "price": 5.02,
+                    "size": 50,
+                    "sip_timestamp": 1760000001000000000,
+                }
+            ],
+        },
+    ]
+
+    def fake_get(url, *, params, headers, timeout):
+        calls.append((url, params))
+        return FakeResponse(payloads.pop(0))
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    rows = client.trades(
+        "AAA",
+        timestamp_gte=1760000000000000000,
+        timestamp_lte=1760000002000000000,
+    )
+
+    assert len(rows) == 2
+    assert calls[0][0].endswith("/v3/trades/AAA")
+    assert calls[0][1]["timestamp.gte"] == 1760000000000000000
+    assert calls[0][1]["timestamp.lte"] == 1760000002000000000
+    assert calls[1][1] == {"cursor": "next"}
