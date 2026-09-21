@@ -87,10 +87,11 @@ The v0.1 suite covers:
 - causal timestamp and duplicate-batch guards;
 - checkpoint/restore continuity.
 
-## Next registered implementation bridge
+## Registered implementation bridge
 
-The next milestone should be an offline event-replay adapter, not a new
-profitability claim.
+Phase 2A, the offline chronological replay engine, is now implemented in
+`victory_trader.attention_replay`. It remains an infrastructure and coverage
+audit, not a profitability claim.
 
 1. Convert historical grouped-minute/minute state panels into chronological
    market-wide scan batches.
@@ -106,3 +107,7 @@ profitability claim.
 
 This ordering tests whether dynamic attention can preserve opportunity
 coverage before allowing downstream P&L to tune the scanner.
+
+The remaining next action is Phase 2B: connect complete Massive market-wide
+minute Flat Files and point-in-time universe metadata, then execute the frozen
+replay on a bounded January development slice.

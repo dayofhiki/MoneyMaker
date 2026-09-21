@@ -14,6 +14,13 @@ See `research/ROADMAP.md` and
 infrastructure; it is not evidence of a validated edge or permission for live
 execution.
 
+`victory_trader.attention_replay` provides the next offline bridge: it replays
+market-wide scan rows in timestamp order and reports runner capture,
+promotion lead time, tier occupancy, state churn, and requested data tiers.
+Its first baseline is a causal same-minute momentum percentile and explicitly
+ignores future-return columns. See
+`research/chronological-market-replay-v0.1.md`.
+
 ## Current formal research scope
 
 - U.S. common stocks primarily listed on Nasdaq, NYSE, or NYSE American

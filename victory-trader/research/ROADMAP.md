@@ -169,12 +169,21 @@ policy. It separates orchestration from prediction so later research models
 cannot silently redefine the final architecture. See
 `hierarchical-attention-runtime-v0.1.md`.
 
-### Milestone 2 — chronological market replay (next)
+### Milestone 2 — chronological market replay (in progress)
 
 Build an offline adapter that replays historical market-wide batches through
 the runtime and measures coverage, promotion timing, tier occupancy, churn,
 and data/compute demand. Capacity studies must not use evaluation returns to
 tune score thresholds.
+
+Phase 2A is implemented in `victory_trader.attention_replay`. It builds a
+causal cross-sectional scan baseline, replays each session in timestamp order,
+and audits runner capture plus observation-tier demand. Its input allowlist
+ignores outcome columns. See `chronological-market-replay-v0.1.md`.
+
+Phase 2B is next: adapt complete Massive minute Flat Files and point-in-time
+universe metadata into replay batches, then execute a bounded January
+development slice with settings fixed before results are inspected.
 
 ### Milestone 3 — policy integration
 
