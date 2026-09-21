@@ -60,7 +60,7 @@ def _config() -> AttentionConfig:
 def test_market_scan_score_uses_only_same_timestamp_cross_section():
     frame = build_market_scan_frame(_bars(), _prior())
 
-    last = frame.loc[frame["t"].eq(3 * MINUTE_MS)].set_index("ticker")
+    last = frame.loc[frame["t"].eq(4 * MINUTE_MS)].set_index("ticker")
     assert last.loc["AAA", "attention_score"] == 1.0
     assert last.loc["BBB", "attention_score"] == pytest.approx(2 / 3)
     assert last.loc["CCC", "attention_score"] == pytest.approx(1 / 3)
@@ -160,3 +160,12 @@ def test_sessions_are_replayed_with_fresh_attention_state():
 
     assert set(starts.index) == {"2026-01-02", "2026-01-05"}
     assert starts.loc["2026-01-02", "t"] < starts.loc["2026-01-05", "t"]
+
+
+def test_market_scan_decision_time_is_bar_completion_time():
+    frame = build_market_scan_frame(_bars(), _prior())
+
+    first = frame.sort_values(["t", "ticker"]).iloc[0]
+    assert first["bar_start_t"] == 0
+    assert first["t"] == MINUTE_MS
+    assert (frame["t"] - frame["bar_start_t"]).eq(MINUTE_MS).all()
