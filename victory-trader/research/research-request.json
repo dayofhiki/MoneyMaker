@@ -1,5 +1,5 @@
 {
-  "request_id": 90,
+  "request_id": 91,
   "operation": "expanded_history_path_aware_continuation_v35",
-  "note": "Preregistered v3.5 after corrected v3.4 request 89: unchanged folds, label, model, threshold, opportunity gate, costs and bridge criterion; add only causal entry-relative position-path state. April 2026+ remains sealed."
+  "note": "Clean rerun of preregistered v3.5 after test-fixture-only fixes. Research code, frozen folds, label, model, threshold, opportunity gate, costs, path feature family and bridge criterion unchanged. April 2026+ remains sealed."
 }
