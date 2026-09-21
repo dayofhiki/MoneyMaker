@@ -1,5 +1,5 @@
 {
-  "request_id": 62,
-  "operation": "expanded_history_monthly_q_v21",
-  "note": "Run the same preregistered Jan-Mar 2026 past-only sequential Q evaluations with model-column projection and causal 0/5/10-minute checkpoint compaction. Use request 57 feature checkpoints; no feature rebuild, new validation month, threshold tuning, brokerage action, or quote purchase."
+  "request_id": 63,
+  "operation": "expanded_history_entry_ranker_v22",
+  "note": "Run preregistered expanded-history entry-ranker v2.2 on frozen Jan-Mar 2026 development months with strictly earlier training history. Use request 57 feature checkpoints and the fixed v0.3 EV/rank gates; record all attempts and replay the selected horizon through the account ledger. No new validation month, threshold tuning, brokerage action, or quote purchase."
 }
