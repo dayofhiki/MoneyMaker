@@ -599,8 +599,19 @@ def select_policies(
             }
         )
 
+    trade_frame = pd.DataFrame(trades)
+    if trade_frame.empty:
+        trade_frame = scored.iloc[0:0].copy()
+        trade_frame["policy"] = pd.Series(dtype=str)
+        trade_frame["action_horizon_min"] = pd.Series(dtype=int)
+        trade_frame["selected_viability_probability"] = pd.Series(dtype=float)
+        trade_frame["selected_predicted_rank_score"] = pd.Series(dtype=float)
+        trade_frame["realized_gross_return_pct"] = pd.Series(dtype=float)
+        trade_frame["realized_base_net_return_pct"] = pd.Series(dtype=float)
+        trade_frame["realized_stress_net_return_pct"] = pd.Series(dtype=float)
+
     return (
-        pd.DataFrame(trades),
+        trade_frame,
         pd.DataFrame(attempts),
         pd.DataFrame(path_rows),
     )
