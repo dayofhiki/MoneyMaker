@@ -1,5 +1,5 @@
 {
-  "request_id": 76,
+  "request_id": 77,
   "operation": "expanded_history_split_hurdle_ev_v28",
-  "note": "Run pre-registered v2.8 split-state hurdle EV on Sep 2025-Mar 2026 development only; strict past-only folds; April 2026+ sealed; no threshold or cost changes."
+  "note": "Operational rerun of pre-registered v2.8 after fixing test fixture only; no research rule changed; April 2026+ sealed."
 }
