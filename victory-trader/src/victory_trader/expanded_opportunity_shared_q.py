@@ -325,6 +325,89 @@ def opportunity_diagnostics(scored: pd.DataFrame, month: str) -> pd.DataFrame:
     )
 
 
+def raw_shared_diagnostics(scored: pd.DataFrame, month: str) -> pd.DataFrame:
+    outcome = pd.DataFrame(index=scored.index)
+    for horizon in HORIZONS:
+        values = pd.to_numeric(scored[_target_column(horizon)], errors="coerce")
+        outcome[horizon] = values.where(decision_feasible(scored, horizon))
+    chosen = _chosen_target(scored)
+    oracle = outcome.max(axis=1, skipna=True)
+    raw_q = pd.to_numeric(scored["shared_best_raw_q_pct"], errors="coerce")
+    gate = pd.to_numeric(scored["opportunity_probability"], errors="coerce")
+    chosen_horizon = pd.to_numeric(
+        scored["shared_best_horizon_min"], errors="coerce"
+    )
+    subsets = {
+        "all_clock_feasible": chosen_horizon.gt(0),
+        "gate_positive": chosen_horizon.gt(0) & gate.gt(0.5),
+        "raw_q_positive": chosen_horizon.gt(0) & raw_q.gt(0.0),
+        "gate_and_raw_q_positive": (
+            chosen_horizon.gt(0) & gate.gt(0.5) & raw_q.gt(0.0)
+        ),
+    }
+    rows: list[dict[str, object]] = []
+    for label, selected in subsets.items():
+        valid = selected & chosen.notna() & oracle.notna() & raw_q.notna()
+        exact: list[bool] = []
+        for idx in scored.index[valid]:
+            horizon = int(chosen_horizon.loc[idx])
+            row = outcome.loc[idx].dropna()
+            exact.append(
+                bool(
+                    not row.empty
+                    and pd.notna(outcome.loc[idx, horizon])
+                    and float(outcome.loc[idx, horizon])
+                    >= float(row.max()) - 1e-12
+                )
+            )
+        entry: dict[str, object] = {
+            "month": month,
+            "subset": label,
+            "states": int(selected.sum()),
+            "chosen_evaluated": int(valid.sum()),
+            "chosen_evaluation_rate": (
+                float(valid.sum() / selected.sum()) if selected.any() else np.nan
+            ),
+            "chosen_base_mean_pct": float(chosen.loc[valid].mean())
+            if valid.any()
+            else np.nan,
+            "oracle_base_mean_pct": float(oracle.loc[valid].mean())
+            if valid.any()
+            else np.nan,
+            "mean_oracle_regret_pct": float(
+                (oracle.loc[valid] - chosen.loc[valid]).mean()
+            )
+            if valid.any()
+            else np.nan,
+            "chosen_is_best_horizon_rate": float(np.mean(exact))
+            if exact
+            else np.nan,
+            "any_base_positive_rate": float(
+                outcome.loc[valid].gt(0.0).any(axis=1).mean()
+            )
+            if valid.any()
+            else np.nan,
+            "raw_q_chosen_spearman": float(
+                raw_q.loc[valid].corr(chosen.loc[valid], method="spearman")
+            )
+            if valid.sum() > 1
+            else np.nan,
+            "mean_selected_q_optimism_pct": float(
+                (raw_q.loc[valid] - chosen.loc[valid]).mean()
+            )
+            if valid.any()
+            else np.nan,
+        }
+        for horizon in HORIZONS:
+            entry[f"action_{horizon}m_rate"] = (
+                float(chosen_horizon.loc[selected].eq(horizon).mean())
+                if selected.any()
+                else np.nan
+            )
+        rows.append(entry)
+    return pd.DataFrame(rows)
+
+
 def action_summary(
     trades: pd.DataFrame,
     attempts: pd.DataFrame,
@@ -457,6 +540,7 @@ def run_fold(dataset_paths: dict[str, Path], evaluation_month: str):
     )
     calibration_frame = pd.DataFrame([{"month": evaluation_month, **correction}])
     opportunity_frame = opportunity_diagnostics(scored, evaluation_month)
+    raw_diagnostics = raw_shared_diagnostics(scored, evaluation_month)
     actions = action_summary(trades, attempts, evaluation_month)
     ranks = action_rank_diagnostics(trades, evaluation_month)
     comparisons = selection_comparison(trades, evaluation_month)
@@ -476,6 +560,7 @@ def run_fold(dataset_paths: dict[str, Path], evaluation_month: str):
         attempts,
         calibration_frame,
         opportunity_frame,
+        raw_diagnostics,
         actions,
         ranks,
         comparisons,
@@ -492,6 +577,7 @@ def render_report(outputs: tuple[pd.DataFrame, ...]) -> str:
         attempts,
         calibration,
         opportunity,
+        raw_diagnostics,
         actions,
         ranks,
         comparisons,
@@ -511,6 +597,7 @@ def render_report(outputs: tuple[pd.DataFrame, ...]) -> str:
         ("Details", details),
         ("Policy-level calibration", calibration),
         ("Opportunity gate", opportunity),
+        ("Raw shared-Q diagnostics (non-policy)", raw_diagnostics),
         ("Action mix", actions),
         ("Action ranking and oracle regret", ranks),
         ("Selection comparison", comparisons),
@@ -547,7 +634,8 @@ def main() -> int:
     parser.add_argument("--report", type=Path, required=True)
     for name in (
         "details", "trades", "attempts", "calibration", "opportunity",
-        "actions", "ranks", "comparisons", "coverage", "provenance", "bootstrap",
+        "raw-diagnostics", "actions", "ranks", "comparisons", "coverage",
+        "provenance", "bootstrap",
     ):
         parser.add_argument(f"--{name}-csv", type=Path, required=True)
     args = parser.parse_args()
@@ -559,9 +647,9 @@ def main() -> int:
     args.report.write_text(report + "\n", encoding="utf-8")
     paths = (
         args.details_csv, args.trades_csv, args.attempts_csv,
-        args.calibration_csv, args.opportunity_csv, args.actions_csv,
-        args.ranks_csv, args.comparisons_csv, args.coverage_csv,
-        args.provenance_csv, args.bootstrap_csv,
+        args.calibration_csv, args.opportunity_csv, args.raw_diagnostics_csv,
+        args.actions_csv, args.ranks_csv, args.comparisons_csv,
+        args.coverage_csv, args.provenance_csv, args.bootstrap_csv,
     )
     for path, frame in zip(paths, outputs, strict=True):
         path.parent.mkdir(parents=True, exist_ok=True)

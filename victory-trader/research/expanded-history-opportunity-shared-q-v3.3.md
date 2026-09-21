@@ -140,3 +140,27 @@ Do not access April 2026 or later unless the primary satisfies all of:
   then HOLD or EXIT.
 
 Do not tune this exact branch after results.
+
+## Diagnostic-only amendment after request 86
+
+Request 86 completed before this amendment. The frozen primary selected zero
+trades in January and February and one trade in March because the policy-level
+correction was 4.359, 4.193 and 2.302 percentage points. The opportunity gate
+remained informative with monthly AUC 0.645, 0.698 and 0.673.
+
+The original output recorded action regret only for trades surviving the frozen
+correction, so it could not distinguish weak shared action ranking from a
+conservative policy correction. A diagnostic-only rerun will additionally
+record the unchanged shared-Q chosen action over four pre-existing subsets:
+
+- all clock-feasible states;
+- gate probability above the frozen 0.5 threshold;
+- raw maximum shared Q above the frozen zero threshold;
+- both frozen conditions together.
+
+For each subset report chosen-outcome coverage, chosen BASE mean, feasible
+hindsight-oracle mean/regret, exact-best rate, any-positive-action rate,
+raw-Q/chosen-return Spearman, selected-Q optimism and action mix. This amendment
+does not change a model, fit/calibration split, feature, action, threshold,
+correction, trade, promotion rule or April seal. Its output is descriptive only
+and cannot retroactively promote v3.3.

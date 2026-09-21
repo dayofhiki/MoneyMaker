@@ -5829,6 +5829,7 @@ jobs:
             --attempts-csv "artifacts/v33-$MONTH-attempts.csv" \
             --calibration-csv "artifacts/v33-$MONTH-calibration.csv" \
             --opportunity-csv "artifacts/v33-$MONTH-opportunity.csv" \
+            --raw-diagnostics-csv "artifacts/v33-$MONTH-raw-diagnostics.csv" \
             --actions-csv "artifacts/v33-$MONTH-actions.csv" \
             --ranks-csv "artifacts/v33-$MONTH-ranks.csv" \
             --comparisons-csv "artifacts/v33-$MONTH-comparisons.csv" \
@@ -5890,8 +5891,8 @@ jobs:
           root = Path("artifacts/evals")
           suffixes = (
               "attempts", "details", "trades", "calibration", "opportunity",
-              "actions", "ranks", "comparisons", "coverage", "provenance",
-              "bootstrap",
+              "raw-diagnostics", "actions", "ranks", "comparisons", "coverage",
+              "provenance", "bootstrap",
           )
           for suffix in suffixes:
               paths = sorted(root.glob(f"v33-*-{suffix}.csv"))
