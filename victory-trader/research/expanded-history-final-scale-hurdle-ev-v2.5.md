@@ -223,3 +223,65 @@ Interpret failure as follows:
   HOLD, or SELL freedom be introduced.
 
 No fresh validation month is consumed here.
+
+
+## Result — request 68
+
+Workflow run 35561473130 completed successfully for all three strict past-only
+development folds. April 2026 and later were not accessed.
+
+### Final-scale transport
+
+| Month | OLS intercept | OLS slope | Eval EV Spearman | Calibrated selected rate |
+|---|---:|---:|---:|---:|
+| 2026-01 | -0.1321 | 0.7583 | 0.1897 | 1.27% |
+| 2026-02 | -0.7570 | 0.5093 | 0.2607 | 0.00% |
+| 2026-03 | +0.5888 | 1.1905 | 0.2099 | 0.33% |
+
+All slopes were positive and broad evaluation ordering remained positive. The
+affine map therefore preserved rank information, but its transported zero
+crossing was unstable: it removed every February trade while expanding the
+March positive-EV region relative to raw hurdle EV.
+
+### Primary trading result
+
+| Month | Evaluated trades | Gross mean | BASE mean | Day-balanced BASE | Bootstrap 95% low |
+|---|---:|---:|---:|---:|---:|
+| 2026-01 | 26 | +0.900% | -0.289% | -0.218% | -2.142% |
+| 2026-02 | 0 | n/a | n/a | n/a | n/a |
+| 2026-03 | 8 | -2.097% | -3.089% | -3.395% | -6.426% |
+
+The January selected tail retained positive gross alpha but did not cover BASE
+friction. February was disabled economically by the transported zero crossing.
+March calibration selected a small tail that was wrong even before friction.
+
+### Frozen account replay
+
+BASE marked returns for the primary calibrated policy were:
+
+- January: -0.936% with 35 attempts, 31 accepted/closed and 4 missing entry
+  references;
+- February: 0.000% with zero attempts;
+- March: -2.471% with 9 attempts, 8 accepted/closed and 1 missing entry
+  reference.
+
+January and March accounting were incomplete because of missing entry
+references. February zero trading is not profitable evidence.
+
+## Decision
+
+Reject exact v2.5. Do not access April 2026 or later.
+
+The pre-registered failure branch applies: evaluation ordering did not collapse,
+but the selected tail remained sparse and BASE-negative. Therefore stop
+threshold and calibration engineering on January-March. The next intervention
+must change the candidate universe or add genuinely new causal state
+information.
+
+The immediate next branch will test a structural execution-feasibility candidate
+universe rather than a return-tuned subgroup. The gate will be fixed from the
+$1,000 synthetic order convention before results: the first eligible anchor must
+have at least $100,000 five-minute dollar volume, at least 50 five-minute
+transactions, and at least 0.80 active-minute fraction over the prior 15 minutes.
+A ticker-day that fails this first-anchor gate is skipped; the policy may not
+fall through to a later anchor.
