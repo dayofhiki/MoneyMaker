@@ -133,3 +133,46 @@ allowance, horizon, held-minute subset, phase subset, model capacity or v3.5
 path feature subset against January-March. The next branch must change the
 state-transition formulation or candidate information source rather than
 continue objective-threshold tweaking.
+
+## Result — request 93
+
+The authoritative public-run recovery request completed successfully after the
+repository was made public and the temporary sequential-month Actions workaround
+was reverted. The research specification itself was unchanged.
+
+Workflow run: `35610527038`.
+
+### Frozen opportunity-gate result
+
+| Month | Day-balanced selected policy | 95% bootstrap lower | 95% bootstrap upper | Other four frozen checks | Frozen pass |
+|---|---:|---:|---:|---|---|
+| 2026-01 | +0.008097% | -0.008212% | +0.023634% | all pass | no |
+| 2026-02 | +0.005428% | -0.005704% | +0.015998% | all pass | no |
+| 2026-03 | +0.013142% | +0.005072% | +0.021055% | all pass | yes |
+
+In every month adjusted-EV Spearman was positive, selected policy mean was
+positive, day-balanced mean was positive, and exact-reference coverage exceeded
+90%. January and February failed only the preregistered trading-day bootstrap
+lower-bound condition.
+
+The combined artifact printed:
+
+`FAIL: change state-transition formulation or information source`
+
+### Interpretation
+
+The arithmetic expected-value target did not erase the path-aware continuation
+signal, but it did not make that signal robust across development months. March
+passed completely, while January and February retained positive point estimates
+with confidence intervals crossing zero.
+
+Relative to v3.5, the magnitude-regression objective did not improve the frozen
+bridge consistently: v3.5 had already passed February and March, whereas v3.6
+passed March only. Therefore the next branch must not tune the zero-EV boundary,
+winsorization, correction, model capacity, held-minute subset or phase subset.
+
+Retain the v3.5 causal position-path state family. The next experiment changes
+the state-transition representation by adding strictly causal history of how
+those position-relative path variables are evolving. April 2026 and later remain
+sealed.
+
