@@ -182,10 +182,16 @@ and audits runner capture plus observation-tier demand. Its input allowlist
 ignores outcome columns. See `chronological-market-replay-v0.1.md`.
 
 Phase 2B is implemented in `victory_trader.attention_flatfile_replay` and the
-`attention_market_replay_v01` Actions operation. Dedicated request 103 runs a frozen
-2026-01-02 infrastructure smoke slice using complete Massive minute Flat Files,
-point-in-time universe metadata, prior-session nominal closes, and same-day
-split exclusion. Its result is not a threshold-tuning or profitability test.
+`attention_market_replay_v01` Actions operation. Request 107 completed the
+frozen 2026-01-02 market-wide smoke after hardening per-day caches, duplicate
+resolution, workflow failure propagation and missing-data capacity accounting.
+The audited outputs have no duplicate keys and respect the fixed WATCH 50/HOT
+10 budgets. Its coverage figures are not a threshold-tuning or profitability
+test.
+
+Phase 2C request 108 extends the unchanged replay through 2026-01-05 to verify
+session reset and repeat data integrity across two trading sessions before any
+broader January development replay.
 
 ### Milestone 3 — policy integration
 

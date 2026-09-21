@@ -107,3 +107,26 @@ Missing WATCH/HOT names retain their observation tier during the configured
 grace window and therefore reserve capacity until they return or DROP. This
 keeps the configured observation budgets strict even when the broad scan has
 intermittent bars.
+
+## Phase 2B smoke result
+
+Request 107 completed the 2026-01-02 market-wide smoke replay. Artifact audit
+verified 482,710 scan rows, 1,054,089 trace rows, 2,748 scan symbols and 390
+regular-session timestamps, with zero duplicate keys, no missing attention
+scores and chronological ordering in both Parquet outputs. The adapter
+resolved two conflicting prior-close tickers and two conflicting minute-series
+tickers against uniquely matching exact-date REST data.
+
+The first artifact exposed a capacity bug during intermittent bars: missing
+grace records were retained without reserving their WATCH/HOT slots. After the
+runtime fix, request 107 held maximum occupancy to exactly WATCH 50 and HOT 10.
+Its +10% runner coverage was 53.44% at WATCH-or-better and 3.44% at
+HOT-or-position, with a five-minute median WATCH lead. These figures are an
+infrastructure baseline only and must not be used to tune v0.1 thresholds.
+
+## Phase 2C — requested
+
+Request 108 extends the frozen replay through 2026-01-05 without changing any
+score or capacity setting. The two-session run checks session reset, per-day
+cache isolation, repeat duplicate handling and strict occupancy budgets before
+the development window is expanded further.

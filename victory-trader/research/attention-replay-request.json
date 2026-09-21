@@ -1,7 +1,7 @@
 {
-  "request_id": 107,
+  "request_id": 108,
   "operation": "attention_market_replay_v01",
   "start_date": "2026-01-02",
-  "end_date": "2026-01-02",
-  "note": "Phase 2B infrastructure smoke replay on one frozen January development day. Use collision-free per-day Flat File cache paths, complete market-wide minute files, nominal prior close, point-in-time common-stock taxonomy, same-day split exclusion, regular-session rows, and the preregistered v0.1 momentum-percentile attention baseline. Resolve duplicate daily or minute candidates only with uniquely matching exact-date unadjusted REST data. Missing WATCH/HOT grace states must reserve capacity so occupancy never exceeds the fixed 50/10 budgets. Audit coverage and data demand only; do not tune thresholds or claim profitability. April 2026 and later remain sealed."
+  "end_date": "2026-01-05",
+  "note": "Phase 2C two-session infrastructure replay over the frozen 2026-01-02 through 2026-01-05 development slice. Preserve the exact Phase 2B data rules, duplicate resolution, default score thresholds, WATCH/HOT capacities, and regular-session boundaries. Verify session reset, collision-free per-day cache behavior, strict occupancy budgets, chronological ordering, and repeat data quality across both sessions. Audit coverage and data demand only; do not tune thresholds or claim profitability. April 2026 and later remain sealed."
 }
