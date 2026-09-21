@@ -199,6 +199,19 @@ to one trading session, which is the scaling prerequisite for longer January
 development runs. Request 109 validates the partitioned path on the same frozen
 two-session slice before expansion.
 
+Phase 2E/2F now support six-session, day-partitioned market replay with compact
+artifacts and causal bar-completion decision timestamps. The first frozen
+baseline places 67.36% of +10% crossings in WATCH-or-better before crossing but
+only 4.37% in HOT/POSITION, with zero-minute median HOT lead. Historical
+one-second aggregates are available under the current data entitlement, while
+historical trades/NBBO are not.
+
+The active research task is therefore a preregistered WATCH -> HOT
+information-value test: determine whether the just-completed 60-second path at
+one-second resolution adds causal near-term urgency information beyond completed
+minute bars. This is an attention-layer diagnostic, not an entry-policy or
+profitability test.
+
 ### Milestone 3 — policy integration
 
 Connect causal attention scoring to SCAN/WATCH, entry/abstention to HOT, and
