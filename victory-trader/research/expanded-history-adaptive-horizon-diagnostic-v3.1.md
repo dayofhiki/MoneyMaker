@@ -107,3 +107,66 @@ attractive month or one horizon cell.
 - no claim that the oracle is executable;
 - no change to the existing LIGHT/BASE/STRESS cost assumptions;
 - no live, paper, or brokerage action.
+
+
+## Result — request 82
+
+Workflow run 35594971454 completed successfully. Artifact
+`moneymaker-expanded-history-v31-82` has digest
+`sha256:426d0c5bec8161506b37cd0ed19889eb7d3406490f69f4c72db2824e591e133e`.
+
+The diagnostic reattached only the already-frozen state-panel outcomes at the
+exact v3.0 evaluated trade keys. No model was refit and April 2026+ remained
+sealed.
+
+### Primary v3.0 semantic tail
+
+| Month | Trades | 15m BASE | Any BASE-positive horizon | Horizon miss | Candidate miss | Oracle BASE |
+|---|---:|---:|---:|---:|---:|---:|
+| 2026-01 | 48 | -0.526% | 75.0% | 37.5% | 25.0% | +2.881% |
+| 2026-02 | 6 | -2.472% | 33.3% | 0.0% | 66.7% | -1.052% |
+| 2026-03 | 4 | -6.058% | 25.0% | 25.0% | 75.0% | -2.513% |
+
+In January, 60% of the trades that lost at the fixed 15-minute horizon had at
+least one other frozen horizon with positive BASE return. The per-trade
+hindsight horizon ceiling improved mean BASE by +3.408 percentage points.
+
+That pattern did not transport to February or March. The hindsight oracle itself
+remained negative in both months, so horizon choice alone could not rescue those
+selected tails. Their dominant failure was candidate/state selection.
+
+Across all 58 primary trades, the diagnostic split was nearly even: 20 fixed-15
+winners, 19 horizon misses, and 19 candidate misses. This pooled split is
+descriptive only because January contributes most observations.
+
+### Broad execution-feasible anchors
+
+The broad first-anchor universe showed a stable but difficult opportunity:
+any frozen horizon was BASE-positive for 47.3% / 47.6% / 44.9% of anchors in
+January / February / March, while the hindsight best-horizon BASE mean was
++1.138% / +0.831% / +1.091%. Fixed 15-minute BASE means remained about
+-1.4% to -1.8%.
+
+This is not an executable edge. It shows that the data contain state-dependent
+holding-horizon opportunity, while roughly half the anchors have no profitable
+frozen horizon after BASE costs.
+
+## Decision
+
+v3.1 confirms that fixed 15 minutes is a real bottleneck for some opportunities,
+especially January, but it is not the sole or dominant explanation for the
+cross-month failure.
+
+The next branch should therefore combine both decisions rather than merely swap
+15 minutes for another fixed horizon:
+
+1. estimate action-conditioned upside/downside and BASE expected value for the
+   frozen 1/2/5/10/15/30-minute actions from the same causal state;
+2. abstain when no action has positive predicted BASE EV;
+3. otherwise choose the horizon with the highest predicted BASE EV;
+4. evaluate the actually chosen horizon, not the hindsight oracle;
+5. report max-action optimism and unevaluable-action coverage explicitly.
+
+This is the next intermediate step toward a continuous HOLD/SELL trader. It
+tests whether causal state can choose both whether to trade and how long to hold
+before adding unrestricted exit freedom.
