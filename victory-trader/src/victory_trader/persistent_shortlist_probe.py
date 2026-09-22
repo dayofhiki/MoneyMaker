@@ -16,7 +16,6 @@ from .flatfiles import MassiveFlatFilesClient, MassiveFlatFileStore
 from .hierarchical_attention_runtime import _prior_population_capture
 from .market_calendar import is_us_equity_trading_day
 from .market_wide_focus_hazard import (
-    FIT_END,
     HAZARD_COLUMNS,
     build_market_hazard_rows,
     fit_market_hazard,
@@ -27,12 +26,13 @@ from .multi_day import daterange
 from .second_path_attention_probe import BASELINE_FEATURES
 
 EVAL_DAYS = [
-    "2026-03-25",
-    "2026-03-26",
-    "2026-03-27",
-    "2026-03-30",
-    "2026-03-31",
+    "2026-01-12",
+    "2026-01-13",
+    "2026-01-14",
+    "2026-01-15",
+    "2026-01-16",
 ]
+PROBE_FIT_END = "2026-01-09"
 FOCUS_BUDGET = 60
 SHORTLIST_BUDGET = 20
 INCUMBENT_RANK_BUFFER = 40
@@ -80,7 +80,14 @@ def select_persistent_shortlist(
     for _, day_rows in focus.groupby("trading_day", sort=True):
         incumbents: dict[str, pd.Series] = {}
         admitted: set[str] = set()
-        for _, group in day_rows.groupby("t", sort=True):
+        decision_groups = list(day_rows.groupby("t", sort=True))
+        final_index = max(len(decision_groups) - 1, 1)
+        for decision_index, (_, group) in enumerate(decision_groups):
+            unlocked_budget = SHORTLIST_BUDGET + int(
+                (max_session_tickers - SHORTLIST_BUDGET)
+                * decision_index
+                / final_index
+            )
             ranked = group.sort_values(
                 ["market_hazard_probability", "ticker"],
                 ascending=[False, True],
@@ -104,7 +111,7 @@ def select_persistent_shortlist(
                 if len(retained) + len(fill_rows) >= SHORTLIST_BUDGET:
                     break
                 ticker = str(candidate["ticker"])
-                if ticker not in admitted and len(admitted) >= max_session_tickers:
+                if ticker not in admitted and len(admitted) >= unlocked_budget:
                     continue
                 admitted.add(ticker)
                 fill_rows.append(candidate)
@@ -247,7 +254,7 @@ def run_probe(
 
     for day in daterange(start, end):
         day_text = day.isoformat()
-        if day_text > FIT_END or not is_us_equity_trading_day(day):
+        if day_text > PROBE_FIT_END or not is_us_equity_trading_day(day):
             continue
         scan, scan_summary = build_flatfile_scan_day(store, scan_client, day)
         rows = build_market_hazard_rows(scan)
@@ -322,10 +329,10 @@ def run_probe(
         ],
     ].copy()
     summary: dict[str, object] = {
-        "schema_version": 3,
+        "schema_version": 4,
         "start": start.isoformat(),
         "end": end.isoformat(),
-        "fit_end": FIT_END,
+        "fit_end": PROBE_FIT_END,
         "eval_days": EVAL_DAYS,
         "focus_budget": FOCUS_BUDGET,
         "shortlist_budget": SHORTLIST_BUDGET,

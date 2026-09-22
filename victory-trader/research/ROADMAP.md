@@ -243,11 +243,16 @@ Request 128 raised mean retention to 76.31% and limited pooled capture loss to
 ticker-day demand fell only 18.51% rather than 25%. Rank-only persistence has
 therefore reached its useful limit.
 
-The active task is preregistered v1.2 request 129. On untouched 2026-03-25
-through 2026-03-31 sessions, it adds an explicit 300-symbol session admission
-budget while keeping the rank-40 policy and every prior gate unchanged. April
-2026 and later remain sealed. This is still an attention-layer bridge, not a
-profitability claim.
+Request 129 met the resource objective with a 46.35% ticker-day reduction, but
+first-come budget allocation collapsed exact-prior capture from 53.56% to
+40.17%. The failure is late-session admission starvation, so the first-come
+policy is rejected.
+
+The active task is development-only request 130. It fits through 2026-01-09
+and uses the previously seen 2026-01-12 through 2026-01-16 block to test linear
+release of the same 300-symbol budget across the session. Passing cannot promote
+the policy; it only justifies a separately preregistered sealed test. April 2026
+and later remain sealed.
 
 ### Milestone 3 — policy integration
 
