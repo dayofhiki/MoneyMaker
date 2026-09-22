@@ -32,3 +32,16 @@ percentage points, daily noninferiority on four of five days, at least 95%
 conditional focus capture, at least 25% fewer ticker-days, at least 70%
 retention, and occupancy at most 20. Passing only authorizes a separately
 preregistered sealed evaluation; it does not promote the model.
+
+## Result — request 130
+
+The paced budget failed the development viability criteria, so the sealed
+holdout remains unopened. It reduced unique ticker-days from 2,518 to 1,467
+(41.74%) and raised retention from 58.26% to 80.63%, but exact-prior capture
+fell from 61.57% to 52.60%, an 8.97 percentage-point loss. Conditional capture
+versus learned focus was only 82.47%, and no day met the two-point
+noninferiority rule.
+
+Together with request 129, this shows that the 300-symbol ceiling itself—not
+only first-come timing—is incompatible with the current cross-sectional signal.
+The admission-cap family is rejected without spending April data.
