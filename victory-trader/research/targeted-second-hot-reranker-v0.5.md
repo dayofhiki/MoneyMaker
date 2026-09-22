@@ -148,3 +148,69 @@ If the gate fails, do not tune top-20 size, second-feature windows or model
 hyperparameters on these dates. The next branch should move high-resolution
 information to the HOT -> ENTRY/ABSTAIN problem rather than repeatedly tuning
 WATCH -> HOT.
+
+
+## Result — request 122
+
+Request 122 completed successfully after request 121 was retried unchanged
+following minute-data integrity fixes.
+
+Untouched evaluation covered 15,271 all-WATCH rows and 260 next-minute first
++10% crossings on 2026-02-03, 04, 05, 06 and 09.
+
+The frozen stage-1 top-20 shortlist retained 258 of 260 positive events:
+
+- pooled shortlist positive-event coverage: **99.23%**.
+
+Pooled stage-2 comparison:
+
+| Metric | Minute reranker | Minute + targeted 1s reranker |
+| --- | ---: | ---: |
+| PR-AUC | 0.268409 | **0.274595** |
+| ROC-AUC | 0.944578 | **0.944969** |
+| Brier | 0.0142469 | **0.0142426** |
+| HOT-10 all-WATCH capture | 95.38% | **95.77%** |
+| captured events | 248 / 260 | **249 / 260** |
+| mean positive-candidate rank | 2.9690 | **2.8721** |
+
+Second HOT-10 capture was non-lower on all five evaluation sessions.
+
+The preregistered promotion gate **passes**.
+
+Data audit:
+
+- 2,624 candidate ticker-days requested;
+- 2,624 returned non-empty second aggregates;
+- candidate-row second-data coverage: 100%;
+- 4,558,299 second aggregate rows;
+- zero REST retries.
+
+## Interpretation
+
+This is the first preregistered evidence that targeted one-second observation
+adds incremental value after a cheap minute-level attention model has already
+narrowed the market.
+
+The improvement is modest rather than transformative. The main value is
+architectural: broad one-second observation is unnecessary, while selective
+high-resolution observation of a frozen urgent shortlist improves ranking
+without degrading any preregistered allocation criterion.
+
+The promoted hierarchy is therefore:
+
+market-wide completed-minute scan
+-> WATCH
+-> minute recurrent hazard shortlist
+-> one-second observation of top-20
+-> one-second reranked HOT-10.
+
+The next experiment must place this hierarchy inside a **true chronological
+attention runtime** on fresh development sessions. HOT membership must persist,
+turn over and compete through time rather than being reconstructed as an
+independent post-hoc top-10 at each timestamp. The runtime replay should compare
+the frozen learned hierarchy against the existing baseline attention runtime,
+measuring pre-crossing capture, lead time, HOT occupancy, churn and displacement
+behavior.
+
+Passing v0.5 does not create an ENTRY/BUY signal. One-second information is
+promoted only as an attention-allocation input.
