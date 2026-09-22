@@ -73,3 +73,30 @@ If the gate fails, do not tune on these dates. Attribute the loss to focus
 admission, shortlist retention or HOT allocation and change only the failed
 layer on a later untouched development block.
 
+## Result — request 124
+
+Request 124 completed successfully on the five frozen sessions. The formal
+promotion gate failed, so the hierarchy is not promoted to ENTRY/ABSTAIN.
+
+Across 865 first +10% crossings, the old percentile runtime held 0 runners in
+HOT at the exact prior minute. The learned hierarchy held 321 (37.11%), passed
+the preregistered 30% immediate-HOT floor, and was non-lower on all five days.
+Its final-two-minute and final-five-minute capture rates were 38.73% and
+42.66%; 23.47% of runners were HOT throughout both final minutes.
+
+The loss decomposition isolates the failed layer:
+
+- focus-pool exact-prior-minute capture: 336/865 (38.84%), below the frozen
+  50% requirement;
+- top-20 exact-prior-minute capture: 332/865 (38.38%), retaining 98.81% of
+  focus captures and passing the 95% conditional requirement;
+- one-second candidate coverage: 100%;
+- maximum HOT occupancy: 10;
+- mean HOT-set retention: 69.61%, with 1.97 slots replaced per decision.
+
+Exact-prior-minute learned HOT capture by day was 24.43%, 37.74%, 46.04%,
+50.88% and 36.64% in chronological order. Every session had at least 10
+crossings. Therefore the objective bottleneck is market-wide admission into
+the 60-name focus pool, not top-20 retention, second-data availability or
+HOT-10 allocation. No threshold is tuned on these dates; the next experiment
+changes only focus admission and uses later untouched sessions.
