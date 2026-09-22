@@ -35,3 +35,16 @@ least four of five days, at least 95% capture conditional on focus, at least
 If this gate fails, do not tune rank 40 on these dates. Replace rank-only
 hysteresis with an explicit causal admission budget or residence-time policy on
 a later untouched block.
+
+## Result — request 128
+
+The rank-40 policy passed every capture, stability and occupancy condition but
+missed the observation-demand condition. Persistent capture was 398 of 763
+(52.16%) versus 405 of 763 (53.08%) for stateless top-20, a loss of 0.92
+percentage points. It was noninferior on four of five days and retained 96.14%
+of learned-focus captures. Mean retention rose to 76.31% and replacements fell
+from 8.19 to 4.78 of 20 slots per minute.
+
+Unique ticker-days fell from 2,604 to 2,122, only 18.51% rather than the frozen
+25%. This second rank-only failure motivates a resource budget rather than a
+wider rank threshold.

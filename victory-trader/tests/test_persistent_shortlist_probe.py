@@ -43,6 +43,38 @@ def test_persistent_shortlist_retains_incumbents_inside_top40():
     assert audit["max_occupancy"] == 20
 
 
+def test_persistent_shortlist_enforces_session_admission_budget():
+    rows: list[dict[str, object]] = []
+    for minute in range(16):
+        for index in range(20):
+            rows.append(
+                {
+                    "trading_day": "2026-03-25",
+                    "t": minute * 60_000,
+                    "ticker": f"T{minute:02d}{index:02d}",
+                    "market_hazard_probability": float(20 - index),
+                    "target_next_cross": False,
+                }
+            )
+
+    selected, audit = select_persistent_shortlist(
+        pd.DataFrame(rows), max_session_tickers=300
+    )
+
+    assert audit["ticker_day_requests"] == 300
+    assert audit["max_occupancy"] == 20
+    assert len(selected.loc[selected["t"].eq(15 * 60_000)]) == 20
+
+
+def test_persistent_shortlist_rejects_budget_below_occupancy():
+    try:
+        select_persistent_shortlist(pd.DataFrame(), max_session_tickers=19)
+    except ValueError as exc:
+        assert "must cover the shortlist" in str(exc)
+    else:
+        raise AssertionError("expected invalid admission budget to fail")
+
+
 def _evaluation_frames() -> tuple[pd.DataFrame, ...]:
     scan: list[dict[str, object]] = []
     focus: list[dict[str, object]] = []

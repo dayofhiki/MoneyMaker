@@ -15,7 +15,7 @@ on:
       end_date:
         description: Last evaluation date
         required: true
-        default: '2026-03-24'
+        default: '2026-03-31'
       request_id:
         description: Artifact request identifier
         required: true
@@ -58,7 +58,7 @@ jobs:
                       encoding="utf-8"
                   )
               )
-              enabled = payload.get("operation") == "persistent_shortlist_v11"
+              enabled = payload.get("operation") == "persistent_shortlist_v12"
               start = str(payload.get("start_date", ""))
               end = str(payload.get("end_date", ""))
               request_id = str(payload.get("request_id", ""))
@@ -121,11 +121,11 @@ jobs:
           python -m victory_trader.persistent_shortlist_probe \
             "${{ needs.request.outputs.start_date }}" \
             "${{ needs.request.outputs.end_date }}" \
-            --output artifacts/persistent-shortlist-v11.parquet \
-            --summary artifacts/persistent-shortlist-v11.json \
-            | tee artifacts/persistent-shortlist-v11.log
-          test -s artifacts/persistent-shortlist-v11.parquet
-          test -s artifacts/persistent-shortlist-v11.json
+            --output artifacts/persistent-shortlist-v12.parquet \
+            --summary artifacts/persistent-shortlist-v12.json \
+            | tee artifacts/persistent-shortlist-v12.log
+          test -s artifacts/persistent-shortlist-v12.parquet
+          test -s artifacts/persistent-shortlist-v12.json
 
       - name: Save market-wide Flat File cache
         if: always()
@@ -137,10 +137,10 @@ jobs:
       - name: Upload persistent shortlist audit
         uses: actions/upload-artifact@v4
         with:
-          name: moneymaker-persistent-shortlist-v11-${{ needs.request.outputs.request_id }}
+          name: moneymaker-persistent-shortlist-v12-${{ needs.request.outputs.request_id }}
           path: |
-            victory-trader/artifacts/persistent-shortlist-v11.parquet
-            victory-trader/artifacts/persistent-shortlist-v11.json
-            victory-trader/artifacts/persistent-shortlist-v11.log
+            victory-trader/artifacts/persistent-shortlist-v12.parquet
+            victory-trader/artifacts/persistent-shortlist-v12.json
+            victory-trader/artifacts/persistent-shortlist-v12.log
           if-no-files-found: error
           retention-days: 90
