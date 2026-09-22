@@ -60,3 +60,25 @@ The 30% HOT floor is retained from request 124 rather than increased after the
 request-125 result. If the gate fails, do not tune on these dates. Attribute the
 loss to focus persistence, top-20 retention, second-data coverage or HOT
 allocation and modify only the failed layer on a later untouched March block.
+
+## Result — request 126
+
+Request 126 completed successfully and passed every preregistered performance
+condition. Across 1,034 first +10% crossings, exact-prior-minute HOT capture
+rose from 281 (27.18%) in the frozen hierarchy to 529 (51.16%) in the integrated
+hierarchy. The integrated policy improved on all five days; daily capture was
+49.47%, 47.89%, 52.63%, 51.23% and 54.04%.
+
+Integrated focus captured 574 runners (55.51%), top-20 retained 561 (97.74% of
+focus captures), and HOT retained 529 (94.30% of top-20 captures). Final-two-
+minute, final-five-minute and sustained-final-two-minute HOT readiness were
+52.42%, 59.38% and 34.33%. One-second row coverage was 100% and HOT occupancy
+never exceeded 10.
+
+The performance promotion gate is true, but the operational audit exposes a
+remaining deficiency. The integrated candidate set covered 11,327 ticker-days
+versus 3,350 for the frozen hierarchy, required 8,741 uncached network requests,
+and took about 67 minutes. HOT-set retention fell to 52.28%, with 4.79 of 10
+slots replaced per minute. A persistence bridge is therefore required before
+ENTRY/ABSTAIN integration: reduce top-20 observation demand and churn without
+sacrificing the newly validated capture.

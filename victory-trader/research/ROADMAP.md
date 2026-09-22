@@ -226,12 +226,19 @@ from 33.63% to 58.63%, improved on all five days, and exceeded the 50% floor.
 Market-wide average precision rose from 0.0681 to 0.1469, while the top-20
 retained 96.42% of focus captures within its fixed capacity.
 
-The active task is preregistered v0.9 request 126. It integrates the promoted
-focus-60 selector with the frozen targeted one-second and HOT-10 layers and
-compares the complete hierarchy against the old learned hierarchy on untouched
-2026-03-04 through 2026-03-10 sessions. April 2026 and later remain sealed.
-Passing permits HOT -> ENTRY/ABSTAIN research; this remains an attention-layer
-validation, not a profitability claim.
+Request 126 passed every attention-performance gate on untouched 2026-03-04
+through 2026-03-10 sessions. Exact-prior-minute HOT capture rose from 27.18% to
+51.16%, improved on all five days, and retained 94.30% of top-20 captures with
+100% second-data coverage. However, it required 11,327 one-second ticker-days
+and replaced 4.79 of 10 HOT slots per minute, so operational efficiency is not
+yet adequate for ENTRY/ABSTAIN integration.
+
+The active task is preregistered v1.0 request 127. On untouched 2026-03-11
+through 2026-03-17 sessions, it tests a fixed top-30 incumbent buffer around the
+learned top-20 and requires at least 25% fewer ticker-days plus 70% retention
+while allowing at most two percentage points of capture loss. April 2026 and
+later remain sealed. This is still an attention-layer bridge, not a
+profitability claim.
 
 ### Milestone 3 — policy integration
 

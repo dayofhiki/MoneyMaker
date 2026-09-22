@@ -1,0 +1,7 @@
+{
+  "request_id": 127,
+  "operation": "persistent_shortlist_v10",
+  "start_date": "2026-01-02",
+  "end_date": "2026-03-17",
+  "note": "Operational bridge after request 126 passed performance but required 11,327 one-second ticker-days and replaced 4.79/10 HOT slots per minute. Fit the unchanged market hazard through 2026-01-16. On untouched 2026-03-11/12/13/16/17, retain top-20 incumbents while current focus rank <=30 and compare capture, retention and unique ticker-day demand with stateless top-20. April 2026+ remain sealed."
+}
