@@ -1,0 +1,7 @@
+{
+  "request_id": 126,
+  "operation": "integrated_learned_focus_hierarchy_v09",
+  "start_date": "2026-01-02",
+  "end_date": "2026-03-10",
+  "note": "Integrate the request-125 learned market-wide focus-60 selector with frozen top-20, targeted one-second and HOT-10 layers. Fit focus through 2026-01-16 and downstream rerankers on 2026-01-20..2026-02-09. Compare against the frozen hierarchy on untouched 2026-03-04/05/06/09/10. Do not tune on request-124/125 dates; April 2026+ remain sealed."
+}
