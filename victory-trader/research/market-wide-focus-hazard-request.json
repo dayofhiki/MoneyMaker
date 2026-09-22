@@ -1,0 +1,7 @@
+{
+  "request_id": 125,
+  "operation": "market_wide_focus_hazard_v08",
+  "start_date": "2026-01-02",
+  "end_date": "2026-03-03",
+  "note": "Fresh-session focus-admission diagnostic after request 124 isolated the bottleneck at market-wide -> focus-60. Fit through 2026-01-16 with frozen minute features/model; compare learned top-60 hazard rank against unchanged threshold/hysteresis on 2026-02-25/26/27 and 2026-03-02/03. Do not tune on request-124 dates; April 2026+ remain sealed."
+}
