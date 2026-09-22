@@ -349,16 +349,16 @@ def evaluate_runtime(
             learned_trace["trading_day"].astype(str).eq(day)
         ]
         b = _strict_hot_metrics(baseline_day, scan_day)
-        l = _strict_hot_metrics(learned_day, scan_day)
+        learned_metrics = _strict_hot_metrics(learned_day, scan_day)
         if (
             b["strict_hot_capture_rate"] is not None
-            and l["strict_hot_capture_rate"] is not None
-            and l["strict_hot_capture_rate"] >= b["strict_hot_capture_rate"]
+            and learned_metrics["strict_hot_capture_rate"] is not None
+            and learned_metrics["strict_hot_capture_rate"] >= b["strict_hot_capture_rate"]
         ):
             nonlower_days += 1
         if int(b["runner_crossings"]) < 10:
             support_ok = False
-        by_day[day] = {"baseline": b, "learned": l}
+        by_day[day] = {"baseline": b, "learned": learned_metrics}
 
     b_capture = baseline["strict_hot_capture_rate"]
     l_capture = learned["strict_hot_capture_rate"]
