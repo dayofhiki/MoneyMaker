@@ -124,7 +124,7 @@ For baseline and learned runtimes report pooled and by session:
 - crossings that were HOT strictly before the crossing decision;
 - strict pre-crossing HOT capture rate;
 - median and mean HOT lead minutes;
-- fraction of captured runners that became HOT at least one full minute before
+- fraction of all runners that became HOT at least two full minutes before
   crossing;
 - maximum and mean HOT occupancy.
 
@@ -146,7 +146,7 @@ HOT -> ENTRY/ABSTAIN research stage only if all are true:
 2. learned pooled HOT pre-crossing capture exceeds baseline;
 3. learned HOT capture is at least baseline on at least four of five sessions;
 4. learned pooled median HOT lead is at least baseline;
-5. learned fraction captured at least one full minute early exceeds baseline;
+5. learned fraction captured at least two full minutes early exceeds baseline;
 6. stage-1 top-20 next-step-positive coverage is at least 95%;
 7. second-data row coverage is at least 99%;
 8. HOT occupancy never exceeds 10.
