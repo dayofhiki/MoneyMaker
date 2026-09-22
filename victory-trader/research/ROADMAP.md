@@ -220,12 +220,18 @@ because focus admission captured only 38.84% versus the frozen 50% floor. The
 top-20 retained 98.81% of focus captures, one-second coverage was 100%, and HOT
 occupancy stayed within 10, isolating the bottleneck upstream of those layers.
 
-The active task is preregistered v0.8 request 125. It changes only market-wide
-focus admission: a causal exact-next-minute hazard model fitted through
-2026-01-16 ranks the full eligible market into focus-60 and diagnostic top-20,
-then compares with the unchanged threshold/hysteresis baseline on untouched
-2026-02-25 through 2026-03-03 sessions. April 2026 and later remain sealed.
-This remains an attention-layer validation, not a profitability claim.
+Request 125 passed every preregistered focus-admission condition on untouched
+2026-02-25 through 2026-03-03 sessions. Exact-prior-minute focus capture rose
+from 33.63% to 58.63%, improved on all five days, and exceeded the 50% floor.
+Market-wide average precision rose from 0.0681 to 0.1469, while the top-20
+retained 96.42% of focus captures within its fixed capacity.
+
+The active task is preregistered v0.9 request 126. It integrates the promoted
+focus-60 selector with the frozen targeted one-second and HOT-10 layers and
+compares the complete hierarchy against the old learned hierarchy on untouched
+2026-03-04 through 2026-03-10 sessions. April 2026 and later remain sealed.
+Passing permits HOT -> ENTRY/ABSTAIN research; this remains an attention-layer
+validation, not a profitability claim.
 
 ### Milestone 3 — policy integration
 
