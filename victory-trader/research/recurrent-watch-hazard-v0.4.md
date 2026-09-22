@@ -132,3 +132,46 @@ a BUY signal or establish profitability.
 If it fails, do not tune the classifier or one-minute transition definition on
 these evaluation dates. The next branch must change the state target or causal
 information family.
+
+
+## Result — request 120
+
+Request 120 completed successfully on the frozen chronology.
+
+Fit contained 20,314 recurrent WATCH rows and 985 next-step crossing events.
+Evaluation contained 14,359 WATCH rows and 310 next-step crossing events across
+the five untouched sessions.
+
+Pooled evaluation:
+
+| Metric | Current attention score | Learned minute hazard |
+| --- | ---: | ---: |
+| PR-AUC | 0.107459 | 0.220433 |
+| ROC-AUC | 0.736970 | 0.922078 |
+| top-10 next-step crossing capture | 96.13% | 97.10% |
+| top-10 captured events | 298 / 310 | 301 / 310 |
+| mean positive-event rank | 3.0419 | 2.7000 |
+
+The learned Brier score was 0.018458 versus climatology Brier 0.021847.
+Top-10 capture was non-lower than baseline on four of five evaluation days.
+
+The preregistered promotion gate is nevertheless **false** because the support
+criterion required at least 1,000 eligible WATCH rows on every evaluation day,
+while 2026-02-02 contained 656 rows despite 55 positive events. No performance
+criterion caused the failure.
+
+## Interpretation
+
+The failed support gate is respected: v0.4 is not promoted as the production
+HOT allocator and the 1,000-row rule is not relaxed after observing results.
+
+However, the frozen evaluation provides strong evidence that recurrent
+next-step hazard is a substantially better urgency representation than raw
+attention score. The next branch therefore changes the causal information
+family as required by the preregistered failure rule: retain a frozen
+minute-hazard shortlist, then spend expensive one-second observation only on
+that shortlist and test whether second-path state can improve the finite HOT-10
+ordering on new untouched sessions.
+
+This directly tests the intended hierarchical architecture rather than
+returning to market-wide one-second observation.
