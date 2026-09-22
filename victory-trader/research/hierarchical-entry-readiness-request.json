@@ -1,0 +1,8 @@
+{
+  "request_id": 124,
+  "operation": "hierarchical_entry_readiness_v07",
+  "start_date": "2026-01-02",
+  "end_date": "2026-02-24",
+  "note": "Fresh-session bridge after request 123 formally failed only on undefined baseline captured-lead median. Keep the v0.6 hierarchy, fits, features, budgets and hysteresis unchanged. Evaluate untouched 2026-02-18/19/20/23/24 using exact prior-minute, final-2m, final-5m and sustained-2m HOT readiness, plus focus->top20->HOT loss decomposition. No post-result tuning; April 2026+ remain sealed."
+}
+
