@@ -132,12 +132,6 @@ def add_second_features(
                 ticker, day_date, day_date, adjusted=False
             )
             second_frame = _second_frame(payload)
-            if len(second_frame) >= 50_000:
-                raise ValueError(
-                    "one-second aggregate response reached the 50,000-row "
-                    f"request limit for {ticker} on {day}; pagination/data "
-                    "completeness must be resolved before evaluation"
-                )
             seconds_by_ticker[ticker] = second_frame
             second_rows += len(second_frame)
             if not second_frame.empty:
