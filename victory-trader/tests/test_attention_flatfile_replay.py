@@ -326,4 +326,12 @@ def test_rows_match_tolerates_provider_price_rounding_only():
     )
 
     assert _rows_match(left, rounded)
+
+    flatfile_six_decimals = pd.Series(
+        {"o": 78.015966, "h": 78.2, "l": 78.015966, "c": 78.2, "v": 1162.0}
+    )
+    rest_three_decimals = pd.Series(
+        {"o": 78.016, "h": 78.2, "l": 78.016, "c": 78.2, "v": 1162.0}
+    )
+    assert _rows_match(flatfile_six_decimals, rest_three_decimals)
     assert not _rows_match(left, different_series)
