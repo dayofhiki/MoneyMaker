@@ -1,0 +1,163 @@
+name: MoneyMaker Integrated Learned Focus Hierarchy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/integrated-learned-focus-hierarchy-request.json'
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: First fit date
+        required: true
+        default: '2026-01-02'
+      end_date:
+        description: Last evaluation date
+        required: true
+        default: '2026-03-10'
+      request_id:
+        description: Artifact request identifier
+        required: true
+        default: 'manual'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.read.outputs.enabled }}
+      start_date: ${{ steps.read.outputs.start_date }}
+      end_date: ${{ steps.read.outputs.end_date }}
+      request_id: ${{ steps.read.outputs.request_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_START: ${{ inputs.start_date }}
+          INPUT_END: ${{ inputs.end_date }}
+          INPUT_REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          if os.environ["EVENT_NAME"] == "workflow_dispatch":
+              enabled = True
+              start = os.environ["INPUT_START"]
+              end = os.environ["INPUT_END"]
+              request_id = os.environ["INPUT_REQUEST_ID"]
+          else:
+              payload = json.loads(
+                  Path("victory-trader/research/integrated-learned-focus-hierarchy-request.json").read_text(
+                      encoding="utf-8"
+                  )
+              )
+              enabled = payload.get("operation") == "integrated_learned_focus_hierarchy_v09"
+              start = str(payload.get("start_date", ""))
+              end = str(payload.get("end_date", ""))
+              request_id = str(payload.get("request_id", ""))
+          if enabled and (not start or not end or not request_id):
+              raise SystemExit("integrated learned-focus request is incomplete")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as handle:
+              handle.write(f"enabled={'true' if enabled else 'false'}\n")
+              handle.write(f"start_date={start}\n")
+              handle.write(f"end_date={end}\n")
+              handle.write(f"request_id={request_id}\n")
+          PY
+
+  replay:
+    if: ${{ needs.request.outputs.enabled == 'true' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test integrated hierarchy
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q \
+            tests/test_integrated_learned_focus_hierarchy.py \
+            tests/test_market_wide_focus_hazard.py \
+            tests/test_hierarchical_attention_runtime.py \
+            tests/test_targeted_second_hot_reranker.py \
+            tests/test_attention_runtime.py \
+            tests/test_attention_flatfile_replay.py \
+            tests/test_massive_client.py
+
+      - name: Restore market-wide Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-integrated-focus-flatfiles-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-market-focus-flatfiles-${{ runner.os }}-
+            moneymaker-entry-readiness-flatfiles-${{ runner.os }}-
+            moneymaker-hierarchical-runtime-flatfiles-${{ runner.os }}-
+
+      - name: Restore one-second REST cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-integrated-focus-second-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-entry-readiness-second-${{ runner.os }}-
+            moneymaker-hierarchical-runtime-second-${{ runner.os }}-
+            moneymaker-targeted-second-rest-${{ runner.os }}-
+
+      - name: Run frozen integrated learned-focus hierarchy
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.integrated_learned_focus_hierarchy \
+            "${{ needs.request.outputs.start_date }}" \
+            "${{ needs.request.outputs.end_date }}" \
+            --output artifacts/integrated-learned-focus-hierarchy-v09.parquet \
+            --summary artifacts/integrated-learned-focus-hierarchy-v09.json \
+            | tee artifacts/integrated-learned-focus-hierarchy-v09.log
+          test -s artifacts/integrated-learned-focus-hierarchy-v09.parquet
+          test -s artifacts/integrated-learned-focus-hierarchy-v09.json
+
+      - name: Save one-second REST cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-integrated-focus-second-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Save market-wide Flat File cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-integrated-focus-flatfiles-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Upload integrated hierarchy audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-integrated-learned-focus-hierarchy-v09-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/integrated-learned-focus-hierarchy-v09.parquet
+            victory-trader/artifacts/integrated-learned-focus-hierarchy-v09.json
+            victory-trader/artifacts/integrated-learned-focus-hierarchy-v09.log
+          if-no-files-found: error
+          retention-days: 90
