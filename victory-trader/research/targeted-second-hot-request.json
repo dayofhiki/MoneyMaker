@@ -1,0 +1,7 @@
+{
+  "request_id": 121,
+  "operation": "targeted_second_hot_reranker_v05",
+  "start_date": "2026-01-02",
+  "end_date": "2026-02-09",
+  "note": "Frozen hierarchical attention experiment. Fit the stage-1 minute WATCH hazard only through 2026-01-16, use it to create top-20 WATCH shortlists on 2026-01-20..2026-02-09, fit minute-only and minute+frozen-one-second stage-2 rerankers on 2026-01-20..2026-02-02 candidate rows, and evaluate untouched 2026-02-03, 04, 05, 06 and 09. One-second aggregates are requested only for frozen top-20 candidate ticker-days. Compare HOT-10 all-WATCH next-step crossing capture, PR-AUC, Brier and positive-candidate rank. No post-result tuning; April 2026+ remain sealed."
+}
