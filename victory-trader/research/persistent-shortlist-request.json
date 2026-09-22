@@ -1,7 +1,7 @@
 {
-  "request_id": 127,
-  "operation": "persistent_shortlist_v10",
+  "request_id": 128,
+  "operation": "persistent_shortlist_v11",
   "start_date": "2026-01-02",
-  "end_date": "2026-03-17",
-  "note": "Operational bridge after request 126 passed performance but required 11,327 one-second ticker-days and replaced 4.79/10 HOT slots per minute. Fit the unchanged market hazard through 2026-01-16. On untouched 2026-03-11/12/13/16/17, retain top-20 incumbents while current focus rank <=30 and compare capture, retention and unique ticker-day demand with stateless top-20. April 2026+ remain sealed."
+  "end_date": "2026-03-24",
+  "note": "Request 127 preserved capture but failed operational gates: only 8.61% fewer ticker-days and 66.04% retention. Without tuning on those dates, test the structurally stronger 2x-budget rank-40 incumbent band on untouched 2026-03-18/19/20/23/24. Fit remains through 2026-01-16; April 2026+ remain sealed."
 }

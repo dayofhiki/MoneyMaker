@@ -27,15 +27,15 @@ from .multi_day import daterange
 from .second_path_attention_probe import BASELINE_FEATURES
 
 EVAL_DAYS = [
-    "2026-03-11",
-    "2026-03-12",
-    "2026-03-13",
-    "2026-03-16",
-    "2026-03-17",
+    "2026-03-18",
+    "2026-03-19",
+    "2026-03-20",
+    "2026-03-23",
+    "2026-03-24",
 ]
 FOCUS_BUDGET = 60
 SHORTLIST_BUDGET = 20
-INCUMBENT_RANK_BUFFER = 30
+INCUMBENT_RANK_BUFFER = 40
 
 
 def shortlist_audit(shortlist: pd.DataFrame) -> dict[str, float | int | None]:
@@ -69,7 +69,7 @@ def select_persistent_shortlist(
     *,
     incumbent_rank_buffer: int = INCUMBENT_RANK_BUFFER,
 ) -> tuple[pd.DataFrame, dict[str, float | int | None]]:
-    """Retain incumbents while they remain inside the causal top-30 focus rank."""
+    """Retain incumbents while they remain inside the causal top-40 focus rank."""
 
     selected: list[pd.DataFrame] = []
     for _, day_rows in focus.groupby("trading_day", sort=True):
@@ -274,7 +274,7 @@ def run_probe(
         ],
     ].copy()
     summary: dict[str, object] = {
-        "schema_version": 1,
+        "schema_version": 2,
         "start": start.isoformat(),
         "end": end.isoformat(),
         "fit_end": FIT_END,
