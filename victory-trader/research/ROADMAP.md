@@ -248,11 +248,18 @@ first-come budget allocation collapsed exact-prior capture from 53.56% to
 40.17%. The failure is late-session admission starvation, so the first-come
 policy is rejected.
 
-The active task is development-only request 130. It fits through 2026-01-09
-and uses the previously seen 2026-01-12 through 2026-01-16 block to test linear
-release of the same 300-symbol budget across the session. Passing cannot promote
-the policy; it only justifies a separately preregistered sealed test. April 2026
-and later remain sealed.
+Request 130 also rejected the 300-symbol ceiling. Linear release cut demand by
+41.74% and raised retention to 80.63%, but lost 8.97 percentage points of
+capture and was noninferior on zero of five development days. April remained
+sealed.
+
+The active task is v1.4 attention/transport separation. Predictive membership
+will no longer be distorted to reduce historical REST ticker-day downloads.
+The rank-40 shortlist candidate instead feeds a bounded 20-subscription runtime
+with explicit churn, freshness and reconnect telemetry. Only after transport
+fault tests pass will the full one-second HOT hierarchy be evaluated once on
+the sealed holdout. This is still an attention-layer bridge, not a
+profitability claim.
 
 ### Milestone 3 — policy integration
 
