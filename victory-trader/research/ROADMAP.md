@@ -213,12 +213,19 @@ for the old percentile runtime. Its formal gate remained false only because the
 zero-capture comparator had no defined captured-only lead median. That outcome
 is not retroactively promoted.
 
-The active research task is the preregistered v0.7 HOT entry-readiness bridge on
-fresh 2026-02-18 through 2026-02-24 sessions. The policy remains frozen while
-the replay measures whether runners are actually HOT in the exact minute(s)
-before crossing and decomposes losses through focus, shortlist and HOT
-allocation. This is still an attention-layer validation, not a profitability
-claim. Passing it permits the next HOT -> ENTRY/ABSTAIN integration experiment.
+Request 124 then tested immediate HOT readiness on fresh 2026-02-18 through
+2026-02-24 sessions. Learned exact-prior-minute HOT capture was 37.11% versus
+zero for the old runtime and passed its 30% floor, while the formal gate failed
+because focus admission captured only 38.84% versus the frozen 50% floor. The
+top-20 retained 98.81% of focus captures, one-second coverage was 100%, and HOT
+occupancy stayed within 10, isolating the bottleneck upstream of those layers.
+
+The active task is preregistered v0.8 request 125. It changes only market-wide
+focus admission: a causal exact-next-minute hazard model fitted through
+2026-01-16 ranks the full eligible market into focus-60 and diagnostic top-20,
+then compares with the unchanged threshold/hysteresis baseline on untouched
+2026-02-25 through 2026-03-03 sessions. April 2026 and later remain sealed.
+This remains an attention-layer validation, not a profitability claim.
 
 ### Milestone 3 — policy integration
 
