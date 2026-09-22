@@ -1,0 +1,7 @@
+{
+  "request_id": 120,
+  "operation": "recurrent_watch_hazard_v04",
+  "start_date": "2026-01-02",
+  "end_date": "2026-02-02",
+  "note": "Frozen recurrent WATCH->HOT urgency experiment. Use Phase-2F causal minute-completion timestamps and every pre-runner WATCH row with an exact next minute. Target 1 only when the ticker's first +10% prior-close crossing occurs at the next minute decision. Fit through 2026-01-26; evaluate untouched 2026-01-27, 28, 29, 30 and 2026-02-02. Compare current attention score against the fixed minute-state HistGradientBoostingClassifier plus causal focus/watch age. Evaluate PR-AUC, Brier, and finite top-10 HOT-budget next-step crossing capture. No request-119 market-relative features, no retired one-second features, no post-result tuning, and April 2026+ remain sealed."
+}
