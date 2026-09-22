@@ -299,9 +299,9 @@ def fit_and_evaluate(
             evaluation["trading_day"].astype(str).eq(eval_day)
         ]
         b = _score_metrics(frame, "attention_score", probability=False)
-        l = _score_metrics(frame, "hazard_probability", probability=True)
+        learned_day = _score_metrics(frame, "hazard_probability", probability=True)
         b_capture = b["top10"]["capture_rate"]
-        l_capture = l["top10"]["capture_rate"]
+        l_capture = learned_day["top10"]["capture_rate"]
         if (
             b_capture is not None
             and l_capture is not None
@@ -314,7 +314,7 @@ def fit_and_evaluate(
             "rows": int(len(frame)),
             "positives": int(frame["target_next_cross"].sum()),
             "baseline": b,
-            "learned": l,
+            "learned": learned_day,
         }
 
     baseline_ap = baseline.get("average_precision")
