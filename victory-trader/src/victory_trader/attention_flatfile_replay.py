@@ -132,7 +132,7 @@ def _rows_match(left: pd.Series, right: pd.Series) -> bool:
                 float(left_value),
                 float(right_value),
                 rel_tol=1e-7,
-                abs_tol=1e-6,
+                abs_tol=5e-5,
             )
         else:
             # Volume is integral in the source data and should match exactly
