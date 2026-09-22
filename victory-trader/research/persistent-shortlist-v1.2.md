@@ -40,3 +40,13 @@ If the gate passes, integrate this policy with one-second HOT allocation on a
 new preregistered period. If it fails, do not alter the 300-symbol budget on
 these dates; attribute the failure to capture or resource feasibility before
 moving forward.
+
+## Result — request 129
+
+The first-come budget failed. It capped demand at exactly 1,500 ticker-days
+versus 2,796 for stateless top-20, a 46.35% reduction, and retained 74.45% of
+the prior set. But exact-prior capture collapsed from 53.56% to 40.17%, was
+noninferior on zero days, and retained only 68.97% of learned-focus captures.
+
+The fixed budget was consumed too early and prevented late-session admissions.
+The resource ceiling remains viable, but first-come allocation is rejected.
