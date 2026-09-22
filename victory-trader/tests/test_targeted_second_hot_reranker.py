@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
+
+import victory_trader.targeted_second_hot_reranker as reranker
 
 from victory_trader.targeted_second_hot_reranker import (
     EVAL_DAYS,
     HOT_BUDGET,
     SHORTLIST_BUDGET,
+    add_second_features,
     shortlist_rows,
 )
 
@@ -45,3 +49,28 @@ def test_eval_days_are_five_fresh_sessions():
         "2026-02-09",
     ]
     assert SHORTLIST_BUDGET == 2 * HOT_BUDGET
+
+
+def test_second_feature_enrichment_rejects_request_limit(monkeypatch):
+    candidates = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-02-03",
+                "t": 60_000,
+                "ticker": "AAA",
+            }
+        ]
+    )
+
+    class FakeClient:
+        def second_bars_range(self, ticker, start, end, *, adjusted=False):
+            return {"results": []}
+
+    monkeypatch.setattr(
+        reranker,
+        "_second_frame",
+        lambda payload: pd.DataFrame(index=range(50_000)),
+    )
+
+    with pytest.raises(ValueError, match="50,000-row request limit"):
+        add_second_features(candidates, FakeClient())
