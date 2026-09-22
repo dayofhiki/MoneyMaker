@@ -10,15 +10,15 @@ from victory_trader.persistent_shortlist_probe import (
 )
 
 
-def test_persistent_shortlist_retains_incumbents_inside_top30():
+def test_persistent_shortlist_retains_incumbents_inside_top40():
     rows: list[dict[str, object]] = []
-    for index in range(30):
+    for index in range(40):
         rows.append(
             {
                 "trading_day": "2026-03-11",
                 "t": 60_000,
                 "ticker": f"T{index:02d}",
-                "market_hazard_probability": float(30 - index),
+                "market_hazard_probability": float(40 - index),
             }
         )
         rows.append(
@@ -27,7 +27,7 @@ def test_persistent_shortlist_retains_incumbents_inside_top30():
                 "t": 120_000,
                 "ticker": f"T{index:02d}",
                 "market_hazard_probability": float(
-                    40 - index if index >= 20 else 20 - index
+                    60 - index if index >= 20 else 20 - index
                 ),
             }
         )
