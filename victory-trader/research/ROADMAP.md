@@ -238,11 +238,16 @@ persistent and stateless top-20), but failed the operational gate: ticker-day
 demand fell only 8.61% and retention reached only 66.04%. The remaining
 bottleneck is minute-rank oscillation, not predictive loss.
 
-The active task is preregistered v1.1 request 128. On untouched 2026-03-18
-through 2026-03-24 sessions, it tests a structural rank-40 band, exactly twice
-the 20-name observation budget, under the same capture and operational gates.
-April 2026 and later remain sealed. This is still an attention-layer bridge,
-not a profitability claim.
+Request 128 raised mean retention to 76.31% and limited pooled capture loss to
+0.92 percentage points, but still failed the operational gate because
+ticker-day demand fell only 18.51% rather than 25%. Rank-only persistence has
+therefore reached its useful limit.
+
+The active task is preregistered v1.2 request 129. On untouched 2026-03-25
+through 2026-03-31 sessions, it adds an explicit 300-symbol session admission
+budget while keeping the rank-40 policy and every prior gate unchanged. April
+2026 and later remain sealed. This is still an attention-layer bridge, not a
+profitability claim.
 
 ### Milestone 3 — policy integration
 
