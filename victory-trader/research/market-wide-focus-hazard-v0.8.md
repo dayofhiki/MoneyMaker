@@ -61,3 +61,25 @@ decomposition to decide whether the next untouched block should test temporal
 persistence, capacity allocation, or a different causal label. Passing this
 probe permits integration of the learned focus selector into the full frozen
 top-20 -> one-second -> HOT-10 hierarchy on another untouched block.
+
+## Result — request 125
+
+Request 125 completed successfully on all five frozen sessions and passed every
+promotion condition. Across 904 first +10% crossings, the learned focus-60 held
+530 runners at the exact prior minute (58.63%) versus 304 (33.63%) for the
+unchanged threshold/hysteresis baseline, a gain of 25.00 percentage points.
+
+Learned versus baseline capture by day was 58.53% versus 24.81%, 60.12% versus
+43.45%, 60.16% versus 47.15%, 59.47% versus 22.91%, and 53.91% versus 44.53%.
+Thus the learned selector improved on all five days and every session exceeded
+the minimum support requirement.
+
+The model's market-wide average precision was 0.1469 versus 0.0681 for raw
+attention score. The diagnostic top-20 retained 511 of the 530 focus captures
+(96.42%), while focus and shortlist occupancy stayed exactly within 60 and 20.
+The fit used 3,721,491 causal rows through 2026-01-16 and evaluation used
+1,726,206 rows; no request-124 date was used for tuning.
+
+This result promotes the learned focus selector only to a full hierarchy
+integration test. It does not yet establish that the downstream one-second
+reranker and HOT-10 allocation preserve the additional focus captures.
