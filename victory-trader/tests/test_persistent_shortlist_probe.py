@@ -64,6 +64,7 @@ def test_persistent_shortlist_enforces_session_admission_budget():
     assert audit["ticker_day_requests"] == 300
     assert audit["max_occupancy"] == 20
     assert len(selected.loc[selected["t"].eq(15 * 60_000)]) == 20
+    assert selected.loc[selected["t"].le(60_000), "ticker"].nunique() == 38
 
 
 def test_persistent_shortlist_rejects_budget_below_occupancy():
