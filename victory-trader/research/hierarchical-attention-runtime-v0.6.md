@@ -163,3 +163,50 @@ was HOT at a decision timestamp strictly earlier than the first +10% crossing
 timestamp. Becoming HOT on the already-completed crossing minute is not credited.
 This matches the recurrent next-step hazard objective and prevents the crossing
 bar itself from masquerading as advance attention.
+
+## Result — request 123
+
+Authoritative workflow run: `35677100909`. The workflow completed successfully,
+including 43 focused tests, and produced the frozen five-session replay.
+
+Across 797 first +10% crossings, the unchanged baseline runtime had zero HOT
+observations strictly before crossing. The learned hierarchy captured 431:
+
+| Metric | Baseline | Learned hierarchy |
+| --- | ---: | ---: |
+| Strict pre-crossing HOT capture | 0 / 797 (0.00%) | 431 / 797 (54.08%) |
+| Median lead among captured runners | undefined | 21.0 minutes |
+| Mean lead among captured runners | undefined | 60.23 minutes |
+| At least two minutes early | 0 / 797 (0.00%) | 384 / 797 (48.18%) |
+
+Learned strict capture by session was 52.46%, 69.30%, 66.94%, 39.24% and
+57.75%. It exceeded the baseline on all five sessions. The stage-1 top-20
+shortlist retained 100% of next-step positives already inside the focus pool,
+one-second row coverage was 100%, and HOT occupancy never exceeded 10.
+
+The stateful allocation was active rather than static:
+
+- 4,127 HOT promotions and 4,118 demotions;
+- 63.99% mean minute-to-minute HOT-set retention;
+- 2.77 mean HOT slots replaced per decision;
+- 7.55 mean and 10 maximum HOT occupancy.
+
+The preregistered promotion gate is formally **false**. This is not caused by
+inferior capture, insufficient support, shortlist loss, missing second data or
+capacity overflow. The baseline captured zero runners, so its captured-only
+median lead is undefined. Gate condition 4 required both medians to be defined
+before comparing them and therefore evaluated false.
+
+This null-comparator defect is not repaired post hoc and request 123 is not
+retroactively promoted. The result nevertheless establishes that the frozen
+hierarchy is materially better at placing future runners under advance HOT
+observation than the old percentile runtime.
+
+The remaining operational uncertainty is more important than the null itself:
+the current metric credits a runner if it was HOT at any earlier time, even if
+it was demoted long before crossing. Given 2.77 replacements per decision, that
+does not yet prove the ticker is under expensive observation at the HOT ->
+ENTRY handoff. The next branch therefore freezes the policy unchanged and uses
+fresh February sessions to measure immediate prior-minute, last-two-minute and
+sustained HOT readiness, with explicit focus -> shortlist -> HOT loss
+decomposition. April 2026 and later remain sealed.

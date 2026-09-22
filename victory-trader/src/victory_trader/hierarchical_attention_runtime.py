@@ -112,9 +112,13 @@ def build_focus_rows(
     return merged, trace
 
 
-def fit_stage1(focus_rows: pd.DataFrame) -> HistGradientBoostingClassifier:
+def fit_stage1(
+    focus_rows: pd.DataFrame,
+    *,
+    fit_end: str = STAGE1_FIT_END,
+) -> HistGradientBoostingClassifier:
     fit = focus_rows.loc[
-        focus_rows["trading_day"].astype(str).le(STAGE1_FIT_END)
+        focus_rows["trading_day"].astype(str).le(fit_end)
     ].copy()
     if fit.empty or int(fit["target_next_cross"].sum()) == 0:
         raise ValueError("stage-1 focus fit is empty or has no positives")
@@ -128,10 +132,13 @@ def fit_stage1(focus_rows: pd.DataFrame) -> HistGradientBoostingClassifier:
 
 def fit_stage2(
     candidates: pd.DataFrame,
+    *,
+    fit_start: str = STAGE2_FIT_START,
+    fit_end: str = STAGE2_FIT_END,
 ) -> tuple[HistGradientBoostingClassifier, HistGradientBoostingClassifier]:
     day = candidates["trading_day"].astype(str)
     fit = candidates.loc[
-        day.ge(STAGE2_FIT_START) & day.le(STAGE2_FIT_END)
+        day.ge(fit_start) & day.le(fit_end)
     ].copy()
     if fit.empty or int(fit["target_next_cross"].sum()) == 0:
         raise ValueError("stage-2 runtime fit is empty or has no positives")
@@ -325,7 +332,10 @@ def evaluate_runtime(
     eval_candidates: pd.DataFrame,
     second_coverage: float | None,
     runtime_audit: dict[str, object],
+    *,
+    eval_days: list[str] | None = None,
 ) -> dict[str, object]:
+    eval_days = EVAL_DAYS if eval_days is None else eval_days
     baseline = _strict_hot_metrics(baseline_trace, eval_scan)
     learned = _strict_hot_metrics(learned_trace, eval_scan)
 
@@ -338,7 +348,7 @@ def evaluate_runtime(
     by_day: dict[str, object] = {}
     nonlower_days = 0
     support_ok = True
-    for day in EVAL_DAYS:
+    for day in eval_days:
         scan_day = eval_scan.loc[
             eval_scan["trading_day"].astype(str).eq(day)
         ]
@@ -386,11 +396,173 @@ def evaluate_runtime(
         and int(runtime_audit["max_hot_occupancy"]) <= HOT_BUDGET
     )
     return {
-        "eval_days": EVAL_DAYS,
+        "eval_days": eval_days,
         "baseline": baseline,
         "learned": learned,
         "nonlower_capture_days": nonlower_days,
         "stage1_top20_next_step_positive_coverage": shortlist_coverage,
+        "second_data_row_coverage": second_coverage,
+        "runtime_audit": runtime_audit,
+        "by_day": by_day,
+        "promotion_gate_pass": gate,
+    }
+
+
+def _hot_readiness_metrics(
+    trace: pd.DataFrame,
+    scan: pd.DataFrame,
+) -> dict[str, float | int | None]:
+    """Measure whether runners are HOT immediately before first crossing."""
+
+    crossings = scan.loc[
+        scan["runner_cross_now"].fillna(False).astype(bool),
+        ["trading_day", "ticker", "t"],
+    ].copy()
+    hot_keys = {
+        (str(row.trading_day), str(row.ticker).upper(), int(row.t))
+        for row in trace.loc[
+            trace["state"].astype(str).eq("hot")
+        ].itertuples(index=False)
+    }
+    counts = {1: 0, 2: 0, 5: 0}
+    sustained_two = 0
+    for row in crossings.itertuples(index=False):
+        day = str(row.trading_day)
+        ticker = str(row.ticker).upper()
+        t = int(row.t)
+        prior = [
+            (day, ticker, t - offset * MINUTE_MS) in hot_keys
+            for offset in range(1, 6)
+        ]
+        for window in counts:
+            counts[window] += int(any(prior[:window]))
+        sustained_two += int(prior[0] and prior[1])
+
+    total = int(len(crossings))
+    result: dict[str, float | int | None] = {"runner_crossings": total}
+    for window, count in counts.items():
+        result[f"hot_within_{window}m_count"] = count
+        result[f"hot_within_{window}m_rate"] = (
+            float(count / total) if total else None
+        )
+    result["hot_sustained_last_2m_count"] = sustained_two
+    result["hot_sustained_last_2m_rate"] = (
+        float(sustained_two / total) if total else None
+    )
+    return result
+
+
+def _prior_population_capture(
+    population: pd.DataFrame,
+    scan: pd.DataFrame,
+) -> dict[str, float | int | None]:
+    """Count first crossings whose immediately prior row is in a population."""
+
+    keys = {
+        (str(row.trading_day), str(row.ticker).upper(), int(row.t))
+        for row in population.itertuples(index=False)
+    }
+    crossings = scan.loc[
+        scan["runner_cross_now"].fillna(False).astype(bool),
+        ["trading_day", "ticker", "t"],
+    ]
+    captured = sum(
+        (
+            str(row.trading_day),
+            str(row.ticker).upper(),
+            int(row.t) - MINUTE_MS,
+        )
+        in keys
+        for row in crossings.itertuples(index=False)
+    )
+    total = int(len(crossings))
+    return {
+        "runner_crossings": total,
+        "prior_minute_count": int(captured),
+        "prior_minute_rate": float(captured / total) if total else None,
+    }
+
+
+def evaluate_entry_readiness(
+    eval_scan: pd.DataFrame,
+    baseline_trace: pd.DataFrame,
+    learned_trace: pd.DataFrame,
+    eval_focus: pd.DataFrame,
+    eval_candidates: pd.DataFrame,
+    second_coverage: float | None,
+    runtime_audit: dict[str, object],
+    *,
+    eval_days: list[str],
+) -> dict[str, object]:
+    """Evaluate frozen attention policy at the HOT -> ENTRY handoff."""
+
+    baseline = _hot_readiness_metrics(baseline_trace, eval_scan)
+    learned = _hot_readiness_metrics(learned_trace, eval_scan)
+    focus = _prior_population_capture(eval_focus, eval_scan)
+    shortlist = _prior_population_capture(eval_candidates, eval_scan)
+
+    by_day: dict[str, object] = {}
+    nonlower_days = 0
+    support_ok = True
+    for day in eval_days:
+        scan_day = eval_scan.loc[eval_scan["trading_day"].astype(str).eq(day)]
+        baseline_day = baseline_trace.loc[
+            baseline_trace["trading_day"].astype(str).eq(day)
+        ]
+        learned_day = learned_trace.loc[
+            learned_trace["trading_day"].astype(str).eq(day)
+        ]
+        b = _hot_readiness_metrics(baseline_day, scan_day)
+        learned_metrics = _hot_readiness_metrics(learned_day, scan_day)
+        b_rate = b["hot_within_1m_rate"]
+        learned_rate = learned_metrics["hot_within_1m_rate"]
+        if (
+            b_rate is not None
+            and learned_rate is not None
+            and learned_rate >= b_rate
+        ):
+            nonlower_days += 1
+        if int(b["runner_crossings"]) < 10:
+            support_ok = False
+        by_day[day] = {"baseline": b, "learned": learned_metrics}
+
+    b_one = baseline["hot_within_1m_rate"]
+    l_one = learned["hot_within_1m_rate"]
+    b_two = baseline["hot_within_2m_rate"]
+    l_two = learned["hot_within_2m_rate"]
+    focus_rate = focus["prior_minute_rate"]
+    shortlist_rate = shortlist["prior_minute_rate"]
+    conditional_shortlist = (
+        float(shortlist_rate / focus_rate)
+        if focus_rate not in (None, 0) and shortlist_rate is not None
+        else None
+    )
+    gate = bool(
+        support_ok
+        and b_one is not None
+        and l_one is not None
+        and l_one > b_one
+        and l_one >= 0.30
+        and nonlower_days >= 4
+        and b_two is not None
+        and l_two is not None
+        and l_two > b_two
+        and focus_rate is not None
+        and focus_rate >= 0.50
+        and conditional_shortlist is not None
+        and conditional_shortlist >= 0.95
+        and second_coverage is not None
+        and second_coverage >= 0.99
+        and int(runtime_audit["max_hot_occupancy"]) <= HOT_BUDGET
+    )
+    return {
+        "eval_days": eval_days,
+        "baseline": baseline,
+        "learned": learned,
+        "focus_prior_minute_capture": focus,
+        "shortlist_prior_minute_capture": shortlist,
+        "shortlist_conditional_on_focus_rate": conditional_shortlist,
+        "nonlower_immediate_capture_days": nonlower_days,
         "second_data_row_coverage": second_coverage,
         "runtime_audit": runtime_audit,
         "by_day": by_day,
@@ -404,7 +576,14 @@ def run_probe(
     second_client: MassiveClient,
     start: date,
     end: date,
+    *,
+    stage1_fit_end: str = STAGE1_FIT_END,
+    stage2_fit_start: str = STAGE2_FIT_START,
+    stage2_fit_end: str = STAGE2_FIT_END,
+    eval_days: list[str] | None = None,
+    evaluation_kind: str = "runtime_v06",
 ) -> tuple[pd.DataFrame, dict[str, object]]:
+    eval_days = EVAL_DAYS if eval_days is None else eval_days
     scans: list[pd.DataFrame] = []
     focus_rows: list[pd.DataFrame] = []
     baseline_traces: list[pd.DataFrame] = []
@@ -441,12 +620,12 @@ def run_probe(
     all_focus = pd.concat(focus_rows, ignore_index=True)
     all_baseline = pd.concat(baseline_traces, ignore_index=True)
 
-    stage1 = fit_stage1(all_focus)
+    stage1 = fit_stage1(all_focus, fit_end=stage1_fit_end)
     scored_focus = add_stage1_scores(all_focus, stage1)
 
     day_text = scored_focus["trading_day"].astype(str)
-    rerank_period = day_text.ge(STAGE2_FIT_START) & (
-        day_text.le(STAGE2_FIT_END) | day_text.isin(EVAL_DAYS)
+    rerank_period = day_text.ge(stage2_fit_start) & (
+        day_text.le(stage2_fit_end) | day_text.isin(eval_days)
     )
     candidates = shortlist_rows(
         scored_focus.loc[rerank_period].copy(),
@@ -455,27 +634,31 @@ def run_probe(
     candidates, second_audit = add_second_features(
         candidates, second_client
     )
-    minute_model, second_model = fit_stage2(candidates)
+    minute_model, second_model = fit_stage2(
+        candidates,
+        fit_start=stage2_fit_start,
+        fit_end=stage2_fit_end,
+    )
     scored_candidates = add_stage2_scores(
         candidates, minute_model, second_model
     )
 
     eval_scan = all_scan.loc[
-        all_scan["trading_day"].astype(str).isin(EVAL_DAYS)
+        all_scan["trading_day"].astype(str).isin(eval_days)
     ].copy()
     eval_focus = scored_focus.loc[
-        scored_focus["trading_day"].astype(str).isin(EVAL_DAYS)
+        scored_focus["trading_day"].astype(str).isin(eval_days)
     ].copy()
     eval_candidates = scored_candidates.loc[
-        scored_candidates["trading_day"].astype(str).isin(EVAL_DAYS)
+        scored_candidates["trading_day"].astype(str).isin(eval_days)
     ].copy()
     eval_baseline = all_baseline.loc[
-        all_baseline["trading_day"].astype(str).isin(EVAL_DAYS)
+        all_baseline["trading_day"].astype(str).isin(eval_days)
     ].copy()
 
     found_days = sorted(eval_scan["trading_day"].astype(str).unique())
-    if found_days != EVAL_DAYS:
-        raise ValueError(f"expected eval days {EVAL_DAYS}, found {found_days}")
+    if found_days != eval_days:
+        raise ValueError(f"expected eval days {eval_days}, found {found_days}")
 
     learned_trace, runtime_audit = build_learned_runtime_trace(
         eval_focus, eval_candidates
@@ -492,24 +675,40 @@ def run_probe(
         if len(eval_candidates)
         else None
     )
-    evaluation = evaluate_runtime(
-        eval_scan,
-        eval_baseline,
-        learned_trace,
-        eval_focus,
-        eval_candidates,
-        second_coverage,
-        runtime_audit,
-    )
+    if evaluation_kind == "runtime_v06":
+        evaluation = evaluate_runtime(
+            eval_scan,
+            eval_baseline,
+            learned_trace,
+            eval_focus,
+            eval_candidates,
+            second_coverage,
+            runtime_audit,
+            eval_days=eval_days,
+        )
+    elif evaluation_kind == "entry_readiness_v07":
+        evaluation = evaluate_entry_readiness(
+            eval_scan,
+            eval_baseline,
+            learned_trace,
+            eval_focus,
+            eval_candidates,
+            second_coverage,
+            runtime_audit,
+            eval_days=eval_days,
+        )
+    else:
+        raise ValueError(f"unknown evaluation kind: {evaluation_kind}")
 
     summary: dict[str, object] = {
         "schema_version": 1,
         "start": start.isoformat(),
         "end": end.isoformat(),
-        "stage1_fit_end": STAGE1_FIT_END,
-        "stage2_fit_start": STAGE2_FIT_START,
-        "stage2_fit_end": STAGE2_FIT_END,
-        "eval_days": EVAL_DAYS,
+        "stage1_fit_end": stage1_fit_end,
+        "stage2_fit_start": stage2_fit_start,
+        "stage2_fit_end": stage2_fit_end,
+        "eval_days": eval_days,
+        "evaluation_kind": evaluation_kind,
         "focus_budget": 60,
         "shortlist_budget": SHORTLIST_BUDGET,
         "hot_budget": HOT_BUDGET,
@@ -543,6 +742,19 @@ def main() -> int:
     parser.add_argument("end", type=date.fromisoformat)
     parser.add_argument("--trace-output", type=Path, required=True)
     parser.add_argument("--summary", type=Path, required=True)
+    parser.add_argument("--stage1-fit-end", default=STAGE1_FIT_END)
+    parser.add_argument("--stage2-fit-start", default=STAGE2_FIT_START)
+    parser.add_argument("--stage2-fit-end", default=STAGE2_FIT_END)
+    parser.add_argument(
+        "--eval-days",
+        default=",".join(EVAL_DAYS),
+        help="Comma-separated untouched evaluation sessions.",
+    )
+    parser.add_argument(
+        "--evaluation-kind",
+        choices=["runtime_v06", "entry_readiness_v07"],
+        default="runtime_v06",
+    )
     args = parser.parse_args()
 
     settings = load_settings()
@@ -562,7 +774,16 @@ def main() -> int:
         request_interval_seconds=0.0,
     )
     trace, summary = run_probe(
-        store, scan_client, second_client, args.start, args.end
+        store,
+        scan_client,
+        second_client,
+        args.start,
+        args.end,
+        stage1_fit_end=args.stage1_fit_end,
+        stage2_fit_start=args.stage2_fit_start,
+        stage2_fit_end=args.stage2_fit_end,
+        eval_days=[day.strip() for day in args.eval_days.split(",") if day.strip()],
+        evaluation_kind=args.evaluation_kind,
     )
     args.trace_output.parent.mkdir(parents=True, exist_ok=True)
     args.summary.parent.mkdir(parents=True, exist_ok=True)

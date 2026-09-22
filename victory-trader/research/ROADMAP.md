@@ -206,11 +206,19 @@ only 4.37% in HOT/POSITION, with zero-minute median HOT lead. Historical
 one-second aggregates are available under the current data entitlement, while
 historical trades/NBBO are not.
 
-The active research task is therefore a preregistered WATCH -> HOT
-information-value test: determine whether the just-completed 60-second path at
-one-second resolution adds causal near-term urgency information beyond completed
-minute bars. This is an attention-layer diagnostic, not an entry-policy or
-profitability test.
+The targeted one-second reranker passed its frozen information-value gate.
+Request 123 then replayed the full learned hierarchy chronologically: it placed
+431 of 797 future first +10% runners in HOT strictly before crossing versus zero
+for the old percentile runtime. Its formal gate remained false only because the
+zero-capture comparator had no defined captured-only lead median. That outcome
+is not retroactively promoted.
+
+The active research task is the preregistered v0.7 HOT entry-readiness bridge on
+fresh 2026-02-18 through 2026-02-24 sessions. The policy remains frozen while
+the replay measures whether runners are actually HOT in the exact minute(s)
+before crossing and decomposes losses through focus, shortlist and HOT
+allocation. This is still an attention-layer validation, not a profitability
+claim. Passing it permits the next HOT -> ENTRY/ABSTAIN integration experiment.
 
 ### Milestone 3 — policy integration
 
