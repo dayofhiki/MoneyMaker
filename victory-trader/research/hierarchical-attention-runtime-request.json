@@ -1,0 +1,7 @@
+{
+  "request_id": 123,
+  "operation": "hierarchical_attention_runtime_v06",
+  "start_date": "2026-01-02",
+  "end_date": "2026-02-17",
+  "note": "Frozen chronological attention-runtime promotion test after request 122 passed. Build a 60-name causal focus pool with the original 0.60/0.40 focus hysteresis, fit the minute hazard through 2026-01-16, fit the minute/targeted-one-second rerankers on 2026-01-20..2026-02-09, and evaluate untouched 2026-02-10/11/12/13/17. At each evaluation minute use stage-1 top20 then targeted one-second reranking to allocate at most HOT10, preserving exact-tie incumbents. Compare against the unchanged baseline AttentionRuntime using strict pre-crossing HOT capture, HOT lead, 2+ minute early capture, occupancy, churn, shortlist coverage and second-data coverage. No post-result tuning; April 2026+ remain sealed."
+}
