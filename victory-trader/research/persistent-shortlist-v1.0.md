@@ -45,3 +45,16 @@ true:
 If the gate fails, do not tune the rank buffer on these dates. Attribute the
 failure to capture loss or inadequate demand reduction and test a different
 causal persistence mechanism on a later untouched March block.
+
+## Result — request 127
+
+The policy preserved predictive coverage but failed the operational gate.
+Persistent and stateless top-20 both captured 450 of 867 crossings in the exact
+prior minute (51.90%), and the persistent policy was noninferior on all five
+days. Conditional capture versus the learned focus was 95.54%.
+
+The rank-30 band reduced unique ticker-day demand only from 2,915 to 2,664
+(8.61%) and raised mean set retention only from 53.68% to 66.04%, below the
+frozen 25% and 70% requirements. It still replaced 6.83 of 20 slots per minute.
+The failure is therefore attributed to inadequate suppression of rank
+oscillation, not capture loss. No rank threshold was selected on these dates.
