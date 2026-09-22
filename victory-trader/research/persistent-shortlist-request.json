@@ -1,7 +1,7 @@
 {
-  "request_id": 129,
-  "operation": "persistent_shortlist_v12",
+  "request_id": 130,
+  "operation": "persistent_shortlist_v13",
   "start_date": "2026-01-02",
-  "end_date": "2026-03-31",
-  "note": "Request 128 passed capture and retention conditions but reduced ticker-days only 18.51%, below 25%. Stop rank tuning. On untouched 2026-03-25/26/27/30/31, impose a causal 300-symbol session admission budget while retaining rank-40 hysteresis. Fit remains through 2026-01-16; April 2026+ remain sealed."
+  "end_date": "2026-01-16",
+  "note": "Development-only mechanism check after request 129's first-come 300-symbol budget cut demand 46.35% but collapsed capture. Fit market hazard through 2026-01-09 and evaluate paced linear release of the same 300-symbol budget on 2026-01-12..16. This reused development block cannot promote the model; April 2026+ remain sealed."
 }
