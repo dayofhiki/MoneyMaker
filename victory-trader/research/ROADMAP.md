@@ -233,12 +233,16 @@ through 2026-03-10 sessions. Exact-prior-minute HOT capture rose from 27.18% to
 and replaced 4.79 of 10 HOT slots per minute, so operational efficiency is not
 yet adequate for ENTRY/ABSTAIN integration.
 
-The active task is preregistered v1.0 request 127. On untouched 2026-03-11
-through 2026-03-17 sessions, it tests a fixed top-30 incumbent buffer around the
-learned top-20 and requires at least 25% fewer ticker-days plus 70% retention
-while allowing at most two percentage points of capture loss. April 2026 and
-later remain sealed. This is still an attention-layer bridge, not a
-profitability claim.
+Request 127 preserved exact-prior-minute capture exactly (51.90% for both
+persistent and stateless top-20), but failed the operational gate: ticker-day
+demand fell only 8.61% and retention reached only 66.04%. The remaining
+bottleneck is minute-rank oscillation, not predictive loss.
+
+The active task is preregistered v1.1 request 128. On untouched 2026-03-18
+through 2026-03-24 sessions, it tests a structural rank-40 band, exactly twice
+the 20-name observation budget, under the same capture and operational gates.
+April 2026 and later remain sealed. This is still an attention-layer bridge,
+not a profitability claim.
 
 ### Milestone 3 — policy integration
 
