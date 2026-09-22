@@ -189,11 +189,28 @@ class MassiveClient:
         *,
         adjusted: bool = False,
     ) -> dict[str, Any]:
-        """Fetch historical one-second aggregate bars."""
-        return self._get(
+        """Fetch complete historical one-second aggregate bars.
+
+        Massive aggregate endpoints may paginate when a ticker-day exceeds the
+        50,000-row page limit. Follow ``next_url`` so callers never receive a
+        silently truncated second-path history.
+        """
+        page = self._get(
             f"/v2/aggs/ticker/{ticker.upper()}/range/1/second/{start.isoformat()}/{end.isoformat()}",
             {"adjusted": str(adjusted).lower(), "sort": "asc", "limit": 50000},
         )
+        payload = dict(page)
+        rows: list[dict[str, Any]] = list(page.get("results") or [])
+        next_url = page.get("next_url")
+        while next_url:
+            page = self._get_next_url(str(next_url))
+            rows.extend(page.get("results") or [])
+            next_url = page.get("next_url")
+
+        payload["results"] = rows
+        payload["resultsCount"] = len(rows)
+        payload.pop("next_url", None)
+        return payload
 
     def trades(
         self,
