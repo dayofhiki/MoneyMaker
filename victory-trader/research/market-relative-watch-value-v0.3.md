@@ -171,3 +171,55 @@ would be recurrent WATCH scoring and a finite HOT-budget replay.
 If the gate fails, do not tune this feature family on 2026-01-20 through
 2026-01-26. The next branch must change the information family or model target
 again.
+
+
+## Result — request 119
+
+Request 119 completed successfully after the preregistered request 117 was
+rerun unchanged following a data-resolver-only rounding fix.
+
+The full-population dataset contained 7,801 eligible pre-runner WATCH-entry
+episodes across 1,391 tickers. Fit used 5,017 episodes through 2026-01-16 and
+evaluation used 2,784 episodes on the untouched 2026-01-20 through 2026-01-26
+sessions.
+
+Pooled evaluation:
+
+| Metric | Minute baseline | + market-relative family |
+| --- | ---: | ---: |
+| Spearman | 0.268493 | 0.245336 |
+| MAE | 1.414965 | 1.387114 |
+| top-quartile episode peak return | +2.313274% | +2.149393% |
+| top-quartile runner rate | 28.02% | 26.15% |
+
+Incremental pooled Spearman was -0.023157. Mean per-day incremental Spearman was
+-0.020853 and the extended model was non-lower on only one of five evaluation
+sessions.
+
+Per-day incremental Spearman:
+
+- 2026-01-20: -0.057289
+- 2026-01-21: -0.008063
+- 2026-01-22: +0.033839
+- 2026-01-23: -0.058332
+- 2026-01-26: -0.014420
+
+The preregistered promotion gate **fails**. The market-relative extension
+improves pooled MAE slightly, but it worsens the ranking metric, top-quartile
+episode return and top-quartile runner rate.
+
+## Interpretation
+
+The larger full-population experiment removes small-sample ambiguity: this
+particular market-relative acceleration family is not a useful extension of the
+current WATCH-entry value model and is retired from this branch.
+
+The adaptive episode target itself remains informative: the minute-only
+baseline reached pooled Spearman 0.268493 on 2,784 untouched episode rows and
+its top prediction quartile contained a 28.02% runner-in-episode rate. The next
+research question should therefore move from WATCH-entry lifetime value to a
+**recurrent transition-hazard target** that is evaluated at every WATCH
+decision and maps directly to finite HOT-budget allocation.
+
+No request-119 evaluation session is reused to tune the failed
+market-relative family.
