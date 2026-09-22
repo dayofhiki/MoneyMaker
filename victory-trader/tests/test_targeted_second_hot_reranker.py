@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import pandas as pd
-import pytest
-
 import victory_trader.targeted_second_hot_reranker as reranker
 
 from victory_trader.targeted_second_hot_reranker import (
@@ -51,7 +49,7 @@ def test_eval_days_are_five_fresh_sessions():
     assert SHORTLIST_BUDGET == 2 * HOT_BUDGET
 
 
-def test_second_feature_enrichment_rejects_request_limit(monkeypatch):
+def test_second_feature_enrichment_accepts_complete_large_history(monkeypatch):
     candidates = pd.DataFrame(
         [
             {
@@ -69,8 +67,27 @@ def test_second_feature_enrichment_rejects_request_limit(monkeypatch):
     monkeypatch.setattr(
         reranker,
         "_second_frame",
-        lambda payload: pd.DataFrame(index=range(50_000)),
+        lambda payload: pd.DataFrame(
+            {
+                "t": range(50_001),
+                "o": 1.0,
+                "h": 1.0,
+                "l": 1.0,
+                "c": 1.0,
+                "v": 1.0,
+                "n": 1.0,
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        reranker,
+        "second_path_features",
+        lambda frame, decision_t: {
+            name: 0.0 for name in reranker.SECOND_FEATURES
+        },
     )
 
-    with pytest.raises(ValueError, match="50,000-row request limit"):
-        add_second_features(candidates, FakeClient())
+    enriched, audit = add_second_features(candidates, FakeClient())
+
+    assert len(enriched) == 1
+    assert audit["second_rows"] == 50_001
