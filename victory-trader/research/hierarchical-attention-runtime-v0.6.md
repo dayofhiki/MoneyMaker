@@ -121,8 +121,8 @@ sessions:
 For baseline and learned runtimes report pooled and by session:
 
 - first +10% runner crossings;
-- crossings that were HOT at or before the crossing;
-- HOT pre-crossing capture rate;
+- crossings that were HOT strictly before the crossing decision;
+- strict pre-crossing HOT capture rate;
 - median and mean HOT lead minutes;
 - fraction of captured runners that became HOT at least one full minute before
   crossing;
@@ -154,3 +154,12 @@ HOT -> ENTRY/ABSTAIN research stage only if all are true:
 If the gate fails, do not tune the frozen hierarchy on these dates. Analyze
 whether the failure comes from focus gating, shortlist loss, high-resolution
 reranking, or state turnover before choosing a new branch.
+
+
+### Strict lead convention
+
+For both runtimes, a crossing counts as attention-captured only if the ticker
+was HOT at a decision timestamp strictly earlier than the first +10% crossing
+timestamp. Becoming HOT on the already-completed crossing minute is not credited.
+This matches the recurrent next-step hazard objective and prevents the crossing
+bar itself from masquerading as advance attention.
