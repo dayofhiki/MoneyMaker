@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Iterable
 
 
 @dataclass(frozen=True)
@@ -18,6 +19,93 @@ class TransportSnapshot:
     cumulative_additions: int
     cumulative_removals: int
     reconnects: int
+
+
+@dataclass(frozen=True)
+class RankedCandidate:
+    ticker: str
+    score: float
+
+
+class RankHysteresisSelector:
+    """Stateful shortlist selector that can run at any event cadence."""
+
+    def __init__(self, *, capacity: int = 20, incumbent_rank_limit: int = 40):
+        if capacity <= 0:
+            raise ValueError("capacity must be positive")
+        if incumbent_rank_limit < capacity:
+            raise ValueError("incumbent rank limit must cover capacity")
+        self.capacity = capacity
+        self.incumbent_rank_limit = incumbent_rank_limit
+        self._incumbents: set[str] = set()
+
+    def reset(self) -> None:
+        self._incumbents.clear()
+
+    def select(self, candidates: Iterable[RankedCandidate]) -> tuple[str, ...]:
+        ranked = sorted(candidates, key=lambda item: (-item.score, item.ticker))
+        seen: set[str] = set()
+        unique = [
+            item
+            for item in ranked
+            if not (item.ticker in seen or seen.add(item.ticker))
+        ]
+        rank = {item.ticker: index + 1 for index, item in enumerate(unique)}
+        retained = {
+            ticker
+            for ticker in self._incumbents
+            if rank.get(ticker, self.incumbent_rank_limit + 1)
+            <= self.incumbent_rank_limit
+        }
+        ordered_retained = [item for item in unique if item.ticker in retained]
+        selected = ordered_retained[: self.capacity]
+        selected_names = {item.ticker for item in selected}
+        for item in unique:
+            if len(selected) >= self.capacity:
+                break
+            if item.ticker not in selected_names:
+                selected.append(item)
+                selected_names.add(item.ticker)
+        self._incumbents = selected_names
+        return tuple(item.ticker for item in selected)
+
+
+@dataclass(frozen=True)
+class ObservationBridgeSnapshot:
+    selected: tuple[str, ...]
+    transport: TransportSnapshot
+
+
+class ObservationBridge:
+    """Connect event-driven rank hysteresis to bounded observation transport."""
+
+    def __init__(
+        self,
+        *,
+        capacity: int = 20,
+        incumbent_rank_limit: int = 40,
+        max_staleness_ms: int = 2_000,
+    ):
+        self.selector = RankHysteresisSelector(
+            capacity=capacity, incumbent_rank_limit=incumbent_rank_limit
+        )
+        self.transport = ObservationTransport(
+            capacity=capacity, max_staleness_ms=max_staleness_ms
+        )
+
+    def reset_session(self) -> None:
+        self.selector.reset()
+        self.transport = ObservationTransport(
+            capacity=self.transport.capacity,
+            max_staleness_ms=self.transport.max_staleness_ms,
+        )
+
+    def update(
+        self, candidates: Iterable[RankedCandidate], *, now_ms: int
+    ) -> ObservationBridgeSnapshot:
+        selected = self.selector.select(candidates)
+        snapshot = self.transport.reconcile(selected, now_ms=now_ms)
+        return ObservationBridgeSnapshot(selected=selected, transport=snapshot)
 
 
 class ObservationTransport:
