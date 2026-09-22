@@ -253,13 +253,16 @@ Request 130 also rejected the 300-symbol ceiling. Linear release cut demand by
 capture and was noninferior on zero of five development days. April remained
 sealed.
 
-The active task is v1.4 attention/transport separation. Predictive membership
-will no longer be distorted to reduce historical REST ticker-day downloads.
-The rank-40 shortlist candidate instead feeds a bounded 20-subscription runtime
-with explicit churn, freshness and reconnect telemetry. Only after transport
-fault tests pass will the full one-second HOT hierarchy be evaluated once on
-the sealed holdout. This is still an attention-layer bridge, not a
-profitability claim.
+The v1.4 bridge now passes transport fault tests and accepts score updates at
+arbitrary event cadence rather than requiring a one-minute timer. It preserves
+selected membership, enforces 20 concurrent subscriptions, and reports churn,
+freshness, missing bars and reconnect state.
+
+The active task is preregistered request 131. It unlocks only 2026-04-01,
+04-02, 04-06, 04-07 and 04-08 to evaluate the complete focus -> event-driven
+rank-40 shortlist -> transport -> one-second -> HOT-10 hierarchy. April 9 and
+later remain sealed. ENTRY/ABSTAIN remains blocked until both performance and
+transport gates pass.
 
 ### Milestone 3 — policy integration
 

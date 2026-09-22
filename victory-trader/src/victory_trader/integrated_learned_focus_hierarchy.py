@@ -37,6 +37,10 @@ from .market_wide_focus_hazard import (
 )
 from .massive_client import MassiveClient
 from .multi_day import daterange
+from .observation_transport import (
+    ObservationBridge,
+    RankedCandidate,
+)
 from .second_path_attention_probe import BASELINE_FEATURES, SECOND_CACHE_DIR
 from .targeted_second_hot_reranker import (
     MINUTE_RERANK_FEATURES,
@@ -47,11 +51,11 @@ from .targeted_second_hot_reranker import (
 )
 
 EVAL_DAYS = [
-    "2026-03-04",
-    "2026-03-05",
-    "2026-03-06",
-    "2026-03-09",
-    "2026-03-10",
+    "2026-04-01",
+    "2026-04-02",
+    "2026-04-06",
+    "2026-04-07",
+    "2026-04-08",
 ]
 FOCUS_BUDGET = 60
 SHORTLIST_BUDGET = 20
@@ -84,16 +88,74 @@ def add_learned_focus_state(focus: pd.DataFrame) -> pd.DataFrame:
 
 
 def learned_shortlist(focus: pd.DataFrame) -> pd.DataFrame:
-    ranked = focus.sort_values(
-        ["trading_day", "t", "market_hazard_probability", "ticker"],
-        ascending=[True, True, False, True],
-        kind="stable",
-    )
+    """Build the event-driven rank-40 shortlist without changing membership."""
+
+    selected: list[pd.DataFrame] = []
+    for _, day_rows in focus.groupby("trading_day", sort=True):
+        bridge = ObservationBridge(
+            capacity=SHORTLIST_BUDGET, incumbent_rank_limit=40
+        )
+        for timestamp, group in day_rows.groupby("t", sort=True):
+            candidates = [
+                RankedCandidate(
+                    ticker=str(row.ticker),
+                    score=float(row.market_hazard_probability),
+                )
+                for row in group.itertuples(index=False)
+            ]
+            snapshot = bridge.update(candidates, now_ms=int(timestamp))
+            chosen = set(snapshot.selected)
+            current = group.loc[group["ticker"].astype(str).isin(chosen)].copy()
+            current["transport_active"] = current["ticker"].astype(str).isin(
+                snapshot.transport.active
+            )
+            current["transport_addition"] = current["ticker"].astype(str).isin(
+                snapshot.transport.additions
+            )
+            selected.append(current)
     return (
-        ranked.groupby(["trading_day", "t"], sort=False)
-        .head(SHORTLIST_BUDGET)
-        .copy()
+        pd.concat(selected, ignore_index=True)
+        if selected
+        else focus.iloc[0:0].copy()
     )
+
+
+def observation_transport_audit(shortlist: pd.DataFrame) -> dict[str, object]:
+    """Audit selection-preserving subscription capacity and churn."""
+
+    additions: list[int] = []
+    retentions: list[float] = []
+    occupancies: list[int] = []
+    previous_by_day: dict[str, set[str]] = {}
+    for (day, _), group in shortlist.groupby(
+        ["trading_day", "t"], sort=True
+    ):
+        current = set(group["ticker"].astype(str))
+        previous = previous_by_day.get(str(day), set())
+        occupancies.append(len(current))
+        additions.append(len(current - previous))
+        if previous:
+            retentions.append(len(current & previous) / len(previous))
+        previous_by_day[str(day)] = current
+
+    mismatch_rows = int(
+        (~shortlist.get("transport_active", pd.Series(False, index=shortlist.index)))
+        .fillna(False)
+        .astype(bool)
+        .sum()
+    )
+    return {
+        "decisions": len(occupancies),
+        "max_concurrent_subscriptions": max(occupancies, default=0),
+        "total_subscription_additions": int(sum(additions)),
+        "mean_subscription_additions_per_decision": (
+            float(sum(additions) / len(additions)) if additions else None
+        ),
+        "mean_selection_retention": (
+            float(sum(retentions) / len(retentions)) if retentions else None
+        ),
+        "selection_transport_mismatch_rows": mismatch_rows,
+    }
 
 
 def evaluate_integration(
@@ -104,6 +166,7 @@ def evaluate_integration(
     integrated_candidates: pd.DataFrame,
     second_coverage: float | None,
     runtime_audit: dict[str, object],
+    transport_audit: dict[str, object],
 ) -> dict[str, object]:
     """Evaluate whether learned focus improves the complete HOT handoff."""
 
@@ -171,6 +234,13 @@ def evaluate_integration(
         and second_coverage is not None
         and second_coverage >= 0.99
         and int(runtime_audit["max_hot_occupancy"]) <= HOT_BUDGET
+        and int(transport_audit["max_concurrent_subscriptions"])
+        <= SHORTLIST_BUDGET
+        and int(transport_audit["selection_transport_mismatch_rows"]) == 0
+        and transport_audit["mean_subscription_additions_per_decision"]
+        is not None
+        and float(transport_audit["mean_subscription_additions_per_decision"])
+        <= 5.0
     )
     return {
         "eval_days": EVAL_DAYS,
@@ -183,6 +253,7 @@ def evaluate_integration(
         "nonlower_immediate_capture_days": nonlower_days,
         "second_data_row_coverage": second_coverage,
         "runtime_audit": runtime_audit,
+        "transport_audit": transport_audit,
         "by_day": by_day,
         "promotion_gate_pass": gate,
     }
@@ -306,6 +377,7 @@ def run_probe(
     integrated_trace, integrated_runtime_audit = build_learned_runtime_trace(
         eval_integrated_focus, eval_integrated_candidates
     )
+    transport_audit = observation_transport_audit(eval_integrated_candidates)
     frozen_trace, frozen_runtime_audit = build_learned_runtime_trace(
         eval_frozen_focus, eval_frozen_candidates
     )
@@ -330,6 +402,7 @@ def run_probe(
         eval_integrated_candidates,
         second_coverage,
         integrated_runtime_audit,
+        transport_audit,
     )
     output = integrated_trace.merge(
         eval_scan.loc[:, ["trading_day", "ticker", "t", "runner_cross_now"]],
@@ -337,7 +410,7 @@ def run_probe(
         how="left",
     )
     summary: dict[str, object] = {
-        "schema_version": 1,
+        "schema_version": 2,
         "start": start.isoformat(),
         "end": end.isoformat(),
         "focus_fit_end": FIT_END,
@@ -358,6 +431,7 @@ def run_probe(
         "integrated_second_data_audit": integrated_second_audit,
         "frozen_second_data_audit": frozen_second_audit,
         "integrated_runtime_audit": integrated_runtime_audit,
+        "integrated_transport_audit": transport_audit,
         "frozen_runtime_audit": frozen_runtime_audit,
         "second_client_stats": second_client.stats.to_dict(),
         "flatfile_stats": store.stats.to_dict(),

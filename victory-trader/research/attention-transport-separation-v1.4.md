@@ -49,3 +49,9 @@ reranking or dropping names, enforces the concurrent capacity, records
 subscription additions/removals, flags missing and stale bars, rejects
 future-dated events, and requires explicit recovery after disconnect. Unit
 tests inject capacity overflow, missing data, stale data and reconnects.
+
+The bridge is now event-driven rather than tied to one-minute scheduling.
+`RankHysteresisSelector` can reconcile whenever market scores change, and
+`ObservationBridge` passes its exact selection to transport without reranking.
+The integrated hierarchy now uses this rank-40 bridge for its 20-name
+high-resolution candidate set.

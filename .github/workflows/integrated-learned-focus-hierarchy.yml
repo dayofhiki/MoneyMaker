@@ -15,7 +15,7 @@ on:
       end_date:
         description: Last evaluation date
         required: true
-        default: '2026-03-10'
+        default: '2026-04-08'
       request_id:
         description: Artifact request identifier
         required: true
@@ -58,7 +58,7 @@ jobs:
                       encoding="utf-8"
                   )
               )
-              enabled = payload.get("operation") == "integrated_learned_focus_hierarchy_v09"
+              enabled = payload.get("operation") == "integrated_learned_focus_hierarchy_v10"
               start = str(payload.get("start_date", ""))
               end = str(payload.get("end_date", ""))
               request_id = str(payload.get("request_id", ""))
@@ -97,6 +97,7 @@ jobs:
           ruff check src tests --select E4,E7,E9,F
           pytest -q \
             tests/test_integrated_learned_focus_hierarchy.py \
+            tests/test_observation_transport.py \
             tests/test_market_wide_focus_hazard.py \
             tests/test_hierarchical_attention_runtime.py \
             tests/test_targeted_second_hot_reranker.py \
@@ -131,11 +132,11 @@ jobs:
           python -m victory_trader.integrated_learned_focus_hierarchy \
             "${{ needs.request.outputs.start_date }}" \
             "${{ needs.request.outputs.end_date }}" \
-            --output artifacts/integrated-learned-focus-hierarchy-v09.parquet \
-            --summary artifacts/integrated-learned-focus-hierarchy-v09.json \
-            | tee artifacts/integrated-learned-focus-hierarchy-v09.log
-          test -s artifacts/integrated-learned-focus-hierarchy-v09.parquet
-          test -s artifacts/integrated-learned-focus-hierarchy-v09.json
+            --output artifacts/integrated-learned-focus-hierarchy-v10.parquet \
+            --summary artifacts/integrated-learned-focus-hierarchy-v10.json \
+            | tee artifacts/integrated-learned-focus-hierarchy-v10.log
+          test -s artifacts/integrated-learned-focus-hierarchy-v10.parquet
+          test -s artifacts/integrated-learned-focus-hierarchy-v10.json
 
       - name: Save one-second REST cache
         if: always()
@@ -154,10 +155,10 @@ jobs:
       - name: Upload integrated hierarchy audit
         uses: actions/upload-artifact@v4
         with:
-          name: moneymaker-integrated-learned-focus-hierarchy-v09-${{ needs.request.outputs.request_id }}
+          name: moneymaker-integrated-learned-focus-hierarchy-v10-${{ needs.request.outputs.request_id }}
           path: |
-            victory-trader/artifacts/integrated-learned-focus-hierarchy-v09.parquet
-            victory-trader/artifacts/integrated-learned-focus-hierarchy-v09.json
-            victory-trader/artifacts/integrated-learned-focus-hierarchy-v09.log
+            victory-trader/artifacts/integrated-learned-focus-hierarchy-v10.parquet
+            victory-trader/artifacts/integrated-learned-focus-hierarchy-v10.json
+            victory-trader/artifacts/integrated-learned-focus-hierarchy-v10.log
           if-no-files-found: error
           retention-days: 90
