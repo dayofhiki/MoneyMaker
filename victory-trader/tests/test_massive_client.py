@@ -591,3 +591,36 @@ def test_trades_use_nanosecond_timestamp_bounds_and_paginate(monkeypatch):
     assert calls[0][1]["timestamp.gte"] == 1760000000000000000
     assert calls[0][1]["timestamp.lte"] == 1760000002000000000
     assert calls[1][1] == {"cursor": "next"}
+
+
+
+def test_second_bars_range_paginates_and_merges_results(monkeypatch):
+    from datetime import date
+
+    calls = []
+    payloads = [
+        {
+            "results": [{"t": 1, "c": 10.0}],
+            "next_url": "https://api.massive.com/v2/aggs/ticker/AAA/range/1/second/2026-01-02/2026-01-02?cursor=next",
+        },
+        {
+            "results": [{"t": 2, "c": 10.1}],
+        },
+    ]
+
+    def fake_get(url, *, params, headers, timeout):
+        calls.append((url, params))
+        return FakeResponse(payloads.pop(0))
+
+    monkeypatch.setattr("victory_trader.massive_client.requests.get", fake_get)
+    client = MassiveClient("secret")
+    payload = client.second_bars_range(
+        "aaa",
+        date(2026, 1, 2),
+        date(2026, 1, 2),
+    )
+
+    assert [row["t"] for row in payload["results"]] == [1, 2]
+    assert payload["resultsCount"] == 2
+    assert "next_url" not in payload
+    assert calls[1][1] == {"cursor": "next"}
