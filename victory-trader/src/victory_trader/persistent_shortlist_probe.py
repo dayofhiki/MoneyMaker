@@ -27,15 +27,16 @@ from .multi_day import daterange
 from .second_path_attention_probe import BASELINE_FEATURES
 
 EVAL_DAYS = [
-    "2026-03-18",
-    "2026-03-19",
-    "2026-03-20",
-    "2026-03-23",
-    "2026-03-24",
+    "2026-03-25",
+    "2026-03-26",
+    "2026-03-27",
+    "2026-03-30",
+    "2026-03-31",
 ]
 FOCUS_BUDGET = 60
 SHORTLIST_BUDGET = 20
 INCUMBENT_RANK_BUFFER = 40
+MAX_SESSION_TICKERS = 300
 
 
 def shortlist_audit(shortlist: pd.DataFrame) -> dict[str, float | int | None]:
@@ -68,12 +69,17 @@ def select_persistent_shortlist(
     focus: pd.DataFrame,
     *,
     incumbent_rank_buffer: int = INCUMBENT_RANK_BUFFER,
+    max_session_tickers: int = MAX_SESSION_TICKERS,
 ) -> tuple[pd.DataFrame, dict[str, float | int | None]]:
-    """Retain incumbents while they remain inside the causal top-40 focus rank."""
+    """Apply rank hysteresis under a causal session admission budget."""
+
+    if max_session_tickers < SHORTLIST_BUDGET:
+        raise ValueError("session ticker budget must cover the shortlist")
 
     selected: list[pd.DataFrame] = []
     for _, day_rows in focus.groupby("trading_day", sort=True):
-        incumbents: set[str] = set()
+        incumbents: dict[str, pd.Series] = {}
+        admitted: set[str] = set()
         for _, group in day_rows.groupby("t", sort=True):
             ranked = group.sort_values(
                 ["market_hazard_probability", "ticker"],
@@ -91,12 +97,54 @@ def select_persistent_shortlist(
                 kind="stable",
             ).head(SHORTLIST_BUDGET)
             retained_names = set(retained["ticker"].astype(str))
-            fill = ranked.loc[
+            fill_rows: list[pd.Series] = []
+            for _, candidate in ranked.loc[
                 ~ranked["ticker"].astype(str).isin(retained_names)
-            ].head(SHORTLIST_BUDGET - len(retained))
+            ].iterrows():
+                if len(retained) + len(fill_rows) >= SHORTLIST_BUDGET:
+                    break
+                ticker = str(candidate["ticker"])
+                if ticker not in admitted and len(admitted) >= max_session_tickers:
+                    continue
+                admitted.add(ticker)
+                fill_rows.append(candidate)
+                retained_names.add(ticker)
+            fill = (
+                pd.DataFrame(fill_rows, columns=ranked.columns)
+                if fill_rows
+                else ranked.iloc[0:0].copy()
+            )
             current = pd.concat([retained, fill], ignore_index=True)
+
+            if len(current) < SHORTLIST_BUDGET:
+                stale_rows: list[pd.Series] = []
+                current_names = set(current["ticker"].astype(str))
+                stale_candidates = sorted(
+                    (
+                        row.copy()
+                        for ticker, row in incumbents.items()
+                        if ticker not in current_names
+                    ),
+                    key=lambda row: (
+                        -float(row["market_hazard_probability"]),
+                        str(row["ticker"]),
+                    ),
+                )
+                for row in stale_candidates[: SHORTLIST_BUDGET - len(current)]:
+                    row["t"] = group["t"].iloc[0]
+                    row["focus_hazard_rank"] = FOCUS_BUDGET + 1
+                    if "target_next_cross" in row.index:
+                        row["target_next_cross"] = False
+                    stale_rows.append(row)
+                if stale_rows:
+                    current = pd.concat(
+                        [current, pd.DataFrame(stale_rows, columns=ranked.columns)],
+                        ignore_index=True,
+                    )
             selected.append(current)
-            incumbents = set(current["ticker"].astype(str))
+            incumbents = {
+                str(row["ticker"]): row.copy() for _, row in current.iterrows()
+            }
     output = (
         pd.concat(selected, ignore_index=True)
         if selected
@@ -274,7 +322,7 @@ def run_probe(
         ],
     ].copy()
     summary: dict[str, object] = {
-        "schema_version": 2,
+        "schema_version": 3,
         "start": start.isoformat(),
         "end": end.isoformat(),
         "fit_end": FIT_END,
@@ -282,6 +330,7 @@ def run_probe(
         "focus_budget": FOCUS_BUDGET,
         "shortlist_budget": SHORTLIST_BUDGET,
         "incumbent_rank_buffer": INCUMBENT_RANK_BUFFER,
+        "max_session_tickers": MAX_SESSION_TICKERS,
         "features": BASELINE_FEATURES,
         "days": day_summaries,
         "flatfile_stats": store.stats.to_dict(),
