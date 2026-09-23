@@ -582,19 +582,45 @@ def evaluate_observability(frame: pd.DataFrame, *, label: str) -> dict[str, obje
     return result
 
 
+def request140b_predictive_conditions_pass(summary140: dict[str, object]) -> bool:
+    evaluation = summary140["evaluation"]
+    return bool(
+        float(evaluation["classifier_auc"]) >= 0.55
+        and int(evaluation["auc_above_random_days"]) >= 4
+        and float(evaluation["value_spearman"]) >= 0.05
+        and int(evaluation["positive_spearman_days"]) >= 4
+        and float(evaluation["selected_oracle_base_mean_pct"]) > 0
+        and float(evaluation["selected_oracle_base_mean_pct"])
+        > float(evaluation["oracle_base_mean_pct"])
+        and float(evaluation["selected_positive_rate"])
+        >= float(evaluation["opportunity_positive_rate"]) + 0.05
+        and int(evaluation["selected_mean_nonlower_days"]) >= 4
+    )
+
+
 def run_probe(
     opportunity_path: Path,
     opportunity_summary_path: Path,
     store: MassiveFlatFileStore,
     scan_client: MassiveClient,
     second_client: MassiveClient,
+    *,
+    allow_coverage_only_failure: bool = False,
+    request_id: int = REQUEST_ID,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
     opportunity = pd.read_parquet(opportunity_path)
     summary140 = json.loads(
         opportunity_summary_path.read_text(encoding="utf-8")
     )
-    if not bool(summary140["evaluation"]["promotion_gate_pass"]):
-        raise ValueError("request 142 requires request 140B to pass")
+    formal_pass = bool(summary140["evaluation"]["promotion_gate_pass"])
+    predictive_pass = request140b_predictive_conditions_pass(summary140)
+    if not formal_pass:
+        if not allow_coverage_only_failure:
+            raise ValueError("request 142 requires request 140B to pass")
+        if not predictive_pass:
+            raise ValueError(
+                "coverage-only diagnostic requires all request-140B predictive gates"
+            )
 
     classifier, _regressor, _offset, threshold, _low, _high = _fit_models(opportunity)
     opportunity = opportunity.copy()
@@ -618,6 +644,8 @@ def run_probe(
         opportunity.loc[:, ["trading_day", "ticker", "t"]],
         scan,
         second_client,
+        allow_coverage_only_failure=args.allow_coverage_only_failure,
+        request_id=args.request_id,
     )
     anchor_flags = opportunity.loc[
         :, ["trading_day", "ticker", "t", "entry_selected_140b"]
@@ -661,8 +689,13 @@ def run_probe(
 
     final = {
         "schema_version": 1,
-        "request_id": REQUEST_ID,
+        "request_id": request_id,
         "opens_new_dates": False,
+        "request140b_formal_gate_pass": formal_pass,
+        "request140b_predictive_conditions_pass": predictive_pass,
+        "coverage_only_failure_diagnostic": bool(
+            allow_coverage_only_failure and not formal_pass
+        ),
         "fit_days": FIT_DAYS,
         "calibration_days": CAL_DAYS,
         "evaluation_days": EVAL_DAYS,
@@ -684,6 +717,8 @@ def main() -> int:
     parser.add_argument("--opportunity-summary", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--summary", type=Path, required=True)
+    parser.add_argument("--allow-coverage-only-failure", action="store_true")
+    parser.add_argument("--request-id", type=int, default=REQUEST_ID)
     args = parser.parse_args()
 
     settings = load_settings()
