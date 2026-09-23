@@ -16,6 +16,7 @@ class EpisodeSnapshot:
     state: str
     promotion_index: int
     minutes_since_previous_promotion: float | None
+    minutes_since_last_promotion: float | None
     minutes_continuously_hot: float
     minutes_continuously_observed: float
     hot_score_peak: float | None
@@ -96,6 +97,7 @@ class CausalEpisodeMemory:
 
         state_text = str(state).lower()
         is_hot = state_text == "hot"
+        is_position = state_text == "position"
         promotion = is_hot and not memory.previous_hot
         minutes_since_previous: float | None = None
         if promotion:
@@ -108,8 +110,14 @@ class CausalEpisodeMemory:
             memory.continuous_hot_since_t = timestamp
         elif is_hot and memory.continuous_hot_since_t is None:
             memory.continuous_hot_since_t = timestamp
-        elif not is_hot:
+        elif not is_hot and not is_position:
             memory.continuous_hot_since_t = None
+
+        minutes_since_last = (
+            (timestamp - memory.last_promotion_t) / MINUTE_MS
+            if memory.last_promotion_t is not None
+            else None
+        )
 
         hot_value = _finite(hot_score)
         if hot_value is not None:
@@ -142,7 +150,8 @@ class CausalEpisodeMemory:
 
         hot_minutes = (
             (timestamp - memory.continuous_hot_since_t) / MINUTE_MS
-            if is_hot and memory.continuous_hot_since_t is not None
+            if (is_hot or is_position)
+            and memory.continuous_hot_since_t is not None
             else 0.0
         )
         observed_minutes = (
@@ -151,7 +160,10 @@ class CausalEpisodeMemory:
             else 0.0
         )
 
-        memory.previous_hot = is_hot
+        if is_hot:
+            memory.previous_hot = True
+        elif not is_position:
+            memory.previous_hot = False
         memory.last_t = timestamp
         return EpisodeSnapshot(
             trading_day=memory.trading_day,
@@ -160,6 +172,11 @@ class CausalEpisodeMemory:
             state=state_text,
             promotion_index=memory.promotion_index,
             minutes_since_previous_promotion=minutes_since_previous,
+            minutes_since_last_promotion=(
+                float(minutes_since_last)
+                if minutes_since_last is not None
+                else None
+            ),
             minutes_continuously_hot=float(hot_minutes),
             minutes_continuously_observed=float(observed_minutes),
             hot_score_peak=memory.hot_score_peak,
