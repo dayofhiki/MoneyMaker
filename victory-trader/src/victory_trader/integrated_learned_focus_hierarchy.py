@@ -121,22 +121,29 @@ def learned_shortlist(focus: pd.DataFrame) -> pd.DataFrame:
 
 
 def observation_transport_audit(shortlist: pd.DataFrame) -> dict[str, object]:
-    """Audit selection-preserving subscription capacity and churn."""
+    """Audit subscription capacity and post-initial transport churn."""
 
     additions: list[int] = []
+    post_initial_additions: list[int] = []
     retentions: list[float] = []
     occupancies: list[int] = []
     previous_by_day: dict[str, set[str]] = {}
+    seen_day: set[str] = set()
     for (day, _), group in shortlist.groupby(
         ["trading_day", "t"], sort=True
     ):
+        day_text = str(day)
         current = set(group["ticker"].astype(str))
-        previous = previous_by_day.get(str(day), set())
+        previous = previous_by_day.get(day_text, set())
         occupancies.append(len(current))
-        additions.append(len(current - previous))
+        added = len(current - previous)
+        additions.append(added)
+        if day_text in seen_day:
+            post_initial_additions.append(added)
         if previous:
             retentions.append(len(current & previous) / len(previous))
-        previous_by_day[str(day)] = current
+        previous_by_day[day_text] = current
+        seen_day.add(day_text)
 
     mismatch_rows = int(
         (~shortlist.get("transport_active", pd.Series(False, index=shortlist.index)))
@@ -146,10 +153,19 @@ def observation_transport_audit(shortlist: pd.DataFrame) -> dict[str, object]:
     )
     return {
         "decisions": len(occupancies),
+        "post_initial_decisions": len(post_initial_additions),
         "max_concurrent_subscriptions": max(occupancies, default=0),
         "total_subscription_additions": int(sum(additions)),
         "mean_subscription_additions_per_decision": (
             float(sum(additions) / len(additions)) if additions else None
+        ),
+        "mean_post_initial_subscription_additions_per_decision": (
+            float(sum(post_initial_additions) / len(post_initial_additions))
+            if post_initial_additions
+            else None
+        ),
+        "max_post_initial_subscription_additions_per_decision": (
+            max(post_initial_additions, default=0)
         ),
         "mean_selection_retention": (
             float(sum(retentions) / len(retentions)) if retentions else None
