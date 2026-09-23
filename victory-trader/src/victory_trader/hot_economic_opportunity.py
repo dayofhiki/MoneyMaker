@@ -234,6 +234,7 @@ def _fit_models(
     float,
     float,
     float,
+    float,
 ]:
     fit = frame.loc[frame["trading_day"].astype(str).isin(FIT_DAYS)].copy()
     cal = frame.loc[frame["trading_day"].astype(str).isin(CAL_DAYS)].copy()
