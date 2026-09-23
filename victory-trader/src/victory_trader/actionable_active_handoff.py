@@ -289,7 +289,12 @@ def run_probe(
         eval_scored["next_minute_observability_probability"],
         errors="coerce",
     )
-    actual_observable = eval_scored["has_exact_next_minute"].fillna(False).astype(bool)
+    # target_next_cross is nullable exactly when no exact next-minute bar
+    # exists. Use that already-carried audit state instead of depending on a
+    # non-feature metadata column that select_learned_focus intentionally drops.
+    actual_observable = pd.to_numeric(
+        eval_scored["target_next_cross"], errors="coerce"
+    ).notna()
     priority = pd.to_numeric(eval_scored["active_priority"], errors="coerce")
 
     summary: dict[str, object] = {
