@@ -1,0 +1,7 @@
+{
+  "request_id": 132,
+  "operation": "focus_shortlist_diagnostic_v11",
+  "start_date": "2026-01-02",
+  "end_date": "2026-04-08",
+  "note": "Diagnostic-only rerun on already-opened request-131 dates. Do not tune thresholds or inspect April 9+. Measure positive hazard-rank distribution, stateless top-20 versus existing rank-40 hysteresis capture, and current-top20 runners blocked by incumbent priority."
+}
