@@ -74,3 +74,50 @@ This experiment does not promote a trading policy.
   proceed to a separately preregistered selective ENTRY/ABSTAIN model.
 
 May 14 and later remain sealed.
+
+## Result — request 140A
+
+Authoritative run: `35828868215`. This diagnostic reused only the already-opened
+2026-05-07 through 2026-05-13 sessions and opened no new date.
+
+Across 9,597 HOT-promotion episodes, 9,509 had an evaluable 30-minute oracle
+exit. Broad promotion entry remained economically weak: the overall oracle
+BASE mean was -0.104% and only 33.23% of evaluable promotions had any
+BASE-positive exit.
+
+Promotion order mattered strongly:
+
+| Promotion order | Episodes | Oracle BASE mean | Oracle-positive rate |
+|---|---:|---:|---:|
+| first | 2,091 | +0.339% | 40.70% |
+| second | 1,297 | +0.209% | 41.17% |
+| third or later | 6,209 | -0.315% | 29.12% |
+
+All re-promotions pooled together averaged -0.225% because third-and-later
+promotions dominate the count. Median spacing between re-promotions was seven
+minutes (p25 4m, p75 17m).
+
+The frozen HOT score nevertheless showed meaningful economic ordering across
+all promotion episodes. Spearman correlation with 30-minute oracle BASE return
+was +0.150. Score quintiles were monotonic:
+
+| HOT-score quintile | Oracle BASE mean | Oracle-positive rate |
+|---|---:|---:|
+| Q1 | -0.616% | 22.45% |
+| Q2 | -0.493% | 24.87% |
+| Q3 | -0.211% | 32.72% |
+| Q4 | +0.115% | 40.90% |
+| Q5 | +0.685% | 45.22% |
+
+### Decision
+
+Do not treat every HOT promotion as a new equal-quality entry opportunity.
+First and second promotions remain plausible economic candidates, while the
+large third-plus population is materially weaker. Promotion index and spacing
+are causal state and should become explicit context in later ENTRY research.
+
+The monotonic HOT-score result also establishes that the surge-detection score
+contains real economic ordering, but it is not sufficient as an entry rule:
+even the highest quintile is oracle-positive in fewer than half of episodes.
+Proceed with a separate economic-opportunity model rather than thresholding HOT
+score directly.
