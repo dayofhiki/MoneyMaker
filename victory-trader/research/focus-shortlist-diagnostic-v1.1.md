@@ -68,3 +68,45 @@ challengers have guaranteed access while retaining a persistence region.
 If focus misses are mostly deep beyond rank 60, the next experiment should
 change the causal focus objective/features rather than simply increase the
 focus budget.
+
+
+## Result — request 132
+
+Request 132 completed successfully on the already-opened request-131 dates.
+
+The key decomposition changes the interpretation of request 131. Across 1,089
+first +10% crossings, only 557 had an eligible exact-prior-minute hazard row.
+The learned focus-60 captured 538 of those 557 observable positives (96.59%),
+which is the same 538 / 1,089 = 49.40% headline capture reported by request
+131. Therefore the 50% focus gate sits very near the observability ceiling of
+the completed-minute input on this block; the principal focus loss is missing
+exact-prior-minute evidence, not poor rank ordering among rows that exist.
+
+Among the 538 focus captures, the stateless current top-20 captured 497
+(92.38%) and the request-131 rank-40 hysteresis selector captured 494 (91.82%).
+Thus incumbency cost only three net captures. Fourteen positive rows were
+current rank <=20 but blocked by incumbent priority, but hysteresis recovered
+other positives outside the current top-20, offsetting most of that loss.
+
+The pooled positive hazard-rank distribution was concentrated but not enough
+for a fixed top-20 to satisfy the 95% conditional gate: 89.23% of exact-next-
+minute positives were rank <=20, 94.43% rank <=40, 96.59% rank <=60. The
+largest regime failure was 2026-04-08, where focus captured 133 runners but
+both stateless and hysteresis top-20 captured only 107 (80.45% conditional).
+On that day the positive rank p75 widened to 23.5 and p90 to 58.2.
+
+Operationally, stateless top-20 averaged 8.56 additions per decision with
+57.37% set retention, while rank-40 hysteresis averaged 4.63 additions and
+77.02% retention. This confirms that simply removing persistence would violate
+the frozen transport objective without solving the pooled 95% conditional
+capture requirement.
+
+Interpretation: request 131 has two distinct structural limits. First, a
+completed-minute market-wide scanner cannot provide an exact prior row for a
+large fraction of crossings, so higher-frequency/event-driven broad-market
+observation is now an attention-recall research requirement rather than only a
+deployment refinement. Second, fixed top-20 allocation can become too narrow
+in broad opportunity regimes such as April 8. Request 133 was preregistered
+before these results were read, so its bounded-turnover selector remains an
+honest fresh-block test of the narrower incumbency hypothesis rather than a
+response tuned to this diagnostic.
