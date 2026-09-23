@@ -47,19 +47,24 @@ MODEL_KWARGS = {
 
 
 def _state_history(trace: pd.DataFrame) -> pd.DataFrame:
-    work = trace.sort_values(["ticker", "t"], kind="stable").copy()
+    work = trace.sort_values(
+        ["trading_day", "ticker", "t"], kind="stable"
+    ).copy()
     state = work["state"].astype(str)
     focus = state.isin({"watch", "hot"})
     watch = state.eq("watch")
 
-    grouped_t = work.groupby("ticker", sort=False)["t"]
+    group_keys = [work["trading_day"], work["ticker"]]
+    grouped_t = work.groupby(
+        ["trading_day", "ticker"], sort=False
+    )["t"]
     previous_t = grouped_t.shift(1)
     gap = pd.to_numeric(work["t"], errors="coerce") - pd.to_numeric(
         previous_t, errors="coerce"
     )
     consecutive = gap.eq(MINUTE_MS)
 
-    previous_focus = focus.groupby(work["ticker"], sort=False).shift(
+    previous_focus = focus.groupby(group_keys, sort=False).shift(
         1, fill_value=False
     )
     focus_start = focus & (~previous_focus | ~consecutive)
@@ -67,7 +72,11 @@ def _state_history(trace: pd.DataFrame) -> pd.DataFrame:
     focus_ordinal = (
         work.loc[focus]
         .groupby(
-            [work.loc[focus, "ticker"], focus_group.loc[focus]],
+            [
+                work.loc[focus, "trading_day"],
+                work.loc[focus, "ticker"],
+                focus_group.loc[focus],
+            ],
             sort=False,
         )
         .cumcount()
@@ -76,7 +85,7 @@ def _state_history(trace: pd.DataFrame) -> pd.DataFrame:
     work["focus_age_minutes"] = np.nan
     work.loc[focus, "focus_age_minutes"] = focus_ordinal + 1.0
 
-    previous_watch = watch.groupby(work["ticker"], sort=False).shift(
+    previous_watch = watch.groupby(group_keys, sort=False).shift(
         1, fill_value=False
     )
     watch_start = watch & (~previous_watch | ~consecutive)
@@ -84,7 +93,11 @@ def _state_history(trace: pd.DataFrame) -> pd.DataFrame:
     watch_ordinal = (
         work.loc[watch]
         .groupby(
-            [work.loc[watch, "ticker"], watch_group.loc[watch]],
+            [
+                work.loc[watch, "trading_day"],
+                work.loc[watch, "ticker"],
+                watch_group.loc[watch],
+            ],
             sort=False,
         )
         .cumcount()
@@ -101,11 +114,15 @@ def build_day_watch_rows(
     trace: pd.DataFrame,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
     annotated = _annotate_scan(scan).sort_values(
-        ["ticker", "t"], kind="stable"
+        ["trading_day", "ticker", "t"], kind="stable"
     )
-    next_t = annotated.groupby("ticker", sort=False)["t"].shift(-1)
+    next_t = annotated.groupby(
+        ["trading_day", "ticker"], sort=False
+    )["t"].shift(-1)
     next_cross = (
-        annotated.groupby("ticker", sort=False)["runner_cross_now"]
+        annotated.groupby(
+            ["trading_day", "ticker"], sort=False
+        )["runner_cross_now"]
         .shift(-1)
         .astype("boolean")
     )
