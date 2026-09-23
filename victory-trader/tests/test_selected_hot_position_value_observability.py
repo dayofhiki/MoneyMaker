@@ -13,6 +13,7 @@ from victory_trader.selected_hot_position_value_observability import (
     MODEL_FEATURES,
     _base_return,
     _selected_position_scan_features,
+    _session_clock,
     apply_excess_target,
     build_position_rows,
     fit_minute_baselines,
@@ -226,3 +227,19 @@ def test_selected_position_annotation_matches_full_market_reference():
                 pd.to_numeric(reference[column], errors="coerce").reset_index(drop=True),
                 check_names=False,
             )
+
+
+def test_session_clock_respects_nyse_early_close():
+    day = "2026-11-27"
+    bounds = regular_session_bounds(date.fromisoformat(day))
+    assert bounds is not None
+    open_ms = int(bounds[0].timestamp() * 1000)
+    close_ms = int(bounds[1].timestamp() * 1000)
+    session_minutes = (close_ms - open_ms) / 60_000.0
+    assert session_minutes < 390.0
+
+    noon = open_ms + 150 * 60_000
+    since, remaining = _session_clock(day, noon)
+
+    assert since == pytest.approx(150.0)
+    assert remaining == pytest.approx(session_minutes - 150.0)
