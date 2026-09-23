@@ -80,3 +80,36 @@ choosing another structural transport policy.
 Request 136 changes no model or transport behavior from request 135. Only the
 operational metric definition is aligned with the already-frozen initialization
 exception, and that definition is fixed before the new dates are opened.
+
+
+## Result — request 136
+
+Request 136 passed every preregistered confirmation gate on untouched
+2026-04-23, 04-24, 04-27, 04-28 and 04-29 sessions.
+
+Across 600 first +10% crossings, focus-60 captured 349 (58.17%). The
+rate-limited active set retained 341 of those focus captures (97.71%) versus
+337 (96.56%) for the request-131 rank-40 selector. Active pooled exact-prior
+capture was 56.83% versus 56.17% for rank-40 and was non-lower on all five
+sessions.
+
+The operational layer also passed cleanly:
+
+- maximum active subscriptions: 20;
+- mean post-initial additions per decision: 4.935;
+- maximum post-initial additions per decision: 5;
+- mean all-decision additions including mandatory session initialization:
+  4.974;
+- mean active/desired symmetric-difference rate: 25.68%.
+
+The instantaneous desired top-20 itself churned much more heavily, averaging
+7.624 post-initial additions per decision and reaching 14 in one decision.
+This confirms the architectural result: the predictive attention layer should
+be allowed to change its desired membership rapidly, while the observation
+transport follows that target under an explicit rate limit.
+
+Request 136 therefore promotes the desired/active separation and its
+five-addition post-initial transport policy. The next fresh-block experiment
+may integrate this confirmed observation set with the frozen one-second
+reranker and HOT-10 runtime. ENTRY/ABSTAIN remains blocked until that complete
+handoff passes.
