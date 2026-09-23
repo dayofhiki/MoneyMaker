@@ -58,16 +58,51 @@ def _price_lookup(scan: pd.DataFrame) -> dict[tuple[str, str, int], dict[str, fl
     return result
 
 
-def label_first_hot_economics(
-    trace: pd.DataFrame,
+def promotion_hot_events(trace: pd.DataFrame) -> pd.DataFrame:
+    promoted = trace.loc[
+        trace["state"].astype(str).eq("hot")
+        & trace.get("reason", pd.Series(index=trace.index, dtype=object))
+        .astype(str)
+        .eq("learned_hot_promote")
+    ].copy()
+    if promoted.empty:
+        return promoted
+
+    promoted = promoted.sort_values(
+        ["trading_day", "ticker", "t"], kind="stable"
+    ).reset_index(drop=True)
+    promoted["promotion_index"] = (
+        promoted.groupby(["trading_day", "ticker"], sort=False).cumcount() + 1
+    )
+    previous_t = promoted.groupby(
+        ["trading_day", "ticker"], sort=False
+    )["t"].shift()
+    promoted["minutes_since_previous_promotion"] = (
+        pd.to_numeric(promoted["t"], errors="coerce")
+        - pd.to_numeric(previous_t, errors="coerce")
+    ) / MINUTE_MS
+    promoted["is_repromotion"] = promoted["promotion_index"].gt(1)
+    return promoted
+
+
+def label_hot_event_economics(
+    events: pd.DataFrame,
     scan: pd.DataFrame,
     *,
     horizons: Iterable[int] = HORIZONS,
     scenarios: tuple[ExecutionScenario, ...] = DEFAULT_EXECUTION_SCENARIOS,
 ) -> pd.DataFrame:
-    events = first_hot_events(trace)
     lookup = _price_lookup(scan)
     rows: list[dict[str, object]] = []
+
+    passthrough = (
+        "attention_score",
+        "learned_hot_score",
+        "reason",
+        "promotion_index",
+        "minutes_since_previous_promotion",
+        "is_repromotion",
+    )
 
     for event in events.itertuples(index=False):
         day = str(event.trading_day)
@@ -88,6 +123,9 @@ def label_first_hot_economics(
                 else np.nan
             ),
         }
+        for column in passthrough:
+            if hasattr(event, column):
+                record[column] = getattr(event, column)
 
         oracle_base: list[tuple[int, float]] = []
         if entry is not None:
@@ -145,6 +183,21 @@ def label_first_hot_economics(
         rows.append(record)
 
     return pd.DataFrame(rows)
+
+
+def label_first_hot_economics(
+    trace: pd.DataFrame,
+    scan: pd.DataFrame,
+    *,
+    horizons: Iterable[int] = HORIZONS,
+    scenarios: tuple[ExecutionScenario, ...] = DEFAULT_EXECUTION_SCENARIOS,
+) -> pd.DataFrame:
+    return label_hot_event_economics(
+        first_hot_events(trace),
+        scan,
+        horizons=horizons,
+        scenarios=scenarios,
+    )
 
 
 def summarize_hot_economics(
