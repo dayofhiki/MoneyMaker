@@ -16,11 +16,10 @@ import pandas as pd
 
 from .attention_flatfile_replay import FLATFILE_CACHE_DIR, build_flatfile_scan_day
 from .config import load_settings, require_flatfile_credentials
-from .explicit_transport_integrated_hierarchy import EVAL_DAYS, run_probe as run_attention
+from .explicit_transport_integrated_hierarchy import EVAL_DAYS
 from .flatfiles import MassiveFlatFilesClient, MassiveFlatFileStore
 from .hot_entry_economics import label_first_hot_economics, summarize_hot_economics
 from .massive_client import MassiveClient
-from .second_path_attention_probe import SECOND_CACHE_DIR
 
 REQUEST_ID = 139
 
@@ -28,20 +27,20 @@ REQUEST_ID = 139
 def run_probe(
     store: MassiveFlatFileStore,
     scan_client: MassiveClient,
-    second_client: MassiveClient,
-    start: date,
-    end: date,
+    attention_trace_path: Path,
+    attention_summary_path: Path,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
-    trace, attention_summary = run_attention(
-        store,
-        scan_client,
-        second_client,
-        start,
-        end,
+    trace = pd.read_parquet(attention_trace_path)
+    attention_summary = json.loads(
+        attention_summary_path.read_text(encoding="utf-8")
     )
     if not bool(attention_summary["evaluation"]["promotion_gate_pass"]):
         raise ValueError(
             "request 139 is conditional on request-138 attention promotion"
+        )
+    if list(attention_summary.get("eval_days") or []) != EVAL_DAYS:
+        raise ValueError(
+            "request-138 artifact evaluation dates do not match frozen request 139 dates"
         )
 
     scans: list[pd.DataFrame] = []
@@ -73,8 +72,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Diagnose first-HOT entry economics on request-138 dates."
     )
-    parser.add_argument("start", type=date.fromisoformat)
-    parser.add_argument("end", type=date.fromisoformat)
+    parser.add_argument("--attention-trace", type=Path, required=True)
+    parser.add_argument("--attention-summary", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--summary", type=Path, required=True)
     args = parser.parse_args()
@@ -89,17 +88,11 @@ def main() -> int:
         cache_dir=Path("data/cache/massive"),
         request_interval_seconds=0.0,
     )
-    second_client = MassiveClient(
-        settings.massive_api_key,
-        cache_dir=SECOND_CACHE_DIR,
-        request_interval_seconds=0.0,
-    )
     output, summary = run_probe(
         store,
         scan_client,
-        second_client,
-        args.start,
-        args.end,
+        args.attention_trace,
+        args.attention_summary,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     output.to_parquet(args.output, index=False, compression="zstd")
