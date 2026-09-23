@@ -124,6 +124,11 @@ def fit_stage1(
     fit = focus_rows.loc[
         focus_rows["trading_day"].astype(str).le(fit_end)
     ].copy()
+    target = pd.to_numeric(fit["target_next_cross"], errors="coerce")
+    fit = fit.loc[target.notna()].copy()
+    fit["target_next_cross"] = pd.to_numeric(
+        fit["target_next_cross"], errors="raise"
+    ).astype(int)
     if fit.empty or int(fit["target_next_cross"].sum()) == 0:
         raise ValueError("stage-1 focus fit is empty or has no positives")
     model = HistGradientBoostingClassifier(**MODEL_KWARGS)
@@ -144,6 +149,11 @@ def fit_stage2(
     fit = candidates.loc[
         day.ge(fit_start) & day.le(fit_end)
     ].copy()
+    target = pd.to_numeric(fit["target_next_cross"], errors="coerce")
+    fit = fit.loc[target.notna()].copy()
+    fit["target_next_cross"] = pd.to_numeric(
+        fit["target_next_cross"], errors="raise"
+    ).astype(int)
     if fit.empty or int(fit["target_next_cross"].sum()) == 0:
         raise ValueError("stage-2 runtime fit is empty or has no positives")
 
