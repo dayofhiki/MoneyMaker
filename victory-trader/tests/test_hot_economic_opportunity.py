@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from victory_trader.hot_economic_opportunity import (
+    CAL_DAYS,
     ENTRY_FEATURES,
+    FIT_DAYS,
     _attach_entry_context,
+    fit_policy_opportunity_selector,
 )
 from victory_trader.market_calendar import regular_session_bounds
 
@@ -63,3 +67,36 @@ def test_attach_entry_context_adds_price_time_rank_and_transport_state():
     assert aaa["minutes_since_open"] == 1.0
     assert aaa["minutes_to_close"] > 300
     assert aaa["log_current_price"] < bbb["log_current_price"]
+
+
+def test_policy_selector_calibrates_threshold_on_all_calibration_rows():
+    rows = []
+    for i in range(200):
+        row = {
+            "trading_day": FIT_DAYS[i % len(FIT_DAYS)],
+            "oracle_best_base_pct": 1.0 if i >= 100 else -1.0,
+        }
+        for feature in ENTRY_FEATURES:
+            row[feature] = 0.0
+        row[ENTRY_FEATURES[0]] = i / 199.0
+        rows.append(row)
+
+    for i in range(100):
+        row = {
+            "trading_day": CAL_DAYS[i % len(CAL_DAYS)],
+            # Deliberately hide future labels for the high-score half. A
+            # causal policy threshold must still include these feature rows.
+            "oracle_best_base_pct": (0.5 if i < 50 else float("nan")),
+        }
+        for feature in ENTRY_FEATURES:
+            row[feature] = 0.0
+        row[ENTRY_FEATURES[0]] = i / 99.0
+        rows.append(row)
+
+    frame = pd.DataFrame(rows)
+    classifier, threshold = fit_policy_opportunity_selector(frame)
+    calibration = frame.loc[frame["trading_day"].isin(CAL_DAYS)]
+    probabilities = classifier.predict_proba(calibration[ENTRY_FEATURES])[:, 1]
+    expected = float(pd.Series(probabilities).quantile(0.75))
+
+    assert threshold == pytest.approx(expected)
