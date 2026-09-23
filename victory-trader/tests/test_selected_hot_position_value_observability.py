@@ -101,7 +101,7 @@ def _model_panel(rows: int, seed: int) -> pd.DataFrame:
     signal = (
         0.6 * frame["sec_last10_return_pct"]
         - 0.3 * frame["drawdown_from_peak_pct"]
-        + 0.2 * frame["entry_to_current_open_pct"]
+        + 0.2 * frame["entry_to_current_close_pct"]
     )
     frame["hold_advantage_1m_pct"] = signal + rng.normal(0, 0.8, rows)
     frame["remaining_option_value_pct"] = (
