@@ -6,6 +6,7 @@ from victory_trader.observation_transport import (
     BoundedTurnoverSelector,
     ObservationBridge,
     ObservationTransport,
+    RateLimitedSubscriptionSelector,
     RankHysteresisSelector,
     RankedCandidate,
 )
@@ -167,3 +168,45 @@ def test_bounded_turnover_selector_never_replaces_more_than_budget():
 
     assert len(first) == len(second) == 6
     assert len(set(second) - set(first)) == 2
+
+
+
+def test_rate_limited_subscription_selector_caps_post_fill_additions():
+    selector = RateLimitedSubscriptionSelector(capacity=6, max_additions=2)
+    first = selector.select(
+        [RankedCandidate(f"I{i}", float(10 - i)) for i in range(6)]
+    )
+    second = selector.select(
+        [
+            *[RankedCandidate(f"C{i}", float(20 - i)) for i in range(6)],
+            *[RankedCandidate(f"I{i}", float(10 - i)) for i in range(6)],
+        ]
+    )
+    third = selector.select(
+        [
+            *[RankedCandidate(f"C{i}", float(20 - i)) for i in range(6)],
+            *[RankedCandidate(f"I{i}", float(10 - i)) for i in range(6)],
+        ]
+    )
+
+    assert len(set(second) - set(first)) == 2
+    assert len(set(third) - set(second)) == 2
+    assert "C0" in second and "C1" in second
+
+
+def test_rate_limited_subscription_selector_converges_to_desired_set():
+    selector = RateLimitedSubscriptionSelector(capacity=4, max_additions=1)
+    selector.select(
+        [RankedCandidate(f"I{i}", float(8 - i)) for i in range(4)]
+    )
+    candidates = [
+        *[RankedCandidate(f"C{i}", float(20 - i)) for i in range(4)],
+        *[RankedCandidate(f"I{i}", float(8 - i)) for i in range(4)],
+    ]
+
+    active = ()
+    for _ in range(4):
+        active = selector.select(candidates)
+
+    assert set(active) == {f"C{i}" for i in range(4)}
+    assert set(selector.desired) == set(active)
