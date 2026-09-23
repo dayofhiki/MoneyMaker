@@ -78,9 +78,8 @@ def active_observation_rows(scored_market: pd.DataFrame) -> pd.DataFrame:
             capacity=SHORTLIST_BUDGET,
             max_additions=MAX_ADDITIONS,
         )
-        previous_actual: set[str] = set()
-        previous_t: dict[str, int] = {}
-        active_age: dict[str, int] = {}
+        previous_subscribed: set[str] = set()
+        active_since_t: dict[str, int] = {}
 
         for timestamp, group in day_rows.groupby("t", sort=True):
             ranked = group.sort_values(
@@ -98,22 +97,20 @@ def active_observation_rows(scored_market: pd.DataFrame) -> pd.DataFrame:
             requested_active = set(selector.select(candidates))
             desired = set(selector.desired)
 
+            additions = requested_active - previous_subscribed
+            removals = previous_subscribed - requested_active
+            for ticker in removals:
+                active_since_t.pop(ticker, None)
+            for ticker in requested_active:
+                active_since_t.setdefault(ticker, int(timestamp))
+
             current = ranked.loc[
                 ranked["ticker"].astype(str).isin(requested_active)
             ].copy()
-            actual = set(current["ticker"].astype(str))
-            additions = actual - previous_actual
-
-            ages: list[int] = []
-            for ticker in current["ticker"].astype(str):
-                last_t = previous_t.get(ticker)
-                if last_t is not None and int(timestamp) - last_t == MINUTE_MS:
-                    age = active_age.get(ticker, 0) + 1
-                else:
-                    age = 1
-                active_age[ticker] = age
-                previous_t[ticker] = int(timestamp)
-                ages.append(age)
+            ages = [
+                int((int(timestamp) - active_since_t[ticker]) / MINUTE_MS) + 1
+                for ticker in current["ticker"].astype(str)
+            ]
 
             current["focus_age_minutes"] = ages
             current["watch_run_age_minutes"] = ages
@@ -128,7 +125,7 @@ def active_observation_rows(scored_market: pd.DataFrame) -> pd.DataFrame:
                 "ticker"
             ].astype(str).isin(additions)
             selected.append(current)
-            previous_actual = actual
+            previous_subscribed = set(requested_active)
 
     if not selected:
         return scored_market.iloc[0:0].copy()
@@ -147,9 +144,8 @@ def active_observation_rows_with_state(
             capacity=SHORTLIST_BUDGET,
             max_additions=MAX_ADDITIONS,
         )
-        previous_scoreable: set[str] = set()
-        previous_t: dict[str, int] = {}
-        active_age: dict[str, int] = {}
+        previous_subscribed: set[str] = set()
+        active_since_t: dict[str, int] = {}
 
         for timestamp, group in day_rows.groupby("t", sort=True):
             ranked = group.sort_values(
@@ -181,22 +177,20 @@ def active_observation_rows_with_state(
                     }
                 )
 
+            additions = subscribed - previous_subscribed
+            removals = previous_subscribed - subscribed
+            for ticker in removals:
+                active_since_t.pop(ticker, None)
+            for ticker in subscribed:
+                active_since_t.setdefault(ticker, int(timestamp))
+
             current = ranked.loc[
                 ranked["ticker"].astype(str).isin(subscribed)
             ].copy()
-            actual_scoreable = set(current["ticker"].astype(str))
-            additions = actual_scoreable - previous_scoreable
-
-            ages: list[int] = []
-            for ticker in current["ticker"].astype(str):
-                last_t = previous_t.get(ticker)
-                if last_t is not None and int(timestamp) - last_t == MINUTE_MS:
-                    age = active_age.get(ticker, 0) + 1
-                else:
-                    age = 1
-                active_age[ticker] = age
-                previous_t[ticker] = int(timestamp)
-                ages.append(age)
+            ages = [
+                int((int(timestamp) - active_since_t[ticker]) / MINUTE_MS) + 1
+                for ticker in current["ticker"].astype(str)
+            ]
 
             current["focus_age_minutes"] = ages
             current["watch_run_age_minutes"] = ages
@@ -211,7 +205,7 @@ def active_observation_rows_with_state(
                 "ticker"
             ].astype(str).isin(additions)
             selected.append(current)
-            previous_scoreable = actual_scoreable
+            previous_subscribed = set(subscribed)
 
     rows = (
         pd.concat(selected, ignore_index=True)
