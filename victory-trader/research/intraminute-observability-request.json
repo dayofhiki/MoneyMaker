@@ -1,0 +1,7 @@
+{
+  "request_id": 134,
+  "operation": "intraminute_observability_v13",
+  "start_date": "2026-04-01",
+  "end_date": "2026-04-08",
+  "note": "Diagnostic-only on already-opened request-131/132 dates. Measure one-second pre-threshold activity for crossings with no exact prior completed minute. Do not fit a policy or open April 9+."
+}
