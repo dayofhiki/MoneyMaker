@@ -118,3 +118,37 @@ def test_episode_memory_rejects_backward_time():
             t=9,
             state="watch",
         )
+
+
+def test_position_state_does_not_create_false_hot_repromotion():
+    memory = CausalEpisodeMemory()
+    day = "2026-05-21"
+
+    first = memory.observe(
+        trading_day=day,
+        ticker="A",
+        t=10 * MINUTE_MS,
+        state="hot",
+    )
+    position = memory.observe(
+        trading_day=day,
+        ticker="A",
+        t=12 * MINUTE_MS,
+        state="position",
+        position_open=True,
+    )
+    back_to_hot = memory.observe(
+        trading_day=day,
+        ticker="A",
+        t=15 * MINUTE_MS,
+        state="hot",
+        position_open=False,
+    )
+
+    assert first.promotion_index == 1
+    assert position.promotion_index == 1
+    assert position.minutes_since_last_promotion == pytest.approx(2.0)
+    assert back_to_hot.promotion_index == 1
+    assert back_to_hot.minutes_since_previous_promotion is None
+    assert back_to_hot.minutes_since_last_promotion == pytest.approx(5.0)
+    assert back_to_hot.minutes_continuously_hot == pytest.approx(5.0)
