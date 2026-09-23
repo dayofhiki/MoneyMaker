@@ -543,20 +543,35 @@ occupancy reached 19.91 / 20. The unconstrained 20-addition diagnostic retained
 95.43%, so the development evidence suggests sharply diminishing benefit above
 roughly eight additions. These sensitivity results remain non-promotable.
 
-Request 151 is the preregistered fresh confirmation. Before opening any new
-session, the balanced policy, eight-addition primary, five-addition comparator,
-and promotion gate were frozen. The new evaluation block is
-2026-05-21, 05-22, 05-26, 05-27 and 05-28. The primary replaces only as many
-subscriptions as current challenger demand requires, capped at eight, rather
-than forcing eight changes. Promotion requires >=95% Active retention,
-<=2% genuine sparse-slot waste, >=19.60 scoreable occupancy, standard causal
-handoff gates, and non-lower pooled 1m/2m/5m HOT capture than the identical
-five-addition comparator, with 1m HOT non-lower on at least four of five days.
+Request 151 then opened the preregistered fresh block
+2026-05-21, 05-22, 05-26, 05-27 and 05-28. Raising the demand-responsive
+addition ceiling from five to eight materially repaired transport utilization:
+Focus -> Active retention improved from 92.53% to 93.42%, genuine sparse-slot
+waste fell from 2.06% to 0.25%, and mean scoreable Active occupancy improved
+from 19.55 to 19.95 / 20. The primary nevertheless failed the frozen promotion
+gate. It remained below the 95% retention target, pooled HOT-within-1m moved
+slightly from 50.99% to 50.81%, and only three of five sessions were non-lower
+on HOT-within-1m. The eight-addition ceiling is therefore not promoted from
+request 151.
 
-Request 148 remains blocked until the corrected attention handoff is promoted.
-If request 151 passes, downstream economic-opportunity validation must use
-chronologically later sessions; the older May14-May20 evidence cannot be
-relabelled as fresh after upstream policy selection used May21-May28.
+Request 152 reused only those already-opened request-151 sessions and mapped
+the frozen Active policy across addition ceilings 5, 8, 10, 12, 16 and 20. It
+was diagnostic-only and opened no later date. Retention was 92.53%, 93.42%,
+93.12%, 92.97%, 92.83% and 92.83%, respectively. At cap 16 and 20, mean and
+minimum scoreable Active occupancy were both 20 / 20 and genuine sparse-slot
+waste was 0%, yet Focus -> Active retention remained below 95%. Full minute-level
+refresh therefore cannot repair the remaining miss. The preregistered diagnosis
+is **selection_or_admission_bottleneck**, not residual transport capacity.
+Notably, cap 20 was 0.60 percentage points worse than cap 8, so extra churn is
+not merely unnecessary; on this block it displaced useful incumbents.
+
+The next development step is to attribute the missed Focus crossings under the
+full-refresh diagnostic and the cap-eight policy, separating failures caused by
+the Active admission ranking from failures caused by Focus eligibility/support.
+The objective is to improve which names occupy the 20 Active slots rather than
+raise the transport ceiling. No later fresh session should be opened until that
+selection intervention is frozen. Request 148 remains blocked until the
+corrected attention handoff is promoted.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
@@ -566,12 +581,14 @@ references are missing, and represent missing oracle outcomes as unknown rather
 than negative.
 
 The executable recurrent trader remains the architectural target. The immediate
-order of work is now: (1) complete request-147 actionable Active revalidation;
-(2) if it passes, run request 148 corrected opportunity revalidation; (3) add a
-separate causal executability/liquidity value to BUY/WAIT/ABSTAIN; (4) rerun
+order of work is now: (1) diagnose request-152 missed Focus crossings and
+replace the weak Active admission/selection rule while keeping the validated
+transport accounting; (2) freeze that intervention and validate it on later
+unopened sessions; (3) only after the corrected attention handoff passes, run
+request 148 economic-opportunity revalidation on chronologically later data;
+(4) add causal executability/liquidity value to BUY/WAIT/ABSTAIN and rerun
 POSITION observability with silent decision states retained; then (5) integrate
-the recurrent entry and HOLD/EXIT loop. May 21 and later remain sealed until
-these development and audit gates are frozen.
+the recurrent entry and HOLD/EXIT loop.
 
 ### Milestone 3 — policy integration
 
