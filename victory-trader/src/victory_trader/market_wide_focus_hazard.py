@@ -53,8 +53,10 @@ def build_market_hazard_rows(scan: pd.DataFrame) -> pd.DataFrame:
     frame["attention_rank"] = frame.groupby(
         ["trading_day", "t"], sort=False
     )["attention_score"].rank(method="first", ascending=False)
-    ordered = frame.sort_values(["ticker", "t"], kind="stable")
-    groups = ordered.groupby("ticker", sort=False)
+    ordered = frame.sort_values(
+        ["trading_day", "ticker", "t"], kind="stable"
+    )
+    groups = ordered.groupby(["trading_day", "ticker"], sort=False)
     next_t = groups["t"].shift(-1)
     next_cross = groups["runner_cross_now"].shift(-1).astype("boolean")
     ordered["has_exact_next_minute"] = (
