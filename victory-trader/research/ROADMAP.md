@@ -335,17 +335,24 @@ Request 135 tested desired/active separation on untouched 2026-04-16 through
 2026-04-22 sessions. The active transport retained 558 of 585 focus captures
 (95.04%) versus 556 for rank-40 hysteresis, exceeded the comparator in pooled
 capture, and was non-lower on four of five days while respecting 20 active
-slots. The formal gate remained false because the audit averaged 5.004
-additions per decision against a <=5 floor. That average includes each
-session's mandatory initial 20-name fill even though the preregistered
-five-addition rate limit explicitly applies only after initialization; removing
-only those five initial fills gives 9,633 additions across 1,940 post-initial
-decisions, or 4.966 per decision. This result is not retroactively promoted.
-Request 136 will keep the policy unchanged and confirm it on a fresh block with
-the operational metric aligned to the already-stated post-initial constraint.
-April 23 and later remain sealed until that preregistration opens the next
-block. ENTRY/ABSTAIN remains blocked until the attention and observation
-handoff is validated.
+slots. Its formal gate remained false because the audit averaged 5.004
+additions per decision after counting mandatory session initialization against
+a rate limit that was preregistered only for post-initial updates. Request 135
+was not retroactively promoted.
+
+Request 136 then confirmed the unchanged policy on untouched 2026-04-23 through
+2026-04-29 sessions with the operational audit aligned to the already-frozen
+initialization exception. Active membership retained 341 of 349 focus captures
+(97.71%) versus 337 for rank-40 hysteresis, improved pooled exact-prior capture
+from 56.17% to 56.83%, and was non-lower on all five days. Post-initial
+subscription additions averaged 4.935 per decision, never exceeded five, and
+active occupancy never exceeded 20. The desired/active separation and
+rate-limited observation transport are therefore promoted.
+
+The active task now moves back to the complete attention handoff: connect the
+confirmed active observation set to the frozen one-second reranker and HOT-10
+runtime on a new untouched block. ENTRY/ABSTAIN remains blocked until that
+integrated handoff passes.
 
 ### Milestone 3 — policy integration
 
