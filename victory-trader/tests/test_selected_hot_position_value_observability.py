@@ -252,9 +252,11 @@ def test_position_state_is_kept_when_next_exit_reference_is_missing():
         [{"trading_day": "2026-05-07", "ticker": "A", "t": 120_000}]
     )
 
-    rows, _ = build_position_rows(anchors, scan, FakeSecondClient())
+    rows, audit = build_position_rows(anchors, scan, FakeSecondClient())
     first = rows.loc[rows["state_t"].eq(180_000)].iloc[0]
 
+    assert audit["expected_wall_clock_state_slots"] > audit["observed_causal_state_slots"]
+    assert audit["silent_state_slots"] > 0
     assert bool(first["exit_reference_available"]) is False
     assert pd.isna(first["exit_reference_open"])
     assert pd.isna(first["exit_now_base_return_pct"])
