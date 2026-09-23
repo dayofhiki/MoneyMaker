@@ -506,6 +506,38 @@ Request 148 remains preregistered but blocked because request 147 did not pass.
 It will preserve the request-140B ENTRY feature set and model family if/when a
 corrected Active foundation passes. May 21 and later remain sealed.
 
+
+Request 149 then separated Active admission from stale-incumbent eviction.
+Admission kept request-147 actionable priority, while a causal three-minute
+transport-survival model ranked stale incumbents for eviction. The historical
+mixed unscoreable metric was also decomposed into runner graduation versus
+genuine sparse missing-bar waste.
+
+With the frozen five-addition primary budget, the retention policy materially
+fixed slot utilization but did not pass the predictive handoff gate. Genuine
+sparse-waste fell from 6.38% under the request-147 policy to 1.85%, mean
+scoreable Active occupancy rose to 19.60 / 20, and mixed unscoreable state fell
+to 1.98%. However Focus -> Active retention was only 93.78%, HOT-within-1m was
+49.54%, and the formal gate remained false.
+
+The preregistered non-promotable churn sensitivity isolated the remaining
+bottleneck. With max additions 6, Active retention was 94.33% and sparse-waste
+1.25%. With 8, retention reached 95.25%, sparse-waste fell to 0.42%, and mean
+scoreable occupancy reached 19.91 / 20. Allowing unconstrained convergence up
+to 20 additions improved retention only slightly further to 95.43%, showing
+strong diminishing returns after roughly eight additions. The old five-name
+transport ceiling is therefore a binding research resource constraint rather
+than a demonstrated property of the desired final trader.
+
+The next development step is to run the full retention-aware hierarchy with an
+eight-addition ceiling, including the one-second HOT reranker, and verify that
+the gain in Active retention/slot utilization does not sacrifice HOT quality.
+Because the value eight was identified on the already-opened May7-May13
+development block, it cannot be treated as fresh validation. If the full
+development replay passes, freeze that transport design before any new-date
+validation. Request 148 remains blocked until the corrected attention handoff
+is promoted.
+
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
 hazard/session history by trading day, use official exchange session bounds
