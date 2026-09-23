@@ -399,13 +399,23 @@ and oracle means rose monotonically from -0.616% in score quintile 1 to +0.685%
 in quintile 5. Thus HOT score is informative but is still not an entry rule,
 and later ENTRY research must represent promotion order/spacing explicitly.
 
-Request 140B is the fresh first-HOT economic-opportunity learnability test on
-2026-05-14, 05-15, 05-18, 05-19 and 05-20. The methodology was frozen before
-those outcomes were inspected: fit on the request-137 block, calibrate on the
-request-138/139 block, then test whether causal minute/second HOT state can
-classify cost-positive 30-minute opportunity and rank its magnitude. The
-concurrent 140A/140B naming is an administrative request-ID collision only;
-140A opened no new dates. May 21 and later remain sealed.
+Request 140B then completed on fresh 2026-05-14, 05-15, 05-18, 05-19
+and 05-20 sessions. Causal first-HOT economic opportunity replicated strongly:
+pooled classifier AUC was 0.6334 with AUC above 0.5 on all five days, and the
+opportunity-value regressor achieved Spearman 0.2704 with positive correlation
+on all five days. The calibration-frozen top-quartile score selected 503 of
+1,881 labeled episodes; their oracle BASE mean was +1.255% versus +0.452% for
+all first-HOT episodes and their cost-positive opportunity rate was 53.28%
+versus 42.42%. The formal gate remained false only because 2026-05-15 label
+coverage was 94.59%, 0.41 percentage points below the frozen 95% floor. That
+gate is not weakened and request 140B is not retroactively promoted.
+
+The active frontier is now the executable recurrent trader branch documented in
+`executable-recurrent-trader-v0.1.md`. It keeps the promoted attention/HOT
+hierarchy frozen and adds causal episode memory, BUY/WAIT/ABSTAIN action values,
+and recurrent HOLD/EXIT values. Prior fixed-horizon and old stopping thresholds
+are not promoted into this branch. May 21 and later remain sealed until the
+development replay, integrity tests, and executable fresh gates are frozen.
 
 ### Milestone 3 — policy integration
 
