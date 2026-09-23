@@ -179,3 +179,19 @@ freeze actual BUY/WAIT/ABSTAIN/HOLD/EXIT rules before opening May 21+.
 If it fails, do not tune these boundaries on May14-May20.
 
 May 21 and later remain sealed.
+
+
+## Superseded after implementation audit
+
+Request 144 produced no result artifact and is not research evidence. The first
+attempt was terminated by a runner shutdown, while the rerun preserved the
+original request head SHA and therefore did not include later performance
+changes.
+
+Before any result was observed, the implementation audit also found that the
+draft POSITION feature set exposed the next executable minute open to the model
+before the HOLD/EXIT decision, and that multi-day batch annotation could carry
+lagged minute features across session boundaries.
+
+This v1.1 branch is superseded by request 145 / v1.2. Its gates are not applied
+to any partial or interrupted request-144 computation.
