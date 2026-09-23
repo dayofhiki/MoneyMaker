@@ -3,5 +3,6 @@
   "operation": "rate_limited_subscription_v14",
   "start_date": "2026-01-02",
   "end_date": "2026-04-22",
-  "note": "Fresh Apr 16/17/20/21/22 validation. Model desired set is current top20; active subscriptions move toward it by at most five additions per decision after session initialization. Keep focus/model/features fixed. April 23+ remain sealed."
+  "note": "Retry after unrelated intraminute diagnostic lint fix; frozen Apr 16/17/20/21/22 design is unchanged and the fresh block has not been opened.",
+  "retry": 1
 }
