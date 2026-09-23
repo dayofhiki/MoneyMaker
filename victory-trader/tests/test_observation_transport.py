@@ -7,6 +7,7 @@ from victory_trader.observation_transport import (
     ObservationBridge,
     ObservationTransport,
     RateLimitedSubscriptionSelector,
+    RetentionAwareSubscriptionSelector,
     RankHysteresisSelector,
     RankedCandidate,
 )
@@ -210,3 +211,65 @@ def test_rate_limited_subscription_selector_converges_to_desired_set():
 
     assert set(active) == {f"C{i}" for i in range(4)}
     assert set(selector.desired) == set(active)
+
+
+def test_retention_aware_selector_evicts_lowest_value_stale_incumbent():
+    selector = RetentionAwareSubscriptionSelector(
+        capacity=4,
+        max_additions=1,
+    )
+    first = selector.select(
+        [
+            RankedCandidate("A", 4.0),
+            RankedCandidate("B", 3.0),
+            RankedCandidate("C", 2.0),
+            RankedCandidate("D", 1.0),
+        ]
+    )
+    second = selector.select(
+        [
+            RankedCandidate("E", 10.0),
+            RankedCandidate("A", 4.0),
+            RankedCandidate("B", 3.0),
+            RankedCandidate("C", 2.0),
+            RankedCandidate("D", 1.0),
+        ],
+        retention_scores={
+            "A": 0.9,
+            "B": 0.8,
+            "C": 0.7,
+            "D": 0.1,
+        },
+    )
+
+    assert set(first) == {"A", "B", "C", "D"}
+    assert set(second) == {"A", "B", "C", "E"}
+    assert selector.desired == ("E", "A", "B", "C")
+
+
+def test_retention_aware_selector_evicts_missing_value_first():
+    selector = RetentionAwareSubscriptionSelector(
+        capacity=3,
+        max_additions=1,
+    )
+    selector.select(
+        [
+            RankedCandidate("A", 3.0),
+            RankedCandidate("B", 2.0),
+            RankedCandidate("C", 1.0),
+        ]
+    )
+    second = selector.select(
+        [
+            RankedCandidate("D", 5.0),
+            RankedCandidate("A", 3.0),
+            RankedCandidate("B", 2.0),
+            RankedCandidate("C", 1.0),
+        ],
+        retention_scores={
+            "A": 0.9,
+            "B": 0.8,
+        },
+    )
+
+    assert set(second) == {"A", "B", "D"}
