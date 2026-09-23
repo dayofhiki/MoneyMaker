@@ -4,6 +4,7 @@ from datetime import date
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from victory_trader.selected_hot_position_value_observability import (
     MODEL_FEATURES,
@@ -48,7 +49,7 @@ class FakeSecondClient:
 def _scan() -> pd.DataFrame:
     rows = []
     for idx, timestamp in enumerate([180_000, 240_000, 300_000, 360_000]):
-        opening = [1.00, 1.10, 1.20, 1.18][idx]
+        opening = [1.00, 1.05, 1.20, 1.18][idx]
         closing = [1.10, 1.20, 1.18, 1.17][idx]
         rows.append(
             {
@@ -79,7 +80,8 @@ def test_build_position_rows_uses_causal_state_and_future_only_for_labels():
     first = rows.sort_values("minutes_held").iloc[0]
     assert first["minutes_held"] == 1
     assert first["entry_open"] == 1.0
-    assert first["current_open"] == 1.1
+    assert first["exit_reference_open"] == 1.05
+    assert first["log_current_close"] == pytest.approx(np.log(1.10))
     assert first["hold_advantage_1m_pct"] > 0
     assert first["remaining_option_value_pct"] > 0
     assert first["active_seconds_60"] > 0
@@ -147,3 +149,20 @@ def test_request140b_predictive_conditions_allow_coverage_only_diagnostic():
         }
     }
     assert request140b_predictive_conditions_pass(summary)
+
+
+def test_position_model_features_exclude_future_execution_reference():
+    forbidden = {
+        "exit_reference_open",
+        "current_open",
+        "log_current_open",
+        "entry_to_current_open_pct",
+        "exit_now_base_return_pct",
+        "next_minute_base_return_pct",
+        "hold_advantage_1m_pct",
+        "best_future_base_return_pct",
+        "remaining_option_value_pct",
+    }
+    assert forbidden.isdisjoint(MODEL_FEATURES)
+    assert "log_current_close" in MODEL_FEATURES
+    assert "entry_to_current_close_pct" in MODEL_FEATURES
