@@ -177,7 +177,7 @@ def add_transport_survival_probability(
     return result
 
 
-def _request149__request149_retention_aware_active_rows_with_state(
+def _request149_retention_aware_active_rows_with_state(
     scored_market: pd.DataFrame,
     *,
     max_additions: int = PRIMARY_MAX_ADDITIONS,
@@ -394,7 +394,7 @@ def run_probe(
         fit_survival.append(build_transport_survival_rows(scan))
 
     if not fit_labelable:
-        raise ValueError("request 149 fit population is empty")
+        raise ValueError("request 150 fit population is empty")
 
     market_model = fit_market_hazard(pd.concat(fit_labelable, ignore_index=True))
     observability_model = fit_observability_model(
@@ -534,7 +534,7 @@ def run_probe(
     sensitivity: dict[str, object] = {}
     all_eval_scored = pd.concat(eval_sensitivity_scored, ignore_index=True)
     for additions in SENSITIVITY_ADDITIONS:
-        sens_active, sens_trace = _request149_retention_aware_active_rows_with_state(
+        sens_active, sens_trace = balanced_active_rows_with_state(
             all_eval_scored,
             max_additions=additions,
         )
