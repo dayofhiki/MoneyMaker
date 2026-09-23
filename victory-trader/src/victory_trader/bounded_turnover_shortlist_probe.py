@@ -83,6 +83,7 @@ def select_shortlist(
 
 def shortlist_audit(shortlist: pd.DataFrame) -> dict[str, object]:
     additions: list[int] = []
+    post_initial_additions: list[int] = []
     retention: list[float] = []
     occupancies: list[int] = []
     ticker_days = int(
@@ -90,21 +91,35 @@ def shortlist_audit(shortlist: pd.DataFrame) -> dict[str, object]:
     )
     for _, day_rows in shortlist.groupby("trading_day", sort=True):
         previous: set[str] = set()
+        first_decision = True
         for _, group in day_rows.groupby("t", sort=True):
             current = set(group["ticker"].astype(str))
             occupancies.append(len(current))
-            additions.append(len(current - previous))
+            added = len(current - previous)
+            additions.append(added)
+            if not first_decision:
+                post_initial_additions.append(added)
             if previous:
                 retention.append(len(current & previous) / len(previous))
             previous = current
+            first_decision = False
     return {
         "ticker_day_requests": ticker_days,
         "decisions": len(occupancies),
+        "post_initial_decisions": len(post_initial_additions),
         "max_occupancy": max(occupancies, default=0),
         "mean_additions_per_decision": (
             float(np.mean(additions)) if additions else None
         ),
+        "mean_post_initial_additions_per_decision": (
+            float(np.mean(post_initial_additions))
+            if post_initial_additions
+            else None
+        ),
         "max_additions_per_decision": max(additions, default=0),
+        "max_post_initial_additions_per_decision": (
+            max(post_initial_additions, default=0)
+        ),
         "mean_set_retention": (
             float(np.mean(retention)) if retention else None
         ),
