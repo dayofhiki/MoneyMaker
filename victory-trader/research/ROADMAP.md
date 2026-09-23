@@ -148,6 +148,40 @@ A likely mature architecture is hierarchical:
 - **Capital/risk layer:** coordinates simultaneous opportunities and hard limits.
 - **Monitoring/research layer:** detects degradation and supports edge renewal.
 
+
+### Deferred research branch — anticipatory pre-surge watchlist
+
+Request 134 established that many nominal first +10% crossings are not
+recoverable by faster reaction alone: a large fraction of minute-blind names
+first become observable only after they have already jumped through the
+threshold. The active roadmap therefore does **not** require the current
+real-time scanner to predict information that is absent from the live stream.
+
+A separate future research branch is reserved for **anticipatory candidate
+discovery before the immediate surge window**. Its purpose is to test whether
+longer-horizon, strictly causal signals can place some future runners into a
+low-cost WATCH pool before the explosive move begins. Candidate evidence may
+include multi-session accumulation/volume structure, liquidity and spread
+changes, volatility compression/expansion, repeated abnormal buying pressure,
+relative-volume persistence, price structure, corporate/news catalysts, and
+other point-in-time information available before the surge.
+
+This branch must be treated as a distinct forecasting problem rather than as a
+reason to relabel unobservable jumps as scanner failures. It should complement,
+not replace, the broad live scanner:
+
+```text
+ANTICIPATORY WATCHLIST  ----\
+                            -> DYNAMIC ATTENTION -> HIGH-RES OBSERVATION
+LIVE MARKET SCANNER    ----/
+```
+
+It is intentionally deferred until the current attention/transport handoff,
+HOT observation, ENTRY/ABSTAIN and recurrent position-management path is
+validated. When opened, it must use its own chronological training and sealed
+forward blocks and must prove incremental economic value rather than merely
+higher retrospective runner recall.
+
 ## Implementation Milestones
 
 The roadmap is now being implemented as explicit, testable layers.
@@ -297,11 +331,21 @@ contains sparse jump/gap events that provide no causal pre-cross observation
 window in the available stream. Scanner evaluation must therefore report both
 raw crossing recall and recall conditional on genuine causal observability.
 
-Request 135 is the active fresh-block test on untouched 2026-04-16 through
-2026-04-22 sessions. It keeps the model's desired current top-20 separate from
-a rate-limited active subscription set that moves by at most five new names
-per update. April 23 and later remain sealed. ENTRY/ABSTAIN remains blocked
-until the attention and observation handoff is validated.
+Request 135 tested desired/active separation on untouched 2026-04-16 through
+2026-04-22 sessions. The active transport retained 558 of 585 focus captures
+(95.04%) versus 556 for rank-40 hysteresis, exceeded the comparator in pooled
+capture, and was non-lower on four of five days while respecting 20 active
+slots. The formal gate remained false because the audit averaged 5.004
+additions per decision against a <=5 floor. That average includes each
+session's mandatory initial 20-name fill even though the preregistered
+five-addition rate limit explicitly applies only after initialization; removing
+only those five initial fills gives 9,633 additions across 1,940 post-initial
+decisions, or 4.966 per decision. This result is not retroactively promoted.
+Request 136 will keep the policy unchanged and confirm it on a fresh block with
+the operational metric aligned to the already-stated post-initial constraint.
+April 23 and later remain sealed until that preregistration opens the next
+block. ENTRY/ABSTAIN remains blocked until the attention and observation
+handoff is validated.
 
 ### Milestone 3 — policy integration
 
