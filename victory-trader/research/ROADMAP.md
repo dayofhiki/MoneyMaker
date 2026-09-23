@@ -529,14 +529,34 @@ strong diminishing returns after roughly eight additions. The old five-name
 transport ceiling is therefore a binding research resource constraint rather
 than a demonstrated property of the desired final trader.
 
-The next development step is to run the full retention-aware hierarchy with an
-eight-addition ceiling, including the one-second HOT reranker, and verify that
-the gain in Active retention/slot utilization does not sacrifice HOT quality.
-Because the value eight was identified on the already-opened May7-May13
-development block, it cannot be treated as fresh validation. If the full
-development replay passes, freeze that transport design before any new-date
-validation. Request 148 remains blocked until the corrected attention handoff
-is promoted.
+Request 150 then tested a balanced stale-incumbent value on the same
+development block: actionable runner priority multiplied by three-minute
+transport survival. It did not solve the five-addition bottleneck. Focus ->
+Active retention was 93.60%, genuine sparse waste 2.84%, mean scoreable Active
+occupancy 19.39 / 20, and HOT-within-1m / 2m / 5m was
+50.57% / 59.20% / 65.98%. The primary gate remained false.
+
+Its frozen sensitivity strengthened the resource-ceiling diagnosis. With the
+same balanced retention value and an eight-addition ceiling, Active retention
+reached 95.61%, genuine sparse waste fell to 0.45%, and mean scoreable
+occupancy reached 19.91 / 20. The unconstrained 20-addition diagnostic retained
+95.43%, so the development evidence suggests sharply diminishing benefit above
+roughly eight additions. These sensitivity results remain non-promotable.
+
+Request 151 is the preregistered fresh confirmation. Before opening any new
+session, the balanced policy, eight-addition primary, five-addition comparator,
+and promotion gate were frozen. The new evaluation block is
+2026-05-21, 05-22, 05-26, 05-27 and 05-28. The primary replaces only as many
+subscriptions as current challenger demand requires, capped at eight, rather
+than forcing eight changes. Promotion requires >=95% Active retention,
+<=2% genuine sparse-slot waste, >=19.60 scoreable occupancy, standard causal
+handoff gates, and non-lower pooled 1m/2m/5m HOT capture than the identical
+five-addition comparator, with 1m HOT non-lower on at least four of five days.
+
+Request 148 remains blocked until the corrected attention handoff is promoted.
+If request 151 passes, downstream economic-opportunity validation must use
+chronologically later sessions; the older May14-May20 evidence cannot be
+relabelled as fresh after upstream policy selection used May21-May28.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
