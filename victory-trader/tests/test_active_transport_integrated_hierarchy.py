@@ -201,3 +201,23 @@ def test_active_age_survives_temporary_unscoreable_gap():
     assert resumed["focus_age_minutes"] == 3
     assert resumed["watch_run_age_minutes"] == 3
     assert bool(resumed["transport_addition"]) is False
+
+
+def test_active_transport_can_rank_by_causal_utility_score():
+    rows = _scored_rows().copy()
+    rows["active_priority"] = rows["market_hazard_probability"]
+    first_t = int(rows["t"].min())
+    first = rows["t"].eq(first_t)
+    rows.loc[first & rows["ticker"].eq("I19"), "active_priority"] = 10_000.0
+    rows.loc[first & rows["ticker"].eq("I00"), "active_priority"] = -10_000.0
+
+    active, _ = active_observation_rows_with_state(
+        rows,
+        score_column="active_priority",
+    )
+    selected = set(
+        active.loc[active["t"].eq(first_t), "ticker"].astype(str)
+    )
+
+    assert "I19" in selected
+    assert "I00" not in selected
