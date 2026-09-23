@@ -87,6 +87,24 @@ def _feature_frame(frame: pd.DataFrame) -> pd.DataFrame:
     return frame.reindex(columns=MODEL_FEATURES).apply(pd.to_numeric, errors="coerce")
 
 
+def _second_window(seconds: pd.DataFrame, decision_t: int) -> pd.DataFrame:
+    """Return exactly the rows the frozen second feature function can consume.
+
+    second_path_features only considers [decision_t-60s, decision_t-1s].
+    Searchsorted avoids rescanning a full ticker-day second frame at every
+    POSITION decision while preserving the frozen feature semantics.
+    """
+
+    if seconds.empty:
+        return seconds
+    times = seconds["t"].to_numpy(dtype=np.int64, copy=False)
+    left = int(np.searchsorted(times, int(decision_t) - MINUTE_MS, side="left"))
+    right = int(
+        np.searchsorted(times, int(decision_t) - 1_000, side="right")
+    )
+    return seconds.iloc[left:right]
+
+
 def _open_map(scan: pd.DataFrame) -> dict[tuple[str, str, int], float]:
     result: dict[tuple[str, str, int], float] = {}
     for row in scan.itertuples(index=False):
@@ -247,7 +265,9 @@ def build_position_rows(
             for column in BASELINE_FEATURES:
                 record[column] = state.get(column)
 
-            record.update(second_path_features(seconds, state_t))
+            record.update(
+                second_path_features(_second_window(seconds, state_t), state_t)
+            )
             record["log_entry_price"] = float(np.log(entry_open))
             record["log_current_open"] = float(np.log(current_open))
             record["entry_to_current_open_pct"] = (
