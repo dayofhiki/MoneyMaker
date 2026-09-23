@@ -100,3 +100,33 @@ Future scanner evaluation should therefore separate:
 
 The second category should not count as a ranker miss. This is an
 observability correction, not a relaxation of model performance.
+
+
+## Result — request 134
+
+Request 134 completed successfully after one lint-only retry on the same
+already-opened April 1/2/6/7/8 sessions.
+
+Across 1,089 first +10% crossings, 557 (51.15%) had an exact completed minute
+immediately before the crossing and 532 did not. One-second data were available
+for all 532 blind crossings and the +10% threshold second was identified for
+531 of them.
+
+The central result is that most completed-minute blind spots are not recoverable
+by simply running the same logic faster. Among the 531 blind crossings with a
+identified threshold second, 381 (71.75%) were already at or above +10% on the
+first active second of the crossing minute. Only 150 (28.25%) had any active
+pre-threshold second. The median number of active pre-threshold seconds was zero,
+the p75 was one and the p90 was two. Only 3.95% had at least five active
+pre-threshold seconds, 0.94% had at least ten, and 0.19% had at least thirty.
+
+For the 150 cases with observable pre-threshold activity, the median
+pre-threshold peak return was already 9.38% and the p75 was 9.80%, so much of
+the recoverable warning window occurs very close to the +10% event.
+
+Interpretation: higher-frequency broad scanning may recover a minority of the
+current minute-level blind spots, but most of the missing crossings are jump or
+illiquidity events whose first observable trade is already beyond the threshold.
+The research objective should therefore distinguish observable/actionable
+opportunities from all nominal +10% crossings rather than treating total
+crossing recall as a fully controllable model metric.
