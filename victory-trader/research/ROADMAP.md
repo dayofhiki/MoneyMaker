@@ -347,12 +347,29 @@ initialization exception. Active membership retained 341 of 349 focus captures
 from 56.17% to 56.83%, and was non-lower on all five days. Post-initial
 subscription additions averaged 4.935 per decision, never exceeded five, and
 active occupancy never exceeded 20. The desired/active separation and
-rate-limited observation transport are therefore promoted.
+rate-limited observation transport were therefore promoted.
 
-The active task now moves back to the complete attention handoff: connect the
-confirmed active observation set to the frozen one-second reranker and HOT-10
-runtime on a new untouched block. ENTRY/ABSTAIN remains blocked until that
-integrated handoff passes.
+Request 137 integrated that transport with the frozen one-second reranker and
+HOT-10 on untouched 2026-04-30 through 2026-05-06 sessions. Predictive handoff
+quality passed: Focus captured 634/648 causally observable crossings (97.84%),
+active observation retained 95.43% of Focus captures, HOT retained 94.88% of
+active prior-minute captures, second-data coverage was 100%, and exact-prior
+HOT capture improved from 52.07% for the rank-40 comparator to 52.81% with
+non-lower performance on all five days. The formal gate nevertheless failed
+because a row-reconstructed churn audit reported 5.0005 mean post-initial
+additions and a maximum of seven even though the selector hard-caps true
+subscription additions at five. The audit was conflating temporary absence of
+a scoreable feature row with subscription removal/re-addition. Request 137 is
+not retroactively promoted.
+
+Request 138 is the active fresh confirmation on 2026-05-07 through 2026-05-13.
+It changes no predictive model, capacity, reranker or HOT rule. Subscription
+membership is now recorded directly from the selector, separately from whether
+the subscribed ticker has a scoreable feature row at that instant. If this
+explicit-state full handoff passes, Milestone 2 attention/observation research
+is promoted and the active research frontier moves to HOT -> ENTRY/ABSTAIN.
+A conditional first-HOT economic bridge is already preregistered to reuse the
+same request-138 dates without opening May 14 or later.
 
 ### Milestone 3 — policy integration
 
