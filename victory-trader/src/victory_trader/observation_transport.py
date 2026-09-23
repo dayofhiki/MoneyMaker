@@ -70,6 +70,99 @@ class RankHysteresisSelector:
         return tuple(item.ticker for item in selected)
 
 
+
+class BoundedTurnoverSelector:
+    """Responsive shortlist with a hard per-decision replacement budget.
+
+    Incumbents may persist while they remain inside the broad rank band, but a
+    current top-capacity challenger can replace a weaker incumbent immediately.
+    At most max_replacements incumbent slots are replaced after the initial
+    session fill, bounding transport churn without allowing incumbency to block
+    the strongest fresh candidates indefinitely.
+    """
+
+    def __init__(
+        self,
+        *,
+        capacity: int = 20,
+        incumbent_rank_limit: int = 40,
+        max_replacements: int = 5,
+    ):
+        if capacity <= 0:
+            raise ValueError("capacity must be positive")
+        if incumbent_rank_limit < capacity:
+            raise ValueError("incumbent rank limit must cover capacity")
+        if max_replacements <= 0 or max_replacements > capacity:
+            raise ValueError("max replacements must be in [1, capacity]")
+        self.capacity = capacity
+        self.incumbent_rank_limit = incumbent_rank_limit
+        self.max_replacements = max_replacements
+        self._incumbents: set[str] = set()
+
+    def reset(self) -> None:
+        self._incumbents.clear()
+
+    def select(self, candidates: Iterable[RankedCandidate]) -> tuple[str, ...]:
+        ranked = sorted(candidates, key=lambda item: (-item.score, item.ticker))
+        seen: set[str] = set()
+        unique = [
+            item
+            for item in ranked
+            if not (item.ticker in seen or seen.add(item.ticker))
+        ]
+        rank = {item.ticker: index + 1 for index, item in enumerate(unique)}
+        by_ticker = {item.ticker: item for item in unique}
+
+        if not self._incumbents:
+            selected = unique[: self.capacity]
+            self._incumbents = {item.ticker for item in selected}
+            return tuple(item.ticker for item in selected)
+
+        retained_names = {
+            ticker
+            for ticker in self._incumbents
+            if rank.get(ticker, self.incumbent_rank_limit + 1)
+            <= self.incumbent_rank_limit
+        }
+        selected_names = set(retained_names)
+
+        # Deeply fallen or disappeared incumbents create free slots and do not
+        # consume the replacement budget.
+        for item in unique:
+            if len(selected_names) >= self.capacity:
+                break
+            if item.ticker not in selected_names:
+                selected_names.add(item.ticker)
+
+        current_core = unique[: self.capacity]
+        current_core_names = {item.ticker for item in current_core}
+        replacements = 0
+        for challenger in current_core:
+            if challenger.ticker in selected_names:
+                continue
+            if replacements >= self.max_replacements:
+                break
+            replaceable = [
+                by_ticker[ticker]
+                for ticker in selected_names
+                if ticker in by_ticker and ticker not in current_core_names
+            ]
+            if not replaceable:
+                break
+            worst = max(
+                replaceable,
+                key=lambda item: (rank[item.ticker], item.ticker),
+            )
+            selected_names.remove(worst.ticker)
+            selected_names.add(challenger.ticker)
+            replacements += 1
+
+        ordered = [
+            item for item in unique if item.ticker in selected_names
+        ][: self.capacity]
+        self._incumbents = {item.ticker for item in ordered}
+        return tuple(item.ticker for item in ordered)
+
 @dataclass(frozen=True)
 class ObservationBridgeSnapshot:
     selected: tuple[str, ...]
