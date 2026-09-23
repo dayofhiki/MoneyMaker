@@ -439,25 +439,50 @@ ticker-day materialization reduce compute without changing their frozen
 mathematical definitions.
 
 Request 145 then completed successfully on the already-opened Apr30-May20
-sessions. Broad first-HOT position state was learnable: HOLD AUC was 0.5541,
-remaining-option-value Spearman 0.3026, and four of five evaluation sessions
-had all diagnostic signs positive. The economically selected subset retained a
-stronger multi-minute option-value signal (Spearman 0.2233; predicted-positive
-day-balanced realized excess +0.7986%), but its one-minute HOLD controller was
-unstable: May15 and May18 semantic-HOLD advantages were negative, May18 HOLD
-AUC fell to 0.4945, and only three of five sessions satisfied all sign
-conditions. Selected anchor-to-position-path coverage was also 89.36%, below
-the frozen 90% floor. Request 145 therefore formally failed and is not
-promoted.
+sessions and formally failed its frozen bridge. It reported broad HOLD AUC
+0.5541 and remaining-option-value Spearman 0.3026; the policy-selected subset
+reported HOLD AUC 0.5343 and remaining-value Spearman 0.2233, but only three of
+five sessions had all signs positive and selected anchor-to-path coverage was
+89.36% versus the 90% floor.
 
-The active frontier remains the executable recurrent trader branch documented
-in `executable-recurrent-trader-v0.1.md`, but the immediate development
-bottlenecks are now explicit: (1) a causal executability/liquidity gate before
-BUY and (2) a more stable short-horizon decay/HOLD controller. The stronger
-remaining-option-value model may serve only as a narrow patience signal. The
-promoted attention/HOT hierarchy and causal episode memory remain intact.
-May 21 and later remain sealed until these development components and the
-end-to-end replay gates are frozen.
+A second implementation audit subsequently found that request 145 still
+conditioned the POSITION decision-row population on a future execution event:
+a completed causal state was omitted whenever the following minute lacked an
+exit-reference open. Its reported decision-state coverage of 1.0 was therefore
+tautological rather than a genuine coverage measurement. The implementation
+now keeps every causal completed state and marks the future exit reference and
+supervised labels missing when no such fill reference exists. Request 145
+remains a formal failure and its HOLD/remaining-value metrics are treated as
+conditional diagnostics, not promotable recurrent-policy evidence.
+
+The same audit found a more upstream selection leak in the historical
+attention path. `build_market_hazard_rows` required an exact next-minute bar
+to construct its supervised target, and historical inference reused that
+labelable-only population. Whether a ticker will print in the following minute
+is not known at decision time. Although exact-prior runner rows themselves are
+labelable, removing future-silent competitors can change cross-sectional
+Focus/active/HOT allocation. The code now separates all causal inference rows
+from nullable supervised labels. Model fitting may use identifiable labels;
+market ranking and attention allocation may not inspect future bar existence.
+
+Request 146 is therefore revalidating the Focus -> active -> HOT handoff on the
+already-opened May7-May13 block using the fully causal inference population.
+Until request 146 resolves, the old request-138 attention/HOT promotion is
+**provisional rather than an active foundation for new fresh-date policy
+testing**. May 21 and later remain sealed.
+
+Additional audit fixes now preserve active-subscription age through temporary
+unscoreable rows, preserve HOT episode memory through POSITION state, reset
+hazard/session history by trading day, use official exchange session bounds
+including early closes, and represent missing oracle outcomes as unknown rather
+than negative.
+
+The executable recurrent trader remains the architectural target, but the
+immediate order of work is now: (1) finish causal-population attention/HOT
+revalidation; (2) rebuild opportunity selection on that corrected population if
+needed; (3) rerun POSITION observability with missing execution states retained;
+then (4) integrate BUY/WAIT/ABSTAIN and recurrent HOLD/EXIT. May 21 and later
+remain sealed until these corrections pass development and audit gates.
 
 ### Milestone 3 — policy integration
 
