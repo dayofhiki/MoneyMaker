@@ -6,8 +6,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from victory_trader.execution_costs import DEFAULT_EXECUTION_SCENARIOS, net_round_trip_return_pct
 from victory_trader.selected_hot_position_value_observability import (
+    BASE_SCENARIO,
     MODEL_FEATURES,
+    _base_return,
     apply_excess_target,
     build_position_rows,
     fit_minute_baselines,
@@ -166,3 +169,15 @@ def test_position_model_features_exclude_future_execution_reference():
     assert forbidden.isdisjoint(MODEL_FEATURES)
     assert "log_current_close" in MODEL_FEATURES
     assert "entry_to_current_close_pct" in MODEL_FEATURES
+
+
+def test_position_base_return_matches_shared_execution_cost_model():
+    entry = 2.0
+    exit_price = 2.2
+    gross = (exit_price / entry - 1.0) * 100.0
+    base = next(s for s in DEFAULT_EXECUTION_SCENARIOS if s.name == "base")
+
+    assert BASE_SCENARIO == base
+    assert _base_return(entry, exit_price) == pytest.approx(
+        net_round_trip_return_pct(entry, gross, base)
+    )
