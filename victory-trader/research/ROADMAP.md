@@ -376,13 +376,23 @@ subscription-state rows and did not imply unsubscribe/re-add. Request 138 passed
 the frozen promotion gate, so Milestone 2 attention/observation handoff is
 promoted.
 
-Request 139 is now the active economic bridge. It reuses exactly the already-opened
-request-138 dates and opens no date after 2026-05-13. It measures first-HOT
-next-minute-open entry references, frozen LIGHT/BASE/STRESS execution costs,
-fixed 1/2/5/10/15/30-minute outcomes, and a non-executable 30-minute hindsight
-best-exit ceiling. Its purpose is to decide whether the validated HOT population
-contains enough post-signal economic movement to justify ENTRY/ABSTAIN and
-adaptive HOLD/EXIT research.
+Request 139 then reused the already-opened request-138 dates to measure
+first-HOT economics without opening May 14 or later. Across 2,091 first-HOT
+episodes, blind fixed 1/2/5/10/15/30-minute holds were all BASE-negative, with
+means between -1.39% and -1.17%, despite mildly positive gross drift. The
+non-executable 30-minute best-exit ceiling was +0.339% on average, was
+BASE-positive in 40.70% of evaluable episodes, and had a positive mean on every
+evaluation day. The median best BASE return remained negative (-0.431%).
+Therefore HOT is validated as an attention state, not an entry rule: economic
+opportunity is present but sparse enough that most HOT episodes should be
+abstained from, and fixed holding time is rejected.
+
+The active frontier is now a fresh HOT economic-opportunity learnability test.
+Using the frozen request-138 attention hierarchy, the next experiment must test
+whether strictly causal first-HOT state information can identify the roughly
+40% of episodes with a cost-positive future exit opportunity and rank their
+magnitude. Only after that signal replicates on untouched dates should it become
+an executable ENTRY/ABSTAIN gate and feed recurrent HOLD/EXIT research.
 
 ### Milestone 3 — policy integration
 
