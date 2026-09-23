@@ -782,7 +782,22 @@ def run_probe(
         "materialized_market_rows": int(
             sum(int(item["materialized_market_rows"]) for item in audit_by_day.values())
         ),
+        "expected_wall_clock_state_slots": int(
+            sum(int(item["expected_wall_clock_state_slots"]) for item in audit_by_day.values())
+        ),
+        "observed_causal_state_slots": int(
+            sum(int(item["observed_causal_state_slots"]) for item in audit_by_day.values())
+        ),
+        "silent_state_slots": int(
+            sum(int(item["silent_state_slots"]) for item in audit_by_day.values())
+        ),
     }
+    total_slots = int(path_audit["expected_wall_clock_state_slots"])
+    path_audit["silent_state_slot_rate"] = (
+        float(path_audit["silent_state_slots"] / total_slots)
+        if total_slots
+        else None
+    )
     anchor_flags = opportunity.loc[
         :, ["trading_day", "ticker", "t", "entry_selected_policy"]
     ].rename(columns={"t": "hot_t"})
