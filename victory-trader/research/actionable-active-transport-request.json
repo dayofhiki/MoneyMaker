@@ -10,5 +10,6 @@
     "2026-05-13"
   ],
   "opens_new_dates": false,
-  "note": "Factor market runner hazard by causal next-minute observability for active transport. Keep Focus60, active20, max5 additions, HOT10 fixed. May21+ sealed."
+  "note": "Revision 2: actionable priority is used only inside current Focus-60 for new desired Active subscriptions; retained subscriptions may persist under unchanged five-addition transport. Supersedes the first request-147 implementation run.",
+  "revision": 2
 }
