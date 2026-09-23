@@ -99,24 +99,27 @@ def test_observable_prior_metrics_uses_only_causal_exact_prior_rows():
 
 
 
-def test_explicit_subscription_state_survives_missing_scoreable_row():
+def test_explicit_subscription_state_survives_excess_missing_rows():
     rows = _scored_rows()
-    # Remove one incumbent's second timestamp. It remains subscribed internally,
-    # but cannot be scored at that timestamp.
+    # More than five incumbent rows disappear at once. The selector can replace
+    # only five subscriptions, so some missing-row incumbents must remain truly
+    # subscribed even though they are not scoreable at this timestamp.
+    missing = {f"I{i:02d}" for i in range(12, 20)}
     rows = rows.loc[
         ~(
-            rows["ticker"].eq("I00")
+            rows["ticker"].isin(missing)
             & rows["t"].eq(120_000)
         )
     ].copy()
 
     _, trace = active_observation_rows_with_state(rows)
     second = trace.loc[trace["t"].eq(120_000)]
-    incumbent = second.loc[second["ticker"].eq("I00")]
+    unscoreable = second.loc[
+        ~second["scoreable_now"].fillna(False).astype(bool)
+    ]
 
-    assert len(incumbent) == 1
-    assert bool(incumbent.iloc[0]["transport_active"]) is True
-    assert bool(incumbent.iloc[0]["scoreable_now"]) is False
+    assert len(unscoreable) == 3
+    assert unscoreable["transport_active"].fillna(False).astype(bool).all()
 
 
 def test_explicit_subscription_audit_counts_selector_state_not_row_reappearance():
