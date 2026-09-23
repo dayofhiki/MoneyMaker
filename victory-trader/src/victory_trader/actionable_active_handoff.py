@@ -102,6 +102,31 @@ def add_actionable_priority(
     return result
 
 
+def mark_focus_eligibility(
+    scored_market: pd.DataFrame,
+    focus: pd.DataFrame,
+) -> pd.DataFrame:
+    """Mark the current Focus-60 without dropping broad market rows.
+
+    New desired Active subscriptions may come only from Focus. Broad rows stay
+    present so a previously subscribed ticker can retain current features even
+    after it temporarily leaves Focus.
+    """
+
+    keys = focus.loc[:, ["trading_day", "ticker", "t"]].copy()
+    keys["transport_focus_eligible"] = True
+    result = scored_market.merge(
+        keys,
+        on=["trading_day", "ticker", "t"],
+        how="left",
+        validate="one_to_one",
+    )
+    result["transport_focus_eligible"] = (
+        result["transport_focus_eligible"].fillna(False).astype(bool)
+    )
+    return result
+
+
 def add_unconditional_cross_target(frame: pd.DataFrame) -> pd.DataFrame:
     """Make the stage-2 target the actual next wall-clock-minute event.
 
@@ -183,9 +208,11 @@ def run_probe(
             market_model,
         )
         scored = add_actionable_priority(scored, observability_model)
+        scored = mark_focus_eligibility(scored, focus)
         active, subscription_trace = transport.active_observation_rows_with_state(
             scored,
             score_column="active_priority",
+            desired_eligible_column="transport_focus_eligible",
         )
         active = add_unconditional_cross_target(active)
         candidate_parts.append(active)
@@ -276,6 +303,7 @@ def run_probe(
         "active_priority_definition": (
             "market_hazard_probability * next_minute_observability_probability"
         ),
+        "active_desired_population": "current Focus-60 only",
         "population_by_day": population_by_day,
         "second_audit": second_audit,
         "observability": {
