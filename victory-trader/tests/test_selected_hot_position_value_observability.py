@@ -244,3 +244,20 @@ def test_session_clock_respects_nyse_early_close():
 
     assert since == pytest.approx(150.0)
     assert remaining == pytest.approx(session_minutes - 150.0)
+
+
+def test_position_state_is_kept_when_next_exit_reference_is_missing():
+    scan = _scan().loc[_scan()["t"].ne(240_000)].copy()
+    anchors = pd.DataFrame(
+        [{"trading_day": "2026-05-07", "ticker": "A", "t": 120_000}]
+    )
+
+    rows, _ = build_position_rows(anchors, scan, FakeSecondClient())
+    first = rows.loc[rows["state_t"].eq(180_000)].iloc[0]
+
+    assert bool(first["exit_reference_available"]) is False
+    assert pd.isna(first["exit_reference_open"])
+    assert pd.isna(first["exit_now_base_return_pct"])
+    assert pd.isna(first["hold_advantage_1m_pct"])
+    assert pd.notna(first["log_current_close"])
+    assert first["active_seconds_60"] > 0
