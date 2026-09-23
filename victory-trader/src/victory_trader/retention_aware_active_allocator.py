@@ -179,8 +179,9 @@ def retention_aware_active_rows_with_state(
     scored_market: pd.DataFrame,
     *,
     max_additions: int = PRIMARY_MAX_ADDITIONS,
+    retention_score_column: str = "transport_survival_probability",
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Desired admission uses actionable priority; stale eviction uses survival."""
+    """Separate admission ranking from stale-incumbent eviction value."""
 
     selected: list[pd.DataFrame] = []
     snapshots: list[dict[str, object]] = []
@@ -209,11 +210,15 @@ def retention_aware_active_rows_with_state(
                 )
                 for row in focus_pool.itertuples(index=False)
             ]
-            retention_scores = {
-                str(row.ticker): float(row.transport_survival_probability)
-                for row in ranked.itertuples(index=False)
-                if np.isfinite(float(row.transport_survival_probability))
-            }
+            if retention_score_column not in ranked.columns:
+                raise ValueError(
+                    f"missing retention score column: {retention_score_column}"
+                )
+            retention_scores = {}
+            for row in ranked.itertuples(index=False):
+                value = float(getattr(row, retention_score_column))
+                if np.isfinite(value):
+                    retention_scores[str(row.ticker)] = value
             selector.select(
                 candidates,
                 retention_scores=retention_scores,
