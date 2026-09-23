@@ -60,3 +60,43 @@ must instead be treated as unobservable jump risk.
 This diagnostic does not itself justify a trading entry rule. It only measures
 the information that a continuous scanner could have had before the current
 minute-level replay declares the crossing.
+
+
+## Result — request 134
+
+Request 134 completed its diagnostic calculation on the already-opened
+2026-04-01, 04-02, 04-06, 04-07 and 04-08 sessions.
+
+Of 1,089 first +10% crossings, 557 (51.15%) had an exact prior completed-minute
+row and 532 were completed-minute blind spots. Historical one-second coverage
+was available for all 532 blind crossings. The +10% second-close threshold was
+located for 531 of them.
+
+The decisive result is that 381 / 531 (71.75%) were already at or above +10%
+on the first active second in the crossing minute. Only 150 / 531 (28.25%) had
+any active second before the threshold. The pre-threshold window was usually
+extremely short: median zero active seconds, p75 one second, p90 two seconds.
+Only 21 / 531 (3.95%) had at least five active pre-threshold seconds, 5 / 531
+(0.94%) had at least ten, and 1 / 531 (0.19%) had at least thirty.
+
+Among the 150 blind crossings with a pre-threshold second, the median peak
+pre-threshold return was already 9.38% and p75 was 9.80%. The wall-clock time
+from first activity to threshold had median zero seconds, p75 two seconds and
+p90 21 seconds. Blind cases were therefore dominated by sparse or gap-like
+activation rather than a long smooth ramp hidden inside the minute bar.
+
+Interpretation: event-driven broad scanning remains architecturally necessary,
+but it cannot recover most completed-minute blind crossings because the market
+does not reveal a causal precursor for them in the available one-second
+aggregate stream. Under an unrealistically perfect zero-latency observer, the
+557 exact-prior-minute cases plus the 150 blind cases with any pre-threshold
+second define an upper descriptive opportunity set of 707 / 1,089 (64.92%) on
+this block. Requiring even five active seconds of warning reduces that
+descriptive set to 578 / 1,089 (53.08%).
+
+Future scanner evaluation should therefore separate:
+1. crossings with a genuine causal pre-cross observation window;
+2. jump/gap crossings whose first observed event is already beyond the target.
+
+The second category should not count as a ranker miss. This is an
+observability correction, not a relaxation of model performance.
