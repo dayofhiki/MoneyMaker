@@ -387,12 +387,25 @@ Therefore HOT is validated as an attention state, not an entry rule: economic
 opportunity is present but sparse enough that most HOT episodes should be
 abstained from, and fixed holding time is rejected.
 
-The active frontier is now a fresh HOT economic-opportunity learnability test.
-Using the frozen request-138 attention hierarchy, the next experiment must test
-whether strictly causal first-HOT state information can identify the roughly
-40% of episodes with a cost-positive future exit opportunity and rank their
-magnitude. Only after that signal replicates on untouched dates should it become
-an executable ENTRY/ABSTAIN gate and feed recurrent HOLD/EXIT research.
+Request 140A then reused the same opened dates and expanded the economic unit
+from one first-HOT ticker-day episode to every causal HOT promotion. Across
+9,597 promotions, broad promotion entry was weaker than first-HOT entry: the
+30-minute oracle BASE mean was -0.104% overall. Promotion order mattered. First
+promotions retained +0.339% mean oracle BASE value, second promotions +0.209%,
+while third-and-later promotions fell to -0.315%. Re-promotions were separated
+by a median seven minutes. The frozen HOT score nevertheless contained real
+economic ordering: its Spearman correlation with oracle BASE return was +0.150,
+and oracle means rose monotonically from -0.616% in score quintile 1 to +0.685%
+in quintile 5. Thus HOT score is informative but is still not an entry rule,
+and later ENTRY research must represent promotion order/spacing explicitly.
+
+Request 140B is the fresh first-HOT economic-opportunity learnability test on
+2026-05-14, 05-15, 05-18, 05-19 and 05-20. The methodology was frozen before
+those outcomes were inspected: fit on the request-137 block, calibrate on the
+request-138/139 block, then test whether causal minute/second HOT state can
+classify cost-positive 30-minute opportunity and rank its magnitude. The
+concurrent 140A/140B naming is an administrative request-ID collision only;
+140A opened no new dates. May 21 and later remain sealed.
 
 ### Milestone 3 — policy integration
 
