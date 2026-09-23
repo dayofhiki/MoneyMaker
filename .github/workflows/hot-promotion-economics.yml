@@ -1,0 +1,122 @@
+name: MoneyMaker HOT Promotion Economics
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/hot-promotion-economics-request.json'
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: Artifact request identifier
+        required: true
+        default: '140'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.read.outputs.enabled }}
+      request_id: ${{ steps.read.outputs.request_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          if os.environ["EVENT_NAME"] == "workflow_dispatch":
+              enabled = True
+              request_id = os.environ["INPUT_REQUEST_ID"]
+          else:
+              payload = json.loads(
+                  Path("victory-trader/research/hot-promotion-economics-request.json").read_text(
+                      encoding="utf-8"
+                  )
+              )
+              enabled = payload.get("operation") == "hot_promotion_economics_v11"
+              request_id = str(payload.get("request_id", ""))
+          if enabled and not request_id:
+              raise SystemExit("HOT promotion economics request is incomplete")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as handle:
+              handle.write(f"enabled={'true' if enabled else 'false'}\n")
+              handle.write(f"request_id={request_id}\n")
+          PY
+
+  diagnose:
+    if: ${{ needs.request.outputs.enabled == 'true' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test HOT promotion economics helpers
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_hot_entry_economics.py
+
+      - name: Download promoted request 138 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-explicit-transport-integrated-hot-v17-138
+          path: victory-trader/artifacts/request138
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: dayofhiki/MoneyMaker
+          run-id: 35824096991
+
+      - name: Restore market-wide Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-hot-promotion-flatfiles-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-explicit-integrated-flatfiles-${{ runner.os }}-
+            moneymaker-hot-economics-flatfiles-${{ runner.os }}-
+
+      - name: Run HOT promotion economics diagnostic
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.hot_promotion_economics_probe \
+            --attention-trace artifacts/request138/explicit-transport-integrated-hot-v17.parquet \
+            --attention-summary artifacts/request138/explicit-transport-integrated-hot-v17.json \
+            --output artifacts/hot-promotion-economics-v11.parquet \
+            --summary artifacts/hot-promotion-economics-v11.json \
+            | tee artifacts/hot-promotion-economics-v11.log
+          test -s artifacts/hot-promotion-economics-v11.parquet
+          test -s artifacts/hot-promotion-economics-v11.json
+
+      - name: Upload HOT promotion economics audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-hot-promotion-economics-v11-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/hot-promotion-economics-v11.parquet
+            victory-trader/artifacts/hot-promotion-economics-v11.json
+            victory-trader/artifacts/hot-promotion-economics-v11.log
+          if-no-files-found: error
+          retention-days: 90
