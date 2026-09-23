@@ -3,6 +3,6 @@
   "operation": "hot_entry_economics_v10",
   "start_date": "2026-01-02",
   "end_date": "2026-05-13",
-  "note": "Retry request 139 using the already-promoted request-138 artifact instead of recomputing the full attention hierarchy. Economic labels, frozen dates, and interpretation are unchanged; May14+ remain sealed.",
-  "retry": 1
+  "note": "Retry request 139 with identical labels/dates using only promoted request-138 HOT membership plus minute prices for HOT tickers. No market-wide rescoring, no new dates, and no change to frozen economic definitions.",
+  "retry": 2
 }
