@@ -436,16 +436,28 @@ strictly label/execution-only, calibrates the policy selection quantile across
 all causal calibration feature rows, and streams one market day at a time.
 Second-window search, running extrema, future-label suffix maxima, and selective
 ticker-day materialization reduce compute without changing their frozen
-mathematical definitions. Request 145 is the active no-new-date corrected
-HOLD/EXIT observability bridge on the already-opened Apr30-May20 sessions.
+mathematical definitions.
+
+Request 145 then completed successfully on the already-opened Apr30-May20
+sessions. Broad first-HOT position state was learnable: HOLD AUC was 0.5541,
+remaining-option-value Spearman 0.3026, and four of five evaluation sessions
+had all diagnostic signs positive. The economically selected subset retained a
+stronger multi-minute option-value signal (Spearman 0.2233; predicted-positive
+day-balanced realized excess +0.7986%), but its one-minute HOLD controller was
+unstable: May15 and May18 semantic-HOLD advantages were negative, May18 HOLD
+AUC fell to 0.4945, and only three of five sessions satisfied all sign
+conditions. Selected anchor-to-position-path coverage was also 89.36%, below
+the frozen 90% floor. Request 145 therefore formally failed and is not
+promoted.
 
 The active frontier remains the executable recurrent trader branch documented
-in `executable-recurrent-trader-v0.1.md`. It keeps the promoted attention/HOT
-hierarchy frozen and adds causal episode memory, separate economic-opportunity
-and executability signals, BUY/WAIT/ABSTAIN action values, and recurrent
-HOLD/EXIT values. Prior fixed-horizon and old stopping thresholds are not
-promoted into this branch. May 21 and later remain sealed until the development
-replay, integrity tests, and executable fresh gates are frozen.
+in `executable-recurrent-trader-v0.1.md`, but the immediate development
+bottlenecks are now explicit: (1) a causal executability/liquidity gate before
+BUY and (2) a more stable short-horizon decay/HOLD controller. The stronger
+remaining-option-value model may serve only as a narrow patience signal. The
+promoted attention/HOT hierarchy and causal episode memory remain intact.
+May 21 and later remain sealed until these development components and the
+end-to-end replay gates are frozen.
 
 ### Milestone 3 — policy integration
 
