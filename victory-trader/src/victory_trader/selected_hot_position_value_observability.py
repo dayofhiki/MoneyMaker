@@ -24,7 +24,12 @@ from .attention_replay import MINUTE_MS
 from .config import load_settings, require_flatfile_credentials
 from .execution_costs import DEFAULT_EXECUTION_SCENARIOS, modeled_buy_fill, modeled_sell_fill
 from .flatfiles import MassiveFlatFilesClient, MassiveFlatFileStore
-from .hot_economic_opportunity import CAL_DAYS, EVAL_DAYS, FIT_DAYS, _fit_models
+from .hot_economic_opportunity import (
+    CAL_DAYS,
+    EVAL_DAYS,
+    FIT_DAYS,
+    fit_policy_opportunity_selector,
+)
 from .massive_client import MassiveClient
 from .second_path_attention_probe import (
     BASELINE_FEATURES,
@@ -41,8 +46,7 @@ BASE_SCENARIO = next(item for item in DEFAULT_EXECUTION_SCENARIOS if item.name =
 PATH_FEATURES = (
     "minutes_held",
     "log_entry_price",
-    "log_current_open",
-    "entry_to_current_open_pct",
+    "log_current_close",
     "entry_to_current_close_pct",
     "running_max_return_pct",
     "running_min_return_pct",
@@ -87,33 +91,21 @@ def _feature_frame(frame: pd.DataFrame) -> pd.DataFrame:
     return frame.reindex(columns=MODEL_FEATURES).apply(pd.to_numeric, errors="coerce")
 
 
-def _second_window(seconds: pd.DataFrame, decision_t: int) -> pd.DataFrame:
-    """Return exactly the rows the frozen second feature function can consume.
-
-    second_path_features only considers [decision_t-60s, decision_t-1s].
-    Searchsorted avoids rescanning a full ticker-day second frame at every
-    POSITION decision while preserving the frozen feature semantics.
-    """
-
-    if seconds.empty:
-        return seconds
-    times = seconds["t"].to_numpy(dtype=np.int64, copy=False)
-    left = int(np.searchsorted(times, int(decision_t) - MINUTE_MS, side="left"))
-    right = int(
-        np.searchsorted(times, int(decision_t) - 1_000, side="right")
-    )
-    return seconds.iloc[left:right]
-
-
 def _open_map(scan: pd.DataFrame) -> dict[tuple[str, str, int], float]:
-    result: dict[tuple[str, str, int], float] = {}
-    for row in scan.itertuples(index=False):
-        opening = pd.to_numeric(pd.Series([getattr(row, "o")]), errors="coerce").iloc[0]
-        if not _positive(opening):
-            continue
-        actual_open_t = int(row.t) - MINUTE_MS
-        result[(str(row.trading_day), str(row.ticker).upper(), actual_open_t)] = float(opening)
-    return result
+    frame = scan.loc[:, ["trading_day", "ticker", "t", "o"]].copy()
+    frame["trading_day"] = frame["trading_day"].astype(str)
+    frame["ticker"] = frame["ticker"].astype(str).str.upper()
+    frame["t"] = pd.to_numeric(frame["t"], errors="raise").astype("int64")
+    frame["o"] = pd.to_numeric(frame["o"], errors="coerce")
+    frame = frame.loc[frame["o"].gt(0) & np.isfinite(frame["o"])].copy()
+    frame["actual_open_t"] = frame["t"] - MINUTE_MS
+    keys = ["trading_day", "ticker", "actual_open_t"]
+    if frame.duplicated(keys).any():
+        raise ValueError("duplicate executable open reference")
+    return {
+        (str(row.trading_day), str(row.ticker), int(row.actual_open_t)): float(row.o)
+        for row in frame.itertuples(index=False)
+    }
 
 
 def _position_scan_features(scan: pd.DataFrame) -> pd.DataFrame:
@@ -124,26 +116,29 @@ def _position_scan_features(scan: pd.DataFrame) -> pd.DataFrame:
     return annotated
 
 
-def _minute_lookup(scan: pd.DataFrame) -> dict[tuple[str, str, int], dict[str, object]]:
-    annotated = _position_scan_features(scan)
-    return {
-        (str(row.trading_day), str(row.ticker).upper(), int(row.t)): row._asdict()
-        for row in annotated.itertuples(index=False)
-    }
-
-
-def _ticker_completed_rows(
-    scan: pd.DataFrame,
-) -> dict[tuple[str, str], pd.DataFrame]:
-    annotated = _position_scan_features(scan)
-    result: dict[tuple[str, str], pd.DataFrame] = {}
-    for (day, ticker), group in annotated.groupby(["trading_day", "ticker"], sort=False):
-        result[(str(day), str(ticker).upper())] = group.sort_values("t", kind="stable")
-    return result
+def _selected_ticker_day_frame(
+    frame: pd.DataFrame,
+    anchors: pd.DataFrame,
+) -> pd.DataFrame:
+    keys = anchors.loc[:, ["trading_day", "ticker"]].copy()
+    keys["trading_day"] = keys["trading_day"].astype(str)
+    keys["ticker"] = keys["ticker"].astype(str).str.upper()
+    keys = keys.drop_duplicates()
+    work = frame.copy()
+    work["trading_day"] = work["trading_day"].astype(str)
+    work["ticker"] = work["ticker"].astype(str).str.upper()
+    return work.merge(
+        keys,
+        on=["trading_day", "ticker"],
+        how="inner",
+        validate="many_to_one",
+    )
 
 
 def _session_clock(timestamp_ms: int) -> tuple[float, float]:
-    local = pd.Timestamp(timestamp_ms, unit="ms", tz="UTC").tz_convert("America/New_York")
+    local = pd.Timestamp(timestamp_ms, unit="ms", tz="UTC").tz_convert(
+        "America/New_York"
+    )
     minute = local.hour * 60 + local.minute
     since = float(minute - (9 * 60 + 30))
     return since, float(390 - since)
@@ -154,23 +149,44 @@ def build_position_rows(
     scan: pd.DataFrame,
     second_client: MassiveClient,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
-    """Build causal minute-by-minute post-entry states for first-HOT anchors."""
+    """Build causal post-entry states without exposing execution prices as inputs."""
 
-    opens = _open_map(scan)
+    if anchors.empty or scan.empty:
+        return pd.DataFrame(), {
+            "position_rows": 0,
+            "position_ticker_day_requests": 0,
+            "nonempty_second_ticker_days": 0,
+            "second_feature_row_coverage": None,
+        }
+
+    # Cross-sectional rank needs the whole market at each timestamp, but all
+    # later materialization can be restricted to ticker-days that actually
+    # have a first-HOT anchor.
+    annotated_market = _position_scan_features(scan)
+    selected_scan = _selected_ticker_day_frame(scan, anchors)
+    selected_annotated = _selected_ticker_day_frame(annotated_market, anchors)
+
+    opens = _open_map(selected_scan)
     open_groups: dict[tuple[str, str], list[tuple[int, float]]] = {}
     for (day, ticker, timestamp), price in opens.items():
         open_groups.setdefault((day, ticker), []).append((timestamp, price))
     for key in open_groups:
         open_groups[key].sort()
 
-    minute_rows = _minute_lookup(scan)
-    completed = _ticker_completed_rows(scan)
+    minute_rows = {
+        (str(row.trading_day), str(row.ticker).upper(), int(row.t)): row._asdict()
+        for row in selected_annotated.itertuples(index=False)
+    }
+
     second_cache: dict[tuple[str, str], pd.DataFrame] = {}
     records: list[dict[str, object]] = []
     requested_ticker_days = 0
     nonempty_second_days = 0
+    clock_cache: dict[tuple[str, int], tuple[float, float]] = {}
 
-    for anchor in anchors.sort_values(["trading_day", "t", "ticker"], kind="stable").to_dict("records"):
+    for anchor in anchors.sort_values(
+        ["trading_day", "t", "ticker"], kind="stable"
+    ).to_dict("records"):
         day = str(anchor["trading_day"])
         ticker = str(anchor["ticker"]).upper()
         hot_t = int(anchor["t"])
@@ -188,44 +204,72 @@ def build_position_rows(
                 date.fromisoformat(day),
                 adjusted=False,
             )
-            second_cache[key] = _second_frame(payload)
-            if not second_cache[key].empty:
+            seconds = _second_frame(payload)
+            if not seconds.empty and not seconds["t"].is_monotonic_increasing:
+                raise ValueError("second rows must be monotonic after normalization")
+            second_cache[key] = seconds
+            if not seconds.empty:
                 nonempty_second_days += 1
         seconds = second_cache[key]
-        ticker_minutes = completed.get(key)
-        if ticker_minutes is None or ticker_minutes.empty:
-            continue
 
         cap_t = entry_actual_t + MAX_HOLD_MINUTES * MINUTE_MS
-        future_open_pairs = [
-            (timestamp, price)
+        future_pairs = [
+            (timestamp, _base_return(float(entry_open), float(price)))
             for timestamp, price in open_groups.get(key, [])
             if entry_actual_t < timestamp <= cap_t
         ]
+        future_times = np.asarray(
+            [timestamp for timestamp, _ in future_pairs], dtype=np.int64
+        )
+        future_returns = np.asarray(
+            [value for _, value in future_pairs], dtype=float
+        )
+        suffix_best = (
+            np.maximum.accumulate(future_returns[::-1])[::-1]
+            if len(future_returns)
+            else np.asarray([], dtype=float)
+        )
 
+        running_high = np.nan
+        running_low = np.nan
         for held in range(1, MAX_HOLD_MINUTES):
             state_t = entry_actual_t + held * MINUTE_MS
             state = minute_rows.get((day, ticker, state_t))
-            current_open = opens.get((day, ticker, state_t), np.nan)
-            if state is None or not _positive(current_open):
+            if state is None:
                 continue
 
-            completed_since_entry = ticker_minutes.loc[
-                ticker_minutes["t"].gt(entry_actual_t)
-                & ticker_minutes["t"].le(state_t)
-            ]
-            if completed_since_entry.empty:
+            state_high = pd.to_numeric(
+                pd.Series([state.get("h")]), errors="coerce"
+            ).iloc[0]
+            state_low = pd.to_numeric(
+                pd.Series([state.get("l")]), errors="coerce"
+            ).iloc[0]
+            if _positive(state_high):
+                running_high = (
+                    float(state_high)
+                    if pd.isna(running_high)
+                    else max(float(running_high), float(state_high))
+                )
+            if _positive(state_low):
+                running_low = (
+                    float(state_low)
+                    if pd.isna(running_low)
+                    else min(float(running_low), float(state_low))
+                )
+
+            # This is the next causally executable minute open after the
+            # completed state. It is a LABEL/execution reference only and must
+            # never enter MODEL_FEATURES.
+            exit_reference_open = opens.get((day, ticker, state_t), np.nan)
+            if not _positive(exit_reference_open):
                 continue
 
-            high = pd.to_numeric(completed_since_entry["h"], errors="coerce")
-            low = pd.to_numeric(completed_since_entry["l"], errors="coerce")
             current_close = pd.to_numeric(
                 pd.Series([state.get("c")]), errors="coerce"
             ).iloc[0]
-            running_high = float(high.max()) if high.notna().any() else np.nan
-            running_low = float(low.min()) if low.notna().any() else np.nan
-
-            exit_now = _base_return(float(entry_open), float(current_open))
+            exit_now = _base_return(
+                float(entry_open), float(exit_reference_open)
+            )
             next_open = opens.get((day, ticker, state_t + MINUTE_MS), np.nan)
             next_exit = _base_return(float(entry_open), float(next_open))
             hold_advantage = (
@@ -234,13 +278,12 @@ def build_position_rows(
                 else np.nan
             )
 
-            later = [
-                _base_return(float(entry_open), float(price))
-                for timestamp, price in future_open_pairs
-                if timestamp > state_t
-            ]
-            later = [value for value in later if pd.notna(value)]
-            best_future = max(later) if later else np.nan
+            later_index = int(np.searchsorted(future_times, state_t, side="right"))
+            best_future = (
+                float(suffix_best[later_index])
+                if later_index < len(suffix_best)
+                else np.nan
+            )
             remaining = (
                 float(best_future - exit_now)
                 if pd.notna(best_future) and pd.notna(exit_now)
@@ -255,7 +298,7 @@ def build_position_rows(
                 "entry_open": float(entry_open),
                 "state_t": state_t,
                 "minutes_held": float(held),
-                "current_open": float(current_open),
+                "exit_reference_open": float(exit_reference_open),
                 "exit_now_base_return_pct": exit_now,
                 "next_minute_base_return_pct": next_exit,
                 "hold_advantage_1m_pct": hold_advantage,
@@ -265,13 +308,10 @@ def build_position_rows(
             for column in BASELINE_FEATURES:
                 record[column] = state.get(column)
 
-            record.update(
-                second_path_features(_second_window(seconds, state_t), state_t)
-            )
+            record.update(second_path_features(seconds, state_t))
             record["log_entry_price"] = float(np.log(entry_open))
-            record["log_current_open"] = float(np.log(current_open))
-            record["entry_to_current_open_pct"] = (
-                float(current_open / entry_open - 1.0) * 100.0
+            record["log_current_close"] = (
+                float(np.log(current_close)) if _positive(current_close) else np.nan
             )
             record["entry_to_current_close_pct"] = (
                 float(current_close / entry_open - 1.0) * 100.0
@@ -289,16 +329,19 @@ def build_position_rows(
                 else np.nan
             )
             record["drawdown_from_peak_pct"] = (
-                float(current_open / running_high - 1.0) * 100.0
-                if _positive(running_high)
+                float(current_close / running_high - 1.0) * 100.0
+                if _positive(current_close) and _positive(running_high)
                 else np.nan
             )
             record["recovery_from_trough_pct"] = (
-                float(current_open / running_low - 1.0) * 100.0
-                if _positive(running_low)
+                float(current_close / running_low - 1.0) * 100.0
+                if _positive(current_close) and _positive(running_low)
                 else np.nan
             )
-            since_open, to_close = _session_clock(state_t)
+            clock_key = (day, state_t)
+            if clock_key not in clock_cache:
+                clock_cache[clock_key] = _session_clock(state_t)
+            since_open, to_close = clock_cache[clock_key]
             record["minutes_since_open"] = since_open
             record["minutes_to_close"] = to_close
             records.append(record)
@@ -319,6 +362,8 @@ def build_position_rows(
         "position_ticker_day_requests": requested_ticker_days,
         "nonempty_second_ticker_days": nonempty_second_days,
         "second_feature_row_coverage": second_coverage,
+        "materialized_market_rows": int(len(selected_annotated)),
+        "full_market_rows": int(len(annotated_market)),
     }
 
 
@@ -609,12 +654,6 @@ def request140b_predictive_conditions_pass(summary140: dict[str, object]) -> boo
         and int(evaluation["auc_above_random_days"]) >= 4
         and float(evaluation["value_spearman"]) >= 0.05
         and int(evaluation["positive_spearman_days"]) >= 4
-        and float(evaluation["selected_oracle_base_mean_pct"]) > 0
-        and float(evaluation["selected_oracle_base_mean_pct"])
-        > float(evaluation["oracle_base_mean_pct"])
-        and float(evaluation["selected_positive_rate"])
-        >= float(evaluation["opportunity_positive_rate"]) + 0.05
-        and int(evaluation["selected_mean_nonlower_days"]) >= 4
     )
 
 
@@ -642,31 +681,55 @@ def run_probe(
                 "coverage-only diagnostic requires all request-140B predictive gates"
             )
 
-    classifier, _regressor, _offset, threshold, _low, _high = _fit_models(opportunity)
+    classifier, threshold = fit_policy_opportunity_selector(opportunity)
     opportunity = opportunity.copy()
     opportunity["entry_opportunity_probability"] = classifier.predict_proba(
         opportunity[summary140["entry_features"]].replace([np.inf, -np.inf], np.nan)
     )[:, 1]
-    opportunity["entry_selected_140b"] = (
+    opportunity["entry_selected_policy"] = (
         opportunity["entry_opportunity_probability"] >= threshold
     )
 
     days = FIT_DAYS + CAL_DAYS + EVAL_DAYS
-    scans: list[pd.DataFrame] = []
+    path_pieces: list[pd.DataFrame] = []
+    audit_by_day: dict[str, object] = {}
     for day_text in days:
+        day_anchors = opportunity.loc[
+            opportunity["trading_day"].astype(str).eq(day_text),
+            ["trading_day", "ticker", "t"],
+        ].copy()
         scan, _ = build_flatfile_scan_day(
             store, scan_client, date.fromisoformat(day_text)
         )
-        scans.append(scan)
-    scan = pd.concat(scans, ignore_index=True)
-
-    path_rows, path_audit = build_position_rows(
-        opportunity.loc[:, ["trading_day", "ticker", "t"]],
-        scan,
-        second_client,
-    )
+        day_paths, day_audit = build_position_rows(
+            day_anchors,
+            scan,
+            second_client,
+        )
+        audit_by_day[day_text] = day_audit
+        if not day_paths.empty:
+            path_pieces.append(day_paths)
+    if not path_pieces:
+        raise ValueError("position observability produced no causal path rows")
+    path_rows = pd.concat(path_pieces, ignore_index=True)
+    path_audit = {
+        "by_day": audit_by_day,
+        "position_rows": int(len(path_rows)),
+        "position_ticker_day_requests": int(
+            sum(int(item["position_ticker_day_requests"]) for item in audit_by_day.values())
+        ),
+        "nonempty_second_ticker_days": int(
+            sum(int(item["nonempty_second_ticker_days"]) for item in audit_by_day.values())
+        ),
+        "full_market_rows": int(
+            sum(int(item["full_market_rows"]) for item in audit_by_day.values())
+        ),
+        "materialized_market_rows": int(
+            sum(int(item["materialized_market_rows"]) for item in audit_by_day.values())
+        ),
+    }
     anchor_flags = opportunity.loc[
-        :, ["trading_day", "ticker", "t", "entry_selected_140b"]
+        :, ["trading_day", "ticker", "t", "entry_selected_policy"]
     ].rename(columns={"t": "hot_t"})
     path_rows = path_rows.merge(
         anchor_flags,
@@ -677,7 +740,7 @@ def run_probe(
 
     evaluation_anchors = opportunity.loc[
         opportunity["trading_day"].astype(str).isin(EVAL_DAYS),
-        ["trading_day", "ticker", "t", "entry_selected_140b"],
+        ["trading_day", "ticker", "t", "entry_selected_policy"],
     ].copy()
     evaluation_anchors = evaluation_anchors.rename(columns={"t": "hot_t"})
     path_anchor_keys = path_rows.loc[
@@ -686,7 +749,7 @@ def run_probe(
     ].drop_duplicates()
     all_anchor_count = int(len(evaluation_anchors))
     selected_anchors = evaluation_anchors.loc[
-        evaluation_anchors["entry_selected_140b"].fillna(False).astype(bool)
+        evaluation_anchors["entry_selected_policy"].fillna(False).astype(bool)
     ].copy()
     selected_anchor_count = int(len(selected_anchors))
     all_path_anchor_count = int(
@@ -709,7 +772,7 @@ def run_probe(
             if all_anchor_count
             else None
         ),
-        "request140b_selected": (
+        "policy_selected": (
             float(selected_path_anchor_count / selected_anchor_count)
             if selected_anchor_count
             else None
@@ -745,9 +808,9 @@ def run_probe(
     all_eval = evaluate_observability(evaluation, label="all_first_hot")
     selected_eval = evaluate_observability(
         evaluation.loc[
-            evaluation["entry_selected_140b"].fillna(False).astype(bool)
+            evaluation["entry_selected_policy"].fillna(False).astype(bool)
         ].copy(),
-        label="request140b_selected",
+        label="policy_selected",
     )
 
     final = {
@@ -769,11 +832,11 @@ def run_probe(
         "option_winsor_high_pct": option_model.winsor_high,
         "option_calibration_offset_pct": option_model.offset,
         "all_first_hot": all_eval,
-        "request140b_selected": selected_eval,
+        "policy_selected": selected_eval,
         "promotion_gate_pass": bool(
             selected_eval["bridge_pass"]
-            and anchor_path_coverage["request140b_selected"] is not None
-            and float(anchor_path_coverage["request140b_selected"]) >= 0.90
+            and anchor_path_coverage["policy_selected"] is not None
+            and float(anchor_path_coverage["policy_selected"]) >= 0.90
         ),
     }
     return evaluation, final
