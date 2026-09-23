@@ -118,15 +118,6 @@ jobs:
             moneymaker-explicit-integrated-flatfiles-${{ runner.os }}-
             moneymaker-active-integrated-flatfiles-${{ runner.os }}-
 
-      - name: Restore one-second REST cache
-        uses: actions/cache/restore@v4
-        with:
-          path: victory-trader/data/cache/massive-second-attention
-          key: moneymaker-hot-economics-second-${{ runner.os }}-${{ github.run_id }}
-          restore-keys: |
-            moneymaker-explicit-integrated-second-${{ runner.os }}-
-            moneymaker-active-integrated-second-${{ runner.os }}-
-
       - name: Run first-HOT economics diagnostic
         run: |
           set -o pipefail
