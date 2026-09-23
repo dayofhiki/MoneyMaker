@@ -7,7 +7,6 @@ import json
 from datetime import date
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from . import active_transport_integrated_hierarchy as transport
