@@ -655,6 +655,51 @@ def run_probe(
         validate="many_to_one",
     )
 
+    evaluation_anchors = opportunity.loc[
+        opportunity["trading_day"].astype(str).isin(EVAL_DAYS),
+        ["trading_day", "ticker", "t", "entry_selected_140b"],
+    ].copy()
+    evaluation_anchors = evaluation_anchors.rename(columns={"t": "hot_t"})
+    path_anchor_keys = path_rows.loc[
+        path_rows["trading_day"].astype(str).isin(EVAL_DAYS),
+        ["trading_day", "ticker", "hot_t"],
+    ].drop_duplicates()
+    all_anchor_count = int(len(evaluation_anchors))
+    selected_anchors = evaluation_anchors.loc[
+        evaluation_anchors["entry_selected_140b"].fillna(False).astype(bool)
+    ].copy()
+    selected_anchor_count = int(len(selected_anchors))
+    all_path_anchor_count = int(
+        evaluation_anchors.merge(
+            path_anchor_keys,
+            on=["trading_day", "ticker", "hot_t"],
+            how="inner",
+        ).shape[0]
+    )
+    selected_path_anchor_count = int(
+        selected_anchors.merge(
+            path_anchor_keys,
+            on=["trading_day", "ticker", "hot_t"],
+            how="inner",
+        ).shape[0]
+    )
+    anchor_path_coverage = {
+        "all_first_hot": (
+            float(all_path_anchor_count / all_anchor_count)
+            if all_anchor_count
+            else None
+        ),
+        "request140b_selected": (
+            float(selected_path_anchor_count / selected_anchor_count)
+            if selected_anchor_count
+            else None
+        ),
+        "all_anchor_count": all_anchor_count,
+        "all_path_anchor_count": all_path_anchor_count,
+        "selected_anchor_count": selected_anchor_count,
+        "selected_path_anchor_count": selected_path_anchor_count,
+    }
+
     fit = path_rows.loc[
         path_rows["trading_day"].astype(str).isin(FIT_DAYS)
     ].copy()
@@ -699,12 +744,17 @@ def run_probe(
         "evaluation_days": EVAL_DAYS,
         "model_features": MODEL_FEATURES,
         "path_audit": path_audit,
+        "anchor_path_coverage": anchor_path_coverage,
         "option_winsor_low_pct": option_model.winsor_low,
         "option_winsor_high_pct": option_model.winsor_high,
         "option_calibration_offset_pct": option_model.offset,
         "all_first_hot": all_eval,
         "request140b_selected": selected_eval,
-        "promotion_gate_pass": bool(selected_eval["bridge_pass"]),
+        "promotion_gate_pass": bool(
+            selected_eval["bridge_pass"]
+            and anchor_path_coverage["request140b_selected"] is not None
+            and float(anchor_path_coverage["request140b_selected"]) >= 0.90
+        ),
     }
     return evaluation, final
 
