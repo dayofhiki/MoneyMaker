@@ -58,7 +58,10 @@ def test_actionable_priority_is_hazard_times_causal_observability_probability():
     result = add_actionable_priority(_rows(), _FixedObservabilityModel())
 
     assert result["next_minute_observability_probability"].tolist() == [0.25, 0.75]
-    assert result["active_priority"].tolist() == [0.2, 0.6]
+    np.testing.assert_allclose(
+        result["active_priority"].to_numpy(),
+        np.array([0.2, 0.6]),
+    )
 
 
 def test_missing_exact_next_minute_means_no_exact_next_minute_cross_event():
