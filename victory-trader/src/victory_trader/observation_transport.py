@@ -187,6 +187,11 @@ class RateLimitedSubscriptionSelector:
     def desired(self) -> tuple[str, ...]:
         return self._desired
 
+    @property
+    def active(self) -> tuple[str, ...]:
+        """Return the actual subscribed membership, including unscoreable names."""
+        return tuple(sorted(self._active))
+
     def reset(self) -> None:
         self._active.clear()
         self._desired = ()
