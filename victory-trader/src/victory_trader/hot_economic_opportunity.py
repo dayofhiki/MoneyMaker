@@ -278,6 +278,44 @@ def _fit_models(
     return classifier, regressor, offset, probability_gate, float(low), float(high)
 
 
+def fit_policy_opportunity_selector(
+    frame: pd.DataFrame,
+) -> tuple[HistGradientBoostingClassifier, float]:
+    """Fit the request-140B classifier but freeze selection on all cal rows.
+
+    The original request-140B diagnostic computed its top-quartile probability
+    boundary after dropping calibration rows without future economic labels.
+    That is acceptable for the historical diagnostic artifact but not for an
+    executable policy because label availability is future-dependent. Policy
+    selection therefore trains on labeled fit rows while computing the frozen
+    probability quantile across every calibration feature row.
+    """
+
+    day = frame["trading_day"].astype(str)
+    fit = frame.loc[day.isin(FIT_DAYS)].copy()
+    calibration = frame.loc[day.isin(CAL_DAYS)].copy()
+    fit_target = pd.to_numeric(fit["oracle_best_base_pct"], errors="coerce")
+    fit = fit.loc[fit_target.notna()].copy()
+    y_fit = pd.to_numeric(
+        fit["oracle_best_base_pct"], errors="coerce"
+    ).gt(0).astype(int)
+    if fit.empty or y_fit.nunique() < 2:
+        raise ValueError("policy opportunity fit needs labeled rows from both classes")
+    if calibration.empty:
+        raise ValueError("policy opportunity calibration rows are empty")
+
+    classifier = HistGradientBoostingClassifier(**CLASSIFIER_KWARGS)
+    classifier.fit(
+        fit[ENTRY_FEATURES].replace([np.inf, -np.inf], np.nan),
+        y_fit,
+    )
+    cal_probability = classifier.predict_proba(
+        calibration[ENTRY_FEATURES].replace([np.inf, -np.inf], np.nan)
+    )[:, 1]
+    probability_gate = float(np.quantile(cal_probability, 0.75))
+    return classifier, probability_gate
+
+
 def _evaluate(
     frame: pd.DataFrame,
     classifier: HistGradientBoostingClassifier,
