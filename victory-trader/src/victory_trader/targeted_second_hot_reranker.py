@@ -74,6 +74,11 @@ def fit_stage1(all_rows: pd.DataFrame) -> HistGradientBoostingClassifier:
     fit = all_rows.loc[
         all_rows["trading_day"].astype(str).le(STAGE1_FIT_END)
     ].copy()
+    target = pd.to_numeric(fit["target_next_cross"], errors="coerce")
+    fit = fit.loc[target.notna()].copy()
+    fit["target_next_cross"] = pd.to_numeric(
+        fit["target_next_cross"], errors="raise"
+    ).astype(int)
     if fit.empty or int(fit["target_next_cross"].sum()) == 0:
         raise ValueError("stage-1 fit set is empty or has no positives")
     model = HistGradientBoostingClassifier(**MODEL_KWARGS)
@@ -183,6 +188,11 @@ def fit_stage2_models(
     fit = candidates.loc[
         day.ge(STAGE2_FIT_START) & day.le(STAGE2_FIT_END)
     ].copy()
+    target = pd.to_numeric(fit["target_next_cross"], errors="coerce")
+    fit = fit.loc[target.notna()].copy()
+    fit["target_next_cross"] = pd.to_numeric(
+        fit["target_next_cross"], errors="raise"
+    ).astype(int)
     if fit.empty or int(fit["target_next_cross"].sum()) == 0:
         raise ValueError("stage-2 fit set is empty or has no positives")
 
