@@ -12,6 +12,7 @@ from victory_trader.selected_hot_position_value_observability import (
     fit_minute_baselines,
     predict_hold,
     predict_option,
+    request140b_predictive_conditions_pass,
     train_hold_model,
     train_option_model,
 )
@@ -128,3 +129,21 @@ def test_position_value_models_score_finite_outputs():
     assert np.isfinite(hold_score).all()
     assert ((hold_score >= 0) & (hold_score <= 1)).all()
     assert np.isfinite(option_score).all()
+
+
+def test_request140b_predictive_conditions_allow_coverage_only_diagnostic():
+    summary = {
+        "evaluation": {
+            "classifier_auc": 0.63,
+            "auc_above_random_days": 5,
+            "value_spearman": 0.27,
+            "positive_spearman_days": 5,
+            "selected_oracle_base_mean_pct": 1.25,
+            "oracle_base_mean_pct": 0.45,
+            "selected_positive_rate": 0.53,
+            "opportunity_positive_rate": 0.42,
+            "selected_mean_nonlower_days": 5,
+            "promotion_gate_pass": False,
+        }
+    }
+    assert request140b_predictive_conditions_pass(summary)
