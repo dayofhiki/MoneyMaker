@@ -1,0 +1,163 @@
+name: MoneyMaker Active Transport Integrated HOT
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/active-transport-integrated-request.json'
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: First fit date
+        required: true
+        default: '2026-01-02'
+      end_date:
+        description: Last fresh evaluation date
+        required: true
+        default: '2026-05-06'
+      request_id:
+        description: Artifact request identifier
+        required: true
+        default: 'manual'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.read.outputs.enabled }}
+      start_date: ${{ steps.read.outputs.start_date }}
+      end_date: ${{ steps.read.outputs.end_date }}
+      request_id: ${{ steps.read.outputs.request_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_START: ${{ inputs.start_date }}
+          INPUT_END: ${{ inputs.end_date }}
+          INPUT_REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          if os.environ["EVENT_NAME"] == "workflow_dispatch":
+              enabled = True
+              start = os.environ["INPUT_START"]
+              end = os.environ["INPUT_END"]
+              request_id = os.environ["INPUT_REQUEST_ID"]
+          else:
+              payload = json.loads(
+                  Path("victory-trader/research/active-transport-integrated-request.json").read_text(
+                      encoding="utf-8"
+                  )
+              )
+              enabled = payload.get("operation") == "active_transport_integrated_hot_v16"
+              start = str(payload.get("start_date", ""))
+              end = str(payload.get("end_date", ""))
+              request_id = str(payload.get("request_id", ""))
+          if enabled and (not start or not end or not request_id):
+              raise SystemExit("active-transport integrated request is incomplete")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as handle:
+              handle.write(f"enabled={'true' if enabled else 'false'}\n")
+              handle.write(f"start_date={start}\n")
+              handle.write(f"end_date={end}\n")
+              handle.write(f"request_id={request_id}\n")
+          PY
+
+  replay:
+    if: ${{ needs.request.outputs.enabled == 'true' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test active transport integrated hierarchy
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q \
+            tests/test_active_transport_integrated_hierarchy.py \
+            tests/test_rate_limited_subscription_confirmation.py \
+            tests/test_rate_limited_subscription_probe.py \
+            tests/test_integrated_learned_focus_hierarchy.py \
+            tests/test_observation_transport.py \
+            tests/test_market_wide_focus_hazard.py \
+            tests/test_hierarchical_attention_runtime.py
+
+      - name: Restore market-wide Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-active-integrated-flatfiles-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-rate-confirm-flatfiles-${{ runner.os }}-
+            moneymaker-rate-limited-flatfiles-${{ runner.os }}-
+            moneymaker-integrated-focus-flatfiles-${{ runner.os }}-
+
+      - name: Restore one-second REST cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-active-integrated-second-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-intraminute-second-${{ runner.os }}-
+            moneymaker-integrated-focus-second-${{ runner.os }}-
+            moneymaker-entry-readiness-second-${{ runner.os }}-
+
+      - name: Run fresh active-transport integrated HOT validation
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.active_transport_integrated_hierarchy \
+            "${{ needs.request.outputs.start_date }}" \
+            "${{ needs.request.outputs.end_date }}" \
+            --output artifacts/active-transport-integrated-hot-v16.parquet \
+            --summary artifacts/active-transport-integrated-hot-v16.json \
+            | tee artifacts/active-transport-integrated-hot-v16.log
+          test -s artifacts/active-transport-integrated-hot-v16.parquet
+          test -s artifacts/active-transport-integrated-hot-v16.json
+
+      - name: Save one-second REST cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-active-integrated-second-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Save market-wide Flat File cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-active-integrated-flatfiles-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Upload active transport integration audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-active-transport-integrated-hot-v16-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/active-transport-integrated-hot-v16.parquet
+            victory-trader/artifacts/active-transport-integrated-hot-v16.json
+            victory-trader/artifacts/active-transport-integrated-hot-v16.log
+          if-no-files-found: error
+          retention-days: 90
