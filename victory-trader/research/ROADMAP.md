@@ -478,23 +478,33 @@ subscription state rose to 6.35% and mean scoreable Active occupancy fell to
 or the one-second HOT reranker; it is allocating scarce high-resolution Active
 slots to names that remain causally observable/actionable.
 
-Request 147 addresses that bottleneck without increasing Focus, Active, HOT or
+Request 147 tested that bottleneck without increasing Focus, Active, HOT or
 transport-churn budgets. A separately fitted causal observability model predicts
 whether a current ticker will print an exact next-minute aggregate. Active
-priority is frozen as market runner hazard multiplied by predicted next-minute
-observability. New desired Active subscriptions remain restricted to the
-current Focus-60, while existing subscriptions may persist after temporarily
-leaving Focus under the unchanged five-addition transport state. Stage-2 treats
-a missing exact next-minute aggregate as no exact next-minute crossing event.
-The first implementation run is diagnostic only because a hierarchy audit found
-that a changed Active score could otherwise admit names from outside Focus. The
-Focus-first revision is the authoritative request-147 revalidation.
+priority was frozen as market runner hazard multiplied by predicted next-minute
+observability, with new desired Active subscriptions restricted to Focus-60.
 
-Request 148 is preregistered but not yet opened. If request 147 passes, request
-148 will preserve the request-140B ENTRY feature set and model family while
-rebuilding first-HOT economic-opportunity evidence on the corrected actionable
-transport population. This isolates upstream-population correction from later
-ENTRY feature engineering.
+The authoritative Focus-first request-147 run 35884196183 completed and failed
+the frozen improvement gate. Active retention improved from 93.60% to 94.33%
+but remained below the 95% floor. HOT-within-1m / 2m / 5m all improved modestly
+to 50.26% / 59.20% / 65.57%, with 100% one-second coverage and all resource
+budgets respected. However, aggregate temporary-unscoreable subscription rate
+worsened from 6.35% to 6.92% and mean scoreable Active occupancy fell from
+18.73 to 18.62. One-minute observability factorization is therefore not
+promoted.
+
+This result narrows the next question. Aggregate unscoreable state currently
+mixes fundamentally different causes, including a desirable transition into a
+runner state and true sparse/no-bar disappearance. Those reasons must be split
+before unscoreable occupancy is treated as wasted transport capacity.
+In parallel, a direct unconditional next-minute actionable-crossing model can
+be compared with the factorized hazard-times-observability score, and a
+transport-horizon persistence target can be tested if one-step observability
+does not rank sustained scoreability well.
+
+Request 148 remains preregistered but blocked because request 147 did not pass.
+It will preserve the request-140B ENTRY feature set and model family if/when a
+corrected Active foundation passes. May 21 and later remain sealed.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
