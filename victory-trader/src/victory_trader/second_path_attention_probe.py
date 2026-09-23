@@ -82,8 +82,13 @@ def _safe_ratio(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
 
 
 def _annotate_scan(scan: pd.DataFrame) -> pd.DataFrame:
-    frame = scan.sort_values(["ticker", "t"], kind="stable").copy()
-    groups = frame.groupby("ticker", sort=False)
+    sort_columns = ["ticker", "t"]
+    group_columns: list[str] | str = "ticker"
+    if "trading_day" in scan.columns:
+        sort_columns = ["trading_day", "ticker", "t"]
+        group_columns = ["trading_day", "ticker"]
+    frame = scan.sort_values(sort_columns, kind="stable").copy()
+    groups = frame.groupby(group_columns, sort=False)
     previous_close = groups["c"].shift()
     previous_return = groups["return_from_previous_close_pct"].shift()
     previous_volume = groups["v"].shift()
@@ -124,8 +129,12 @@ def _annotate_scan(scan: pd.DataFrame) -> pd.DataFrame:
             frame["return_from_previous_close_pct"], errors="coerce"
         ).ge(RUNNER_THRESHOLD_PCT)
     )
+    if "trading_day" in frame.columns:
+        runner_groups = [frame["trading_day"], frame["ticker"]]
+    else:
+        runner_groups = frame["ticker"]
     frame["already_runner"] = crossed.groupby(
-        frame["ticker"], sort=False
+        runner_groups, sort=False
     ).cummax()
     return frame
 
@@ -199,14 +208,29 @@ def _window_return(frame: pd.DataFrame) -> float:
     return (last_close / first_open - 1.0) * 100.0
 
 
-def second_path_features(seconds: pd.DataFrame, decision_t: int) -> dict[str, float]:
+def second_feature_window(
+    seconds: pd.DataFrame,
+    decision_t: int,
+) -> pd.DataFrame:
+    """Return exactly the completed-second window consumed by the features.
+
+    Callers must provide rows sorted by ascending timestamp, which is the
+    invariant established by _second_frame. Searchsorted changes lookup cost
+    only; boundaries remain t >= decision_t-60s and t+1s <= decision_t.
+    """
+
     if seconds.empty:
-        window = seconds
-    else:
-        window = seconds.loc[
-            seconds["t"].ge(decision_t - MINUTE_MS)
-            & (seconds["t"] + SECOND_MS).le(decision_t)
-        ].copy()
+        return seconds
+    times = seconds["t"].to_numpy(dtype=np.int64, copy=False)
+    left = int(np.searchsorted(times, int(decision_t) - MINUTE_MS, side="left"))
+    right = int(
+        np.searchsorted(times, int(decision_t) - SECOND_MS, side="right")
+    )
+    return seconds.iloc[left:right]
+
+
+def second_path_features(seconds: pd.DataFrame, decision_t: int) -> dict[str, float]:
+    window = second_feature_window(seconds, decision_t)
 
     last10 = window.loc[window["t"].ge(decision_t - 10_000)]
     prev10 = window.loc[
