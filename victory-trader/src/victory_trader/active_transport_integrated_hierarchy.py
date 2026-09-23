@@ -63,7 +63,11 @@ SHORTLIST_BUDGET = 20
 MAX_ADDITIONS = 5
 
 
-def active_observation_rows(scored_market: pd.DataFrame) -> pd.DataFrame:
+def active_observation_rows(
+    scored_market: pd.DataFrame,
+    *,
+    score_column: str = "market_hazard_probability",
+) -> pd.DataFrame:
     """Build active high-resolution rows from broad scored market evidence.
 
     Desired membership is the instantaneous top-20 hazard ranking. Active
@@ -82,15 +86,17 @@ def active_observation_rows(scored_market: pd.DataFrame) -> pd.DataFrame:
         active_since_t: dict[str, int] = {}
 
         for timestamp, group in day_rows.groupby("t", sort=True):
+            if score_column not in group.columns:
+                raise ValueError(f"missing active transport score column: {score_column}")
             ranked = group.sort_values(
-                ["market_hazard_probability", "ticker"],
+                [score_column, "ticker"],
                 ascending=[False, True],
                 kind="stable",
             )
             candidates = [
                 RankedCandidate(
                     ticker=str(row.ticker),
-                    score=float(row.market_hazard_probability),
+                    score=float(getattr(row, score_column)),
                 )
                 for row in ranked.itertuples(index=False)
             ]
@@ -134,6 +140,8 @@ def active_observation_rows(scored_market: pd.DataFrame) -> pd.DataFrame:
 
 def active_observation_rows_with_state(
     scored_market: pd.DataFrame,
+    *,
+    score_column: str = "market_hazard_probability",
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return scoreable active rows plus explicit subscription-state snapshots."""
 
@@ -148,15 +156,17 @@ def active_observation_rows_with_state(
         active_since_t: dict[str, int] = {}
 
         for timestamp, group in day_rows.groupby("t", sort=True):
+            if score_column not in group.columns:
+                raise ValueError(f"missing active transport score column: {score_column}")
             ranked = group.sort_values(
-                ["market_hazard_probability", "ticker"],
+                [score_column, "ticker"],
                 ascending=[False, True],
                 kind="stable",
             )
             candidates = [
                 RankedCandidate(
                     ticker=str(row.ticker),
-                    score=float(row.market_hazard_probability),
+                    score=float(getattr(row, score_column)),
                 )
                 for row in ranked.itertuples(index=False)
             ]
