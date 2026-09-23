@@ -31,6 +31,7 @@ from .hot_economic_opportunity import (
     fit_policy_opportunity_selector,
 )
 from .massive_client import MassiveClient
+from .market_calendar import regular_session_bounds
 from .second_path_attention_probe import (
     BASELINE_FEATURES,
     SECOND_CACHE_DIR,
@@ -157,13 +158,18 @@ def _selected_position_scan_features(
     )
 
 
-def _session_clock(timestamp_ms: int) -> tuple[float, float]:
-    local = pd.Timestamp(timestamp_ms, unit="ms", tz="UTC").tz_convert(
-        "America/New_York"
-    )
-    minute = local.hour * 60 + local.minute
-    since = float(minute - (9 * 60 + 30))
-    return since, float(390 - since)
+def _session_clock(
+    trading_day: str,
+    timestamp_ms: int,
+) -> tuple[float, float]:
+    bounds = regular_session_bounds(date.fromisoformat(str(trading_day)))
+    if bounds is None:
+        raise ValueError(f"missing regular session bounds for {trading_day}")
+    open_ms = int(bounds[0].timestamp() * 1000)
+    close_ms = int(bounds[1].timestamp() * 1000)
+    since = (int(timestamp_ms) - open_ms) / MINUTE_MS
+    remaining = (close_ms - int(timestamp_ms)) / MINUTE_MS
+    return float(since), float(remaining)
 
 
 def build_position_rows(
@@ -362,7 +368,7 @@ def build_position_rows(
             )
             clock_key = (day, state_t)
             if clock_key not in clock_cache:
-                clock_cache[clock_key] = _session_clock(state_t)
+                clock_cache[clock_key] = _session_clock(day, state_t)
             since_open, to_close = clock_cache[clock_key]
             record["minutes_since_open"] = since_open
             record["minutes_to_close"] = to_close
