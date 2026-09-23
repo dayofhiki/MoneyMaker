@@ -95,3 +95,55 @@ originates in active transport lag, second-level reranking or HOT allocation.
 
 No date in the evaluation block is used to choose the architecture, feature
 set, transport limit or gate. May 7 and later remain sealed.
+
+
+## Result — request 137
+
+Request 137 completed successfully on untouched 2026-04-30, 05-01,
+05-04, 05-05 and 05-06 sessions. The formal promotion gate failed, but the
+failure is isolated to the transport audit rather than predictive attention or
+HOT allocation.
+
+Across 1,087 first +10% crossings:
+
+- 648 had a causal exact-prior market-hazard row;
+- Focus-60 captured 634 of those 648 observable crossings (97.84%);
+- active observation retained 605 of the 634 Focus captures (95.43%);
+- HOT-10 captured 574 runners at the exact prior minute (52.81%);
+- the rank-40 integrated comparator captured 566 (52.07%);
+- active HOT-within-1m was non-lower on all five sessions;
+- active HOT-within-2m was 53.82% versus 53.27% for rank-40;
+- HOT retained 94.88% of active prior-minute captures;
+- one-second row coverage was 100%;
+- HOT occupancy never exceeded 10;
+- active subscription occupancy never exceeded 20;
+- selection/transport mismatch rows were zero.
+
+Thus every predictive and observation-quality gate passed.
+
+The formal failure came from the post-initial transport audit:
+
+- mean measured additions per decision: 5.0005 versus the <=5 gate;
+- maximum measured additions in one decision: 7 versus the <=5 gate.
+
+Inspection of the implementation shows that this is not evidence that the
+RateLimitedSubscriptionSelector changed more than five subscriptions. That
+selector hard-caps new active names at five and retains active names even when
+they are absent from the current candidate universe. The integrated audit,
+however, reconstructs subscription membership from feature rows that exist in
+the current scored-market table. If an already-subscribed ticker temporarily
+has no eligible market-hazard row, it disappears from the reconstructed
+'actual' set; when its row reappears later, the audit counts it as a new
+subscription even though the selector never removed it. This can create
+apparent additions above five.
+
+Therefore request 137 remains formally failed and is not retroactively
+promoted. The next experiment should change no ranking, focus, transport limit,
+second-level model or HOT rule. It should make transport state explicit across
+temporarily missing feature rows, separately audit subscription membership from
+scoreable candidate membership, and then rerun the same integrated handoff on a
+new untouched block.
+
+The current evidence does not justify returning to attention-model tuning:
+observable Focus recall, active retention, second-data coverage and HOT
+allocation all passed their frozen gates.
