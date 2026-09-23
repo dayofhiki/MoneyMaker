@@ -179,7 +179,7 @@ def label_hot_event_economics(
         else:
             record["oracle_best_base_pct"] = np.nan
             record["oracle_best_minute"] = np.nan
-            record["oracle_base_positive"] = False
+            record["oracle_base_positive"] = pd.NA
         rows.append(record)
 
     return pd.DataFrame(rows)
