@@ -3,5 +3,6 @@
   "operation": "hot_entry_economics_v10",
   "start_date": "2026-01-02",
   "end_date": "2026-05-13",
-  "note": "Reuse request-138 evaluation dates only. Diagnose first-HOT post-signal economics with frozen execution costs. Open no dates after 2026-05-13."
+  "note": "Retry request 139 using the already-promoted request-138 artifact instead of recomputing the full attention hierarchy. Economic labels, frozen dates, and interpretation are unchanged; May14+ remain sealed.",
+  "retry": 1
 }
