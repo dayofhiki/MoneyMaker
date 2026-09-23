@@ -135,6 +135,153 @@ def active_observation_rows(scored_market: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(selected, ignore_index=True)
 
 
+def active_observation_rows_with_state(
+    scored_market: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Return scoreable active rows plus explicit subscription-state snapshots."""
+
+    selected: list[pd.DataFrame] = []
+    snapshots: list[dict[str, object]] = []
+    for day, day_rows in scored_market.groupby("trading_day", sort=True):
+        selector = RateLimitedSubscriptionSelector(
+            capacity=SHORTLIST_BUDGET,
+            max_additions=MAX_ADDITIONS,
+        )
+        previous_scoreable: set[str] = set()
+        previous_t: dict[str, int] = {}
+        active_age: dict[str, int] = {}
+
+        for timestamp, group in day_rows.groupby("t", sort=True):
+            ranked = group.sort_values(
+                ["market_hazard_probability", "ticker"],
+                ascending=[False, True],
+                kind="stable",
+            )
+            candidates = [
+                RankedCandidate(
+                    ticker=str(row.ticker),
+                    score=float(row.market_hazard_probability),
+                )
+                for row in ranked.itertuples(index=False)
+            ]
+            selector.select(candidates)
+            subscribed = set(selector.active)
+            desired = set(selector.desired)
+            scoreable_names = set(ranked["ticker"].astype(str))
+
+            for ticker in sorted(subscribed):
+                snapshots.append(
+                    {
+                        "trading_day": str(day),
+                        "t": int(timestamp),
+                        "ticker": ticker,
+                        "transport_active": True,
+                        "transport_desired_now": ticker in desired,
+                        "scoreable_now": ticker in scoreable_names,
+                    }
+                )
+
+            current = ranked.loc[
+                ranked["ticker"].astype(str).isin(subscribed)
+            ].copy()
+            actual_scoreable = set(current["ticker"].astype(str))
+            additions = actual_scoreable - previous_scoreable
+
+            ages: list[int] = []
+            for ticker in current["ticker"].astype(str):
+                last_t = previous_t.get(ticker)
+                if last_t is not None and int(timestamp) - last_t == MINUTE_MS:
+                    age = active_age.get(ticker, 0) + 1
+                else:
+                    age = 1
+                active_age[ticker] = age
+                previous_t[ticker] = int(timestamp)
+                ages.append(age)
+
+            current["focus_age_minutes"] = ages
+            current["watch_run_age_minutes"] = ages
+            current["stage1_hazard_probability"] = current[
+                "market_hazard_probability"
+            ]
+            current["transport_active"] = True
+            current["transport_desired_now"] = current[
+                "ticker"
+            ].astype(str).isin(desired)
+            current["transport_addition"] = current[
+                "ticker"
+            ].astype(str).isin(additions)
+            selected.append(current)
+            previous_scoreable = actual_scoreable
+
+    rows = (
+        pd.concat(selected, ignore_index=True)
+        if selected
+        else scored_market.iloc[0:0].copy()
+    )
+    trace = pd.DataFrame(snapshots)
+    return rows, trace
+
+
+def explicit_subscription_audit(trace: pd.DataFrame) -> dict[str, object]:
+    """Audit true selector membership independently of scoreable feature rows."""
+
+    additions: list[int] = []
+    post_initial_additions: list[int] = []
+    occupancies: list[int] = []
+    scoreable_occupancies: list[int] = []
+    previous_by_day: dict[str, set[str]] = {}
+    seen_day: set[str] = set()
+
+    for (day, _), group in trace.groupby(["trading_day", "t"], sort=True):
+        day_text = str(day)
+        current = set(group["ticker"].astype(str))
+        previous = previous_by_day.get(day_text, set())
+        added = len(current - previous)
+        additions.append(added)
+        occupancies.append(len(current))
+        scoreable_occupancies.append(
+            int(group["scoreable_now"].fillna(False).astype(bool).sum())
+        )
+        if day_text in seen_day:
+            post_initial_additions.append(added)
+        previous_by_day[day_text] = current
+        seen_day.add(day_text)
+
+    missing_rows = int(
+        (~trace["scoreable_now"].fillna(False).astype(bool)).sum()
+    )
+    return {
+        "decisions": len(occupancies),
+        "post_initial_decisions": len(post_initial_additions),
+        "max_concurrent_subscriptions": max(occupancies, default=0),
+        "total_subscription_additions": int(sum(additions)),
+        "mean_subscription_additions_per_decision": (
+            float(sum(additions) / len(additions)) if additions else None
+        ),
+        "mean_post_initial_subscription_additions_per_decision": (
+            float(sum(post_initial_additions) / len(post_initial_additions))
+            if post_initial_additions
+            else None
+        ),
+        "max_post_initial_subscription_additions_per_decision": (
+            max(post_initial_additions, default=0)
+        ),
+        "selection_transport_mismatch_rows": 0,
+        "temporarily_unscoreable_subscription_rows": missing_rows,
+        "temporarily_unscoreable_subscription_rate": (
+            float(missing_rows / len(trace)) if len(trace) else None
+        ),
+        "mean_scoreable_active_occupancy": (
+            float(sum(scoreable_occupancies) / len(scoreable_occupancies))
+            if scoreable_occupancies
+            else None
+        ),
+        "min_scoreable_active_occupancy": min(
+            scoreable_occupancies, default=0
+        ),
+    }
+
+
 def _crossing_keys(frame: pd.DataFrame, scan: pd.DataFrame) -> set[tuple[str, str, int]]:
     row_keys = {
         (str(row.trading_day), str(row.ticker).upper(), int(row.t))
