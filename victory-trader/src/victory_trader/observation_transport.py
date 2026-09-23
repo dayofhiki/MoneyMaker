@@ -163,6 +163,82 @@ class BoundedTurnoverSelector:
         self._incumbents = {item.ticker for item in ordered}
         return tuple(item.ticker for item in ordered)
 
+
+class RateLimitedSubscriptionSelector:
+    """Track a responsive desired shortlist with bounded subscription churn.
+
+    The model's desired set is always the current top-capacity ranking. The
+    active observation set moves toward that target by at most max_additions
+    new tickers per update after the initial session fill. Old subscriptions
+    are temporary transport state, not model preference.
+    """
+
+    def __init__(self, *, capacity: int = 20, max_additions: int = 5):
+        if capacity <= 0:
+            raise ValueError("capacity must be positive")
+        if max_additions <= 0 or max_additions > capacity:
+            raise ValueError("max additions must be in [1, capacity]")
+        self.capacity = capacity
+        self.max_additions = max_additions
+        self._active: set[str] = set()
+        self._desired: tuple[str, ...] = ()
+
+    @property
+    def desired(self) -> tuple[str, ...]:
+        return self._desired
+
+    def reset(self) -> None:
+        self._active.clear()
+        self._desired = ()
+
+    def select(self, candidates: Iterable[RankedCandidate]) -> tuple[str, ...]:
+        ranked = sorted(candidates, key=lambda item: (-item.score, item.ticker))
+        seen: set[str] = set()
+        unique = [
+            item
+            for item in ranked
+            if not (item.ticker in seen or seen.add(item.ticker))
+        ]
+        desired_items = unique[: self.capacity]
+        desired = tuple(item.ticker for item in desired_items)
+        desired_set = set(desired)
+        self._desired = desired
+
+        if not self._active:
+            self._active = set(desired)
+            return desired
+
+        rank = {item.ticker: index + 1 for index, item in enumerate(unique)}
+        challengers = [ticker for ticker in desired if ticker not in self._active]
+        stale = sorted(
+            (ticker for ticker in self._active if ticker not in desired_set),
+            key=lambda ticker: (rank.get(ticker, len(unique) + 1), ticker),
+            reverse=True,
+        )
+        changes = min(self.max_additions, len(challengers), len(stale))
+        for ticker in stale[:changes]:
+            self._active.remove(ticker)
+        self._active.update(challengers[:changes])
+
+        # If the active set starts below capacity because the prior universe was
+        # smaller, fill only within the same per-update addition budget.
+        remaining_budget = self.max_additions - changes
+        if len(self._active) < self.capacity and remaining_budget > 0:
+            for ticker in desired:
+                if ticker in self._active:
+                    continue
+                self._active.add(ticker)
+                remaining_budget -= 1
+                if len(self._active) >= self.capacity or remaining_budget <= 0:
+                    break
+
+        ordered_current = [
+            item.ticker for item in unique if item.ticker in self._active
+        ]
+        current_names = set(ordered_current)
+        stale_tail = sorted(self._active - current_names)
+        return tuple((ordered_current + stale_tail)[: self.capacity])
+
 @dataclass(frozen=True)
 class ObservationBridgeSnapshot:
     selected: tuple[str, ...]
