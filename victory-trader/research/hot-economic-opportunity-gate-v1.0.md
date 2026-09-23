@@ -1,5 +1,12 @@
 # HOT economic opportunity gate v1.0 — pre-registration
 
+> **Status: superseded before execution.** This request-141 draft was never
+> triggered and opened no data. The already-preregistered request 140B branch
+> uses the full frozen minute + one-second HOT feature frame and a genuinely
+> fresh May14-May20 block, so 140B is authoritative. Nothing in this draft is
+> research evidence or permission to reinterpret 140B.
+
+
 ## Status
 
 Request 141 is a development bridge after requests 139-140.
