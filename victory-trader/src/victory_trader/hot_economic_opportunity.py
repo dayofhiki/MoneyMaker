@@ -76,8 +76,6 @@ ENTRY_FEATURES = [
     "minutes_to_close",
     "hot_candidate_rank",
     "transport_desired_now_numeric",
-    "promotion_index",
-    "minutes_since_previous_hot_promotion",
 ]
 
 CLASSIFIER_KWARGS = {
@@ -144,18 +142,6 @@ def _attach_entry_context(
     scan: pd.DataFrame,
 ) -> pd.DataFrame:
     result = candidates.copy()
-    result = result.sort_values(
-        ["trading_day", "ticker", "t"], kind="stable"
-    ).copy()
-    hot_candidate = (
-        pd.to_numeric(result["second_rerank_probability"], errors="coerce")
-        .notna()
-    )
-    result["promotion_index"] = np.nan
-    result["minutes_since_previous_hot_promotion"] = np.nan
-    # Promotion history is causal. These fields are populated for candidate
-    # rows from prior HOT membership after runtime trace construction; first-HOT
-    # rows therefore receive index 1 and no previous-promotion spacing.
     result["hot_candidate_rank"] = result.groupby(
         ["trading_day", "t"], sort=False
     )["second_rerank_probability"].rank(method="first", ascending=False)
