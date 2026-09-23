@@ -3,5 +3,6 @@
   "operation": "active_transport_integrated_hot_v16",
   "start_date": "2026-01-02",
   "end_date": "2026-05-06",
-  "note": "Fresh Apr30/May1/4/5/6 full-handoff validation. Compare prior rank40 integrated hierarchy against promoted rate-limited active transport + frozen one-second reranker + HOT10. Gate Focus on causally observable exact-prior crossings while still reporting raw recall. May7+ remain sealed."
+  "note": "Retry after lint-only fix; preregistered architecture, gates, and fresh Apr30/May1/4/5/6 block unchanged. First attempt never opened evaluation data.",
+  "retry": 1
 }
