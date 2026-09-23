@@ -14,11 +14,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from .attention_flatfile_replay import FLATFILE_CACHE_DIR, build_flatfile_scan_day
+from .attention_flatfile_replay import FLATFILE_CACHE_DIR, _prepare_minute_bars
 from .config import load_settings, require_flatfile_credentials
 from .explicit_transport_integrated_hierarchy import EVAL_DAYS
 from .flatfiles import MassiveFlatFilesClient, MassiveFlatFileStore
+from .attention_replay import MINUTE_MS
 from .hot_entry_economics import label_first_hot_economics, summarize_hot_economics
+from .market_calendar import regular_session_bounds
 from .massive_client import MassiveClient
 
 REQUEST_ID = 139
@@ -43,17 +45,39 @@ def run_probe(
             "request-138 artifact evaluation dates do not match frozen request 139 dates"
         )
 
-    scans: list[pd.DataFrame] = []
+    price_frames: list[pd.DataFrame] = []
+    hot = trace.loc[trace["state"].astype(str).eq("hot")].copy()
     for day_text in EVAL_DAYS:
-        scan, _ = build_flatfile_scan_day(
-            store,
-            scan_client,
-            date.fromisoformat(day_text),
+        day = date.fromisoformat(day_text)
+        tickers = set(
+            hot.loc[
+                hot["trading_day"].astype(str).eq(day_text),
+                "ticker",
+            ].astype(str)
         )
-        scans.append(scan)
-    eval_scan = pd.concat(scans, ignore_index=True)
+        if not tickers:
+            continue
+        bounds = regular_session_bounds(day)
+        if bounds is None:
+            raise ValueError(f"expected trading session for {day_text}")
+        open_ms = int(bounds[0].timestamp() * 1000)
+        close_ms = int(bounds[1].timestamp() * 1000)
+        raw_minutes = store.minute_aggregates(day)
+        minutes, _, _ = _prepare_minute_bars(
+            raw_minutes,
+            tickers,
+            day,
+            scan_client,
+            open_ms,
+            close_ms,
+        )
+        prices = minutes.loc[:, ["trading_day", "ticker", "t", "o"]].copy()
+        prices["t"] = pd.to_numeric(prices["t"], errors="raise").astype("int64")
+        prices["t"] += MINUTE_MS
+        price_frames.append(prices)
+    eval_prices = pd.concat(price_frames, ignore_index=True)
 
-    labeled = label_first_hot_economics(trace, eval_scan)
+    labeled = label_first_hot_economics(trace, eval_prices)
     economics = summarize_hot_economics(labeled)
     summary = {
         "schema_version": 1,
