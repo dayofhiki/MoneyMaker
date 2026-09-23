@@ -131,3 +131,50 @@ branch must use only causal first-HOT state information to predict whether a
 BASE-positive exit opportunity exists and to rank opportunity magnitude. It
 must not tune a fixed holding horizon from request 139. May 14 and later remain
 sealed until that experiment is preregistered.
+
+
+## Result — request 139
+
+Authoritative optimized workflow run: `35827976308`.
+
+The diagnostic reused only the request-138 sessions and opened no later date.
+
+Across 2,091 first-HOT ticker-day episodes, the exact next-minute entry
+reference existed for 100% of episodes. Fixed holding rules were economically
+weak under the frozen BASE execution model:
+
+- 1m BASE mean: -1.3531%;
+- 2m: -1.3912%;
+- 5m: -1.3047%;
+- 10m: -1.2000%;
+- 15m: -1.2561%;
+- 30m: -1.1690%.
+
+Gross means were slightly positive at every frozen horizon, but were too small
+to cover the current cheap-stock execution assumptions.
+
+The non-executable 30-minute best-exit ceiling was materially better:
+
+- 2,042 / 2,091 episodes evaluable (97.66%);
+- mean best BASE return: +0.3391%;
+- median best BASE return: -0.4309%;
+- BASE-positive opportunity rate: 40.70%;
+- median hindsight-best exit minute: 10.
+
+The mean hindsight ceiling was positive on each of the five reused sessions,
+from +0.1787% to +0.5049%, while the positive-opportunity rate ranged from
+37.81% to 43.36%.
+
+### Interpretation
+
+Broad first-HOT entry is rejected. The validated HOT population does not itself
+constitute an entry edge after modeled friction.
+
+However, the positive mean hindsight ceiling on every session and the roughly
+41% cost-positive opportunity rate show that the HOT population contains a
+meaningful profitable tail. The dominant next problem is selective
+ENTRY/ABSTAIN plus adaptive exit, not another fixed holding horizon.
+
+Because request 139 collapses each ticker-day to its first HOT state, request
+140 is opened as a same-date structural diagnostic of every actual HOT
+promotion/re-promotion. May 14 and later remain sealed.
