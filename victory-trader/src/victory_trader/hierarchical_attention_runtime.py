@@ -71,11 +71,15 @@ def build_focus_rows(
     state = _state_history(trace)
 
     annotated = _annotate_scan(scan).sort_values(
-        ["ticker", "t"], kind="stable"
+        ["trading_day", "ticker", "t"], kind="stable"
     )
-    next_t = annotated.groupby("ticker", sort=False)["t"].shift(-1)
+    next_t = annotated.groupby(
+        ["trading_day", "ticker"], sort=False
+    )["t"].shift(-1)
     next_cross = (
-        annotated.groupby("ticker", sort=False)["runner_cross_now"]
+        annotated.groupby(
+            ["trading_day", "ticker"], sort=False
+        )["runner_cross_now"]
         .shift(-1)
         .astype("boolean")
     )
