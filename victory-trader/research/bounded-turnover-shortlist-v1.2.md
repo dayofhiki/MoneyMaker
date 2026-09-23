@@ -80,3 +80,28 @@ request 132 results are read. Therefore request 132 cannot be used to tune
 request 133.
 
 April 16 and later remain sealed.
+
+
+## Result — request 133
+
+Request 133 completed successfully on untouched 2026-04-09, 04-10,
+04-13, 04-14 and 04-15 sessions.
+
+Focus-60 captured 599 of 987 crossings (60.69%). The request-131 rank-40
+selector retained 566 of those focus captures (94.49%), while bounded-turnover
+retained 573 (95.66%). Bounded-turnover therefore cleared the 95% predictive
+retention floor, improved pooled exact-prior capture from 57.35% to 58.05%,
+and was non-lower on all five sessions.
+
+The promotion gate nevertheless failed on transport efficiency. Rank-40
+hysteresis averaged 4.20 additions per decision with 79.20% set retention,
+whereas bounded-turnover averaged 8.01 additions with only 60.09% retention.
+Its five explicit challenger replacements did not cap total additions because
+incumbents falling outside the broad eligibility band vacated slots and were
+refilled outside that replacement count.
+
+Interpretation: responsive challenger admission can recover the desired
+attention retention, but combining model membership and transport membership
+in one selector creates avoidable churn. The next layer test therefore
+separates the current model-desired top-20 from the active subscription set
+and rate-limits only the transport transition.
