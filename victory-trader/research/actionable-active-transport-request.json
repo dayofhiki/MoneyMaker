@@ -1,0 +1,14 @@
+{
+  "request_id": 147,
+  "operation": "actionable_active_transport_v1",
+  "source_causal_population_run_id": 35872392320,
+  "eval_days": [
+    "2026-05-07",
+    "2026-05-08",
+    "2026-05-11",
+    "2026-05-12",
+    "2026-05-13"
+  ],
+  "opens_new_dates": false,
+  "note": "Factor market runner hazard by causal next-minute observability for active transport. Keep Focus60, active20, max5 additions, HOT10 fixed. May21+ sealed."
+}
