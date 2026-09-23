@@ -53,3 +53,40 @@ trading, investigate a timestamp/data-pipeline defect before opening May 21 or
 later.
 
 May 21 and later remain sealed.
+
+## Result — request 143
+
+Authoritative run: `35859071727`. No new market date was opened.
+
+Across the 1,936 request-140B fresh first-HOT rows, 1,881 had an evaluable
+30-minute economic label (97.16%) and 55 did not.
+
+The missing-label mechanism was unambiguous:
+
+- **0 / 55** were missing the exact next-minute entry reference;
+- **55 / 55** had a valid entry reference but no later observed minute open
+  within the 30-minute labeling window;
+- **51 / 55** occurred with more than 30 minutes left in the regular session;
+- only three occurred with <=1 minute to close;
+- on 2026-05-15, all 21 missing labels were entry-valid, with median
+  minutes-to-close of 207 and a minimum of 11 minutes.
+
+The missing rows also had much thinner immediate activity. On 2026-05-15 their
+median active seconds in the trailing minute was 1 versus 3 for labeled rows
+(and analogous 1-to-2 second medians appeared on the other evaluation days).
+
+### Interpretation
+
+The 140B 94.59% coverage shortfall on May 15 was not caused by a missing-entry
+timestamp bug or by the 30-minute window running into the session close. It was
+caused by sparse/illiquid names whose current HOT state was observable but whose
+post-entry stream produced no later minute-open exit reference.
+
+Request 140B remains a formal fail and is not retroactively promoted.
+
+The architecture must therefore distinguish **economic opportunity** from
+**executability/liquidity**. A future executable ENTRY policy must be allowed to
+abstain when current causal state implies that entering could leave the trader
+without a timely observable exit. Position-manager research may continue as a
+no-new-date observability diagnostic, but missing position paths must remain an
+explicit execution-risk statistic rather than being silently dropped.
