@@ -67,6 +67,7 @@ def active_observation_rows(
     scored_market: pd.DataFrame,
     *,
     score_column: str = "market_hazard_probability",
+    desired_eligible_column: str | None = None,
 ) -> pd.DataFrame:
     """Build active high-resolution rows from broad scored market evidence.
 
@@ -93,12 +94,22 @@ def active_observation_rows(
                 ascending=[False, True],
                 kind="stable",
             )
+            desired_pool = ranked
+            if desired_eligible_column is not None:
+                if desired_eligible_column not in ranked.columns:
+                    raise ValueError(
+                        "missing active transport eligibility column: "
+                        f"{desired_eligible_column}"
+                    )
+                desired_pool = ranked.loc[
+                    ranked[desired_eligible_column].fillna(False).astype(bool)
+                ]
             candidates = [
                 RankedCandidate(
                     ticker=str(row.ticker),
                     score=float(getattr(row, score_column)),
                 )
-                for row in ranked.itertuples(index=False)
+                for row in desired_pool.itertuples(index=False)
             ]
             requested_active = set(selector.select(candidates))
             desired = set(selector.desired)
@@ -142,6 +153,7 @@ def active_observation_rows_with_state(
     scored_market: pd.DataFrame,
     *,
     score_column: str = "market_hazard_probability",
+    desired_eligible_column: str | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return scoreable active rows plus explicit subscription-state snapshots."""
 
@@ -163,12 +175,22 @@ def active_observation_rows_with_state(
                 ascending=[False, True],
                 kind="stable",
             )
+            desired_pool = ranked
+            if desired_eligible_column is not None:
+                if desired_eligible_column not in ranked.columns:
+                    raise ValueError(
+                        "missing active transport eligibility column: "
+                        f"{desired_eligible_column}"
+                    )
+                desired_pool = ranked.loc[
+                    ranked[desired_eligible_column].fillna(False).astype(bool)
+                ]
             candidates = [
                 RankedCandidate(
                     ticker=str(row.ticker),
                     score=float(getattr(row, score_column)),
                 )
-                for row in ranked.itertuples(index=False)
+                for row in desired_pool.itertuples(index=False)
             ]
             selector.select(candidates)
             subscribed = set(selector.active)
