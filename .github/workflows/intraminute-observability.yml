@@ -1,0 +1,158 @@
+name: MoneyMaker Intraminute Observability Diagnostic
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/intraminute-observability-request.json'
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: First opened diagnostic date
+        required: true
+        default: '2026-04-01'
+      end_date:
+        description: Last opened diagnostic date
+        required: true
+        default: '2026-04-08'
+      request_id:
+        description: Artifact request identifier
+        required: true
+        default: 'manual'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.read.outputs.enabled }}
+      start_date: ${{ steps.read.outputs.start_date }}
+      end_date: ${{ steps.read.outputs.end_date }}
+      request_id: ${{ steps.read.outputs.request_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_START: ${{ inputs.start_date }}
+          INPUT_END: ${{ inputs.end_date }}
+          INPUT_REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          if os.environ["EVENT_NAME"] == "workflow_dispatch":
+              enabled = True
+              start = os.environ["INPUT_START"]
+              end = os.environ["INPUT_END"]
+              request_id = os.environ["INPUT_REQUEST_ID"]
+          else:
+              payload = json.loads(
+                  Path("victory-trader/research/intraminute-observability-request.json").read_text(
+                      encoding="utf-8"
+                  )
+              )
+              enabled = payload.get("operation") == "intraminute_observability_v13"
+              start = str(payload.get("start_date", ""))
+              end = str(payload.get("end_date", ""))
+              request_id = str(payload.get("request_id", ""))
+          if enabled and (not start or not end or not request_id):
+              raise SystemExit("intraminute observability request is incomplete")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as handle:
+              handle.write(f"enabled={'true' if enabled else 'false'}\n")
+              handle.write(f"start_date={start}\n")
+              handle.write(f"end_date={end}\n")
+              handle.write(f"request_id={request_id}\n")
+          PY
+
+  diagnose:
+    if: ${{ needs.request.outputs.enabled == 'true' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test intraminute observability diagnostic
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q \
+            tests/test_intraminute_observability_diagnostic.py \
+            tests/test_second_path_attention_probe.py \
+            tests/test_attention_flatfile_replay.py
+
+      - name: Restore market-wide Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-intraminute-flatfiles-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-focus-shortlist-diagnostic-flatfiles-${{ runner.os }}-
+            moneymaker-integrated-focus-flatfiles-${{ runner.os }}-
+
+      - name: Restore one-second REST cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-intraminute-second-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-integrated-focus-second-${{ runner.os }}-
+            moneymaker-entry-readiness-second-${{ runner.os }}-
+            moneymaker-targeted-second-rest-${{ runner.os }}-
+
+      - name: Run blind-spot one-second diagnostic
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.intraminute_observability_diagnostic \
+            "${{ needs.request.outputs.start_date }}" \
+            "${{ needs.request.outputs.end_date }}" \
+            --output artifacts/intraminute-observability-v13.parquet \
+            --summary artifacts/intraminute-observability-v13.json \
+            | tee artifacts/intraminute-observability-v13.log
+          test -s artifacts/intraminute-observability-v13.parquet
+          test -s artifacts/intraminute-observability-v13.json
+
+      - name: Save one-second REST cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-intraminute-second-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Save market-wide Flat File cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-intraminute-flatfiles-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Upload intraminute observability audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-intraminute-observability-v13-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/intraminute-observability-v13.parquet
+            victory-trader/artifacts/intraminute-observability-v13.json
+            victory-trader/artifacts/intraminute-observability-v13.log
+          if-no-files-found: error
+          retention-days: 90
