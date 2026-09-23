@@ -45,6 +45,22 @@ first opportunity.
 
 ### 2. Entry controller
 
+Request 143 adds a separate causal **executability/liquidity** question. On the
+request-140B fresh block, all 55 missing economic labels had a valid entry
+reference but no later observed minute open inside 30 minutes; 51 of those 55
+still had more than 30 regular-session minutes remaining. A high predicted
+opportunity is therefore insufficient if the current stream is too sparse to
+support a timely exit.
+
+The entry layer must keep two concepts separate:
+
+- economic opportunity: is there enough expected movement to justify risk/cost?
+- executability: does current causal liquidity/activity support entering and
+  later unwinding the position without relying on a long silent gap?
+
+A mature BUY action must satisfy both. Sparse/invalid execution state should
+favor WAIT or ABSTAIN rather than be removed from evaluation.
+
 At each score update while not in a position, produce values for:
 
 - ABSTAIN: stop considering the current episode unless rediscovered later;
