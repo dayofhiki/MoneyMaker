@@ -1,6 +1,11 @@
 name: MoneyMaker First-HOT Entry Economics
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/hot-entry-economics-request.json'
   workflow_dispatch:
     inputs:
       start_date:
@@ -21,7 +26,54 @@ permissions:
   actions: read
 
 jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.read.outputs.enabled }}
+      start_date: ${{ steps.read.outputs.start_date }}
+      end_date: ${{ steps.read.outputs.end_date }}
+      request_id: ${{ steps.read.outputs.request_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_START: ${{ inputs.start_date }}
+          INPUT_END: ${{ inputs.end_date }}
+          INPUT_REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          if os.environ["EVENT_NAME"] == "workflow_dispatch":
+              enabled = True
+              start = os.environ["INPUT_START"]
+              end = os.environ["INPUT_END"]
+              request_id = os.environ["INPUT_REQUEST_ID"]
+          else:
+              payload = json.loads(
+                  Path("victory-trader/research/hot-entry-economics-request.json").read_text(
+                      encoding="utf-8"
+                  )
+              )
+              enabled = payload.get("operation") == "hot_entry_economics_v10"
+              start = str(payload.get("start_date", ""))
+              end = str(payload.get("end_date", ""))
+              request_id = str(payload.get("request_id", ""))
+          if enabled and (not start or not end or not request_id):
+              raise SystemExit("hot-entry economics request is incomplete")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as handle:
+              handle.write(f"enabled={'true' if enabled else 'false'}\n")
+              handle.write(f"start_date={start}\n")
+              handle.write(f"end_date={end}\n")
+              handle.write(f"request_id={request_id}\n")
+          PY
+
   diagnose:
+    if: ${{ needs.request.outputs.enabled == 'true' }}
+    needs: request
     runs-on: ubuntu-latest
     timeout-minutes: 180
     defaults:
@@ -71,8 +123,8 @@ jobs:
           set -o pipefail
           mkdir -p artifacts
           python -m victory_trader.hot_entry_economics_probe \
-            "${{ inputs.start_date }}" \
-            "${{ inputs.end_date }}" \
+            "${{ needs.request.outputs.start_date }}" \
+            "${{ needs.request.outputs.end_date }}" \
             --output artifacts/hot-entry-economics-v10.parquet \
             --summary artifacts/hot-entry-economics-v10.json \
             | tee artifacts/hot-entry-economics-v10.log
@@ -82,7 +134,7 @@ jobs:
       - name: Upload first-HOT economics audit
         uses: actions/upload-artifact@v4
         with:
-          name: moneymaker-hot-entry-economics-v10-${{ inputs.request_id }}
+          name: moneymaker-hot-entry-economics-v10-${{ needs.request.outputs.request_id }}
           path: |
             victory-trader/artifacts/hot-entry-economics-v10.parquet
             victory-trader/artifacts/hot-entry-economics-v10.json
