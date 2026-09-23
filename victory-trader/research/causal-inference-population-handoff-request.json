@@ -1,0 +1,13 @@
+{
+  "request_id": 146,
+  "operation": "causal_inference_population_handoff_v10",
+  "eval_days": [
+    "2026-05-07",
+    "2026-05-08",
+    "2026-05-11",
+    "2026-05-12",
+    "2026-05-13"
+  ],
+  "opens_new_dates": false,
+  "note": "Revalidate Focus -> active -> HOT after separating causal inference population from exact-next-minute label availability. May21+ remain sealed."
+}
