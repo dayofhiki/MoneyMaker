@@ -1,0 +1,19 @@
+{
+  "request_id": 149,
+  "operation": "retention_aware_active_allocation_v1",
+  "eval_days": [
+    "2026-05-07",
+    "2026-05-08",
+    "2026-05-11",
+    "2026-05-12",
+    "2026-05-13"
+  ],
+  "opens_new_dates": false,
+  "primary_max_additions": 5,
+  "sensitivity_additions": [
+    6,
+    8,
+    20
+  ],
+  "note": "Separate Active admission from retention/eviction. Primary keeps all resource budgets fixed; sensitivity cannot be promoted. May21+ sealed."
+}
