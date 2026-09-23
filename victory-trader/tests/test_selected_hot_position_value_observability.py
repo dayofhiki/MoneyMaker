@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from victory_trader.execution_costs import DEFAULT_EXECUTION_SCENARIOS, net_round_trip_return_pct
+from victory_trader.market_calendar import regular_session_bounds
 from victory_trader.second_path_attention_probe import _annotate_scan
 from victory_trader.selected_hot_position_value_observability import (
     BASE_SCENARIO,
