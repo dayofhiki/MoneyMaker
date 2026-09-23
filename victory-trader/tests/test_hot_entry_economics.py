@@ -170,3 +170,33 @@ def test_generic_hot_event_label_preserves_causal_scores():
     assert row["learned_hot_score"] == pytest.approx(0.91)
     assert row["promotion_index"] == 2
     assert bool(row["is_repromotion"]) is True
+
+
+def test_missing_oracle_outcome_is_unknown_not_negative():
+    events = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-05-07",
+                "ticker": "A",
+                "t": 120_000,
+                "state": "hot",
+            }
+        ]
+    )
+    scan = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-05-07",
+                "ticker": "A",
+                "t": 180_000,
+                "o": 1.0,
+            }
+        ]
+    )
+
+    labeled = label_hot_event_economics(events, scan, horizons=(1,))
+    row = labeled.iloc[0]
+
+    assert bool(row["entry_reference_available"]) is True
+    assert pd.isna(row["oracle_best_base_pct"])
+    assert pd.isna(row["oracle_base_positive"])
