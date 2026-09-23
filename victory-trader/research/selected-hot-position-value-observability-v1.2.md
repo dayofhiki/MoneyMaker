@@ -175,3 +175,87 @@ ABSTAIN/WAIT/BUY -> HOLD/EXIT loop with explicit executability/liquidity state
 before any May21+ fresh policy test.
 
 May 21 and later remain sealed.
+
+
+## Result — request 145
+
+Authoritative run: `35869141041`. The corrected no-new-date diagnostic
+completed successfully and uploaded artifact
+`moneymaker-selected-hot-position-value-observability-v12-145`.
+No session after 2026-05-20 was opened.
+
+### Path/execution coverage
+
+Across 1,936 fresh first-HOT anchors, 1,695 produced at least one causal
+post-entry POSITION state, for 87.55% anchor-to-path coverage.
+
+The policy-safe entry selector chose 517 fresh anchors. Of those, 462 produced
+at least one POSITION state, for **89.36% coverage**, narrowly below the frozen
+90% bridge floor.
+
+This confirms request 143's conclusion that executability/liquidity is a real
+part of the entry decision rather than a bookkeeping nuisance.
+
+### All first-HOT position states
+
+The broad first-HOT population showed reproducible post-entry state information:
+
+- 24,293 evaluation decision rows;
+- HOLD AUC: **0.5541**;
+- semantic-HOLD one-minute BASE advantage: **+0.0439%** arithmetic,
+  **+0.0468%** day-balanced;
+- remaining-option-value Spearman: **+0.3026**;
+- same-held-minute Spearman median: **+0.2761**;
+- 96.55% of eligible held-minute groups had positive Spearman;
+- predicted-excess-positive rows realized **+0.7283%** mean excess remaining
+  value, **+0.7354%** day-balanced;
+- all required signs were positive on four of five evaluation sessions.
+
+The broad diagnostic therefore passes its internal observability bridge.
+
+### Policy-selected position states
+
+The economically selected population was harder:
+
+- 7,192 evaluation decision rows;
+- HOLD AUC: **0.5343**;
+- semantic-HOLD one-minute BASE advantage: **+0.0165%** arithmetic,
+  **+0.0220%** day-balanced;
+- remaining-option-value Spearman: **+0.2233**;
+- same-held-minute Spearman median: **+0.2129**;
+- 96.55% of eligible held-minute groups had positive Spearman;
+- predicted-excess-positive rows realized **+0.7861%** mean excess remaining
+  value, **+0.7986%** day-balanced.
+
+However, the daily short-horizon HOLD signal was not stable enough:
+
+- 2026-05-14: all signs positive, HOLD AUC 0.5721, semantic-HOLD advantage
+  +0.2004%;
+- 2026-05-15: HOLD AUC 0.5181 but semantic-HOLD advantage **-0.0904%**;
+- 2026-05-18: HOLD AUC **0.4945** and semantic-HOLD advantage **-0.0841%**;
+- 2026-05-19: all signs positive, HOLD AUC 0.5416, advantage +0.0355%;
+- 2026-05-20: all signs positive, HOLD AUC 0.5321, advantage +0.0488%.
+
+Only three of five sessions satisfied all sign conditions, below the frozen
+four-of-five requirement.
+
+### Formal decision
+
+**Request 145 FAILS the frozen bridge.**
+
+The failures are substantive rather than infrastructural:
+
+1. policy-selected anchor-to-position-path coverage is 89.36%, below the 90%
+   floor by 0.64 percentage points;
+2. all HOLD/remaining-value signs are simultaneously positive on only three of
+   five sessions rather than four.
+
+The important positive result is that residual multi-minute option value is
+clearly observable even after the causality fixes. The weak component is the
+one-minute HOLD/decay controller on the economically selected subset.
+
+Do not lower the gates and do not open May 21 or later. The next development
+work should add an explicit causal executability/liquidity gate and improve the
+short-horizon decay/HOLD controller using already-opened development data.
+The stronger remaining-option-value signal should be retained as a narrow
+patience signal rather than used alone to justify HOLD.
