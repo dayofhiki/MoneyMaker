@@ -10,6 +10,6 @@
     "2026-05-13"
   ],
   "opens_new_dates": false,
-  "note": "Revision 2: actionable priority is used only inside current Focus-60 for new desired Active subscriptions; retained subscriptions may persist under unchanged five-addition transport. Supersedes the first request-147 implementation run.",
-  "revision": 2
+  "note": "Revision 3: same Focus-first request-147 method and frozen gates. Compute-only retry after the prior run failed at final summary serialization because a non-feature audit column was not carried through scoring.",
+  "revision": 3
 }
