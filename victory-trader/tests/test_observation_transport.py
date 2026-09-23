@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from victory_trader.observation_transport import (
+    BoundedTurnoverSelector,
     ObservationBridge,
     ObservationTransport,
     RankHysteresisSelector,
@@ -107,3 +108,62 @@ def test_observation_bridge_disconnect_does_not_change_model_selection():
     assert snapshot.selected == ("AAA",)
     assert snapshot.transport.active == ()
     assert snapshot.transport.reconnect_required is True
+
+
+
+def test_bounded_turnover_selector_admits_strong_challengers():
+    selector = BoundedTurnoverSelector(
+        capacity=4, incumbent_rank_limit=8, max_replacements=1
+    )
+    first = selector.select(
+        [
+            RankedCandidate("A", 8.0),
+            RankedCandidate("B", 7.0),
+            RankedCandidate("C", 6.0),
+            RankedCandidate("D", 5.0),
+            RankedCandidate("E", 4.0),
+            RankedCandidate("F", 3.0),
+            RankedCandidate("G", 2.0),
+            RankedCandidate("H", 1.0),
+        ]
+    )
+    second = selector.select(
+        [
+            RankedCandidate("E", 8.0),
+            RankedCandidate("F", 7.0),
+            RankedCandidate("G", 6.0),
+            RankedCandidate("H", 5.0),
+            RankedCandidate("A", 4.0),
+            RankedCandidate("B", 3.0),
+            RankedCandidate("C", 2.0),
+            RankedCandidate("D", 1.0),
+        ]
+    )
+
+    assert first == ("A", "B", "C", "D")
+    assert "E" in second
+    assert len(set(second) - set(first)) == 1
+
+
+def test_bounded_turnover_selector_never_replaces_more_than_budget():
+    selector = BoundedTurnoverSelector(
+        capacity=6, incumbent_rank_limit=12, max_replacements=2
+    )
+    first = selector.select(
+        [RankedCandidate(f"I{i}", float(12 - i)) for i in range(12)]
+    )
+    second = selector.select(
+        [
+            *[
+                RankedCandidate(f"C{i}", float(20 - i))
+                for i in range(6)
+            ],
+            *[
+                RankedCandidate(f"I{i}", float(14 - i))
+                for i in range(12)
+            ],
+        ]
+    )
+
+    assert len(first) == len(second) == 6
+    assert len(set(second) - set(first)) == 2
