@@ -289,14 +289,15 @@ def build_position_rows(
             # completed state. It is a LABEL/execution reference only and must
             # never enter MODEL_FEATURES.
             exit_reference_open = opens.get((day, ticker, state_t), np.nan)
-            if not _positive(exit_reference_open):
-                continue
+            exit_reference_available = _positive(exit_reference_open)
 
             current_close = pd.to_numeric(
                 pd.Series([state.get("c")]), errors="coerce"
             ).iloc[0]
-            exit_now = _base_return(
-                float(entry_open), float(exit_reference_open)
+            exit_now = (
+                _base_return(float(entry_open), float(exit_reference_open))
+                if exit_reference_available
+                else np.nan
             )
             next_open = opens.get((day, ticker, state_t + MINUTE_MS), np.nan)
             next_exit = _base_return(float(entry_open), float(next_open))
@@ -326,7 +327,14 @@ def build_position_rows(
                 "entry_open": float(entry_open),
                 "state_t": state_t,
                 "minutes_held": float(held),
-                "exit_reference_open": float(exit_reference_open),
+                "exit_reference_open": (
+                    float(exit_reference_open)
+                    if exit_reference_available
+                    else np.nan
+                ),
+                "exit_reference_available": bool(
+                    exit_reference_available
+                ),
                 "exit_now_base_return_pct": exit_now,
                 "next_minute_base_return_pct": next_exit,
                 "hold_advantage_1m_pct": hold_advantage,
