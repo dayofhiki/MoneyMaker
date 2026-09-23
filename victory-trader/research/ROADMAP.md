@@ -258,11 +258,25 @@ arbitrary event cadence rather than requiring a one-minute timer. It preserves
 selected membership, enforces 20 concurrent subscriptions, and reports churn,
 freshness, missing bars and reconnect state.
 
-The active task is preregistered request 131. It unlocks only 2026-04-01,
-04-02, 04-06, 04-07 and 04-08 to evaluate the complete focus -> event-driven
-rank-40 shortlist -> transport -> one-second -> HOT-10 hierarchy. April 9 and
-later remain sealed. ENTRY/ABSTAIN remains blocked until both performance and
-transport gates pass.
+Request 131 evaluated the complete focus -> event-driven rank-40 shortlist
+-> selection-preserving transport -> one-second -> HOT-10 hierarchy on the
+first five April sessions. Exact-prior-minute HOT capture improved from 21.58%
+to 42.61%; two-minute capture rose from 23.05% to 43.89% and five-minute
+capture from 26.63% to 50.14%. Transport preserved model membership exactly,
+never exceeded 20 subscriptions, averaged 4.63 additions per decision and
+retained 100% one-second coverage. The frozen promotion gate nevertheless
+failed because focus-60 prior-minute capture was 49.40% versus the 50% floor
+and shortlist capture conditional on focus was 91.82% versus the 95% floor.
+HOT conditional retention was 93.93%, so the remaining loss is upstream.
+
+Request 132 is the active diagnostic. It reuses only the already-opened
+2026-04-01, 04-02, 04-06, 04-07 and 04-08 sessions to decompose those upstream
+misses. It records the hazard rank of every next-minute runner and compares the
+already-existing stateless top-20 against the request-131 rank-40 incumbent
+hysteresis selector, including whether current top-ranked challengers are
+blocked by incumbent priority. It tests no new threshold, feature, budget or
+selector. April 9 and later remain sealed for the next preregistered structural
+change. ENTRY/ABSTAIN remains blocked until the attention handoff passes.
 
 ### Milestone 3 — policy integration
 
