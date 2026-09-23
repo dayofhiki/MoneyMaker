@@ -70,28 +70,29 @@ def test_selector_evaluation_can_pass_layer_gate():
                     "runner_cross_now": True,
                 }
             )
-            focus_rows.append(
-                {
-                    "trading_day": day,
-                    "ticker": ticker,
-                    "t": 120_000,
-                }
-            )
-            new_rows.append(
-                {
-                    "trading_day": day,
-                    "ticker": ticker,
-                    "t": 120_000,
-                }
-            )
-            if index < 9:
-                old_rows.append(
+            for timestamp in [60_000, 120_000]:
+                focus_rows.append(
                     {
                         "trading_day": day,
                         "ticker": ticker,
-                        "t": 120_000,
+                        "t": timestamp,
                     }
                 )
+                new_rows.append(
+                    {
+                        "trading_day": day,
+                        "ticker": ticker,
+                        "t": timestamp,
+                    }
+                )
+                if index < 9:
+                    old_rows.append(
+                        {
+                            "trading_day": day,
+                            "ticker": ticker,
+                            "t": timestamp,
+                        }
+                    )
 
     result = evaluate(
         pd.DataFrame(scan_rows),
