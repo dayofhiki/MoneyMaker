@@ -644,8 +644,6 @@ def run_probe(
         opportunity.loc[:, ["trading_day", "ticker", "t"]],
         scan,
         second_client,
-        allow_coverage_only_failure=args.allow_coverage_only_failure,
-        request_id=args.request_id,
     )
     anchor_flags = opportunity.loc[
         :, ["trading_day", "ticker", "t", "entry_selected_140b"]
@@ -742,6 +740,8 @@ def main() -> int:
         store,
         scan_client,
         second_client,
+        allow_coverage_only_failure=args.allow_coverage_only_failure,
+        request_id=args.request_id,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     output.to_parquet(args.output, index=False, compression="zstd")
