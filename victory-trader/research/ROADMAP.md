@@ -465,24 +465,51 @@ Focus/active/HOT allocation. The code now separates all causal inference rows
 from nullable supervised labels. Model fitting may use identifiable labels;
 market ranking and attention allocation may not inspect future bar existence.
 
-Request 146 is therefore revalidating the Focus -> active -> HOT handoff on the
-already-opened May7-May13 block using the fully causal inference population.
-Until request 146 resolves, the old request-138 attention/HOT promotion is
-**provisional rather than an active foundation for new fresh-date policy
-testing**. May 21 and later remain sealed.
+Request 146 then completed on the already-opened May7-May13 block using
+the fully causal inference population. The corrected market population restored
+515,850 current rows (22.94% of causal inference rows) that the historical path
+had removed based on future next-minute bar existence. Focus quality remained
+strong: it captured 547 of 559 causally observable exact-prior crossings
+(97.85%). HOT-within-1m remained 49.54%, while HOT-within-2m and 5m rose to
+58.58% and 65.36%. The formal gate nevertheless failed because Active retained
+only 93.60% of Focus captures versus the frozen 95% floor. Temporary unscoreable
+subscription state rose to 6.35% and mean scoreable Active occupancy fell to
+18.73 / 20. The remaining upstream bottleneck is therefore not broad discovery
+or the one-second HOT reranker; it is allocating scarce high-resolution Active
+slots to names that remain causally observable/actionable.
+
+Request 147 addresses that bottleneck without increasing Focus, Active, HOT or
+transport-churn budgets. A separately fitted causal observability model predicts
+whether a current ticker will print an exact next-minute aggregate. Active
+priority is frozen as market runner hazard multiplied by predicted next-minute
+observability. New desired Active subscriptions remain restricted to the
+current Focus-60, while existing subscriptions may persist after temporarily
+leaving Focus under the unchanged five-addition transport state. Stage-2 treats
+a missing exact next-minute aggregate as no exact next-minute crossing event.
+The first implementation run is diagnostic only because a hierarchy audit found
+that a changed Active score could otherwise admit names from outside Focus. The
+Focus-first revision is the authoritative request-147 revalidation.
+
+Request 148 is preregistered but not yet opened. If request 147 passes, request
+148 will preserve the request-140B ENTRY feature set and model family while
+rebuilding first-HOT economic-opportunity evidence on the corrected actionable
+transport population. This isolates upstream-population correction from later
+ENTRY feature engineering.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
 hazard/session history by trading day, use official exchange session bounds
-including early closes, and represent missing oracle outcomes as unknown rather
+including early closes, retain causal POSITION states when future execution
+references are missing, and represent missing oracle outcomes as unknown rather
 than negative.
 
-The executable recurrent trader remains the architectural target, but the
-immediate order of work is now: (1) finish causal-population attention/HOT
-revalidation; (2) rebuild opportunity selection on that corrected population if
-needed; (3) rerun POSITION observability with missing execution states retained;
-then (4) integrate BUY/WAIT/ABSTAIN and recurrent HOLD/EXIT. May 21 and later
-remain sealed until these corrections pass development and audit gates.
+The executable recurrent trader remains the architectural target. The immediate
+order of work is now: (1) complete request-147 actionable Active revalidation;
+(2) if it passes, run request 148 corrected opportunity revalidation; (3) add a
+separate causal executability/liquidity value to BUY/WAIT/ABSTAIN; (4) rerun
+POSITION observability with silent decision states retained; then (5) integrate
+the recurrent entry and HOLD/EXIT loop. May 21 and later remain sealed until
+these development and audit gates are frozen.
 
 ### Milestone 3 — policy integration
 
