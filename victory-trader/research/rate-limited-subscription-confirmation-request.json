@@ -1,0 +1,7 @@
+{
+  "request_id": 136,
+  "operation": "rate_limited_subscription_confirmation_v15",
+  "start_date": "2026-01-02",
+  "end_date": "2026-04-29",
+  "note": "Fresh Apr 23/24/27/28/29 confirmation of the unchanged request-135 desired/active transport. Five-addition gate applies only after mandatory session initialization, exactly as preregistered. April 30+ remain sealed."
+}
