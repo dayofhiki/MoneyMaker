@@ -1,0 +1,20 @@
+{
+  "request_id": 150,
+  "operation": "balanced_retention_active_allocation_v1",
+  "eval_days": [
+    "2026-05-07",
+    "2026-05-08",
+    "2026-05-11",
+    "2026-05-12",
+    "2026-05-13"
+  ],
+  "opens_new_dates": false,
+  "primary_max_additions": 5,
+  "sensitivity_additions": [
+    6,
+    8,
+    20
+  ],
+  "retention_value": "active_priority * transport_survival_probability",
+  "note": "Admission unchanged. Only stale-incumbent eviction ranking changes. Primary keeps 20 Active, 5 additions, 10 HOT fixed. May21+ sealed."
+}
