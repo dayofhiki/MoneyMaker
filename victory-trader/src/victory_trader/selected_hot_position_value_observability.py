@@ -118,7 +118,7 @@ def _ticker_completed_rows(
     scan: pd.DataFrame,
 ) -> dict[tuple[str, str], pd.DataFrame]:
     annotated = _position_scan_features(scan)
-    result: dict[tuple[str, str], pd.DataFrame] = {
+    result: dict[tuple[str, str], pd.DataFrame] = {}
     for (day, ticker), group in annotated.groupby(["trading_day", "ticker"], sort=False):
         result[(str(day), str(ticker).upper())] = group.sort_values("t", kind="stable")
     return result
