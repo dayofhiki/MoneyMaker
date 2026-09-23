@@ -35,8 +35,12 @@ The active-observation priority is fixed as:
 This is a factorized estimate of an actionable next-step opportunity. No
 weight, blend coefficient, threshold, or transport budget is tuned.
 
-Focus-60 remains ranked by the original market hazard probability. Only the
-Focus -> active observation utility changes.
+Focus-60 remains ranked by the original market hazard probability. New desired
+Active subscriptions are restricted to the current Focus-60; previously active
+subscriptions may persist temporarily after leaving Focus under the unchanged
+five-addition transport state. Broad current feature rows remain available for
+those retained subscriptions. Only the Focus -> active observation utility
+changes.
 
 ## Stage-2 target
 
