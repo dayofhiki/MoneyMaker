@@ -72,3 +72,37 @@ def test_fit_and_evaluate_uses_frozen_hazard_eval_days():
         modeled.loc[modeled["split"].eq("eval"), "trading_day"]
     ) == set(EVAL_DAYS)
     assert modeled["hazard_probability"].between(0.0, 1.0).all()
+
+
+def test_state_history_resets_same_ticker_on_new_session():
+    trace = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-01-27",
+                "ticker": "AAA",
+                "t": 60_000,
+                "state": "watch",
+            },
+            {
+                "trading_day": "2026-01-27",
+                "ticker": "AAA",
+                "t": 120_000,
+                "state": "watch",
+            },
+            {
+                "trading_day": "2026-01-28",
+                "ticker": "AAA",
+                "t": 60_000,
+                "state": "watch",
+            },
+        ]
+    )
+
+    enriched = _state_history(trace).sort_values(
+        ["trading_day", "t"]
+    ).reset_index(drop=True)
+
+    assert enriched.loc[0, "watch_run_age_minutes"] == 1.0
+    assert enriched.loc[1, "watch_run_age_minutes"] == 2.0
+    assert enriched.loc[2, "watch_run_age_minutes"] == 1.0
+    assert enriched.loc[2, "focus_age_minutes"] == 1.0
