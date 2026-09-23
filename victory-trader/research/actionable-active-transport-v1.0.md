@@ -107,3 +107,51 @@ HOLD/EXIT replay.
 
 If it fails, diagnose the Focus -> active loss without changing capacity or
 opening May 21+.
+
+
+## Request 147 result
+
+Authoritative compute-only retry: run 35884196183.
+
+The Focus-first actionable transport completed successfully, but the frozen
+improvement gate failed.
+
+Pooled results on 2026-05-07 through 2026-05-13:
+
+- Focus captured 547 / 559 observable exact-prior crossings = 97.8533%.
+- Active retained 516 / 547 Focus captures = 94.3327%.
+- HOT-within-1m = 489 / 973 = 50.2569%.
+- HOT-within-2m = 576 / 973 = 59.1984%.
+- HOT-within-5m = 638 / 973 = 65.5704%.
+- HOT conditional on Active exact-prior capture = 94.7674%.
+- one-second row coverage = 100%.
+- maximum active subscriptions = 20.
+- mean post-initial additions = 4.9969; maximum = 5.
+- maximum HOT occupancy = 10.
+- selection / transport mismatch rows = 0.
+
+Versus request 146, Active retention improved from 93.6015% to 94.3327%
+(+0.7312 percentage points) but remained below the frozen 95% floor.
+HOT-within-1m improved from 49.5375% to 50.2569%, HOT-within-2m from
+58.5817% to 59.1984%, and HOT-within-5m from 65.3649% to 65.5704%.
+
+However, the temporary-unscoreable subscription rate increased from 6.3487%
+to 6.9179%, and mean scoreable active occupancy fell from 18.7303 to 18.6164.
+Therefore the one-step observability factor is not promoted.
+
+The observability model was population-calibrated in the broad sense:
+actual next-minute observability was 77.0559% and mean predicted observability
+was 77.2844%. That aggregate calibration does not establish useful ranking or
+multi-minute subscription persistence.
+
+Interpretation: multiplying conditional runner hazard by one-minute
+observability modestly improves runner capture, but it does not solve the
+scarce-slot persistence problem. The next diagnostic must separate reasons for
+an active subscription becoming unscoreable (e.g. successful runner transition
+versus true sparse/no-bar disappearance) before treating the aggregate
+unscoreable rate as wasted capacity. A direct unconditional actionable-crossing
+model and/or transport-horizon persistence target should be compared on already
+opened dates before any new fresh block.
+
+Request 148 remains blocked because request 147 did not pass its preregistered
+gate. May 21 and later remain sealed.
