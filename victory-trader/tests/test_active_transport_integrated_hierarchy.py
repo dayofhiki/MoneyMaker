@@ -221,3 +221,56 @@ def test_active_transport_can_rank_by_causal_utility_score():
 
     assert "I19" in selected
     assert "I00" not in selected
+
+
+def test_active_desired_set_respects_focus_eligibility_but_retains_existing_subscription():
+    rows = _scored_rows().copy()
+    rows["active_priority"] = rows["market_hazard_probability"]
+    rows["focus_eligible"] = True
+
+    first_t = int(rows["t"].min())
+    second_t = int(rows["t"].max())
+
+    # An outside-Focus name has the highest utility but must not enter desired.
+    rows.loc[
+        rows["t"].eq(first_t) & rows["ticker"].eq("I19"),
+        "focus_eligible",
+    ] = False
+    rows.loc[
+        rows["t"].eq(first_t) & rows["ticker"].eq("I19"),
+        "active_priority",
+    ] = 1_000_000.0
+
+    active, trace = active_observation_rows_with_state(
+        rows,
+        score_column="active_priority",
+        desired_eligible_column="focus_eligible",
+    )
+    first_active = set(
+        active.loc[active["t"].eq(first_t), "ticker"].astype(str)
+    )
+    assert "I19" not in first_active
+
+    # I00 starts subscribed, then leaves Focus. It can remain active while the
+    # five-addition transport budget moves membership gradually.
+    rows2 = _scored_rows().copy()
+    rows2["active_priority"] = rows2["market_hazard_probability"]
+    rows2["focus_eligible"] = True
+    rows2.loc[
+        rows2["t"].eq(second_t) & rows2["ticker"].eq("I00"),
+        "focus_eligible",
+    ] = False
+
+    active2, trace2 = active_observation_rows_with_state(
+        rows2,
+        score_column="active_priority",
+        desired_eligible_column="focus_eligible",
+    )
+    second_trace = trace2.loc[
+        trace2["t"].eq(second_t) & trace2["ticker"].eq("I00")
+    ]
+    if not second_trace.empty:
+        assert bool(second_trace.iloc[0]["scoreable_now"]) is True
+        assert "I00" in set(
+            active2.loc[active2["t"].eq(second_t), "ticker"].astype(str)
+        )
