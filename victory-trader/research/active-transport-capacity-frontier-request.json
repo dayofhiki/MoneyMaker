@@ -1,0 +1,16 @@
+{
+  "request_id": 152,
+  "operation": "active_transport_capacity_frontier_v1",
+  "eval_days": [
+    "2026-05-21",
+    "2026-05-22",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28"
+  ],
+  "opens_new_dates": false,
+  "capacity_frontier": [5, 8, 10, 12, 16, 20],
+  "target_retention": 0.95,
+  "material_gain_threshold": 0.01,
+  "note": "Diagnostic only on request-151-opened dates. No policy promotion and no later session is opened."
+}
