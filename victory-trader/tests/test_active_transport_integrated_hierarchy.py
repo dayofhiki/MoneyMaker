@@ -157,3 +157,47 @@ def test_explicit_subscription_audit_counts_selector_state_not_row_reappearance(
 
     assert audit["max_post_initial_subscription_additions_per_decision"] == 0
     assert audit["temporarily_unscoreable_subscription_rows"] == 1
+
+
+def test_active_age_survives_temporary_unscoreable_gap():
+    rows = []
+    day = "2026-04-30"
+    for timestamp in [60_000, 120_000, 180_000]:
+        for index in range(20):
+            ticker = f"I{index:02d}"
+            if ticker == "I00" and timestamp == 120_000:
+                continue
+            rows.append(
+                {
+                    "trading_day": day,
+                    "ticker": ticker,
+                    "t": timestamp,
+                    "market_hazard_probability": float(100 - index),
+                    "attention_score": float(100 - index),
+                    "attention_rank": index + 1,
+                    "return_from_previous_close_pct": 1.0,
+                    "minute_body_return_pct": 0.1,
+                    "minute_range_pct": 0.2,
+                    "log_minute_volume": 1.0,
+                    "log_minute_transactions": 1.0,
+                    "minute_return_1m_pct": 0.1,
+                    "return_accel_1m_pct": 0.0,
+                    "volume_ratio_prev1": 1.0,
+                    "transactions_ratio_prev1": 1.0,
+                    "target_next_cross": 0,
+                }
+            )
+
+    active, trace = active_observation_rows_with_state(pd.DataFrame(rows))
+    gap = trace.loc[
+        trace["t"].eq(120_000) & trace["ticker"].eq("I00")
+    ].iloc[0]
+    resumed = active.loc[
+        active["t"].eq(180_000) & active["ticker"].eq("I00")
+    ].iloc[0]
+
+    assert bool(gap["transport_active"]) is True
+    assert bool(gap["scoreable_now"]) is False
+    assert resumed["focus_age_minutes"] == 3
+    assert resumed["watch_run_age_minutes"] == 3
+    assert bool(resumed["transport_addition"]) is False
