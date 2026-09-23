@@ -1,0 +1,7 @@
+{
+  "request_id": 133,
+  "operation": "bounded_turnover_shortlist_v12",
+  "start_date": "2026-01-02",
+  "end_date": "2026-04-15",
+  "note": "Fresh Apr 9/10/13/14/15 selector-only validation. Frozen before request 132 results are inspected. Keep focus-60/model/features unchanged; compare request-131 rank-40 incumbency against bounded-turnover challenger admission with at most five replacements per decision. April 16+ remain sealed."
+}
