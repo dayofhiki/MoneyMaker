@@ -84,3 +84,50 @@ profit edge.
 
 May 14 and later remain sealed for a separately preregistered ENTRY/ABSTAIN
 policy.
+
+## Result — request 139
+
+Authoritative successful run: `35827976308`. The probe reused the promoted
+request-138 HOT trace and opened no date after 2026-05-13.
+
+Across 2,091 first-HOT ticker-day episodes, the next executable minute-open
+reference was available for 100% of episodes. Fixed holding times were not
+economically viable under the frozen BASE friction model:
+
+| Hold | Gross mean | BASE mean | BASE-positive rate |
+|---|---:|---:|---:|
+| 1m | +0.106% | -1.353% | 10.85% |
+| 2m | +0.072% | -1.391% | 12.25% |
+| 5m | +0.165% | -1.305% | 16.78% |
+| 10m | +0.262% | -1.200% | 21.00% |
+| 15m | +0.176% | -1.256% | 23.56% |
+| 30m | +0.277% | -1.169% | 26.37% |
+
+Thus HOT membership by itself is not an entry rule. The gross drift after first
+HOT is only mildly positive and is overwhelmed by the frozen cheap-stock
+spread/slippage assumptions.
+
+The non-executable 30-minute best-exit ceiling was materially different:
+
+- 2,042 / 2,091 episodes (97.66%) had at least one evaluable future exit;
+- mean best BASE return was +0.339%;
+- median best BASE return was -0.431%;
+- 40.70% of evaluable episodes had some BASE-positive exit opportunity;
+- median best exit minute was 10 minutes;
+- per-day oracle mean was positive on all five sessions: +0.277%, +0.179%,
+  +0.386%, +0.353%, and +0.505%.
+
+The median remains negative and only about 41% of episodes have a cost-positive
+exit even with hindsight. Therefore the result does **not** establish a
+profitable policy. It establishes a sharper bottleneck: the validated HOT pool
+contains real economic opportunities every day, but the majority of HOT
+episodes should be skipped and fixed holding periods cannot extract the
+available value.
+
+### Decision
+
+Proceed to a fresh learnability test for HOT economic opportunity. The next
+branch must use only causal first-HOT state information to predict whether a
+BASE-positive exit opportunity exists and to rank opportunity magnitude. It
+must not tune a fixed holding horizon from request 139. May 14 and later remain
+sealed until that experiment is preregistered.
