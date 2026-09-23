@@ -410,12 +410,24 @@ versus 42.42%. The formal gate remained false only because 2026-05-15 label
 coverage was 94.59%, 0.41 percentage points below the frozen 95% floor. That
 gate is not weakened and request 140B is not retroactively promoted.
 
+Request 143 then diagnosed the sole request-140B formal failure without
+opening new dates. All 55 missing fresh economic labels had a valid exact
+next-minute entry reference but no later observed minute open inside the
+30-minute window. Fifty-one of 55 still had more than 30 minutes left in the
+regular session, and the missing rows generally had thinner trailing second
+activity. The failure is therefore an executability/liquidity problem rather
+than an entry-timestamp or session-close artifact. Request 140B remains a
+formal fail.
+
 The active frontier is now the executable recurrent trader branch documented in
 `executable-recurrent-trader-v0.1.md`. It keeps the promoted attention/HOT
-hierarchy frozen and adds causal episode memory, BUY/WAIT/ABSTAIN action values,
-and recurrent HOLD/EXIT values. Prior fixed-horizon and old stopping thresholds
-are not promoted into this branch. May 21 and later remain sealed until the
-development replay, integrity tests, and executable fresh gates are frozen.
+hierarchy frozen and adds causal episode memory, separate economic-opportunity
+and executability signals, BUY/WAIT/ABSTAIN action values, and recurrent
+HOLD/EXIT values. Prior fixed-horizon and old stopping thresholds are not
+promoted into this branch. Request 144 is the no-new-date HOLD/EXIT
+observability bridge on the already-opened May14-May20 block. May 21 and later
+remain sealed until the development replay, integrity tests, and executable
+fresh gates are frozen.
 
 ### Milestone 3 — policy integration
 
