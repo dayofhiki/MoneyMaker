@@ -1,0 +1,8 @@
+{
+  "request_id": 145,
+  "operation": "selected_hot_position_value_observability_v12",
+  "source_opportunity_run_id": 35829190438,
+  "source_coverage_run_id": 35859071727,
+  "supersedes_incomplete_request": 144,
+  "note": "No-new-date corrected HOLD/EXIT observability audit after causality/performance review. Uses policy-safe calibration and streamed causal position states. May21+ remain sealed."
+}
