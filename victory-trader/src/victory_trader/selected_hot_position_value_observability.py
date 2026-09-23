@@ -98,8 +98,16 @@ def _open_map(scan: pd.DataFrame) -> dict[tuple[str, str, int], float]:
     return result
 
 
-def _minute_lookup(scan: pd.DataFrame) -> dict[tuple[str, str, int], dict[str, object]]:
+def _position_scan_features(scan: pd.DataFrame) -> pd.DataFrame:
     annotated = _annotate_scan(scan)
+    annotated["attention_rank"] = annotated.groupby(
+        ["trading_day", "t"], sort=False
+    )["attention_score"].rank(method="first", ascending=False)
+    return annotated
+
+
+def _minute_lookup(scan: pd.DataFrame) -> dict[tuple[str, str, int], dict[str, object]]:
+    annotated = _position_scan_features(scan)
     return {
         (str(row.trading_day), str(row.ticker).upper(), int(row.t)): row._asdict()
         for row in annotated.itertuples(index=False)
@@ -109,8 +117,8 @@ def _minute_lookup(scan: pd.DataFrame) -> dict[tuple[str, str, int], dict[str, o
 def _ticker_completed_rows(
     scan: pd.DataFrame,
 ) -> dict[tuple[str, str], pd.DataFrame]:
-    annotated = _annotate_scan(scan)
-    result: dict[tuple[str, str], pd.DataFrame] = {}
+    annotated = _position_scan_features(scan)
+    result: dict[tuple[str, str], pd.DataFrame] = {
     for (day, ticker), group in annotated.groupby(["trading_day", "ticker"], sort=False):
         result[(str(day), str(ticker).upper())] = group.sort_values("t", kind="stable")
     return result
