@@ -46,8 +46,14 @@ HAZARD_COLUMNS = [
 ]
 
 
-def build_market_hazard_rows(scan: pd.DataFrame) -> pd.DataFrame:
-    """Build causal market-wide rows and exact next-minute crossing targets."""
+def build_market_hazard_frame(scan: pd.DataFrame) -> pd.DataFrame:
+    """Build causal inference rows with nullable next-minute labels.
+
+    Whether a ticker will print an exact next-minute aggregate is not known at
+    decision time. Every currently observable pre-runner row therefore remains
+    eligible for inference. Exact-next-minute availability is used only to
+    decide whether the supervised target is identifiable.
+    """
 
     frame = _annotate_scan(scan)
     frame["attention_rank"] = frame.groupby(
@@ -63,22 +69,43 @@ def build_market_hazard_rows(scan: pd.DataFrame) -> pd.DataFrame:
         pd.to_numeric(next_t, errors="coerce")
         - pd.to_numeric(ordered["t"], errors="coerce")
     ).eq(MINUTE_MS)
-    ordered["target_next_cross"] = (
-        next_cross.fillna(False).astype(bool)
-        & ordered["has_exact_next_minute"]
-    ).astype(int)
+
+    target = pd.Series(pd.NA, index=ordered.index, dtype="Int64")
+    labelable = ordered["has_exact_next_minute"].fillna(False).astype(bool)
+    target.loc[labelable] = (
+        next_cross.loc[labelable].fillna(False).astype(bool).astype(int)
+    )
+    ordered["target_next_cross"] = target
+
     rows = ordered.loc[
         ~ordered["already_runner"].fillna(True)
-        & ordered["has_exact_next_minute"].fillna(False)
     ].copy()
     missing = set(BASELINE_FEATURES) - set(rows.columns)
     if missing:
-        raise ValueError(f"market hazard rows missing columns: {sorted(missing)}")
+        raise ValueError(f"market hazard frame missing columns: {sorted(missing)}")
+    return rows
+
+
+def build_market_hazard_rows(scan: pd.DataFrame) -> pd.DataFrame:
+    """Return the labelable subset used for supervised hazard fitting only."""
+
+    frame = build_market_hazard_frame(scan)
+    rows = frame.loc[
+        frame["has_exact_next_minute"].fillna(False).astype(bool)
+    ].copy()
+    rows["target_next_cross"] = pd.to_numeric(
+        rows["target_next_cross"], errors="raise"
+    ).astype(int)
     return rows
 
 
 def fit_market_hazard(rows: pd.DataFrame) -> HistGradientBoostingClassifier:
     fit = rows.loc[rows["trading_day"].astype(str).le(FIT_END)].copy()
+    target = pd.to_numeric(fit["target_next_cross"], errors="coerce")
+    fit = fit.loc[target.notna()].copy()
+    fit["target_next_cross"] = pd.to_numeric(
+        fit["target_next_cross"], errors="raise"
+    ).astype(int)
     if fit.empty or int(fit["target_next_cross"].sum()) == 0:
         raise ValueError("market-wide hazard fit is empty or has no positives")
     model = HistGradientBoostingClassifier(**MODEL_KWARGS)
