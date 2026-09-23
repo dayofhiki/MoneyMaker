@@ -210,6 +210,8 @@ def build_position_rows(
     records: list[dict[str, object]] = []
     requested_ticker_days = 0
     nonempty_second_days = 0
+    expected_state_slots = 0
+    silent_state_slots = 0
     clock_cache: dict[tuple[str, int], tuple[float, float]] = {}
 
     for anchor in anchors.sort_values(
@@ -260,10 +262,19 @@ def build_position_rows(
 
         running_high = np.nan
         running_low = np.nan
+        bounds = regular_session_bounds(date.fromisoformat(day))
+        if bounds is None:
+            raise ValueError(f"missing regular session bounds for {day}")
+        close_ms = int(bounds[1].timestamp() * 1000)
+
         for held in range(1, MAX_HOLD_MINUTES):
             state_t = entry_actual_t + held * MINUTE_MS
+            if state_t > close_ms:
+                continue
+            expected_state_slots += 1
             state = minute_rows.get((day, ticker, state_t))
             if state is None:
+                silent_state_slots += 1
                 continue
 
             state_high = pd.to_numeric(
@@ -398,6 +409,14 @@ def build_position_rows(
         "position_ticker_day_requests": requested_ticker_days,
         "nonempty_second_ticker_days": nonempty_second_days,
         "second_feature_row_coverage": second_coverage,
+        "expected_wall_clock_state_slots": int(expected_state_slots),
+        "observed_causal_state_slots": int(expected_state_slots - silent_state_slots),
+        "silent_state_slots": int(silent_state_slots),
+        "silent_state_slot_rate": (
+            float(silent_state_slots / expected_state_slots)
+            if expected_state_slots
+            else None
+        ),
         "materialized_market_rows": int(len(selected_annotated)),
         "full_market_rows": int(len(scan)),
     }
