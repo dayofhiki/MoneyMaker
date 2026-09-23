@@ -419,15 +419,33 @@ activity. The failure is therefore an executability/liquidity problem rather
 than an entry-timestamp or session-close artifact. Request 140B remains a
 formal fail.
 
-The active frontier is now the executable recurrent trader branch documented in
-`executable-recurrent-trader-v0.1.md`. It keeps the promoted attention/HOT
+A subsequent implementation audit invalidated request 144 as research
+evidence before it produced any artifact. Its runs terminated during the
+position calculation, and the audit found two semantic defects in the draft:
+multi-day batching could carry prior-minute features across a session boundary,
+and the next executable minute open was exposed to the HOLD/EXIT model before
+the decision that was supposed to precede that fill. The audit also found that
+the historical request-140B top-quartile diagnostic threshold had been computed
+only on future-labeled calibration rows, which is unsuitable for an executable
+policy. None of these findings retroactively change request-140B's AUC/value
+ordering evidence, but they prevent promotion of the old selected subset.
+
+The corrected recurrent path now resets lag state by session, uses only
+completed-bar close/path information as POSITION features, keeps next opens
+strictly label/execution-only, calibrates the policy selection quantile across
+all causal calibration feature rows, and streams one market day at a time.
+Second-window search, running extrema, future-label suffix maxima, and selective
+ticker-day materialization reduce compute without changing their frozen
+mathematical definitions. Request 145 is the active no-new-date corrected
+HOLD/EXIT observability bridge on the already-opened Apr30-May20 sessions.
+
+The active frontier remains the executable recurrent trader branch documented
+in `executable-recurrent-trader-v0.1.md`. It keeps the promoted attention/HOT
 hierarchy frozen and adds causal episode memory, separate economic-opportunity
 and executability signals, BUY/WAIT/ABSTAIN action values, and recurrent
 HOLD/EXIT values. Prior fixed-horizon and old stopping thresholds are not
-promoted into this branch. Request 144 is the no-new-date HOLD/EXIT
-observability bridge on the already-opened May14-May20 block. May 21 and later
-remain sealed until the development replay, integrity tests, and executable
-fresh gates are frozen.
+promoted into this branch. May 21 and later remain sealed until the development
+replay, integrity tests, and executable fresh gates are frozen.
 
 ### Milestone 3 — policy integration
 
