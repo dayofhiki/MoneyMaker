@@ -1,0 +1,6 @@
+{
+  "request_id": 143,
+  "operation": "hot_opportunity_coverage_diagnostic_v10",
+  "source_run_id": 35829190438,
+  "note": "Row-level diagnosis of request-140B missing economic labels only. Opens no new dates and does not retrain predictive models."
+}
