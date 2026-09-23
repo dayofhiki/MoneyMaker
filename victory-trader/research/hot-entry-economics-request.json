@@ -1,0 +1,7 @@
+{
+  "request_id": 139,
+  "operation": "hot_entry_economics_v10",
+  "start_date": "2026-01-02",
+  "end_date": "2026-05-13",
+  "note": "Reuse request-138 evaluation dates only. Diagnose first-HOT post-signal economics with frozen execution costs. Open no dates after 2026-05-13."
+}
