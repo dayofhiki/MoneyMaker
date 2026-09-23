@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from victory_trader.hot_entry_economics import (
     first_hot_events,
@@ -61,8 +62,8 @@ def test_hot_economics_uses_next_bar_open_and_costs():
     row = labeled.iloc[0]
 
     assert row["entry_price"] == 1.0
-    assert row["return_1m_gross_pct"] == 10.0
-    assert row["return_2m_gross_pct"] == 20.0
+    assert row["return_1m_gross_pct"] == pytest.approx(10.0)
+    assert row["return_2m_gross_pct"] == pytest.approx(20.0)
     assert row["return_1m_base_net_pct"] < 10.0
     assert row["oracle_best_minute"] == 2
     assert row["oracle_best_base_pct"] > 0
