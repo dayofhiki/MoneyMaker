@@ -80,3 +80,37 @@ different observation allocation strategy.
 This experiment is selected because request 133 isolated the tradeoff between
 responsive membership and churn. April 23 and later remain untouched for full
 integration or the next structural test.
+
+
+## Result — request 135
+
+Request 135 completed successfully on untouched 2026-04-16, 04-17,
+04-20, 04-21 and 04-22 sessions after one shared lint-only retry that had not
+opened the evaluation data.
+
+Focus-60 captured 585 of 965 crossings (60.62%). The request-131 rank-40
+selector retained 556 focus captures, while the rate-limited active set
+retained 558. The new transport retained 95.04% of focus captures, exceeded the
+rank-40 comparator in pooled exact-prior capture, was non-lower on four of five
+sessions, and never exceeded 20 active subscriptions.
+
+The formal gate remained false because mean additions were reported as 5.004
+per decision versus the frozen <=5 floor. Inspection shows that this audit
+includes the first decision of each of the five sessions, when the
+preregistered design explicitly initializes all 20 subscriptions at once before
+the five-addition rate limit applies. Total additions were 9,733 across 1,945
+decisions. Subtracting only the five mandatory 20-name initial fills leaves
+9,633 additions across 1,940 post-initial decisions, or 4.966 additions per
+post-initial decision.
+
+This is a measurement-definition mismatch, not grounds for retroactive
+promotion. Request 135 remains formally failed. The policy parameters are not
+changed. A fresh confirmation block must preregister the operational metric as
+post-initial additions per decision, consistent with the original design text,
+before opening new dates.
+
+A secondary diagnostic remains: the active set differed from the instantaneous
+desired top-20 by a mean symmetric-difference rate of 34.26%, yet retained
+95.04% of focus-captured runners. That supports the architectural separation
+between model preference and transport convergence rather than requiring the
+transport to mirror every short-lived rank oscillation.
