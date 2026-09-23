@@ -1,0 +1,5 @@
+{
+  "request_id": 140,
+  "operation": "hot_promotion_economics_v11",
+  "note": "Reuse promoted request-138 artifact and only the already-opened 2026-05-07 through 2026-05-13 sessions. Treat every learned_hot_promote transition as an episode. Open no dates after 2026-05-13."
+}
