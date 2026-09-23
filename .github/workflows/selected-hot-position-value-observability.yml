@@ -1,0 +1,134 @@
+name: MoneyMaker Selected HOT Position Value Observability
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/selected-hot-position-value-observability-request.json'
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: Artifact request identifier
+        required: true
+        default: '142'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.read.outputs.enabled }}
+      request_id: ${{ steps.read.outputs.request_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          if os.environ["EVENT_NAME"] == "workflow_dispatch":
+              enabled = True
+              request_id = os.environ["INPUT_REQUEST_ID"]
+          else:
+              payload = json.loads(
+                  Path("victory-trader/research/selected-hot-position-value-observability-request.json").read_text(
+                      encoding="utf-8"
+                  )
+              )
+              enabled = payload.get("operation") == "selected_hot_position_value_observability_v10"
+              request_id = str(payload.get("request_id", ""))
+          if enabled and not request_id:
+              raise SystemExit("selected-HOT position observability request is incomplete")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as handle:
+              handle.write(f"enabled={'true' if enabled else 'false'}\n")
+              handle.write(f"request_id={request_id}\n")
+          PY
+
+  diagnose:
+    if: ${{ needs.request.outputs.enabled == 'true' }}
+    needs: request
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test selected-HOT position observability
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q \
+            tests/test_selected_hot_position_value_observability.py \
+            tests/test_hot_economic_opportunity.py \
+            tests/test_hot_entry_economics.py
+
+      - name: Download passed request 140B artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-hot-economic-opportunity-v11-140
+          path: victory-trader/artifacts/request140b
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: dayofhiki/MoneyMaker
+          run-id: 35829190438
+
+      - name: Restore market-wide Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-selected-hot-position-flatfiles-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-hot-opportunity-flatfiles-${{ runner.os }}-
+            moneymaker-explicit-integrated-flatfiles-${{ runner.os }}-
+
+      - name: Restore one-second REST cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-selected-hot-position-second-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-hot-opportunity-second-${{ runner.os }}-
+            moneymaker-explicit-integrated-second-${{ runner.os }}-
+
+      - name: Run selected-HOT position-value observability
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.selected_hot_position_value_observability \
+            --opportunity artifacts/request140b/hot-economic-opportunity-v11.parquet \
+            --opportunity-summary artifacts/request140b/hot-economic-opportunity-v11.json \
+            --output artifacts/selected-hot-position-value-observability-v10.parquet \
+            --summary artifacts/selected-hot-position-value-observability-v10.json \
+            | tee artifacts/selected-hot-position-value-observability-v10.log
+          test -s artifacts/selected-hot-position-value-observability-v10.parquet
+          test -s artifacts/selected-hot-position-value-observability-v10.json
+
+      - name: Upload position-value observability audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-selected-hot-position-value-observability-v10-${{ needs.request.outputs.request_id }}
+          path: |
+            victory-trader/artifacts/selected-hot-position-value-observability-v10.parquet
+            victory-trader/artifacts/selected-hot-position-value-observability-v10.json
+            victory-trader/artifacts/selected-hot-position-value-observability-v10.log
+          if-no-files-found: error
+          retention-days: 90
