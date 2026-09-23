@@ -2,6 +2,15 @@
 
 ## Status
 
+## Administrative request ID note
+
+A separate no-new-date HOT-promotion diagnostic was concurrently preregistered
+as request 140 first. This fresh learnability branch is therefore designated
+**request 140B** for the research record. The already-triggered workflow
+metadata still emits integer request_id 140; that is an administrative ID
+collision only. The v1.1 methodology, gates and fresh dates below were frozen
+before any 140B result was inspected.
+
 Frozen after request 139 established that the promoted HOT population contains
 real but sparse economic opportunity, and before inspecting any request-140
 output.
