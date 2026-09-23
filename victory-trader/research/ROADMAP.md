@@ -362,14 +362,27 @@ subscription additions at five. The audit was conflating temporary absence of
 a scoreable feature row with subscription removal/re-addition. Request 137 is
 not retroactively promoted.
 
-Request 138 is the active fresh confirmation on 2026-05-07 through 2026-05-13.
-It changes no predictive model, capacity, reranker or HOT rule. Subscription
-membership is now recorded directly from the selector, separately from whether
-the subscribed ticker has a scoreable feature row at that instant. If this
-explicit-state full handoff passes, Milestone 2 attention/observation research
-is promoted and the active research frontier moves to HOT -> ENTRY/ABSTAIN.
-A conditional first-HOT economic bridge is already preregistered to reuse the
-same request-138 dates without opening May 14 or later.
+Request 138 then passed the explicit-state full handoff on untouched
+2026-05-07 through 2026-05-13 sessions. Of 559 causally observable exact-prior
+crossings, Focus captured 551 (98.57%). Active observation preserved the
+required focus coverage, HOT retained 95.25% of active prior-minute captures,
+and active HOT-within-1m was non-lower than the rank-40 integrated comparator
+on four of five days. The explicit selector-state audit confirmed a maximum of
+20 concurrent subscriptions, mean 4.988 post-initial additions per decision,
+maximum five, and zero selection/transport mismatch. The legacy row-reconstructed
+audit still falsely reported a maximum of seven additions, confirming the
+request-137 diagnosis. Temporary unscoreable subscription rows were 1.72% of
+subscription-state rows and did not imply unsubscribe/re-add. Request 138 passed
+the frozen promotion gate, so Milestone 2 attention/observation handoff is
+promoted.
+
+Request 139 is now the active economic bridge. It reuses exactly the already-opened
+request-138 dates and opens no date after 2026-05-13. It measures first-HOT
+next-minute-open entry references, frozen LIGHT/BASE/STRESS execution costs,
+fixed 1/2/5/10/15/30-minute outcomes, and a non-executable 30-minute hindsight
+best-exit ceiling. Its purpose is to decide whether the validated HOT population
+contains enough post-signal economic movement to justify ENTRY/ABSTAIN and
+adaptive HOLD/EXIT research.
 
 ### Milestone 3 — policy integration
 
