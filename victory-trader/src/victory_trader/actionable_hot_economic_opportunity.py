@@ -14,6 +14,7 @@ from .actionable_active_handoff import (
     add_actionable_priority,
     add_unconditional_cross_target,
     fit_observability_model,
+    mark_focus_eligibility,
 )
 from .attention_flatfile_replay import FLATFILE_CACHE_DIR, build_flatfile_scan_day
 from .config import load_settings, require_flatfile_credentials
@@ -93,14 +94,16 @@ def run_probe(
 
         scan, _ = build_flatfile_scan_day(store, scan_client, day)
         causal_market = build_market_hazard_frame(scan)
-        scored, _, _ = select_learned_focus(
+        scored, focus, _ = select_learned_focus(
             causal_market.loc[:, HAZARD_COLUMNS].copy(),
             market_model,
         )
         scored = add_actionable_priority(scored, observability_model)
+        scored = mark_focus_eligibility(scored, focus)
         active_rows, _ = transport.active_observation_rows_with_state(
             scored,
             score_column="active_priority",
+            desired_eligible_column="transport_focus_eligible",
         )
         active_rows = add_unconditional_cross_target(active_rows)
         candidate_parts.append(active_rows)
