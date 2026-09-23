@@ -286,14 +286,22 @@ failed the operational gate because subscription additions rose from 4.20 to
 8.01 per decision. This validates responsive attention while rejecting the
 attempt to encode both model preference and transport stability in one set.
 
-The active work now splits those concerns. Request 134 is a diagnostic on the
-already-opened first April block measuring one-second pre-threshold activity
-inside completed-minute blind spots, directly testing how much recall a future
-event-driven scanner could recover. Request 135 uses untouched 2026-04-16
-through 2026-04-22 sessions to keep the model's desired current top-20 separate
-from a rate-limited active subscription set that moves by at most five new
-names per update. April 23 and later remain sealed. ENTRY/ABSTAIN remains
-blocked until the attention and observation handoff is validated.
+Request 134 then measured one-second observability inside the 532
+completed-minute blind crossings from the already-opened first April block.
+All 532 had second data, but 381 / 531 located second-level crossings (71.75%)
+were already beyond +10% on their first active second. Only 150 / 531 (28.25%)
+had any active pre-threshold second, only 21 had at least five active seconds
+of warning, and only five had at least ten. Event-driven broad scanning remains
+architecturally necessary, but most of the old headline recall denominator
+contains sparse jump/gap events that provide no causal pre-cross observation
+window in the available stream. Scanner evaluation must therefore report both
+raw crossing recall and recall conditional on genuine causal observability.
+
+Request 135 is the active fresh-block test on untouched 2026-04-16 through
+2026-04-22 sessions. It keeps the model's desired current top-20 separate from
+a rate-limited active subscription set that moves by at most five new names
+per update. April 23 and later remain sealed. ENTRY/ABSTAIN remains blocked
+until the attention and observation handoff is validated.
 
 ### Milestone 3 — policy integration
 
