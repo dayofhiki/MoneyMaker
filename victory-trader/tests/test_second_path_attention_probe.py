@@ -6,7 +6,9 @@ import pandas as pd
 from victory_trader.second_path_attention_probe import (
     BASELINE_FEATURES,
     SECOND_FEATURES,
+    _annotate_scan,
     fit_and_evaluate,
+    second_feature_window,
     second_path_features,
 )
 
@@ -68,3 +70,65 @@ def test_fit_and_evaluate_keeps_last_two_sessions_untouched():
     assert set(modeled.loc[modeled["split"].eq("eval"), "trading_day"]) == set(days[4:])
     assert modeled["baseline_prediction"].notna().all()
     assert modeled["extended_prediction"].notna().all()
+
+
+def test_second_feature_window_matches_original_boolean_boundaries():
+    decision_t = 60_000
+    seconds = pd.DataFrame(
+        [
+            {"t": 0, "o": 1.0, "h": 1.0, "l": 1.0, "c": 1.0, "v": 1, "n": 1},
+            {"t": 1_000, "o": 1.0, "h": 1.0, "l": 1.0, "c": 1.0, "v": 1, "n": 1},
+            {"t": 58_000, "o": 1.0, "h": 1.0, "l": 1.0, "c": 1.0, "v": 1, "n": 1},
+            {"t": 59_000, "o": 1.0, "h": 1.0, "l": 1.0, "c": 1.0, "v": 1, "n": 1},
+            {"t": 60_000, "o": 9.0, "h": 9.0, "l": 9.0, "c": 9.0, "v": 9, "n": 9},
+        ]
+    )
+    expected = seconds.loc[
+        seconds["t"].ge(decision_t - 60_000)
+        & (seconds["t"] + 1_000).le(decision_t)
+    ]
+    actual = second_feature_window(seconds, decision_t)
+    pd.testing.assert_frame_equal(
+        actual.reset_index(drop=True),
+        expected.reset_index(drop=True),
+    )
+
+
+def test_annotate_scan_resets_lagged_features_at_trading_day_boundary():
+    scan = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-05-14",
+                "ticker": "AAA",
+                "t": 60_000,
+                "o": 1.0,
+                "h": 1.2,
+                "l": 1.0,
+                "c": 1.2,
+                "v": 100.0,
+                "n": 10.0,
+                "return_from_previous_close_pct": 20.0,
+            },
+            {
+                "trading_day": "2026-05-15",
+                "ticker": "AAA",
+                "t": 60_000,
+                "o": 1.0,
+                "h": 1.01,
+                "l": 0.99,
+                "c": 1.0,
+                "v": 10.0,
+                "n": 2.0,
+                "return_from_previous_close_pct": 0.0,
+            },
+        ]
+    )
+
+    result = _annotate_scan(scan)
+    second_day = result.loc[result["trading_day"].eq("2026-05-15")].iloc[0]
+
+    assert pd.isna(second_day["minute_return_1m_pct"])
+    assert pd.isna(second_day["return_accel_1m_pct"])
+    assert pd.isna(second_day["volume_ratio_prev1"])
+    assert pd.isna(second_day["transactions_ratio_prev1"])
+    assert bool(second_day["already_runner"]) is False
