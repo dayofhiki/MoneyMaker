@@ -124,10 +124,9 @@ def _selected_ticker_day_frame(
     keys["trading_day"] = keys["trading_day"].astype(str)
     keys["ticker"] = keys["ticker"].astype(str).str.upper()
     keys = keys.drop_duplicates()
-    work = frame.copy()
-    work["trading_day"] = work["trading_day"].astype(str)
-    work["ticker"] = work["ticker"].astype(str).str.upper()
-    return work.merge(
+    # build_flatfile_scan_day and _position_scan_features already normalize
+    # these keys; avoiding another full-market copy keeps peak memory bounded.
+    return frame.merge(
         keys,
         on=["trading_day", "ticker"],
         how="inner",
@@ -157,6 +156,8 @@ def build_position_rows(
             "position_ticker_day_requests": 0,
             "nonempty_second_ticker_days": 0,
             "second_feature_row_coverage": None,
+            "materialized_market_rows": 0,
+            "full_market_rows": int(len(scan)),
         }
 
     # Cross-sectional rank needs the whole market at each timestamp, but all
