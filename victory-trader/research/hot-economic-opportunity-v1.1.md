@@ -205,3 +205,37 @@ No fixed holding horizon may be selected from request-139 or request-140
 outcomes.
 
 May 21 and later remain sealed.
+
+## Result — request 140B
+
+Authoritative fresh run: `35829190438`, completed successfully. Evaluation used
+only 2026-05-14, 05-15, 05-18, 05-19 and 05-20; May 21 and later remained
+sealed.
+
+The economic-opportunity signal replicated strongly on 1,881 labeled first-HOT
+episodes. Pooled classifier ROC AUC was 0.6334 and exceeded random on all five
+days (daily AUC 0.6126 to 0.6464). The opportunity-value regressor achieved
+Spearman 0.2704 and was positive on all five days (0.1733 to 0.3241).
+
+The calibration-frozen top-quartile score boundary selected 503 / 1,881
+labeled episodes (26.74%). Their hindsight 30-minute oracle BASE mean was
++1.255% versus +0.452% across all first-HOT episodes, and their cost-positive
+opportunity rate was 53.28% versus 42.42% overall. Selected oracle mean exceeded
+the daily all-HOT mean on all five fresh sessions.
+
+The formal preregistered promotion gate remained false for one non-predictive
+reason: 2026-05-15 economic-label coverage was 94.59%, below the frozen 95%
+floor by 0.41 percentage points. The other four days had 97.27% to 98.10%
+coverage. All predictive ordering and selection-effect conditions passed.
+This result is therefore not retroactively promoted, but it establishes strong
+fresh evidence that causal first-HOT state contains learnable economic-value
+information.
+
+### Decision
+
+Do not weaken the 95% coverage gate or relabel request 140B as a pass. Diagnose
+the small May-15 label-coverage shortfall without tuning predictive models on
+this block. The active research frontier nevertheless moves to a preregistered
+executable policy experiment: combine the frozen opportunity representation
+with causal BUY/WAIT/ABSTAIN and recurrent HOLD/EXIT, while keeping May 21 and
+later sealed until that policy is frozen.
