@@ -100,6 +100,15 @@ jobs:
             tests/test_active_transport_integrated_hierarchy.py \
             tests/test_observation_transport.py
 
+      - name: Download promoted request 138 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-explicit-transport-integrated-hot-v17-138
+          path: victory-trader/artifacts/request138
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: dayofhiki/MoneyMaker
+          run-id: 35824096991
+
       - name: Restore market-wide Flat File cache
         uses: actions/cache/restore@v4
         with:
@@ -123,8 +132,8 @@ jobs:
           set -o pipefail
           mkdir -p artifacts
           python -m victory_trader.hot_entry_economics_probe \
-            "${{ needs.request.outputs.start_date }}" \
-            "${{ needs.request.outputs.end_date }}" \
+            --attention-trace artifacts/request138/explicit-transport-integrated-hot-v17.parquet \
+            --attention-summary artifacts/request138/explicit-transport-integrated-hot-v17.json \
             --output artifacts/hot-entry-economics-v10.parquet \
             --summary artifacts/hot-entry-economics-v10.json \
             | tee artifacts/hot-entry-economics-v10.log
