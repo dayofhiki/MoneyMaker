@@ -7,10 +7,12 @@ import pandas as pd
 import pytest
 
 from victory_trader.execution_costs import DEFAULT_EXECUTION_SCENARIOS, net_round_trip_return_pct
+from victory_trader.second_path_attention_probe import _annotate_scan
 from victory_trader.selected_hot_position_value_observability import (
     BASE_SCENARIO,
     MODEL_FEATURES,
     _base_return,
+    _selected_position_scan_features,
     apply_excess_target,
     build_position_rows,
     fit_minute_baselines,
@@ -181,3 +183,46 @@ def test_position_base_return_matches_shared_execution_cost_model():
     assert _base_return(entry, exit_price) == pytest.approx(
         net_round_trip_return_pct(entry, gross, base)
     )
+
+
+def test_selected_position_annotation_matches_full_market_reference():
+    day = "2026-05-07"
+    rows = []
+    for ticker, score_base in [("A", 0.9), ("B", 0.4)]:
+        for idx, timestamp in enumerate([180_000, 240_000]):
+            close = 1.0 + 0.1 * idx + (0.02 if ticker == "A" else 0.0)
+            rows.append(
+                {
+                    "trading_day": day,
+                    "ticker": ticker,
+                    "t": timestamp,
+                    "o": close - 0.02,
+                    "h": close + 0.03,
+                    "l": close - 0.03,
+                    "c": close,
+                    "v": 100.0 + idx * 10,
+                    "n": 10.0 + idx,
+                    "attention_score": score_base - idx * 0.01,
+                    "return_from_previous_close_pct": close * 10.0 - 10.0,
+                }
+            )
+    scan = pd.DataFrame(rows)
+    anchors = pd.DataFrame(
+        [{"trading_day": day, "ticker": "A", "t": 120_000}]
+    )
+
+    reference = _annotate_scan(scan)
+    reference["attention_rank"] = reference.groupby(
+        ["trading_day", "t"], sort=False
+    )["attention_score"].rank(method="first", ascending=False)
+    reference = reference.loc[reference["ticker"].eq("A")].sort_values("t")
+
+    optimized = _selected_position_scan_features(scan, anchors).sort_values("t")
+
+    for column in MODEL_FEATURES:
+        if column in reference.columns:
+            pd.testing.assert_series_equal(
+                pd.to_numeric(optimized[column], errors="coerce").reset_index(drop=True),
+                pd.to_numeric(reference[column], errors="coerce").reset_index(drop=True),
+                check_names=False,
+            )
