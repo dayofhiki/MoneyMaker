@@ -269,14 +269,31 @@ failed because focus-60 prior-minute capture was 49.40% versus the 50% floor
 and shortlist capture conditional on focus was 91.82% versus the 95% floor.
 HOT conditional retention was 93.93%, so the remaining loss is upstream.
 
-Request 132 is the active diagnostic. It reuses only the already-opened
-2026-04-01, 04-02, 04-06, 04-07 and 04-08 sessions to decompose those upstream
-misses. It records the hazard rank of every next-minute runner and compares the
-already-existing stateless top-20 against the request-131 rank-40 incumbent
-hysteresis selector, including whether current top-ranked challengers are
-blocked by incumbent priority. It tests no new threshold, feature, budget or
-selector. April 9 and later remain sealed for the next preregistered structural
-change. ENTRY/ABSTAIN remains blocked until the attention handoff passes.
+Request 132 decomposed that failure without opening new dates. Only 557 of
+1,089 crossings had an eligible exact prior completed-minute hazard row, and
+focus-60 captured 538 of those 557 (96.59%). The 49.40% headline focus rate is
+therefore near the observability ceiling of the current completed-minute input
+on that block rather than evidence that the ranker misses half of observable
+opportunities. Stateless top-20 retained 497 / 538 focus captures (92.38%);
+rank-40 hysteresis retained 494 / 538 (91.82%), so incumbency cost only three
+net captures. The remaining fixed-capacity loss concentrated in broad
+opportunity regimes such as 2026-04-08.
+
+Request 133 then tested bounded-turnover challenger admission on untouched
+2026-04-09 through 2026-04-15 sessions. It raised shortlist retention from
+94.49% to 95.66% of focus captures and was non-lower on all five days, but
+failed the operational gate because subscription additions rose from 4.20 to
+8.01 per decision. This validates responsive attention while rejecting the
+attempt to encode both model preference and transport stability in one set.
+
+The active work now splits those concerns. Request 134 is a diagnostic on the
+already-opened first April block measuring one-second pre-threshold activity
+inside completed-minute blind spots, directly testing how much recall a future
+event-driven scanner could recover. Request 135 uses untouched 2026-04-16
+through 2026-04-22 sessions to keep the model's desired current top-20 separate
+from a rate-limited active subscription set that moves by at most five new
+names per update. April 23 and later remain sealed. ENTRY/ABSTAIN remains
+blocked until the attention and observation handoff is validated.
 
 ### Milestone 3 — policy integration
 
