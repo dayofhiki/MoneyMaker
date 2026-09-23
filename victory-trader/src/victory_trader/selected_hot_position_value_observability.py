@@ -108,14 +108,6 @@ def _open_map(scan: pd.DataFrame) -> dict[tuple[str, str, int], float]:
     }
 
 
-def _position_scan_features(scan: pd.DataFrame) -> pd.DataFrame:
-    annotated = _annotate_scan(scan)
-    annotated["attention_rank"] = annotated.groupby(
-        ["trading_day", "t"], sort=False
-    )["attention_score"].rank(method="first", ascending=False)
-    return annotated
-
-
 def _selected_ticker_day_frame(
     frame: pd.DataFrame,
     anchors: pd.DataFrame,
@@ -131,6 +123,37 @@ def _selected_ticker_day_frame(
         on=["trading_day", "ticker"],
         how="inner",
         validate="many_to_one",
+    )
+
+
+def _selected_position_scan_features(
+    scan: pd.DataFrame,
+    anchors: pd.DataFrame,
+) -> pd.DataFrame:
+    """Annotate only position ticker-days while preserving market-wide rank."""
+
+    selected = _selected_ticker_day_frame(scan, anchors)
+    annotated = _annotate_scan(selected)
+
+    rank_frame = scan.loc[
+        :, ["trading_day", "ticker", "t", "attention_score"]
+    ].copy()
+    rank_frame["trading_day"] = rank_frame["trading_day"].astype(str)
+    rank_frame["ticker"] = rank_frame["ticker"].astype(str).str.upper()
+    rank_frame = rank_frame.sort_values(
+        ["trading_day", "ticker", "t"], kind="stable"
+    )
+    rank_frame["attention_rank"] = rank_frame.groupby(
+        ["trading_day", "t"], sort=False
+    )["attention_score"].rank(method="first", ascending=False)
+
+    return annotated.merge(
+        rank_frame.loc[
+            :, ["trading_day", "ticker", "t", "attention_rank"]
+        ],
+        on=["trading_day", "ticker", "t"],
+        how="left",
+        validate="one_to_one",
     )
 
 
@@ -160,12 +183,10 @@ def build_position_rows(
             "full_market_rows": int(len(scan)),
         }
 
-    # Cross-sectional rank needs the whole market at each timestamp, but all
-    # later materialization can be restricted to ticker-days that actually
-    # have a first-HOT anchor.
-    annotated_market = _position_scan_features(scan)
+    # Cross-sectional rank still uses the whole market at each timestamp.
+    # Expensive lag/path annotation is restricted to anchored ticker-days.
     selected_scan = _selected_ticker_day_frame(scan, anchors)
-    selected_annotated = _selected_ticker_day_frame(annotated_market, anchors)
+    selected_annotated = _selected_position_scan_features(scan, anchors)
 
     opens = _open_map(selected_scan)
     open_groups: dict[tuple[str, str], list[tuple[int, float]]] = {}
@@ -364,7 +385,7 @@ def build_position_rows(
         "nonempty_second_ticker_days": nonempty_second_days,
         "second_feature_row_coverage": second_coverage,
         "materialized_market_rows": int(len(selected_annotated)),
-        "full_market_rows": int(len(annotated_market)),
+        "full_market_rows": int(len(scan)),
     }
 
 
