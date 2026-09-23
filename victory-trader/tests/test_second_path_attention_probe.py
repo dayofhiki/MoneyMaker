@@ -7,6 +7,7 @@ from victory_trader.second_path_attention_probe import (
     BASELINE_FEATURES,
     SECOND_FEATURES,
     _annotate_scan,
+    _second_frame,
     fit_and_evaluate,
     second_feature_window,
     second_path_features,
@@ -132,3 +133,19 @@ def test_annotate_scan_resets_lagged_features_at_trading_day_boundary():
     assert pd.isna(second_day["volume_ratio_prev1"])
     assert pd.isna(second_day["transactions_ratio_prev1"])
     assert bool(second_day["already_runner"]) is False
+
+
+def test_second_frame_enforces_searchsorted_ordering_invariant():
+    frame = _second_frame(
+        {
+            "results": [
+                {"t": 2_000, "o": 2.0, "h": 2.0, "l": 2.0, "c": 2.0, "v": 2.0},
+                {"t": 1_000, "o": 1.0, "h": 1.0, "l": 1.0, "c": 1.0, "v": 1.0},
+                {"t": 2_000, "o": 2.1, "h": 2.1, "l": 2.1, "c": 2.1, "v": 3.0},
+            ]
+        }
+    )
+
+    assert frame["t"].is_monotonic_increasing
+    assert frame["t"].tolist() == [1_000, 2_000]
+    assert frame.iloc[-1]["c"] == 2.1
