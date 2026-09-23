@@ -1,0 +1,16 @@
+{
+  "request_id": 151,
+  "operation": "fresh_active_transport_capacity_v1",
+  "eval_days": [
+    "2026-05-21",
+    "2026-05-22",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28"
+  ],
+  "opens_new_dates": true,
+  "primary_max_additions": 8,
+  "comparator_max_additions": 5,
+  "retention_value": "active_priority * transport_survival_probability",
+  "note": "Fresh confirmation only. All policy and gate definitions were committed before this request. No later session is opened."
+}
