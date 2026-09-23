@@ -3,5 +3,6 @@
   "operation": "explicit_transport_integrated_hot_v17",
   "start_date": "2026-01-02",
   "end_date": "2026-05-13",
-  "note": "Fresh May7/8/11/12/13 confirmation. Keep request-137 predictive hierarchy unchanged. Audit true subscription state directly from selector membership so temporary feature-row absence does not count as unsubscribe/resubscribe. May14+ remain sealed."
+  "note": "Retry after correcting a unit-test fixture. The first attempt stopped before cache restore/data replay; architecture, gates, and fresh May7/8/11/12/13 block are unchanged.",
+  "retry": 1
 }
