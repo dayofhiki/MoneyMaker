@@ -148,3 +148,40 @@ def test_learned_focus_and_shortlist_respect_fixed_budgets():
     assert len(shortlist) == SHORTLIST_BUDGET == 20
     assert shortlist["ticker"].tolist()[0] == "T099"
     assert shortlist["ticker"].tolist()[-1] == "T080"
+
+
+def test_market_hazard_never_links_next_session_as_next_minute():
+    scan = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-02-25",
+                "ticker": "AAA",
+                "t": 60_000,
+                "o": 1.0,
+                "h": 1.01,
+                "l": 0.99,
+                "c": 1.0,
+                "v": 100,
+                "n": 10,
+                "attention_score": 0.5,
+                "return_from_previous_close_pct": 4.0,
+                "runner_cross_now": False,
+            },
+            {
+                "trading_day": "2026-02-26",
+                "ticker": "AAA",
+                "t": 120_000,
+                "o": 1.0,
+                "h": 1.12,
+                "l": 1.0,
+                "c": 1.11,
+                "v": 300,
+                "n": 30,
+                "attention_score": 0.9,
+                "return_from_previous_close_pct": 11.0,
+                "runner_cross_now": True,
+            },
+        ]
+    )
+
+    assert build_market_hazard_rows(scan).empty
