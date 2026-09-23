@@ -131,6 +131,12 @@ def build_position_rows(
     """Build causal minute-by-minute post-entry states for first-HOT anchors."""
 
     opens = _open_map(scan)
+    open_groups: dict[tuple[str, str], list[tuple[int, float]]] = {}
+    for (day, ticker, timestamp), price in opens.items():
+        open_groups.setdefault((day, ticker), []).append((timestamp, price))
+    for key in open_groups:
+        open_groups[key].sort()
+
     minute_rows = _minute_lookup(scan)
     completed = _ticker_completed_rows(scan)
     second_cache: dict[tuple[str, str], pd.DataFrame] = {}
@@ -165,14 +171,11 @@ def build_position_rows(
             continue
 
         cap_t = entry_actual_t + MAX_HOLD_MINUTES * MINUTE_MS
-        future_open_pairs = sorted(
-            (
-                timestamp,
-                price,
-            )
-            for (d, tick, timestamp), price in opens.items()
-            if d == day and tick == ticker and entry_actual_t < timestamp <= cap_t
-        )
+        future_open_pairs = [
+            (timestamp, price)
+            for timestamp, price in open_groups.get(key, [])
+            if entry_actual_t < timestamp <= cap_t
+        ]
 
         for held in range(1, MAX_HOLD_MINUTES):
             state_t = entry_actual_t + held * MINUTE_MS
