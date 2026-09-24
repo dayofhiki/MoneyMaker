@@ -1,0 +1,11 @@
+{
+  "request_id": 187,
+  "operation": "fresh_buy_horizon_ceiling_audit",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "policy_changed": false,
+  "promotion_eligible": false,
+  "horizons_minutes": [1, 2, 3, 5, 10, 15, 30],
+  "bootstrap_samples": 10000,
+  "interpretation": "Oracle ceiling diagnostic only. Determines whether fresh BUY population economics are absent or merely delayed beyond short horizons."
+}
