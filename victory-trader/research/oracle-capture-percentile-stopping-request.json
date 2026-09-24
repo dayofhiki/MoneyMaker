@@ -1,0 +1,15 @@
+{
+  "request_id": 189,
+  "operation": "oracle_capture_percentile_stopping",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "capture_target": "within-episode percentile rank of current executable BASE exit among all exits through minute30",
+  "threshold_candidates": [0.7, 0.8, 0.9],
+  "threshold_selection": "highest chronological-calibration day-balanced BASE return among candidates with >=90% completion; ties choose lower threshold",
+  "min_start_coverage": 0.85,
+  "min_completion_coverage": 0.9,
+  "min_fresh_capture_spearman": 0.1,
+  "bootstrap_samples": 10000,
+  "note": "Development-only recurrent stopping test. Threshold is selected only on old chronological calibration before fresh evaluation."
+}
