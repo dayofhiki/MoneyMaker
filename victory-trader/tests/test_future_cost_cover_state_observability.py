@@ -6,6 +6,7 @@ import pandas as pd
 from victory_trader.future_cost_cover_state_observability import (
     CLASSIFIER_SEED,
     EARLY_MAX_MINUTE,
+    FEATURES,
     MIN_AUC,
     MIN_EARLY_AUC,
     MIN_EARLY_VALUE_SPEARMAN,
@@ -17,7 +18,6 @@ from victory_trader.future_cost_cover_state_observability import (
     PROBABILITY_GATE_QUANTILE,
     REGRESSOR_SEED,
     REQUEST_ID,
-    FEATURES,
     _day_weights,
     add_targets,
 )
@@ -52,9 +52,9 @@ def test_future_cost_cover_target_is_strictly_positive():
     )
     result = add_targets(frame)
     target = result["future_cost_coverable"].tolist()
-    assert target[0] is False or target[0] == False
-    assert target[1] is False or target[1] == False
-    assert target[2] is True or target[2] == True
+    assert not bool(target[0])
+    assert not bool(target[1])
+    assert bool(target[2])
     assert pd.isna(target[3])
 
 
