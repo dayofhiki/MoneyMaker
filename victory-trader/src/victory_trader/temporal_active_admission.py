@@ -82,42 +82,31 @@ def add_cross_within_horizon_targets(
             raise ValueError(f"missing session bounds for {day_text}")
         close_by_day[str(day_text)] = int(bounds[1].timestamp() * 1000)
 
+    crossing_index = pd.MultiIndex.from_frame(
+        crossings.loc[:, ["trading_day", "ticker", "t"]]
+    )
+    day_values = base["trading_day"].astype(str).to_numpy()
+    ticker_values = base["ticker"].astype(str).to_numpy()
+    t_values = pd.to_numeric(base["t"], errors="raise").astype("int64").to_numpy()
+
     for horizon in horizons:
         positive = np.zeros(len(base), dtype=bool)
         for minute in range(1, horizon + 1):
-            future = crossings.copy()
-            future["t"] = (
-                pd.to_numeric(future["t"], errors="raise").astype("int64")
-                - minute * MINUTE_MS
-            )
-            future = future.drop_duplicates(
-                ["trading_day", "ticker", "t"],
-                keep="first",
-            )
-            future[f"cross_plus_{minute}m"] = True
-            base = base.merge(
-                future[
-                    [
-                        "trading_day",
-                        "ticker",
-                        "t",
-                        f"cross_plus_{minute}m",
-                    ]
+            future_keys = pd.MultiIndex.from_arrays(
+                [
+                    day_values,
+                    ticker_values,
+                    t_values + minute * MINUTE_MS,
                 ],
-                on=["trading_day", "ticker", "t"],
-                how="left",
-                validate="one_to_one",
+                names=["trading_day", "ticker", "t"],
             )
-            hit = base[f"cross_plus_{minute}m"].fillna(False).astype(bool)
-            positive |= hit.to_numpy(dtype=bool)
+            positive |= future_keys.isin(crossing_index)
 
-        t = pd.to_numeric(base["t"], errors="raise").astype("int64")
-        close_ms = base["trading_day"].map(close_by_day).astype("int64")
-        full_horizon = (t + horizon * MINUTE_MS).le(close_ms)
-        target = pd.Series(np.nan, index=base.index, dtype=float)
-        target.iloc[np.flatnonzero(positive)] = 1.0
-        negative = full_horizon.to_numpy(dtype=bool) & ~positive
-        target.iloc[np.flatnonzero(negative)] = 0.0
+        close_ms = base["trading_day"].map(close_by_day).astype("int64").to_numpy()
+        full_horizon = (t_values + horizon * MINUTE_MS) <= close_ms
+        target = np.full(len(base), np.nan, dtype=float)
+        target[positive] = 1.0
+        target[full_horizon & ~positive] = 0.0
         base[f"target_cross_within_{horizon}m"] = target
 
     return base
