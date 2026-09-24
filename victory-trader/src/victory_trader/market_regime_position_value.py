@@ -286,6 +286,14 @@ def run(
     calibration = pd.read_parquet(calibration_path)
     evaluation = pd.read_parquet(evaluation_path)
     scan = pd.read_parquet(scan_path)
+    wanted_days = set(
+        fit["trading_day"].astype(str).unique().tolist()
+        + calibration["trading_day"].astype(str).unique().tolist()
+        + evaluation["trading_day"].astype(str).unique().tolist()
+    )
+    scan = scan.loc[
+        scan["trading_day"].astype(str).isin(wanted_days)
+    ].copy()
 
     regime = build_market_regime(scan)
     fit = attach_market_regime(fit, regime)
