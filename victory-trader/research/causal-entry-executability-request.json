@@ -17,6 +17,6 @@
   "fresh_min_buy_per_day": 25,
   "fresh_exec_auc_gate": 0.55,
   "fixed_horizons_diagnostic_only": true,
-  "execution_attempt": 2,
-  "execution_note": "Retry after lint-only unused-import fix; no fresh market session had been opened in attempt 1."
+  "execution_attempt": 3,
+  "execution_note": "Infrastructure-only parallel day shards; scientific contract unchanged and attempt 2 fresh preparation still has no observed result."
 }
