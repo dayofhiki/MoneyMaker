@@ -77,6 +77,17 @@ Semantics remain exact-time and causal.
    stop, or a full causal policy replay) rather than treating every eventual
    +3% oracle winner as capturable.
 
+8. Legacy Request-189/192 trajectory helpers contain the same historical
+   "missing state -> fallback exit" completion convention. Those helpers may
+   remain useful for reproducing their original research reports, but they must
+   not be reused as the execution engine for the next MoneyMaker policy.
+   New executable policy code must distinguish:
+   - no causal state observed: no new trading decision;
+   - EXIT decision observed but execution unavailable: pending/unresolved
+     execution;
+   - exact research-cap execution: resolve only from an exact causal execution
+     reference, not from an earlier data gap.
+
 ## Goal
 
 The next executable experiment should be judged only by causal, realizable
