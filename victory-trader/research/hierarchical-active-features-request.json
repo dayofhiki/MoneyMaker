@@ -1,0 +1,20 @@
+{
+  "request_id": 159,
+  "operation": "hierarchical_active_features_v1",
+  "opens_new_dates": false,
+  "eval_days": [
+    "2026-05-21",
+    "2026-05-22",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28"
+  ],
+  "focus_cap": 180,
+  "horizon_minutes": 3,
+  "target_selected_fraction": 0.1291012691012691,
+  "added_features": ["market_hazard_probability", "market_rank"],
+  "target_capture": 0.95,
+  "tail_target_captured": 7,
+  "max_burden_ratio": 1.1,
+  "note": "Test whether upstream learned Focus probability/rank improve Active discrimination, especially market-hazard ranks 61-180."
+}
