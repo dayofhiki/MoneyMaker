@@ -63,10 +63,7 @@ from .market_regime_positive_value import (
 )
 from .massive_client import MassiveClient
 from .market_calendar import is_us_equity_trading_day
-from .rich_second_position_value import (
-    RICH_SECOND_FEATURES,
-    rich_second_features,
-)
+from .rich_second_position_value import rich_second_features
 from .second_path_attention_probe import (
     SECOND_CACHE_DIR,
     _second_frame,
