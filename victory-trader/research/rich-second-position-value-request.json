@@ -1,0 +1,15 @@
+{
+  "request_id": 171,
+  "operation": "rich_second_position_remaining_value",
+  "opens_new_dates": false,
+  "source_position_run_id": 36027818439,
+  "tick_trade_data_used": false,
+  "nbbo_data_used": false,
+  "rich_second_feature_count": 20,
+  "min_eval_feature_coverage": 0.85,
+  "min_pooled_spearman_improvement": 0.03,
+  "min_same_minute_median_improvement": 0.02,
+  "min_selected_rate": 0.10,
+  "min_good_days": 4,
+  "bootstrap_ci_low_must_be_positive": true
+}
