@@ -19,5 +19,7 @@
   "max_executed_rate": 0.4,
   "min_positive_days": 3,
   "bootstrap_samples": 10000,
-  "note": "No percentile filtering and no fresh threshold fitting. Development-only economic-entry representation test."
+  "note": "No percentile filtering and no fresh threshold fitting. Development-only economic-entry representation test.",
+  "execution_attempt": 2,
+  "execution_note": "Retry after lint-only cleanup; research design, data and gates unchanged."
 }
