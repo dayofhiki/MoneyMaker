@@ -97,3 +97,26 @@ def test_reference_account_releases_partial_cash():
         rel_tol=0,
         abs_tol=1e-8,
     )
+
+
+def test_silent_minute_does_not_force_exit(monkeypatch):
+    monkeypatch.setattr(
+        target,
+        "_marked_base_return",
+        lambda row: float(row["test_mark"]),
+    )
+    frame = _episode(
+        [1.0, 2.0, 3.0],
+        [0.5, 1.5, 2.5],
+    )
+    frame.loc[1, "minutes_held"] = 3.0
+    frame.loc[2, "minutes_held"] = 4.0
+    spec = target.PolicySpec(-5.0, 10.0, 5.0)
+    trajectories, _ = target.build_policy_trajectories(
+        frame,
+        spec,
+    )
+    row = trajectories.iloc[0]
+    assert row["exit_reason"] != "missing_state_next_minute_exit"
+    assert row["exit_reason"] != "missing_state_delayed_open_exit"
+    assert row["minutes_held"] != 2.0
