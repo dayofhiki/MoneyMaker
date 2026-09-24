@@ -644,15 +644,35 @@ from ranks 1-60 (641 -> 643), not from the newly exposed tail. The same raw
 numeric threshold also underperformed, confirming that simple score-scale
 changes do not solve the issue.
 
-The current development baseline therefore remains Focus cap 180 with the
-request-156 Focus-60-trained three-minute Active model and its frozen q65
-threshold. Broad retraining alone is not promoted. The next diagnostic should
-target feature/representation quality for the Active handoff, especially the
-61-180 tail: the temporal model currently does not directly consume the learned
-market-hazard probability/rank that caused a ticker to enter learned Focus.
-Test hierarchical Focus-context features and inspect missed-tail separability
-before opening later fresh sessions. Request 148 remains blocked until the
-corrected attention handoff is promoted.
+Request 159 then added the upstream learned Focus context directly to the
+Focus-180-trained three-minute Active model. Adding both market-hazard
+probability and market rank raised overall supported capture from 647/684
+(94.59%) to 652/684 (95.32%) while slightly reducing mean Active count from
+21.45 to 20.91. However, the mechanism hypothesis failed: rank-61-180 capture
+fell from 4/14 to 3/14. The preregistered diagnosis was therefore
+**hierarchical_focus_context_regression** despite the strong overall gain.
+
+Request 160 ablated those two hierarchical features. The clean result was that
+**market_hazard_probability alone** retained the full 652/684 overall capture
+(95.32%), improved Focus-180 average precision from 0.2469 to 0.2506, reduced
+mean Active count from 21.45 to 21.04, and preserved tail capture at 4/14.
+By contrast, market rank alone captured only 648/684 overall and collapsed the
+rank-61-180 tail from 4/14 to **0/14**. Using probability and rank together
+again produced 652/684 overall but tail capture regressed to 3/14. The
+preregistered Request-160 diagnosis was **hierarchical_ablation_candidate**,
+with `hazard_probability_only` selected.
+
+This resolves the feature-transfer question. Absolute upstream hazard evidence
+is useful to Active; relative market rank is harmful because it reintroduces a
+rank-order bias that suppresses lower-ranked but still valid candidates. The
+current development candidate is therefore: learned Focus cap 180, a
+Focus-180-trained three-minute Active model, BASELINE_FEATURES plus
+market_hazard_probability, and the fit-period burden-matched threshold
+0.003093198572895277. It captures 652/684 supported crossings (95.32%) on the
+opened May block at mean Active count 21.04 while preserving 4/14 capture in
+market-hazard ranks 61-180. Freeze this candidate before any chronologically
+later unseen validation. Request 148 remains blocked until the corrected
+attention handoff passes fresh validation.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
