@@ -1,0 +1,21 @@
+{
+  "request_id": 181,
+  "operation": "fresh_entry_economics_audit",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "policy_changed": false,
+  "audits": [
+    "immediate_entry_to_minute1_exit",
+    "one_minute_wait_counterfactual"
+  ],
+  "base_execution_model_changed": false,
+  "price_bins": ["<1", "1-2", "2-5", "5-10", ">=10"],
+  "bootstrap_samples": 10000,
+  "interpretation": {
+    "execution_dominant": "mean execution drag exceeds absolute adverse gross move",
+    "price_move_dominant": "absolute adverse gross move exceeds mean execution drag",
+    "mixed": "otherwise or pooled gross movement is positive",
+    "robust_wait_signal": "delayed-minus-immediate bootstrap 95% lower bound > 0"
+  }
+}
