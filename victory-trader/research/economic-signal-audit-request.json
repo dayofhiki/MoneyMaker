@@ -5,5 +5,7 @@
   "opens_new_dates": false,
   "changes_model": false,
   "changes_threshold": false,
-  "goal": "Identify causal economic signals, explain missing labels, and measure BASE net returns at fixed exits for the frozen Request-163 selector."
+  "goal": "Identify causal economic signals, explain missing labels, and measure BASE net returns at fixed exits for the frozen Request-163 selector.",
+  "execution_attempt": 2,
+  "execution_note": "Reuse completed Request-163 first-HOT artifact instead of replaying attention; scientific diagnostic unchanged."
 }
