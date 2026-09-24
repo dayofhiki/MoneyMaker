@@ -9,5 +9,7 @@
   "min_start_coverage": 0.85,
   "min_completion_coverage": 0.9,
   "bootstrap_samples": 10000,
-  "note": "Development-only relative trend controller. No absolute EV threshold, percentile, patience count, or fresh-tuned score drop."
+  "note": "Development-only relative trend controller. No absolute EV threshold, percentile, patience count, or fresh-tuned score drop.",
+  "execution_attempt": 2,
+  "execution_note": "Retry after floating-point test-tolerance fix only; research design, data, controller and gates unchanged."
 }
