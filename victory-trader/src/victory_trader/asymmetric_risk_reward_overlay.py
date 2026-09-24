@@ -28,7 +28,6 @@ from .future_viability_capture_controller import (
 from .oracle_capture_percentile_stopping import (
     BOOTSTRAP_SEED,
     _episode_rows,
-    _first_later_exit,
     build_trajectories,
     matched_difference,
     summarize,
@@ -175,16 +174,12 @@ def build_policy_trajectories(
         while minute < MAX_HOLD_MINUTES:
             row = by_minute.get(minute)
             if row is None:
-                later = _first_later_exit(by_minute, minute)
-                if later is None:
-                    reason = "missing_reached_state"
-                    break
-                later_minute, value = later
-                status = "completed"
-                reason = "missing_state_delayed_open_exit"
-                final_return = float(value)
-                final_minute = float(later_minute)
-                break
+                # A silent/missing minute is not an EXIT signal. In live
+                # operation the controller would simply have no new bar-level
+                # evidence at this exact minute, so preserve the position and
+                # resume decisions at the next observed causal state.
+                minute += 1
+                continue
 
             mark = _marked_base_return(row)
             exit_now = _num(row, "exit_now_base_return_pct")
@@ -249,29 +244,10 @@ def build_policy_trajectories(
                 final_minute = float(MAX_HOLD_MINUTES)
                 break
 
-            if by_minute.get(minute + 1) is None:
-                next_return = _num(
-                    row,
-                    "next_minute_base_return_pct",
-                )
-                if pd.notna(next_return):
-                    status = "completed"
-                    reason = "missing_state_next_minute_exit"
-                    final_return = float(next_return)
-                    final_minute = float(minute + 1)
-                    break
-                later = _first_later_exit(by_minute, minute)
-                if later is not None:
-                    later_minute, value = later
-                    status = "completed"
-                    reason = "missing_state_delayed_open_exit"
-                    final_return = float(value)
-                    final_minute = float(later_minute)
-                else:
-                    reason = "missing_state_and_exit"
-                break
-
             minute += 1
+
+        if status == "unresolved" and reason == "unknown":
+            reason = "missing_forced_cap_state"
 
         records.append(
             _trajectory_record(
