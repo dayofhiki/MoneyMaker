@@ -1,0 +1,17 @@
+{
+  "request_id": 183,
+  "operation": "calibration_relative_entry_value",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "support_levels": [0.8, 0.9, 0.95],
+  "threshold_source": "old calibration best-predicted action value distribution",
+  "action_rule": "choose argmax ENTER_NOW vs WAIT_1M only when best score exceeds frozen calibration percentile threshold; otherwise ABSTAIN",
+  "selection_rule": "least selective passing level: P80 then P90 then P95",
+  "min_action_value_coverage": 0.9,
+  "min_executed_rate": 0.03,
+  "max_executed_rate": 0.4,
+  "min_positive_days": 3,
+  "bootstrap_samples": 10000,
+  "note": "Development-only support diagnostic. No new dates and no fresh-outcome threshold fitting."
+}
