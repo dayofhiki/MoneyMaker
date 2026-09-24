@@ -1,0 +1,20 @@
+{
+  "request_id": 165,
+  "operation": "causal_entry_executability_v1",
+  "fresh_days": [
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-17",
+    "2026-06-18",
+    "2026-06-22"
+  ],
+  "attention_changed": false,
+  "economic_model_changed": false,
+  "execution_target": "exact_next_minute_entry_reference_available",
+  "calibration_target_entry_rate": 0.90,
+  "fresh_pooled_entry_rate_gate": 0.90,
+  "fresh_daily_entry_rate_gate": 0.85,
+  "fresh_min_buy_per_day": 25,
+  "fresh_exec_auc_gate": 0.55,
+  "fixed_horizons_diagnostic_only": true
+}
