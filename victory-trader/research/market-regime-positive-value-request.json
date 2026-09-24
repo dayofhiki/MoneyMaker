@@ -1,0 +1,14 @@
+{
+  "request_id": 174,
+  "operation": "market_regime_positive_remaining_value_classifier",
+  "opens_new_dates": false,
+  "source_rich_second_run_id": 36033120106,
+  "source_market_scan_run_id": 36001945920,
+  "min_context_coverage": 0.95,
+  "min_global_auc": 0.55,
+  "min_same_minute_auc": 0.53,
+  "min_selected_rate": 0.10,
+  "min_selected_positive_rate": 0.58,
+  "min_good_days": 4,
+  "bootstrap_ci_low_must_be_positive": true
+}
