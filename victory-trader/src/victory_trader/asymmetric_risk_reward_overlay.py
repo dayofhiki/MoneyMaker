@@ -357,8 +357,52 @@ def build_policy_trajectories(
                 and mark >= float(spec.take_pct)
             ):
                 if pd.isna(exit_now):
-                    reason = "partial_take_missing_open"
-                    break
+                    delayed = _first_execution_at_or_after(
+                        first,
+                        grouped_opens,
+                        int(first["hot_t"])
+                        + minute * MINUTE_MS,
+                    )
+                    if delayed is None:
+                        reason = "partial_take_unfilled"
+                        break
+                    (
+                        delayed_return,
+                        delayed_minute,
+                        _,
+                    ) = delayed
+                    if (
+                        float(delayed_minute)
+                        >= MAX_HOLD_MINUTES
+                    ):
+                        # The partial order could not execute before the
+                        # mandatory liquidation decision. At the first
+                        # executable open thereafter the whole position is
+                        # liquidated, so do not pretend the half-take
+                        # happened first.
+                        status = "completed"
+                        reason = (
+                            "forced_30m_cap_delayed_execution"
+                        )
+                        final_return = float(
+                            delayed_return
+                        )
+                        final_minute = float(
+                            delayed_minute
+                        )
+                        break
+                    partial_return = float(
+                        delayed_return
+                    )
+                    partial_minute = float(
+                        delayed_minute
+                    )
+                    post_partial_peak = -np.inf
+                    minute = max(
+                        minute + 1,
+                        int(np.ceil(delayed_minute)),
+                    )
+                    continue
                 partial_return = float(exit_now)
                 partial_minute = float(minute)
                 post_partial_peak = float(mark)
@@ -486,7 +530,12 @@ def summarize_enhanced(
             "hard_stop_rate": (
                 float(
                     completed["exit_reason"]
-                    .eq("hard_stop")
+                    .isin(
+                        [
+                            "hard_stop",
+                            "hard_stop_delayed_execution",
+                        ]
+                    )
                     .mean()
                 )
                 if len(completed)
@@ -495,7 +544,12 @@ def summarize_enhanced(
             "trailing_exit_rate": (
                 float(
                     completed["exit_reason"]
-                    .eq("trailing_exit")
+                    .isin(
+                        [
+                            "trailing_exit",
+                            "trailing_exit_delayed_execution",
+                        ]
+                    )
                     .mean()
                 )
                 if len(completed)
