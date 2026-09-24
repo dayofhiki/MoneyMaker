@@ -221,3 +221,79 @@ def test_missing_state_does_not_decide_exit_but_stop_can_fill_later(
     assert row["status"] == "completed"
     assert row["exit_reason"] == "hard_stop_delayed_execution"
     assert row["minutes_held"] == 3.0
+
+
+def test_partial_take_can_fill_later_without_becoming_unresolved(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        target,
+        "_marked_base_return",
+        lambda row: float(row["test_mark"]),
+    )
+    frame = _episode(
+        [6.0, 7.0, 8.0],
+        [float("nan"), 6.5, 7.5],
+    )
+    frame["entry_open"] = 100.0
+    hot_t = int(frame.iloc[0]["hot_t"])
+    scan = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "t": hot_t
+                + 3 * target.MINUTE_MS,
+                "o": 108.0,
+            },
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "t": hot_t
+                + 31 * target.MINUTE_MS,
+                "o": 109.0,
+            },
+        ]
+    )
+    trajectories, _ = target.build_policy_trajectories(
+        frame,
+        target.PolicySpec(-5.0, 5.0, 5.0),
+        scan,
+    )
+    row = trajectories.iloc[0]
+    assert row["status"] == "completed"
+    assert bool(row["partial_taken"])
+    assert row["partial_minute"] == 2.0
+
+
+def test_enhanced_summary_counts_delayed_stop_and_trail():
+    trajectories = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "AAA",
+                "hot_t": 1,
+                "status": "completed",
+                "base_net_return_pct": -4.0,
+                "minutes_held": 2.0,
+                "partial_taken": False,
+                "exit_reason": "hard_stop_delayed_execution",
+            },
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "BBB",
+                "hot_t": 2,
+                "status": "completed",
+                "base_net_return_pct": 4.0,
+                "minutes_held": 3.0,
+                "partial_taken": True,
+                "exit_reason": "trailing_exit_delayed_execution",
+            },
+        ]
+    )
+    summary = target.summarize_enhanced(
+        trajectories,
+        seed=1,
+    )
+    assert summary["hard_stop_rate"] == 0.5
+    assert summary["trailing_exit_rate"] == 0.5
