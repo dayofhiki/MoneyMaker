@@ -96,22 +96,38 @@ def add_exact_sequence_lags(frame: pd.DataFrame) -> pd.DataFrame:
         for column in SEQUENCE_SOURCE_FEATURES
         if column in result.columns
     ]
-    grouped = result.groupby(
-        EPISODE_KEYS,
-        sort=False,
-        group_keys=False,
+    index_columns = [*EPISODE_KEYS, "state_t"]
+    if result.duplicated(index_columns).any():
+        raise ValueError(
+            "request 196 requires unique episode/state timestamps"
+        )
+
+    source_index = pd.MultiIndex.from_frame(
+        result[index_columns]
     )
 
     for lag in LAGS:
-        shifted_t = grouped["state_t"].shift(lag)
-        exact = (
-            result["state_t"] - shifted_t
-        ).eq(lag * MINUTE_MS)
+        target_keys = result[index_columns].copy()
+        target_keys["state_t"] = (
+            target_keys["state_t"]
+            - lag * MINUTE_MS
+        )
+        target_index = pd.MultiIndex.from_frame(
+            target_keys
+        )
         for column in available_sources:
-            shifted = grouped[column].shift(lag)
-            result[f"{column}_lag{lag}m"] = (
-                shifted.where(exact)
+            source = pd.Series(
+                pd.to_numeric(
+                    result[column],
+                    errors="coerce",
+                ).to_numpy(),
+                index=source_index,
             )
+            result[
+                f"{column}_lag{lag}m"
+            ] = source.reindex(
+                target_index
+            ).to_numpy()
 
     return result.sort_index()
 
