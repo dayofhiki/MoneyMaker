@@ -2,8 +2,9 @@
   "request_id": 196,
   "experiment": "causal-sequence-right-tail-entry-observability-v1.0",
   "preregistered_commit": "f008c0acb87b2e80aeaea60b562dfbf10e0a04d5",
-  "run_reason": "Test whether exact prior-five-minute causal state sequences improve identification of delayed entries that retain a large cost-adjusted winner.",
+  "run_reason": "Integrity-audit rerun after upstream exact-time shadow-feature correction and vectorized exact sequence-lag construction. Frozen labels, thresholds, and gate unchanged.",
   "opens_new_dates": false,
-  "retry": 1,
-  "retry_reason": "Implementation-only fix: exact-minute lag lookup; frozen design and thresholds unchanged."
+  "retry": 2,
+  "retry_reason": "Integrity audit only; no threshold or date changes.",
+  "integrity_audit_revision": 1
 }
