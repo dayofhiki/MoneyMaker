@@ -39,10 +39,10 @@ def build_episode_ceilings(
             continue
         first = work.sort_values("_minute", kind="stable").iloc[0]
         exits: list[tuple[int, float]] = []
-        for row in work.itertuples(index=False):
-            minute = int(row._minute)
+        for _, row in work.iterrows():
+            minute = int(row["_minute"])
             value = pd.to_numeric(
-                pd.Series([getattr(row, "exit_now_base_return_pct", np.nan)]),
+                pd.Series([row.get("exit_now_base_return_pct", np.nan)]),
                 errors="coerce",
             ).iloc[0]
             if pd.notna(value):
@@ -50,7 +50,7 @@ def build_episode_ceilings(
             if minute == 29:
                 minute30 = pd.to_numeric(
                     pd.Series(
-                        [getattr(row, "next_minute_base_return_pct", np.nan)]
+                        [row.get("next_minute_base_return_pct", np.nan)]
                     ),
                     errors="coerce",
                 ).iloc[0]
