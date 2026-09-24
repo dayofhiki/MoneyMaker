@@ -86,6 +86,10 @@ def add_exact_sequence_lags(frame: pd.DataFrame) -> pd.DataFrame:
         result["state_t"],
         errors="coerce",
     )
+    if result["state_t"].isna().any():
+        raise ValueError(
+            "request 196 requires finite causal state timestamps"
+        )
     result = result.sort_values(
         EPISODE_KEYS + ["state_t"],
         kind="stable",
@@ -105,7 +109,15 @@ def add_exact_sequence_lags(frame: pd.DataFrame) -> pd.DataFrame:
     source_index = pd.MultiIndex.from_frame(
         result[index_columns]
     )
+    source_table = result.loc[
+        :, available_sources
+    ].apply(
+        pd.to_numeric,
+        errors="coerce",
+    )
+    source_table.index = source_index
 
+    blocks: list[pd.DataFrame] = [result]
     for lag in LAGS:
         target_keys = result[index_columns].copy()
         target_keys["state_t"] = (
@@ -115,22 +127,20 @@ def add_exact_sequence_lags(frame: pd.DataFrame) -> pd.DataFrame:
         target_index = pd.MultiIndex.from_frame(
             target_keys
         )
-        for column in available_sources:
-            source = pd.Series(
-                pd.to_numeric(
-                    result[column],
-                    errors="coerce",
-                ).to_numpy(),
-                index=source_index,
-            )
-            result[
-                f"{column}_lag{lag}m"
-            ] = source.reindex(
-                target_index
-            ).to_numpy()
+        lagged = source_table.reindex(
+            target_index
+        ).copy()
+        lagged.index = result.index
+        lagged.columns = [
+            f"{column}_lag{lag}m"
+            for column in lagged.columns
+        ]
+        blocks.append(lagged)
 
-    return result.sort_index()
-
+    return pd.concat(
+        blocks,
+        axis=1,
+    ).sort_index()
 
 def sequence_columns(frame: pd.DataFrame) -> tuple[str, ...]:
     lagged = tuple(
