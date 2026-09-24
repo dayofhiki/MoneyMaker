@@ -565,13 +565,39 @@ is **selection_or_admission_bottleneck**, not residual transport capacity.
 Notably, cap 20 was 0.60 percentage points worse than cap 8, so extra churn is
 not merely unnecessary; on this block it displaced useful incumbents.
 
-The next development step is to attribute the missed Focus crossings under the
-full-refresh diagnostic and the cap-eight policy, separating failures caused by
-the Active admission ranking from failures caused by Focus eligibility/support.
-The objective is to improve which names occupy the 20 Active slots rather than
-raise the transport ceiling. No later fresh session should be opened until that
-selection intervention is frozen. Request 148 remains blocked until the
-corrected attention handoff is promoted.
+Request 153 attributed the remaining Active miss and tested a single direct
+one-minute crossing model on the same already-opened block. Direct admission
+improved cap-20 Focus -> Active retention only from 92.83% to 93.27%
+(+0.45pp), below the preregistered 1pp material-gain threshold and below the
+95% target. The result was **direct_formulation_insufficient**.
+
+Request 154 decomposed the one-minute admission score family. The Focus-only
+direct model materially improved ranking quality (Focus average precision
+0.1810 versus 0.1265 for the legacy score) and raised cap-20 retention to
+93.57%, but the best cap-20 gain was still only +0.75pp. The preregistered
+diagnosis was **feature_information_bottleneck**: changing the one-minute score
+formulation alone does not recover enough Active coverage.
+
+Request 155 then changed the target itself from next-minute crossing to
+Focus-specific crossing within 1, 2, 3 or 5 wall-clock minutes, with three
+minutes preregistered as primary. The primary three-minute score reduced mean
+cap-8 post-initial additions from 7.83 to 7.16 per decision while improving
+retention from 93.42% to 93.87%. Under cap-20, where the smoother temporal score
+can express its ranking without the older transport bottleneck, retention
+improved from the legacy 92.83% to 94.17% while mean additions fell from 10.00
+to 7.86. Two-minute and three-minute cap-20 retention both reached 94.17%;
+five minutes degraded to 93.27%. The primary gate therefore remained false and
+the diagnosis was **temporal_target_insufficient**. The experiment nevertheless
+confirms that short multi-minute context reduces attention churn and recovers
+real coverage; it simply does not yet recover the final ~0.83pp needed to reach
+95%.
+
+The next development step is explicit causal attention memory on top of the
+promising two-to-three-minute score: test whether carrying recent setup value
+for a short bounded period can recover the remaining Focus crossings without
+raising churn or hard-locking stale names. No later fresh session should be
+opened until this memory policy is frozen. Request 148 remains blocked until
+the corrected attention handoff is promoted.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
