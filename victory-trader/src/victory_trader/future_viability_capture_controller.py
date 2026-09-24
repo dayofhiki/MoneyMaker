@@ -21,7 +21,6 @@ import pandas as pd
 from .attention_replay import MINUTE_MS
 from .decomposed_cost_aware_entry_surplus import EPISODE_KEYS, FRESH_DAYS
 from .future_cost_cover_state_observability import (
-    add_targets,
     score_states,
     train_models,
 )
