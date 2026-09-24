@@ -88,44 +88,80 @@ class Head:
 
 def add_shadow_features(frame: pd.DataFrame) -> pd.DataFrame:
     result = frame.copy()
-    result["_minute"] = pd.to_numeric(
-        result["minutes_held"],
+    result["state_t"] = pd.to_numeric(
+        result["state_t"],
         errors="coerce",
     )
+    if result["state_t"].isna().any():
+        raise ValueError(
+            "request 195 requires finite causal state timestamps"
+        )
+    result = result.sort_values(
+        EPISODE_KEYS + ["state_t"],
+        kind="stable",
+    ).copy()
+
+    index_columns = [*EPISODE_KEYS, "state_t"]
+    if result.duplicated(index_columns).any():
+        raise ValueError(
+            "request 195 requires unique episode/state timestamps"
+        )
+
     result["_move"] = pd.to_numeric(
         result["entry_to_current_close_pct"],
         errors="coerce",
     )
-    result = result.sort_values(
-        EPISODE_KEYS + ["_minute"],
-        kind="stable",
+    source_index = pd.MultiIndex.from_frame(
+        result[index_columns]
+    )
+    move_source = pd.Series(
+        result["_move"].to_numpy(dtype=float),
+        index=source_index,
     )
 
-    grouped = result.groupby(
-        EPISODE_KEYS,
-        sort=False,
-    )["_move"]
-    result["shadow_move_1m_pct"] = (
-        result["_move"] - grouped.shift(1)
-    )
-    result["shadow_move_3m_pct"] = (
-        result["_move"] - grouped.shift(3)
-    )
-    result["shadow_move_5m_pct"] = (
-        result["_move"] - grouped.shift(5)
-    )
+    def exact_move_lag(minutes: int) -> np.ndarray:
+        target = result[index_columns].copy()
+        target["state_t"] = (
+            target["state_t"]
+            - minutes * MINUTE_MS
+        )
+        target_index = pd.MultiIndex.from_frame(target)
+        return move_source.reindex(
+            target_index
+        ).to_numpy(dtype=float)
 
-    move1 = result["shadow_move_1m_pct"]
+    lag1 = exact_move_lag(1)
+    lag3 = exact_move_lag(3)
+    lag5 = exact_move_lag(5)
+
+    move = result["_move"].to_numpy(dtype=float)
+    result["shadow_move_1m_pct"] = move - lag1
+    result["shadow_move_3m_pct"] = move - lag3
+    result["shadow_move_5m_pct"] = move - lag5
+
+    move1_source = pd.Series(
+        pd.to_numeric(
+            result["shadow_move_1m_pct"],
+            errors="coerce",
+        ).to_numpy(dtype=float),
+        index=source_index,
+    )
+    prior_keys = result[index_columns].copy()
+    prior_keys["state_t"] = (
+        prior_keys["state_t"] - MINUTE_MS
+    )
+    prior_index = pd.MultiIndex.from_frame(
+        prior_keys
+    )
+    prior_move1 = move1_source.reindex(
+        prior_index
+    ).to_numpy(dtype=float)
     result["shadow_accel_1m_pct"] = (
-        move1
-        - move1.groupby(
-            [
-                result["trading_day"],
-                result["ticker"],
-                result["hot_t"],
-            ],
-            sort=False,
-        ).shift(1)
+        pd.to_numeric(
+            result["shadow_move_1m_pct"],
+            errors="coerce",
+        ).to_numpy(dtype=float)
+        - prior_move1
     )
 
     running_max = pd.to_numeric(
@@ -148,27 +184,28 @@ def add_shadow_features(frame: pd.DataFrame) -> pd.DataFrame:
         errors="coerce",
     )
     prices = np.exp(log_close)
-    proxy: list[float] = []
-    for value in prices:
-        if (
-            pd.notna(value)
-            and np.isfinite(float(value))
-            and float(value) > 0
-        ):
-            net = net_round_trip_return_pct(
-                float(value),
-                0.0,
-                BASE_SCENARIO,
+    result["shadow_zero_move_cost_proxy_pct"] = [
+        (
+            float(
+                -net_round_trip_return_pct(
+                    float(value),
+                    0.0,
+                    BASE_SCENARIO,
+                )
             )
-            proxy.append(float(-net))
-        else:
-            proxy.append(np.nan)
-    result["shadow_zero_move_cost_proxy_pct"] = proxy
+            if (
+                pd.notna(value)
+                and np.isfinite(float(value))
+                and float(value) > 0
+            )
+            else np.nan
+        )
+        for value in prices
+    ]
 
     return result.drop(
-        columns=["_minute", "_move"]
+        columns=["_move"]
     ).sort_index()
-
 
 def build_labels(
     positions: pd.DataFrame,
