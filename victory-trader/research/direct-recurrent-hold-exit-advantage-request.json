@@ -1,0 +1,24 @@
+{
+  "request_id": 179,
+  "operation": "direct_recurrent_hold_exit_advantage",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "entry_policy_changed": false,
+  "action_rule": "HOLD iff predicted expected one-minute BASE advantage > 0",
+  "feature_families": [
+    "causal_position_path",
+    "rich_one_second_aggregates",
+    "market_regime"
+  ],
+  "fit_weighting": "equal_total_weight_per_trading_day",
+  "calibration": "equal-day-weighted offset only",
+  "max_hold_minutes": 30,
+  "min_start_coverage": 0.8,
+  "min_advantage_spearman": 0.05,
+  "min_good_days": 3,
+  "candidate_day_balanced_base_must_be_positive": true,
+  "candidate_must_beat_request142_classifier": true,
+  "matched_bootstrap_ci_low_must_be_positive": true,
+  "note": "Development diagnostic only. Even a pass cannot promote because June 23/24/25/26/29 were already inspected by Request 178."
+}
