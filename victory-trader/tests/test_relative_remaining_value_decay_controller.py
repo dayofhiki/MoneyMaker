@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from victory_trader.relative_remaining_value_decay_controller import (
     MIN_COMPLETION_COVERAGE,
@@ -29,7 +30,7 @@ def test_request188_uses_within_episode_score_change():
     )
     result = add_trend_columns(frame)
     assert pd.isna(result.loc[0, "score_delta_pct"])
-    assert result.loc[1, "score_delta_pct"] == 0.2
-    assert result.loc[2, "score_delta_pct"] == -0.4
-    assert result.loc[1, "actual_excess_value_delta_pct"] == 0.5
-    assert result.loc[2, "actual_excess_value_delta_pct"] == -0.8
+    assert result.loc[1, "score_delta_pct"] == pytest.approx(0.2)
+    assert result.loc[2, "score_delta_pct"] == pytest.approx(-0.4)
+    assert result.loc[1, "actual_excess_value_delta_pct"] == pytest.approx(0.5)
+    assert result.loc[2, "actual_excess_value_delta_pct"] == pytest.approx(-0.8)
