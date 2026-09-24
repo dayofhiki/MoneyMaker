@@ -29,11 +29,11 @@ jobs:
         run: |
           ruff check src tests --select E4,E7,E9,F
           pytest -q tests/test_economic_signal_audit.py
-      - name: Download request 163 stage2 artifact
+      - name: Download request 163 result artifact
         uses: actions/download-artifact@v4
         with:
-          name: request163-stage2-prepared
-          path: victory-trader/prepared/stage2
+          name: moneymaker-extended-history-economic-opportunity-v10-163
+          path: victory-trader/prepared/result
           repository: dayofhiki/MoneyMaker
           run-id: 36001945920
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,9 +49,8 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p artifacts
-          python -m victory_trader.economic_signal_audit \
-            --stage2-candidates prepared/stage2/stage2-candidates.parquet \
-            --opportunity-candidates prepared/opportunity/opportunity-candidates.parquet \
+          python -m victory_trader.economic_signal_audit_fast \
+            --first-hot prepared/result/extended-history-economic-opportunity-v10.parquet \
             --opportunity-scan prepared/opportunity/opportunity-scan.parquet \
             --output-json artifacts/economic-signal-audit-v10.json \
             --signal-csv artifacts/economic-signal-audit-signals.csv \
