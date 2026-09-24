@@ -5,7 +5,11 @@
   "reuses_request178_dates": true,
   "promotion_eligible": false,
   "upstream_buy_policy_changed": false,
-  "actions": ["ENTER_NOW", "WAIT_1M", "ABSTAIN"],
+  "actions": [
+    "ENTER_NOW",
+    "WAIT_1M",
+    "ABSTAIN"
+  ],
   "runtime_rule": "choose maximum predicted BASE action value against ABSTAIN=0",
   "tie_break": "ABSTAIN > WAIT_1M > ENTER_NOW",
   "fit_weighting": "equal total sample weight per trading day",
@@ -15,5 +19,7 @@
   "min_executed_rate": 0.1,
   "max_executed_rate": 0.8,
   "bootstrap_samples": 10000,
-  "note": "Development-only entry-value bridge. No fresh-June threshold or price cutoff tuning."
+  "note": "Development-only entry-value bridge. No fresh-June threshold or price cutoff tuning.",
+  "execution_attempt": 2,
+  "execution_note": "Retry after pre-outcome implementation support guard was corrected from 500/250 to 300/150 rows; model settings, targets, action rule, gates and fresh block are unchanged."
 }
