@@ -21,9 +21,6 @@ from .causal_entry_action_value import (
     BOOTSTRAP_SAMPLES,
     EPISODE_KEYS,
     ENTRY_FEATURES,
-    SEVERE_LOSS_PCT,
-    _bootstrap_difference,
-    _day_balanced,
     evaluate_policy,
 )
 from .config import load_settings
@@ -547,11 +544,6 @@ def evaluate(
         float(second.loc[covered].mean()) if int(covered.sum()) else None
     )
 
-    executed_resolved = (
-        scored["executed"]
-        & scored["action_value_resolved"]
-        & covered
-    )
     positive_days = 0
     by_day: dict[str, object] = {}
     for day in FRESH_DAYS:
