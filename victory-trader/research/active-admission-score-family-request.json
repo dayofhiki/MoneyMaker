@@ -1,0 +1,17 @@
+{
+  "request_id": 154,
+  "operation": "active_admission_score_family_v1",
+  "eval_days": [
+    "2026-05-21",
+    "2026-05-22",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28"
+  ],
+  "opens_new_dates": false,
+  "target_retention": 0.95,
+  "material_gain_threshold": 0.01,
+  "variants": ["legacy", "hazard_only", "global_direct", "focus_direct"],
+  "max_additions": [8, 20],
+  "note": "Development-only structural score decomposition on already-opened sessions."
+}
