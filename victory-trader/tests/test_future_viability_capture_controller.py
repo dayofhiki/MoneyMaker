@@ -73,4 +73,4 @@ def test_reference_account_compounds_completed_trade():
     assert result["starting_balance_krw"] == 1_000_000.0
     assert result["admitted_trades"] == 1
     assert result["ending_balance_krw"] == 1_020_000.0
-    assert result["total_return_pct"] == 2.0
+    assert abs(result["total_return_pct"] - 2.0) < 1e-9
