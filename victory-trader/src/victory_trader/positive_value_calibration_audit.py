@@ -16,7 +16,6 @@ import pandas as pd
 from sklearn.metrics import brier_score_loss, roc_auc_score
 
 from .market_regime_position_value import (
-    MARKET_REGIME_FEATURES,
     attach_market_regime,
     build_market_regime,
 )
