@@ -1,0 +1,13 @@
+{
+  "request_id": 169,
+  "operation": "buy_gated_multi_horizon_continuation_value",
+  "opens_new_dates": false,
+  "source_position_run_id": 36027818439,
+  "value_horizons_minutes": [2,5,10],
+  "position_features_changed": false,
+  "min_chosen_target_coverage": 0.70,
+  "min_chosen_spearman": 0.05,
+  "min_selected_rate": 0.10,
+  "min_good_days": 4,
+  "bootstrap_ci_low_must_be_positive": true
+}
