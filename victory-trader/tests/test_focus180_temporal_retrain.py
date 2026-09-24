@@ -48,8 +48,9 @@ def test_select_focus_rows_respects_cap_and_rank(monkeypatch):
             "target_cross_within_3m": [0.0] * 4,
         }
     )
-    focus = select_focus_rows(rows, DummyModel(), 2)
-    assert focus["ticker"].tolist() == ["A", "B"]
+    shuffled = rows.iloc[[2, 0, 3, 1]].reset_index(drop=True)
+    focus = select_focus_rows(shuffled, DummyModel(), 2)
+    assert focus["ticker"].tolist() == ["C", "A"]
     assert focus["market_rank"].tolist() == [1, 2]
 
 
