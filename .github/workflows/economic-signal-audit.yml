@@ -49,7 +49,7 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p artifacts
-          python -m victory_trader.economic_signal_audit_fast \
+          python -m victory_trader.economic_signal_audit_vectorized \
             --first-hot prepared/result/extended-history-economic-opportunity-v10.parquet \
             --opportunity-scan prepared/opportunity/opportunity-scan.parquet \
             --output-json artifacts/economic-signal-audit-v10.json \
