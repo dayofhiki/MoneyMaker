@@ -2,7 +2,7 @@
   "request_id": 194,
   "experiment": "asymmetric-risk-reward-overlay-v1.0",
   "preregistered_commit": "14aace8fd502bc8b615dd2a85d485b647b5e5f34",
-  "run_reason": "Integrity-audit rerun after removing unintended liquidation caused solely by missing/silent minute states. Frozen policy family and thresholds unchanged.",
+  "run_reason": "Integrity-audit rerun after removing missing-minute liquidation and resolving the exact 30-minute cap from historical/fresh scan opens. Frozen policy family and thresholds unchanged.",
   "opens_new_dates": false,
-  "integrity_audit_revision": 1
+  "integrity_audit_revision": 2
 }
