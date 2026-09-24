@@ -15,5 +15,6 @@
   "min_start_coverage": 0.85,
   "min_completion_coverage": 0.9,
   "min_positive_return_days": 4,
-  "note": "Executable development controller. No fresh threshold tuning. Account ledger is interpretability only; promotion still requires untouched dates."
+  "note": "Executable development controller. No fresh threshold tuning. Account ledger is interpretability only; promotion still requires untouched dates.",
+  "execution_attempt": 2
 }
