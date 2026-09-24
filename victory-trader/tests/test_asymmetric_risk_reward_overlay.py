@@ -157,3 +157,67 @@ def test_exact_scan_open_resolves_forced_cap(monkeypatch):
         rel_tol=0,
         abs_tol=1e-12,
     )
+
+
+def test_cap_decision_can_fill_at_next_later_open(monkeypatch):
+    monkeypatch.setattr(
+        target,
+        "_marked_base_return",
+        lambda row: float(row["test_mark"]),
+    )
+    frame = _episode([0.0], [0.0])
+    frame["entry_open"] = 100.0
+    hot_t = int(frame.iloc[0]["hot_t"])
+    scan = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "t": hot_t
+                + 33 * target.MINUTE_MS,
+                "o": 105.0,
+            }
+        ]
+    )
+    trajectories, _ = target.build_policy_trajectories(
+        frame,
+        target.PolicySpec(None, None, None),
+        scan,
+    )
+    row = trajectories.iloc[0]
+    assert row["status"] == "completed"
+    assert row["exit_reason"] == "forced_30m_cap_delayed_execution"
+    assert row["minutes_held"] == 32.0
+
+
+def test_missing_state_does_not_decide_exit_but_stop_can_fill_later(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        target,
+        "_marked_base_return",
+        lambda row: float(row["test_mark"]),
+    )
+    frame = _episode([-6.0], [float("nan")])
+    frame["entry_open"] = 100.0
+    hot_t = int(frame.iloc[0]["hot_t"])
+    scan = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "t": hot_t
+                + 4 * target.MINUTE_MS,
+                "o": 92.0,
+            }
+        ]
+    )
+    trajectories, _ = target.build_policy_trajectories(
+        frame,
+        target.PolicySpec(-5.0, 10.0, 5.0),
+        scan,
+    )
+    row = trajectories.iloc[0]
+    assert row["status"] == "completed"
+    assert row["exit_reason"] == "hard_stop_delayed_execution"
+    assert row["minutes_held"] == 3.0
