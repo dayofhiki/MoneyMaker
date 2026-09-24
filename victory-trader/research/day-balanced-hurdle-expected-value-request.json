@@ -8,8 +8,10 @@
   "equal_total_day_weight": true,
   "min_context_coverage": 0.95,
   "min_ev_spearman": 0.08,
-  "min_selected_rate": 0.10,
-  "min_selected_realized_mean_pct": 0.20,
+  "min_selected_rate": 0.1,
+  "min_selected_realized_mean_pct": 0.2,
   "min_good_days": 4,
-  "bootstrap_ci_low_must_be_positive": true
+  "bootstrap_ci_low_must_be_positive": true,
+  "execution_attempt": 2,
+  "execution_note": "Retry after lint-only unused-import fix; scientific contract unchanged and no Request 177 evaluation output was produced in attempt 1."
 }
