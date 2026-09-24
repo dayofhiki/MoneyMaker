@@ -33,6 +33,9 @@ from .selected_hot_position_value_observability import (
 REQUEST_ID = 168
 BOOTSTRAP_SEED = 20261068
 BOOTSTRAP_SAMPLES = 10_000
+MIN_POOLED_SPEARMAN_IMPROVEMENT = 0.02
+MIN_SAME_MINUTE_MEDIAN_IMPROVEMENT = 0.01
+MIN_SELECTED_RATE = 0.10
 
 
 class TransitionOptionModel:
@@ -308,6 +311,8 @@ def evaluate_option_signal(
         and global_spearman > 0
         and result["same_minute_spearman_median"] is not None
         and float(result["same_minute_spearman_median"]) > 0
+        and result["selected_rate"] is not None
+        and float(result["selected_rate"]) >= MIN_SELECTED_RATE
         and selected_day_mean is not None
         and selected_day_mean > 0
         and bootstrap["ci_low_pct"] is not None
@@ -357,8 +362,34 @@ def run(
         label="transition_option",
     )
 
+    pooled_improvement = (
+        None
+        if baseline_metrics["global_spearman"] is None
+        or transition_metrics["global_spearman"] is None
+        else float(
+            transition_metrics["global_spearman"]
+            - baseline_metrics["global_spearman"]
+        )
+    )
+    same_minute_improvement = (
+        None
+        if baseline_metrics["same_minute_spearman_median"] is None
+        or transition_metrics["same_minute_spearman_median"] is None
+        else float(
+            transition_metrics["same_minute_spearman_median"]
+            - baseline_metrics["same_minute_spearman_median"]
+        )
+    )
+    improvement_gate = bool(
+        pooled_improvement is not None
+        and pooled_improvement >= MIN_POOLED_SPEARMAN_IMPROVEMENT
+        and same_minute_improvement is not None
+        and same_minute_improvement
+        >= MIN_SAME_MINUTE_MEDIAN_IMPROVEMENT
+    )
+
     result = {
-        "schema_version": 1,
+        "schema_version": 2,
         "request_id": REQUEST_ID,
         "opens_new_dates": False,
         "one_minute_hold_model_changed": False,
@@ -373,8 +404,23 @@ def run(
         "transition_calibration_offset_pct": transition.offset,
         "baseline": baseline_metrics,
         "transition": transition_metrics,
+        "pooled_spearman_improvement": pooled_improvement,
+        "same_minute_median_improvement": same_minute_improvement,
+        "improvement_gate_pass": improvement_gate,
+        "frozen_gate": {
+            "min_pooled_spearman_improvement": (
+                MIN_POOLED_SPEARMAN_IMPROVEMENT
+            ),
+            "min_same_minute_median_improvement": (
+                MIN_SAME_MINUTE_MEDIAN_IMPROVEMENT
+            ),
+            "min_selected_rate": MIN_SELECTED_RATE,
+            "min_positive_days": 4,
+            "bootstrap_ci_low_must_be_positive": True,
+        },
         "promotion_gate_pass": bool(
             transition_metrics["signal_bridge_pass"]
+            and improvement_gate
         ),
     }
 
