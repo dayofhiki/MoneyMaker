@@ -9,8 +9,19 @@
     "2026-05-27",
     "2026-05-28"
   ],
-  "focus_caps": [20, 30, 45, 60, 75, 90, 120, 180, null],
+  "focus_caps": [
+    20,
+    30,
+    45,
+    60,
+    75,
+    90,
+    120,
+    180,
+    null
+  ],
   "frozen_active_threshold": 0.0040281217293971616,
   "active_horizon_minutes": 3,
-  "note": "Optimize fixed learned-Focus Top-K while holding request-156 dynamic Active threshold fixed."
+  "note": "Optimize fixed learned-Focus Top-K while holding request-156 dynamic Active threshold fixed.",
+  "rerun": 1
 }
