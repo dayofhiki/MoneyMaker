@@ -14,8 +14,10 @@
   "min_path_coverage": 0.85,
   "min_context_coverage": 0.95,
   "min_consensus_spearman": 0.08,
-  "min_selected_rate": 0.10,
-  "min_selected_realized_mean_pct": 0.20,
+  "min_selected_rate": 0.1,
+  "min_selected_realized_mean_pct": 0.2,
   "min_good_days": 4,
-  "bootstrap_ci_low_must_be_positive": true
+  "bootstrap_ci_low_must_be_positive": true,
+  "execution_attempt": 2,
+  "execution_note": "Retry after lint-only unused-import fix; no fresh June 23/24/25/26/29 data were opened in attempt 1."
 }
