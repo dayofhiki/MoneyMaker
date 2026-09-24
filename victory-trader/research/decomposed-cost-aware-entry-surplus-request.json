@@ -1,0 +1,23 @@
+{
+  "request_id": 184,
+  "operation": "decomposed_cost_aware_entry_surplus",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "entry_population_changed": false,
+  "representation_change": "request182 causal entry state plus original-HOT one-second aggregates and BASE zero-move cost proxy",
+  "decomposition": [
+    "enter_gross_pct",
+    "enter_drag_pct",
+    "wait_gross_pct",
+    "wait_drag_pct"
+  ],
+  "action_rule": "choose max of decomposed ENTER, decomposed WAIT, and ABSTAIN=0 with conservative ties",
+  "min_entry_coverage": 0.9,
+  "min_second_coverage": 0.9,
+  "min_executed_rate": 0.03,
+  "max_executed_rate": 0.4,
+  "min_positive_days": 3,
+  "bootstrap_samples": 10000,
+  "note": "No percentile filtering and no fresh threshold fitting. Development-only economic-entry representation test."
+}
