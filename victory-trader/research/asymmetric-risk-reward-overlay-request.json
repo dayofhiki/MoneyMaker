@@ -2,7 +2,7 @@
   "request_id": 194,
   "experiment": "asymmetric-risk-reward-overlay-v1.0",
   "preregistered_commit": "14aace8fd502bc8b615dd2a85d485b647b5e5f34",
-  "run_reason": "Integrity-audit rerun with corrected missing-state semantics, exact scan cap execution, and implementation-only reuse of precomputed execution open maps. Frozen policy family and thresholds unchanged.",
+  "run_reason": "Integrity-audit rerun with corrected missing-state semantics, exact scan cap execution, shared open maps, and ticker-day scan restriction. Frozen policy family and thresholds unchanged.",
   "opens_new_dates": false,
-  "integrity_audit_revision": 3
+  "integrity_audit_revision": 4
 }
