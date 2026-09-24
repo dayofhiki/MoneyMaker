@@ -720,6 +720,26 @@ were negligible. This shifts the primary downstream bottleneck to
 **executability/liquidity-aware entry plus recurrent exit timing**, not
 candidate discovery.
 
+
+Request 165 then added a causal executability gate without changing the
+validated attention or economic-opportunity models. On the fresh June 15, 16,
+17, 18 and 22 block, exact-next-minute entry observability rose from 71.65% for
+the economic-only population to **91.79%** for BUY decisions. The executability
+classifier achieved fresh ROC AUC **0.8325**. All five sessions exceeded the
+frozen 85% daily entry-observability floor with 49-64 BUY decisions each.
+
+Crucially, this improvement did not come from discarding the economic edge:
+oracle-positive rate changed only from 57.18% to 56.69%, while mean oracle BASE
+opportunity rose from +1.35% to +1.47%. Request 165 therefore **passes** its
+entry bridge and validates BUY versus WAIT as a meaningful causal distinction.
+
+Mechanical fixed exits remain negative after BASE costs (-1.20%, -1.19%,
+-0.90%, -0.97%, -0.89%, and -1.34% at 1, 2, 5, 10, 15 and 30 minutes).
+Therefore the next bottleneck is no longer entry observability alone. The next
+branch must freeze the Request-165 entry bridge and learn recurrent,
+state-dependent BUY/WAIT/ABSTAIN plus POSITION HOLD/EXIT decisions rather than
+selecting a fixed holding horizon from fresh results.
+
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
 hazard/session history by trading day, use official exchange session bounds
