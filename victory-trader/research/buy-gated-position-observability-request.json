@@ -1,0 +1,11 @@
+{
+  "request_id": 166,
+  "operation": "buy_gated_position_observability_v1",
+  "opens_new_dates": false,
+  "entry_policy": "request165_economic_plus_executability_BUY",
+  "position_model_changed_from_request145": false,
+  "fit_days": ["2026-04-30","2026-05-01","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "calibration_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "evaluation_days": ["2026-06-08","2026-06-09","2026-06-10","2026-06-11","2026-06-12"],
+  "bridge_gate": "same_as_request145"
+}
