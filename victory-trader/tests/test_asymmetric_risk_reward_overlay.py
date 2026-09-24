@@ -120,3 +120,40 @@ def test_silent_minute_does_not_force_exit(monkeypatch):
     assert row["exit_reason"] != "missing_state_next_minute_exit"
     assert row["exit_reason"] != "missing_state_delayed_open_exit"
     assert row["minutes_held"] != 2.0
+
+
+def test_exact_scan_open_resolves_forced_cap(monkeypatch):
+    monkeypatch.setattr(
+        target,
+        "_marked_base_return",
+        lambda row: float(row["test_mark"]),
+    )
+    frame = _episode([0.0], [0.0])
+    frame["entry_open"] = 100.0
+    hot_t = int(frame.iloc[0]["hot_t"])
+    scan = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "t": hot_t
+                + 31 * target.MINUTE_MS,
+                "o": 110.0,
+            }
+        ]
+    )
+    trajectories, _ = target.build_policy_trajectories(
+        frame,
+        target.PolicySpec(None, None, None),
+        scan,
+    )
+    row = trajectories.iloc[0]
+    assert row["status"] == "completed"
+    assert row["exit_reason"] == "forced_30m_cap_exact_scan"
+    assert row["minutes_held"] == 30.0
+    assert math.isclose(
+        row["base_net_return_pct"],
+        target._base_return(100.0, 110.0),
+        rel_tol=0,
+        abs_tol=1e-12,
+    )
