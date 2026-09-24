@@ -1,0 +1,33 @@
+{
+  "request_id": 162,
+  "operation": "fresh_validated_attention_economic_opportunity_v1",
+  "opens_new_dates": true,
+  "opportunity_fit_days": [
+    "2026-04-30",
+    "2026-05-01",
+    "2026-05-04",
+    "2026-05-05",
+    "2026-05-06"
+  ],
+  "opportunity_calibration_days": [
+    "2026-05-07",
+    "2026-05-08",
+    "2026-05-11",
+    "2026-05-12",
+    "2026-05-13"
+  ],
+  "fresh_eval_days": [
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-12"
+  ],
+  "focus_cap": 180,
+  "active_horizon_minutes": 3,
+  "active_features": "BASELINE_FEATURES + market_hazard_probability",
+  "active_threshold": 0.003093198572895277,
+  "entry_features_changed": false,
+  "economic_definition_changed": false,
+  "note": "Fresh Request-148 economic-opportunity revalidation using the Request-160/161 validated attention handoff. June 1-5 remain untouched validation evidence."
+}
