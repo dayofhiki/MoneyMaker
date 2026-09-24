@@ -20,7 +20,7 @@ def prepare_day(
 ) -> int:
     parsed = date.fromisoformat(day)
     return prepare_fresh(
-        parsed,
+        date.fromisoformat("2026-01-02"),
         parsed,
         candidates_output,
         scan_output,
