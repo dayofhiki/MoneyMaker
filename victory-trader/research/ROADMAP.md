@@ -747,6 +747,29 @@ including early closes, retain causal POSITION states when future execution
 references are missing, and represent missing oracle outcomes as unknown rather
 than negative.
 
+Request 166 then tested the corrected Request-145 POSITION
+observability family on the Request-165 BUY-gated population without opening
+new market dates. The bridge **failed**. June 8-12 BUY anchor-to-position-path
+coverage was 89.51% versus the frozen 90% floor. More importantly, the
+one-minute HOLD classifier did not transfer: pooled HOLD AUC was 0.4959 and
+only one of 6,230 POSITION rows crossed the calibrated P(HOLD)>0.5 boundary.
+Only one of five sessions satisfied all frozen HOLD/value sign conditions.
+
+The stronger multi-minute remaining-value signal did survive, though weakened:
+pooled Spearman was +0.0900, same-held-minute median Spearman +0.0533, 93.10%
+of eligible held-minute groups were positive, and predicted-excess-positive
+rows realized +0.5782% day-balanced excess. This indicates that residual
+continuation value is still observable, but the old one-minute HOLD classifier
+is the wrong controller for the new BUY distribution.
+
+Earlier expanded-history request 95 (v3.7) provides a concrete no-threshold-tune
+next hypothesis: exact 1/2/3/5/8/13-minute deltas of causal position-path state
+were the first continuation representation to pass all January-March frozen
+bridges. The next branch should therefore restore that transition-state family
+on the current Request-165 BUY population, keep action thresholds/model
+capacity frozen, and test whether dynamic HOLD/EXIT ranking returns before any
+new fresh block or full recurrent trajectory is opened.
+
 The executable recurrent trader remains the architectural target. The immediate
 order of work is now: (1) keep the validated attention architecture frozen;
 (2) model causal executability/liquidity for BUY/WAIT/ABSTAIN, treating absent
