@@ -1,0 +1,9 @@
+{
+  "request_id": 167,
+  "operation": "buy_gated_exact_path_transition_hold_v1",
+  "opens_new_dates": false,
+  "source_run_id": 36027818439,
+  "path_transition_lags_minutes": [1,2,3,5,8,13],
+  "hold_threshold_changed": false,
+  "remaining_option_model_changed": false
+}
