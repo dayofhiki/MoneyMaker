@@ -1,0 +1,12 @@
+{
+  "request_id": 170,
+  "operation": "historical_trade_tape_feasibility",
+  "opens_new_dates": false,
+  "source_position_run_id": 36027818439,
+  "sample_per_day": 10,
+  "lookback_seconds": 60,
+  "recent_seconds": 10,
+  "min_any_trade_60s_coverage": 0.80,
+  "min_five_trade_60s_coverage": 0.70,
+  "min_any_trade_10s_coverage": 0.60
+}
