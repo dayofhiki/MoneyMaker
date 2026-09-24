@@ -241,9 +241,9 @@ def train_value_model(
     valid = target.notna() & fit["entry_state_available"].fillna(False)
     train = fit.loc[valid].copy()
     y = target.loc[valid].astype(float)
-    if len(train) < 500:
+    if len(train) < 300:
         raise ValueError(
-            f"request 182 {target_column} needs >=500 fit rows, got {len(train)}"
+            f"request 182 {target_column} needs >=300 fit rows, got {len(train)}"
         )
 
     columns = tuple(
@@ -280,9 +280,9 @@ def train_value_model(
         & calibration["entry_state_available"].fillna(False)
     )
     cal = calibration.loc[cal_valid].copy()
-    if len(cal) < 250:
+    if len(cal) < 150:
         raise ValueError(
-            f"request 182 {target_column} needs >=250 calibration rows, "
+            f"request 182 {target_column} needs >=150 calibration rows, "
             f"got {len(cal)}"
         )
     raw = model.predict(_feature_frame(cal, columns))
