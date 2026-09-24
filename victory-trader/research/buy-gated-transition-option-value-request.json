@@ -1,0 +1,13 @@
+{
+  "request_id": 168,
+  "operation": "buy_gated_transition_remaining_option_value",
+  "opens_new_dates": false,
+  "source_position_run_id": 36027818439,
+  "one_minute_hold_classifier_tuned": false,
+  "remaining_option_target_changed": false,
+  "min_pooled_spearman_improvement": 0.02,
+  "min_same_minute_median_improvement": 0.01,
+  "min_selected_rate": 0.10,
+  "min_positive_days": 4,
+  "bootstrap_ci_low_must_be_positive": true
+}
