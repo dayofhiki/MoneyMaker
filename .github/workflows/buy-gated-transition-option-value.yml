@@ -1,0 +1,60 @@
+name: MoneyMaker BUY-Gated Transition Option Value
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/buy-gated-transition-option-value-request.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+      - name: Test request 168
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_buy_gated_transition_option_value.py
+      - name: Download Request 166 phases
+        uses: actions/download-artifact@v4
+        with:
+          pattern: request166-position-*
+          path: victory-trader/prepared/position
+          merge-multiple: true
+          repository: dayofhiki/MoneyMaker
+          run-id: 36027818439
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Evaluate request 168
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.buy_gated_transition_option_value \
+            --fit prepared/position/fit-paths.parquet \
+            --calibration prepared/position/calibration-paths.parquet \
+            --evaluation prepared/position/evaluation-paths.parquet \
+            --output artifacts/buy-gated-transition-option-value-v10.json \
+            --scored-output artifacts/buy-gated-transition-option-value-v10.parquet \
+            | tee artifacts/buy-gated-transition-option-value-v10.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-buy-gated-transition-option-value-v10-168
+          path: |
+            victory-trader/artifacts/buy-gated-transition-option-value-v10.json
+            victory-trader/artifacts/buy-gated-transition-option-value-v10.parquet
+            victory-trader/artifacts/buy-gated-transition-option-value-v10.log
+          if-no-files-found: error
+          retention-days: 90
