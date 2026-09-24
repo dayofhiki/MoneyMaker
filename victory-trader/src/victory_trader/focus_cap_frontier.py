@@ -19,7 +19,6 @@ from .attention_replay import MINUTE_MS
 from .config import load_settings, require_flatfile_credentials
 from .direct_active_admission import EVAL_DAYS
 from .flatfiles import MassiveFlatFilesClient, MassiveFlatFileStore
-from .hierarchical_attention_runtime import MODEL_KWARGS
 from .market_calendar import is_us_equity_trading_day
 from .market_wide_focus_hazard import (
     BASELINE_FEATURES,
