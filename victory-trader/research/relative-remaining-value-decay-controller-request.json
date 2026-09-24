@@ -1,0 +1,13 @@
+{
+  "request_id": 188,
+  "operation": "relative_remaining_value_decay_controller",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "absolute_score_threshold_used": false,
+  "controller_rule": "HOLD minute1; from minute2 onward EXIT at first state where current frozen Request178 consensus remaining-value score is <= previous reached score; otherwise HOLD one minute and re-evaluate",
+  "min_start_coverage": 0.85,
+  "min_completion_coverage": 0.9,
+  "bootstrap_samples": 10000,
+  "note": "Development-only relative trend controller. No absolute EV threshold, percentile, patience count, or fresh-tuned score drop."
+}
