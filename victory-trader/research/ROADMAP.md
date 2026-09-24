@@ -665,14 +665,37 @@ with `hazard_probability_only` selected.
 This resolves the feature-transfer question. Absolute upstream hazard evidence
 is useful to Active; relative market rank is harmful because it reintroduces a
 rank-order bias that suppresses lower-ranked but still valid candidates. The
-current development candidate is therefore: learned Focus cap 180, a
+development candidate was therefore frozen as: learned Focus cap 180, a
 Focus-180-trained three-minute Active model, BASELINE_FEATURES plus
 market_hazard_probability, and the fit-period burden-matched threshold
-0.003093198572895277. It captures 652/684 supported crossings (95.32%) on the
+0.003093198572895277. It captured 652/684 supported crossings (95.32%) on the
 opened May block at mean Active count 21.04 while preserving 4/14 capture in
-market-hazard ranks 61-180. Freeze this candidate before any chronologically
-later unseen validation. Request 148 remains blocked until the corrected
-attention handoff passes fresh validation.
+market-hazard ranks 61-180.
+
+Request 161 then opened the first chronologically later fresh block,
+2026-06-01 through 2026-06-05, without changing the frozen candidate. The block
+contained 851 runner crossings, of which 504 had exact prior-minute support.
+Focus-180 captured 499/504 supported crossings (99.01%), passing the
+preregistered 99% Focus gate. The frozen baseline Active model captured 481/504
+(95.44%), while the frozen hazard-probability candidate captured 487/504
+(96.63%), a fresh +1.19pp uplift. The candidate also slightly improved
+Focus-180 average precision (0.2564 versus 0.2540). The preregistered diagnosis
+was **fresh_candidate_validated**.
+
+The fresh result is meaningful but not uniformly perfect. Candidate supported
+capture by day was 97.84%, 97.27%, 98.48%, 94.70%, and 94.74%; Focus-180 itself
+was 98.56%, 98.18%, 100.00%, 99.34%, and 100.00%. Thus the pooled architecture
+passes, but June 4-5 expose day-level Active degradation and June 1-2 show that
+Focus-180 can still dip below 99% on individual sessions. Fresh rank-61-180
+support was only four runner crossings and neither baseline nor candidate
+captured any of them, so the lower-rank tail remains unresolved rather than
+validated.
+
+The corrected attention handoff has now passed its first fresh validation and
+Request 148 is unblocked. The next research step is economic-opportunity
+revalidation on chronologically later data using this frozen attention
+architecture, while preserving the June 1-5 block as validation evidence rather
+than tuning against its day-level misses.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
