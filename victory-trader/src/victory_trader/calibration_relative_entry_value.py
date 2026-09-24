@@ -15,7 +15,6 @@ import numpy as np
 import pandas as pd
 
 from .causal_entry_action_value import (
-    BOOTSTRAP_SAMPLES,
     ENTER_SEED,
     WAIT_SEED,
     build_action_labels,
