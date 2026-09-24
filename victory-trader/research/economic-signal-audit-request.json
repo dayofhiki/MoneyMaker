@@ -1,0 +1,9 @@
+{
+  "request_id": 164,
+  "operation": "economic_signal_and_fixed_horizon_audit",
+  "source_run_id": 36001945920,
+  "opens_new_dates": false,
+  "changes_model": false,
+  "changes_threshold": false,
+  "goal": "Identify causal economic signals, explain missing labels, and measure BASE net returns at fixed exits for the frozen Request-163 selector."
+}
