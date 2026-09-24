@@ -40,6 +40,15 @@ jobs:
           run-id: 36033120106
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download Request 163 historical opportunity scan
+        uses: actions/download-artifact@v4
+        with:
+          name: request163-opportunity-prepared
+          path: victory-trader/prepared/opportunity
+          repository: dayofhiki/MoneyMaker
+          run-id: 36001945920
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Download Request 178 fresh POSITION shards
         uses: actions/download-artifact@v4
         with:
@@ -56,6 +65,7 @@ jobs:
           mkdir -p artifacts
           python -m victory_trader.asymmetric_risk_reward_overlay \
             --calibration prepared/rich/calibration-rich-second.parquet \
+            --history-scan prepared/opportunity/opportunity-scan.parquet \
             --fresh-dir prepared/fresh \
             --output artifacts/asymmetric-risk-reward-overlay-v10.json \
             --trajectories-output artifacts/asymmetric-risk-reward-overlay-v10.parquet \
