@@ -1,0 +1,24 @@
+{
+  "request_id": 160,
+  "operation": "hierarchical_feature_ablation_v1",
+  "opens_new_dates": false,
+  "eval_days": [
+    "2026-05-21",
+    "2026-05-22",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28"
+  ],
+  "focus_cap": 180,
+  "horizon_minutes": 3,
+  "target_selected_fraction": 0.1291012691012691,
+  "variants": [
+    "baseline",
+    "hazard_probability_only",
+    "hazard_rank_only",
+    "hazard_probability_and_rank"
+  ],
+  "target_capture": 0.95,
+  "tail_baseline_captured": 4,
+  "note": "Ablate market-hazard probability and rank after request 159's overall gain but tail regression."
+}
