@@ -10,10 +10,19 @@
   ],
   "opens_new_dates": false,
   "training_population": "learned_focus_60",
-  "horizons_minutes": [1, 2, 3, 5],
+  "horizons_minutes": [
+    1,
+    2,
+    3,
+    5
+  ],
   "primary_horizon_minutes": 3,
-  "max_additions": [8, 20],
+  "max_additions": [
+    8,
+    20
+  ],
   "target_retention": 0.95,
   "material_gain_threshold": 0.01,
-  "note": "Development-only temporal attention test on already-opened dates. Three-minute cap=8 is the preregistered primary."
+  "note": "Development-only temporal attention test on already-opened dates. Three-minute cap=8 is the preregistered primary. Retry 1 fixes only pandas index alignment in target construction.",
+  "retry": 1
 }
