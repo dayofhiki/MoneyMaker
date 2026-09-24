@@ -17,5 +17,6 @@
   "target_capture": 0.95,
   "material_gain": 0.005,
   "max_burden_ratio": 1.1,
-  "note": "Retrain the 3m Active model on Focus-180 and compare at matched fit-period observation burden."
+  "note": "Rerun after preserving legacy fit-row order and restoring market-wide supported-capture denominator; preregistered gates unchanged.",
+  "rerun": 1
 }
