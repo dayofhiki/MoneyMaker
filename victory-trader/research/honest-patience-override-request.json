@@ -20,5 +20,7 @@
   "severe_loss_rate_no_worse_than_comparator": true,
   "economic_day_balanced_base_must_be_positive": true,
   "economic_bootstrap_low_must_be_positive": true,
-  "note": "Development-only honest patience rescue. No threshold tuning on Request-178 outcomes."
+  "note": "Development-only honest patience rescue. No threshold tuning on Request-178 outcomes.",
+  "execution_attempt": 2,
+  "execution_note": "Retry after lint-only unused-import fix; research design and data remain unchanged."
 }
