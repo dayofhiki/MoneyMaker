@@ -1,0 +1,24 @@
+{
+  "request_id": 180,
+  "operation": "honest_patience_override",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "entry_policy_changed": false,
+  "default_controller": "request142_short_hold_classifier",
+  "override_inputs": [
+    "short_hold_probability",
+    "consensus_hurdle_ev_pct"
+  ],
+  "override_action": "force exactly one additional minute of HOLD, then re-evaluate",
+  "max_hold_minutes": 30,
+  "min_start_coverage": 0.8,
+  "min_completion_coverage": 0.9,
+  "min_honest_target_rows": 500,
+  "controller_difference_must_be_positive": true,
+  "controller_difference_bootstrap_low_must_be_positive": true,
+  "severe_loss_rate_no_worse_than_comparator": true,
+  "economic_day_balanced_base_must_be_positive": true,
+  "economic_bootstrap_low_must_be_positive": true,
+  "note": "Development-only honest patience rescue. No threshold tuning on Request-178 outcomes."
+}
