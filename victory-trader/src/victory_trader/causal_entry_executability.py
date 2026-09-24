@@ -125,6 +125,7 @@ def prepare_fresh(
     candidates_output: Path,
     scan_output: Path,
     audit_output: Path,
+    only_day: str | None = None,
 ) -> int:
     settings = load_settings()
     access_key, secret_key = require_flatfile_credentials(settings)
@@ -146,7 +147,7 @@ def prepare_fresh(
         store, scan_client, start, end
     )
 
-    wanted = set(FRESH_DAYS)
+    wanted = {only_day} if only_day is not None else set(FRESH_DAYS)
     active_parts: list[pd.DataFrame] = []
     scan_parts: list[pd.DataFrame] = []
 
@@ -167,8 +168,9 @@ def prepare_fresh(
     enriched, second_audit = add_second_features(active, second_client)
     scan = pd.concat(scan_parts, ignore_index=True)
     found = sorted(scan["trading_day"].astype(str).unique())
-    if found != FRESH_DAYS:
-        raise ValueError(f"request 165 expected {FRESH_DAYS}, found {found}")
+    expected = [only_day] if only_day is not None else FRESH_DAYS
+    if found != expected:
+        raise ValueError(f"request 165 expected {expected}, found {found}")
 
     candidates_output.parent.mkdir(parents=True, exist_ok=True)
     scan_output.parent.mkdir(parents=True, exist_ok=True)
@@ -178,7 +180,7 @@ def prepare_fresh(
 
     audit = {
         "request_id": REQUEST_ID,
-        "fresh_days": FRESH_DAYS,
+        "fresh_days": found,
         "candidate_rows": int(len(enriched)),
         "scan_rows": int(len(scan)),
         "flatfile_stats": store.stats.to_dict(),
@@ -368,6 +370,7 @@ def main() -> int:
     prep.add_argument("--candidates-output", type=Path, required=True)
     prep.add_argument("--scan-output", type=Path, required=True)
     prep.add_argument("--audit-output", type=Path, required=True)
+    prep.add_argument("--only-day", choices=FRESH_DAYS)
 
     ev = sub.add_parser("evaluate")
     ev.add_argument("--history-first-hot", type=Path, required=True)
@@ -385,6 +388,7 @@ def main() -> int:
             args.candidates_output,
             args.scan_output,
             args.audit_output,
+            args.only_day,
         )
     return evaluate(
         args.history_first_hot,
