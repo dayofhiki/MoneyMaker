@@ -98,6 +98,60 @@ def _execution_opens_for_positions(
     return _open_map(selected)
 
 
+def _group_execution_opens(
+    opens: dict[tuple[str, str, int], float],
+) -> dict[tuple[str, str], list[tuple[int, float]]]:
+    grouped: dict[
+        tuple[str, str],
+        list[tuple[int, float]],
+    ] = {}
+    for (day, ticker, timestamp), price in opens.items():
+        grouped.setdefault(
+            (str(day), str(ticker).upper()),
+            [],
+        ).append((int(timestamp), float(price)))
+    for values in grouped.values():
+        values.sort(key=lambda item: item[0])
+    return grouped
+
+
+def _first_execution_at_or_after(
+    first: pd.Series,
+    grouped_opens: dict[
+        tuple[str, str],
+        list[tuple[int, float]],
+    ],
+    decision_t: int,
+) -> tuple[float, float, int] | None:
+    day = str(first["trading_day"])
+    ticker = str(first["ticker"]).upper()
+    hot_t = int(first["hot_t"])
+    entry_open = _num(first, "entry_open")
+    if not np.isfinite(entry_open) or entry_open <= 0:
+        return None
+
+    for timestamp, price in grouped_opens.get(
+        (day, ticker),
+        [],
+    ):
+        if int(timestamp) < int(decision_t):
+            continue
+        realized = _base_return(
+            float(entry_open),
+            float(price),
+        )
+        if pd.notna(realized) and np.isfinite(float(realized)):
+            minutes = (
+                int(timestamp) - hot_t
+            ) / MINUTE_MS
+            return (
+                float(realized),
+                float(minutes),
+                int(timestamp),
+            )
+    return None
+
+
 def _num(row: pd.Series, column: str) -> float:
     value = pd.to_numeric(
         pd.Series([row.get(column)]),
@@ -188,12 +242,18 @@ def build_policy_trajectories(
     scan: pd.DataFrame | None = None,
     *,
     opens: dict[tuple[str, str, int], float] | None = None,
+    grouped_opens: dict[
+        tuple[str, str],
+        list[tuple[int, float]],
+    ] | None = None,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
     if opens is None:
         opens = _execution_opens_for_positions(
             scan,
             positions,
         )
+    if grouped_opens is None:
+        grouped_opens = _group_execution_opens(opens)
     total = int(
         positions.loc[:, EPISODE_KEYS].drop_duplicates().shape[0]
     )
@@ -235,7 +295,22 @@ def build_policy_trajectories(
                 and mark <= float(spec.stop_pct)
             ):
                 if pd.isna(exit_now):
-                    reason = "hard_stop_missing_open"
+                    delayed = _first_execution_at_or_after(
+                        first,
+                        grouped_opens,
+                        int(first["hot_t"])
+                        + minute * MINUTE_MS,
+                    )
+                    if delayed is None:
+                        reason = "hard_stop_unfilled"
+                        break
+                    (
+                        final_return,
+                        final_minute,
+                        _,
+                    ) = delayed
+                    status = "completed"
+                    reason = "hard_stop_delayed_execution"
                     break
                 status = "completed"
                 reason = "hard_stop"
@@ -255,7 +330,22 @@ def build_policy_trajectories(
                     - float(spec.trail_gap_pct)
                 ):
                     if pd.isna(exit_now):
-                        reason = "trailing_exit_missing_open"
+                        delayed = _first_execution_at_or_after(
+                            first,
+                            grouped_opens,
+                            int(first["hot_t"])
+                            + minute * MINUTE_MS,
+                        )
+                        if delayed is None:
+                            reason = "trailing_exit_unfilled"
+                            break
+                        (
+                            final_return,
+                            final_minute,
+                            _,
+                        ) = delayed
+                        status = "completed"
+                        reason = "trailing_exit_delayed_execution"
                         break
                     status = "completed"
                     reason = "trailing_exit"
@@ -274,53 +364,57 @@ def build_policy_trajectories(
                 post_partial_peak = float(mark)
 
             if minute == MAX_HOLD_MINUTES - 1:
-                minute30 = _num(
-                    row,
-                    "next_minute_base_return_pct",
+                decision_t = (
+                    int(first["hot_t"])
+                    + MAX_HOLD_MINUTES * MINUTE_MS
                 )
-                if pd.isna(minute30):
-                    reason = "missing_forced_cap_exit"
+                cap_execution = _first_execution_at_or_after(
+                    first,
+                    grouped_opens,
+                    decision_t,
+                )
+                if cap_execution is None:
+                    reason = "forced_cap_unfilled"
                     break
+                (
+                    final_return,
+                    final_minute,
+                    execution_t,
+                ) = cap_execution
                 status = "completed"
-                reason = "forced_30m_cap"
-                final_return = float(minute30)
-                final_minute = float(MAX_HOLD_MINUTES)
+                reason = (
+                    "forced_30m_cap_exact_scan"
+                    if execution_t == decision_t
+                    else "forced_30m_cap_delayed_execution"
+                )
                 break
 
             minute += 1
 
         if status == "unresolved" and reason == "unknown":
-            day = str(first["trading_day"])
-            ticker = str(first["ticker"]).upper()
-            hot_t = int(first["hot_t"])
-            entry_open = _num(first, "entry_open")
-            cap_open = opens.get(
-                (
-                    day,
-                    ticker,
-                    hot_t
-                    + MAX_HOLD_MINUTES * MINUTE_MS,
-                ),
-                np.nan,
+            decision_t = (
+                int(first["hot_t"])
+                + MAX_HOLD_MINUTES * MINUTE_MS
             )
-            if (
-                np.isfinite(entry_open)
-                and entry_open > 0
-                and pd.notna(cap_open)
-                and np.isfinite(float(cap_open))
-                and float(cap_open) > 0
-            ):
-                status = "completed"
-                reason = "forced_30m_cap_exact_scan"
-                final_return = float(
-                    _base_return(
-                        float(entry_open),
-                        float(cap_open),
-                    )
-                )
-                final_minute = float(MAX_HOLD_MINUTES)
+            cap_execution = _first_execution_at_or_after(
+                first,
+                grouped_opens,
+                decision_t,
+            )
+            if cap_execution is None:
+                reason = "forced_cap_unfilled"
             else:
-                reason = "missing_forced_cap_execution"
+                (
+                    final_return,
+                    final_minute,
+                    execution_t,
+                ) = cap_execution
+                status = "completed"
+                reason = (
+                    "forced_30m_cap_exact_scan"
+                    if execution_t == decision_t
+                    else "forced_30m_cap_delayed_execution"
+                )
 
         records.append(
             _trajectory_record(
@@ -421,6 +515,9 @@ def choose_policy(
         calibration_scan,
         calibration,
     )
+    calibration_grouped_opens = _group_execution_opens(
+        calibration_opens
+    )
     eligible: list[
         tuple[float, float, float, float, float, float, PolicySpec]
     ] = []
@@ -437,6 +534,7 @@ def choose_policy(
             calibration,
             spec,
             opens=calibration_opens,
+            grouped_opens=calibration_grouped_opens,
         )
         summary = summarize_enhanced(
             trajectory,
@@ -791,6 +889,9 @@ def evaluate(
         fresh_scan,
         fresh,
     )
+    fresh_grouped_opens = _group_execution_opens(
+        fresh_opens
+    )
     found = sorted(
         fresh["trading_day"].astype(str).unique()
     )
@@ -804,6 +905,7 @@ def evaluate(
             fresh,
             selected_spec,
             opens=fresh_opens,
+            grouped_opens=fresh_grouped_opens,
         )
     )
     minute1, minute1_coverage = build_trajectories(
@@ -814,6 +916,7 @@ def evaluate(
         fresh,
         PolicySpec(None, None, None),
         opens=fresh_opens,
+        grouped_opens=fresh_grouped_opens,
     )
 
     stop_only_spec = PolicySpec(
@@ -826,6 +929,7 @@ def evaluate(
             fresh,
             stop_only_spec,
             opens=fresh_opens,
+            grouped_opens=fresh_grouped_opens,
         )
     )
     profit_only_spec = PolicySpec(
@@ -838,6 +942,7 @@ def evaluate(
             fresh,
             profit_only_spec,
             opens=fresh_opens,
+            grouped_opens=fresh_grouped_opens,
         )
     )
     canonical_spec = PolicySpec(*CANONICAL)
@@ -846,6 +951,7 @@ def evaluate(
             fresh,
             canonical_spec,
             opens=fresh_opens,
+            grouped_opens=fresh_grouped_opens,
         )
     )
 
