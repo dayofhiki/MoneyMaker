@@ -67,6 +67,37 @@ class PolicySpec:
         return f"stop_{stop}__take_{take}__trail_{trail}"
 
 
+def _execution_opens_for_positions(
+    scan: pd.DataFrame | None,
+    positions: pd.DataFrame,
+) -> dict[tuple[str, str, int], float]:
+    if scan is None or scan.empty or positions.empty:
+        return {}
+    keys = positions.loc[
+        :, ["trading_day", "ticker"]
+    ].copy()
+    keys["trading_day"] = keys["trading_day"].astype(str)
+    keys["ticker"] = (
+        keys["ticker"].astype(str).str.upper()
+    )
+    keys = keys.drop_duplicates()
+
+    selected = scan.copy()
+    selected["trading_day"] = (
+        selected["trading_day"].astype(str)
+    )
+    selected["ticker"] = (
+        selected["ticker"].astype(str).str.upper()
+    )
+    selected = selected.merge(
+        keys,
+        on=["trading_day", "ticker"],
+        how="inner",
+        validate="many_to_one",
+    )
+    return _open_map(selected)
+
+
 def _num(row: pd.Series, column: str) -> float:
     value = pd.to_numeric(
         pd.Series([row.get(column)]),
@@ -159,10 +190,9 @@ def build_policy_trajectories(
     opens: dict[tuple[str, str, int], float] | None = None,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
     if opens is None:
-        opens = (
-            _open_map(scan)
-            if scan is not None and not scan.empty
-            else {}
+        opens = _execution_opens_for_positions(
+            scan,
+            positions,
         )
     total = int(
         positions.loc[:, EPISODE_KEYS].drop_duplicates().shape[0]
@@ -387,11 +417,9 @@ def choose_policy(
     calibration_scan: pd.DataFrame | None = None,
 ) -> tuple[PolicySpec, dict[str, object]]:
     table: dict[str, object] = {}
-    calibration_opens = (
-        _open_map(calibration_scan)
-        if calibration_scan is not None
-        and not calibration_scan.empty
-        else {}
+    calibration_opens = _execution_opens_for_positions(
+        calibration_scan,
+        calibration,
     )
     eligible: list[
         tuple[float, float, float, float, float, float, PolicySpec]
@@ -759,7 +787,10 @@ def evaluate(
         [pd.read_parquet(path) for path in scan_paths],
         ignore_index=True,
     )
-    fresh_opens = _open_map(fresh_scan)
+    fresh_opens = _execution_opens_for_positions(
+        fresh_scan,
+        fresh,
+    )
     found = sorted(
         fresh["trading_day"].astype(str).unique()
     )
