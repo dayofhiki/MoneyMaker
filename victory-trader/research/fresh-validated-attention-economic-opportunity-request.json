@@ -29,5 +29,7 @@
   "active_threshold": 0.003093198572895277,
   "entry_features_changed": false,
   "economic_definition_changed": false,
-  "note": "Fresh Request-148 economic-opportunity revalidation using the Request-160/161 validated attention handoff. June 1-5 remain untouched validation evidence."
+  "note": "Fresh Request-148 economic-opportunity revalidation using the Request-160/161 validated attention handoff. June 1-5 remain untouched validation evidence.",
+  "execution_attempt": 2,
+  "execution_change": "Split one-second enrichment into parallel stage2-fit and opportunity preparation jobs; reuse cache from cancelled run 35969458325. Research dates, models, features, thresholds, costs, and promotion gate unchanged."
 }
