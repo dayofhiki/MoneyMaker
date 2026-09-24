@@ -604,13 +604,35 @@ Top-20 (4.43% versus 4.23%). The preregistered diagnosis was
 **dynamic_threshold_reaches_target_with_lower_burden**. This is strong
 development evidence that a rigid 20-name Active budget is itself a bottleneck.
 
-The q65 threshold is now the leading Active-sizing candidate, but it was selected
-from the preregistered threshold family on already-opened May sessions and is
-not promoted yet. The next step is to freeze this absolute threshold policy and
-validate it on chronologically later unopened sessions, preserving Focus-60 for
-isolation. Only after fresh confirmation should explicit causal attention memory
-be layered on top or the same dynamic-sizing question be extended to Focus-60.
-Request 148 remains blocked until the corrected attention handoff is promoted.
+Request 157 then optimized the fixed learned-Focus ceiling while freezing the
+request-156 q65 Active threshold. Focus-60 was not near the preregistered
+capture frontier: it captured 669/684 supported exact-prior crossings (97.81%),
+whereas Top-120 captured 680/684 (99.42%), Top-180 captured 683/684 (99.85%),
+and unbounded Focus captured 684/684. The frozen downstream Active policy
+captured 641/684 (93.71%) at Focus-60, 644/684 (94.15%) at Focus-120, and
+645/684 (94.30%) at Focus-180; unbounded Focus did not improve beyond 645/684.
+Under the preregistered rule requiring both Focus capture within 0.25pp of the
+best tested frontier and downstream Active capture within 0.50pp of its best
+frontier, the smallest qualifying finite cap was **180**, giving diagnosis
+**focus_cap_increase_supported**.
+
+This result shows that Focus-60 was a real upstream bottleneck, but also that
+downstream Active capture saturates much earlier than raw Focus capture.
+Expanding Focus from 60 to 180 recovers 14 additional supported pre-runner
+crossings into Focus but only four additional crossings into the frozen Active
+policy; mean Active count rises from 19.93 to 22.60 and selected three-minute
+positive rate falls from 4.43% to 3.97%. The likely remaining issue is therefore
+not simply insufficient Focus width: the request-156 temporal model was trained
+only on fit-period Focus-60 and may not rank the newly exposed lower-hazard
+population optimally.
+
+The current development candidate is Focus cap 180 plus the frozen request-156
+q65 Active threshold, but it is not promoted yet. Before opening later fresh
+sessions, decide whether to (a) freeze this finite-cap architecture as-is for
+validation or (b) finish the architecture cleanup by testing an absolute/dynamic
+Focus gate and/or retraining the temporal Active model on the broader Focus
+population. Request 148 remains blocked until the corrected attention handoff
+is promoted.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
