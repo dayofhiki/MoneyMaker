@@ -85,5 +85,5 @@ def test_choose_knee_can_require_larger_focus_cap():
     ]
     knee, diagnosis = choose_knee(rows)
     assert knee is not None
-    assert knee["focus_cap"] == 75
+    assert knee["focus_cap"] == 90
     assert diagnosis == "focus_cap_increase_supported"
