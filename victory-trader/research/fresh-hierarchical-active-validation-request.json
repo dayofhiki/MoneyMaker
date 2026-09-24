@@ -1,0 +1,21 @@
+{
+  "request_id": 161,
+  "operation": "fresh_hierarchical_active_validation_v1",
+  "opens_new_dates": true,
+  "eval_days": [
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-03",
+    "2026-06-04",
+    "2026-06-05"
+  ],
+  "focus_cap": 180,
+  "horizon_minutes": 3,
+  "candidate_features": "BASELINE_FEATURES + market_hazard_probability",
+  "candidate_threshold": 0.003093198572895277,
+  "baseline_threshold": 0.003429286145316252,
+  "target_focus_capture": 0.99,
+  "target_active_capture": 0.95,
+  "min_supported_crossings": 100,
+  "note": "First chronologically later fresh validation after freezing request-160 candidate."
+}
