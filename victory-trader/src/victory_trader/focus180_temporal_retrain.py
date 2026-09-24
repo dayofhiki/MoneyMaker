@@ -56,15 +56,29 @@ def select_focus_rows(
     scored["market_hazard_probability"] = market_model.predict_proba(
         scored[BASELINE_FEATURES].replace([np.inf, -np.inf], np.nan)
     )[:, 1]
-    scored = scored.sort_values(
+    ranked = scored.sort_values(
         ["trading_day", "t", "market_hazard_probability", "ticker"],
         ascending=[True, True, False, True],
         kind="stable",
     ).copy()
-    scored["market_rank"] = (
-        scored.groupby(["trading_day", "t"], sort=False).cumcount() + 1
+    ranked["market_rank"] = (
+        ranked.groupby(["trading_day", "t"], sort=False).cumcount() + 1
     )
-    return scored.loc[scored["market_rank"].le(cap)].copy()
+    selected = ranked.loc[
+        ranked["market_rank"].le(cap),
+        ["trading_day", "ticker", "t", "market_hazard_probability", "market_rank"],
+    ].copy()
+    base = target_rows.drop(
+        columns=["market_hazard_probability", "market_rank"],
+        errors="ignore",
+    )
+    return base.merge(
+        selected,
+        on=["trading_day", "ticker", "t"],
+        how="inner",
+        validate="one_to_one",
+        sort=False,
+    )
 
 
 def add_model_probability(
@@ -120,11 +134,12 @@ def derive_burden_matched_threshold(
 
 
 def _policy_metrics(
+    support_rows: pd.DataFrame,
     focus: pd.DataFrame,
     active: pd.DataFrame,
     scan: pd.DataFrame,
 ) -> dict[str, object]:
-    capture = _supported_capture(focus, active, scan)
+    capture = _supported_capture(support_rows, active, scan)
     return {
         "active_capture": capture,
         "active_count": _count_metrics(active, focus),
@@ -269,6 +284,7 @@ def run_probe(
     )
 
     eval_scans: list[pd.DataFrame] = []
+    eval_support: list[pd.DataFrame] = []
     eval_focus: list[pd.DataFrame] = []
     for day in daterange(start, end):
         day_text = day.isoformat()
@@ -276,6 +292,7 @@ def run_probe(
             continue
         scan, _ = build_flatfile_scan_day(store, scan_client, day)
         rows = add_cross_within_horizon_targets(scan, horizons=(HORIZON,))
+        eval_support.append(rows)
         focus = select_focus_rows(rows, market_model, FOCUS_CAP)
         focus = add_model_probability(
             focus, baseline_model, "baseline_probability"
@@ -287,6 +304,7 @@ def run_probe(
         eval_focus.append(focus)
 
     scan = pd.concat(eval_scans, ignore_index=True)
+    support_rows = pd.concat(eval_support, ignore_index=True)
     focus = pd.concat(eval_focus, ignore_index=True)
     found = sorted(scan["trading_day"].astype(str).unique())
     if found != EVAL_DAYS:
@@ -309,9 +327,15 @@ def run_probe(
         )
     ].copy()
 
-    baseline_metrics = _policy_metrics(focus, baseline_active, scan)
-    broad_metrics = _policy_metrics(focus, broad_active, scan)
-    broad_same_metrics = _policy_metrics(focus, broad_same_threshold, scan)
+    baseline_metrics = _policy_metrics(
+        support_rows, focus, baseline_active, scan
+    )
+    broad_metrics = _policy_metrics(
+        support_rows, focus, broad_active, scan
+    )
+    broad_same_metrics = _policy_metrics(
+        support_rows, focus, broad_same_threshold, scan
+    )
 
     diagnosis = _diagnose(baseline_metrics, broad_metrics)
 
