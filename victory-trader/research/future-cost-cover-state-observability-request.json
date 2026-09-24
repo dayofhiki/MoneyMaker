@@ -17,5 +17,6 @@
   "min_selected_prevalence_uplift": 0.1,
   "min_selected_value_uplift_pct": 0.5,
   "min_positive_selected_days": 4,
+  "execution_attempt": 2,
   "note": "Observability only. No executable stopping policy and no account-level PnL claim. A pass licenses composition with request189 timing."
 }
