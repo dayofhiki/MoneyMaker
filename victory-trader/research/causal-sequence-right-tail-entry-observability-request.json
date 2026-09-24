@@ -1,0 +1,7 @@
+{
+  "request_id": 196,
+  "experiment": "causal-sequence-right-tail-entry-observability-v1.0",
+  "preregistered_commit": "f008c0acb87b2e80aeaea60b562dfbf10e0a04d5",
+  "run_reason": "Test whether exact prior-five-minute causal state sequences improve identification of delayed entries that retain a large cost-adjusted winner.",
+  "opens_new_dates": false
+}
