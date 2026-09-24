@@ -1,0 +1,19 @@
+{
+  "request_id": 192,
+  "operation": "future_viability_capture_controller",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "capture_threshold": 0.7,
+  "future_probability_gate": "request191 chronological calibration P75",
+  "positive_state_rule": "exit on capture>=0.70, faded viability, or predicted future best <= causal marked BASE return; otherwise hold",
+  "nonpositive_state_rule": "hold only when request191 high-viability gate passes and predicted future best BASE > 0; otherwise exit",
+  "max_hold_minutes": 30,
+  "reference_account_start_krw": 1000000,
+  "reference_max_positions": 5,
+  "reference_position_fraction": 0.2,
+  "min_start_coverage": 0.85,
+  "min_completion_coverage": 0.9,
+  "min_positive_return_days": 4,
+  "note": "Executable development controller. No fresh threshold tuning. Account ledger is interpretability only; promotion still requires untouched dates."
+}
