@@ -691,11 +691,34 @@ support was only four runner crossings and neither baseline nor candidate
 captured any of them, so the lower-rank tail remains unresolved rather than
 validated.
 
-The corrected attention handoff has now passed its first fresh validation and
-Request 148 is unblocked. The next research step is economic-opportunity
-revalidation on chronologically later data using this frozen attention
-architecture, while preserving the June 1-5 block as validation evidence rather
-than tuning against its day-level misses.
+The corrected attention handoff then moved into economic-opportunity
+revalidation. Request 162 initially stopped before fitting because the more
+selective attention path yielded only 1,292/1,275 labeled first-HOT episodes in
+the original development blocks, below the unchanged 1,500-row safety floor.
+Request 163 solved this without lowering the standard by extending only
+already-opened history. It produced 1,808 labeled fit rows and 1,949 calibration
+rows, then evaluated June 8-12. The frozen selector achieved fresh classifier
+AUC 0.6304 and value Spearman 0.2629. Selected episodes had 60.32% positive
+oracle opportunity versus 47.24% overall, and mean hindsight-best BASE
+opportunity 2.13% versus 1.22% overall. All five fresh days had selected mean
+opportunity at least as high as the all-HOT mean.
+
+Request 164 then separated opportunity ranking from executable profit. The
+signal directions were stable from development into June: better episodes were
+earlier in the session, had wider minute range, higher learned hazard/rerank
+probabilities, stronger minute momentum/acceleration, more second-scale
+volatility and run-up, and a deeper short-term pullback structure. However,
+mechanical BASE-cost exits at 1, 2, 5, 10, 15, and 30 minutes all remained
+negative on average for the frozen selected set (-1.15%, -1.21%, -0.87%,
+-0.74%, -0.60%, and -0.83%, respectively). The selector improved the population
+at every horizon but did not yet make it profitable.
+
+Request 164 also explained the old economic-label coverage failure: of 2,145
+fresh first-HOT rows, 815 (38.00% of all rows and 97.14% of missing labels)
+lacked an exact next-minute entry bar during the session. Near-close effects
+were negligible. This shifts the primary downstream bottleneck to
+**executability/liquidity-aware entry plus recurrent exit timing**, not
+candidate discovery.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
@@ -705,14 +728,14 @@ references are missing, and represent missing oracle outcomes as unknown rather
 than negative.
 
 The executable recurrent trader remains the architectural target. The immediate
-order of work is now: (1) diagnose request-152 missed Focus crossings and
-replace the weak Active admission/selection rule while keeping the validated
-transport accounting; (2) freeze that intervention and validate it on later
-unopened sessions; (3) only after the corrected attention handoff passes, run
-request 148 economic-opportunity revalidation on chronologically later data;
-(4) add causal executability/liquidity value to BUY/WAIT/ABSTAIN and rerun
-POSITION observability with silent decision states retained; then (5) integrate
-the recurrent entry and HOLD/EXIT loop.
+order of work is now: (1) keep the validated attention architecture frozen;
+(2) model causal executability/liquidity for BUY/WAIT/ABSTAIN, treating absent
+near-term tradeability as a reason to wait or abstain rather than silently
+dropping the row; (3) learn recurrent HOLD/EXIT timing from causal state instead
+of choosing a fixed horizon from the June diagnostic; (4) evaluate the combined
+entry/exit loop on a new unopened block with BASE and stress execution costs;
+then (5) add portfolio allocation, overlapping-position constraints, and full
+capital-path P&L.
 
 ### Milestone 3 — policy integration
 
