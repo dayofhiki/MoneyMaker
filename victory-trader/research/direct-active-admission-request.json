@@ -1,0 +1,17 @@
+{
+  "request_id": 153,
+  "operation": "direct_active_admission_v1",
+  "eval_days": [
+    "2026-05-21",
+    "2026-05-22",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28"
+  ],
+  "opens_new_dates": false,
+  "target_retention": 0.95,
+  "material_gain_threshold": 0.01,
+  "variants": ["legacy", "direct_unconditional_cross"],
+  "max_additions": [8, 20],
+  "note": "Development-only attribution and direct-admission comparison on already-opened request-151/152 dates."
+}
