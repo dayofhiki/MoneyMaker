@@ -5,5 +5,7 @@
   "scientific_contract_changed": false,
   "fresh_dates_changed": false,
   "model_changed": false,
-  "threshold_changed": false
+  "threshold_changed": false,
+  "execution_attempt": 2,
+  "execution_note": "Retry after nullable-boolean implementation fix only; fresh shards unchanged."
 }
