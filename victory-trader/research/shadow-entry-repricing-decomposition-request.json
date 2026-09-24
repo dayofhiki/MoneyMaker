@@ -1,0 +1,7 @@
+{
+  "request_id": 195,
+  "experiment": "shadow-entry-repricing-decomposition-v1.0",
+  "preregistered_commit": "7b53a1e6c86c2d128579b8a0ac9361a621bfba9b",
+  "run_reason": "Decompose shadow new-entry opportunity into remaining gross headroom and execution drag after Request 194 showed risk management alone cannot rescue current entries.",
+  "opens_new_dates": false
+}
