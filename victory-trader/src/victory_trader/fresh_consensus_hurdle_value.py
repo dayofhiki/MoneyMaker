@@ -63,7 +63,6 @@ from .market_regime_positive_value import (
 )
 from .massive_client import MassiveClient
 from .market_calendar import is_us_equity_trading_day
-from .multi_day import daterange
 from .rich_second_position_value import (
     RICH_SECOND_FEATURES,
     rich_second_features,
@@ -71,17 +70,15 @@ from .rich_second_position_value import (
 from .second_path_attention_probe import (
     SECOND_CACHE_DIR,
     _second_frame,
-    add_second_features,
 )
 from .selected_hot_position_value_observability import (
     apply_excess_target,
     build_position_rows,
     fit_minute_baselines,
 )
-from .temporal_active_admission import (
-    HORIZON,
-    add_cross_within_horizon_targets,
-)
+from .hierarchical_active_features import HORIZON
+from .targeted_second_hot_reranker import add_second_features
+from .temporal_active_admission import add_cross_within_horizon_targets
 
 REQUEST_ID = 178
 FRESH_DAYS = (
