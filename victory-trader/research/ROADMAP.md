@@ -592,12 +592,25 @@ confirms that short multi-minute context reduces attention churn and recovers
 real coverage; it simply does not yet recover the final ~0.83pp needed to reach
 95%.
 
-The next development step is explicit causal attention memory on top of the
-promising two-to-three-minute score: test whether carrying recent setup value
-for a short bounded period can recover the remaining Focus crossings without
-raising churn or hard-locking stale names. No later fresh session should be
-opened until this memory policy is frozen. Request 148 remains blocked until
-the corrected attention handoff is promoted.
+Request 156 then challenged the fixed Active-20 assumption directly. Using the
+same Focus-specific three-minute score, fit-period score quantiles were converted
+to frozen absolute thresholds and applied unchanged on the already-opened May
+block. The 65th-percentile fit threshold (probability 0.0040281) averaged 19.93
+Active names, slightly fewer than Top-20, yet raised Focus -> Active retention
+from 94.17% to 95.81%. Active size became genuinely state-dependent: median 18,
+minimum 5, p90 31, p95 38 and maximum 60, with more than 20 names on 35.64% of
+decisions. Its selected three-minute positive rate was also slightly higher than
+Top-20 (4.43% versus 4.23%). The preregistered diagnosis was
+**dynamic_threshold_reaches_target_with_lower_burden**. This is strong
+development evidence that a rigid 20-name Active budget is itself a bottleneck.
+
+The q65 threshold is now the leading Active-sizing candidate, but it was selected
+from the preregistered threshold family on already-opened May sessions and is
+not promoted yet. The next step is to freeze this absolute threshold policy and
+validate it on chronologically later unopened sessions, preserving Focus-60 for
+isolation. Only after fresh confirmation should explicit causal attention memory
+be layered on top or the same dynamic-sizing question be extended to Focus-60.
+Request 148 remains blocked until the corrected attention handoff is promoted.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
