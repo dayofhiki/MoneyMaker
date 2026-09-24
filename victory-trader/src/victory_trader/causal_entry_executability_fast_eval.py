@@ -156,7 +156,9 @@ def _vectorized_economics(
     best_index = np.argmax(safe, axis=1) + 1
     events["oracle_best_minute"] = best_index.astype(float)
     events.loc[all_nan, "oracle_best_minute"] = np.nan
-    events["oracle_base_positive"] = events["oracle_best_base_pct"].gt(0)
+    events["oracle_base_positive"] = (
+        events["oracle_best_base_pct"].gt(0).astype("boolean")
+    )
     events.loc[
         events["oracle_best_base_pct"].isna(), "oracle_base_positive"
     ] = pd.NA
