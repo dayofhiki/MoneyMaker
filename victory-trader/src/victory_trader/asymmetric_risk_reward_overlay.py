@@ -32,6 +32,10 @@ from .oracle_capture_percentile_stopping import (
     matched_difference,
     summarize,
 )
+from .selected_hot_position_value_observability import (
+    _base_return,
+    _open_map,
+)
 
 REQUEST_ID = 194
 MAX_HOLD_MINUTES = 30
@@ -150,7 +154,13 @@ def _trajectory_record(
 def build_policy_trajectories(
     positions: pd.DataFrame,
     spec: PolicySpec,
+    scan: pd.DataFrame | None = None,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
+    opens = (
+        _open_map(scan)
+        if scan is not None and not scan.empty
+        else {}
+    )
     total = int(
         positions.loc[:, EPISODE_KEYS].drop_duplicates().shape[0]
     )
@@ -247,7 +257,37 @@ def build_policy_trajectories(
             minute += 1
 
         if status == "unresolved" and reason == "unknown":
-            reason = "missing_forced_cap_state"
+            day = str(first["trading_day"])
+            ticker = str(first["ticker"]).upper()
+            hot_t = int(first["hot_t"])
+            entry_open = _num(first, "entry_open")
+            cap_open = opens.get(
+                (
+                    day,
+                    ticker,
+                    hot_t
+                    + MAX_HOLD_MINUTES * MINUTE_MS,
+                ),
+                np.nan,
+            )
+            if (
+                np.isfinite(entry_open)
+                and entry_open > 0
+                and pd.notna(cap_open)
+                and np.isfinite(float(cap_open))
+                and float(cap_open) > 0
+            ):
+                status = "completed"
+                reason = "forced_30m_cap_exact_scan"
+                final_return = float(
+                    _base_return(
+                        float(entry_open),
+                        float(cap_open),
+                    )
+                )
+                final_minute = float(MAX_HOLD_MINUTES)
+            else:
+                reason = "missing_forced_cap_execution"
 
         records.append(
             _trajectory_record(
@@ -341,6 +381,7 @@ def summarize_enhanced(
 
 def choose_policy(
     calibration: pd.DataFrame,
+    calibration_scan: pd.DataFrame | None = None,
 ) -> tuple[PolicySpec, dict[str, object]]:
     table: dict[str, object] = {}
     eligible: list[
@@ -358,6 +399,7 @@ def choose_policy(
         trajectory, coverage = build_policy_trajectories(
             calibration,
             spec,
+            calibration_scan,
         )
         summary = summarize_enhanced(
             trajectory,
@@ -667,24 +709,45 @@ def simulate_reference_account(
 
 def evaluate(
     calibration_path: Path,
+    history_scan_path: Path,
     fresh_dir: Path,
     output_path: Path,
     trajectories_output_path: Path,
 ) -> int:
     calibration = pd.read_parquet(calibration_path)
+    history_scan = pd.read_parquet(history_scan_path)
+    calibration_days = set(
+        calibration["trading_day"].astype(str)
+    )
+    calibration_scan = history_scan.loc[
+        history_scan["trading_day"]
+        .astype(str)
+        .isin(calibration_days)
+    ].copy()
     selected_spec, calibration_table = choose_policy(
-        calibration
+        calibration,
+        calibration_scan,
     )
 
     position_paths = sorted(
         fresh_dir.glob("*-positions.parquet")
     )
-    if len(position_paths) != len(FRESH_DAYS):
+    scan_paths = sorted(
+        fresh_dir.glob("*-scan.parquet")
+    )
+    if (
+        len(position_paths) != len(FRESH_DAYS)
+        or len(scan_paths) != len(FRESH_DAYS)
+    ):
         raise ValueError(
-            "request 194 requires complete request 178 positions"
+            "request 194 requires complete request 178 positions and scans"
         )
     fresh = pd.concat(
         [pd.read_parquet(path) for path in position_paths],
+        ignore_index=True,
+    )
+    fresh_scan = pd.concat(
+        [pd.read_parquet(path) for path in scan_paths],
         ignore_index=True,
     )
     found = sorted(
@@ -699,15 +762,17 @@ def evaluate(
         build_policy_trajectories(
             fresh,
             selected_spec,
+            fresh_scan,
         )
     )
     minute1, minute1_coverage = build_trajectories(
         fresh,
         policy="minute1_exit",
     )
-    hold30, hold30_coverage = build_trajectories(
+    hold30, hold30_coverage = build_policy_trajectories(
         fresh,
-        policy="hold30",
+        PolicySpec(None, None, None),
+        fresh_scan,
     )
 
     stop_only_spec = PolicySpec(
@@ -719,6 +784,7 @@ def evaluate(
         build_policy_trajectories(
             fresh,
             stop_only_spec,
+            fresh_scan,
         )
     )
     profit_only_spec = PolicySpec(
@@ -730,6 +796,7 @@ def evaluate(
         build_policy_trajectories(
             fresh,
             profit_only_spec,
+            fresh_scan,
         )
     )
     canonical_spec = PolicySpec(*CANONICAL)
@@ -737,6 +804,7 @@ def evaluate(
         build_policy_trajectories(
             fresh,
             canonical_spec,
+            fresh_scan,
         )
     )
 
@@ -748,7 +816,7 @@ def evaluate(
         minute1,
         seed=BOOTSTRAP_SEED + 401,
     )
-    hold30_summary = summarize(
+    hold30_summary = summarize_enhanced(
         hold30,
         seed=BOOTSTRAP_SEED + 402,
     )
@@ -948,6 +1016,11 @@ def main() -> int:
         required=True,
     )
     parser.add_argument(
+        "--history-scan",
+        type=Path,
+        required=True,
+    )
+    parser.add_argument(
         "--fresh-dir",
         type=Path,
         required=True,
@@ -965,6 +1038,7 @@ def main() -> int:
     args = parser.parse_args()
     return evaluate(
         args.calibration,
+        args.history_scan,
         args.fresh_dir,
         args.output,
         args.trajectories_output,
