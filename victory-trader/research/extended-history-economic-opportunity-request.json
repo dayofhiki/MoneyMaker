@@ -1,0 +1,24 @@
+{
+  "request_id": 163,
+  "operation": "extended_history_economic_opportunity_v1",
+  "reason": "Request 162 stopped before fitting because original fit/calibration blocks contained only 1292/1275 labeled first-HOT episodes, below the unchanged 1500 minimum.",
+  "development_history_change_only": true,
+  "fit_days": [
+    "2026-04-30","2026-05-01","2026-05-04","2026-05-05",
+    "2026-05-06","2026-05-07","2026-05-08"
+  ],
+  "calibration_days": [
+    "2026-05-11","2026-05-12","2026-05-13","2026-05-14",
+    "2026-05-15","2026-05-18","2026-05-19","2026-05-20"
+  ],
+  "fresh_eval_days": [
+    "2026-06-08","2026-06-09","2026-06-10","2026-06-11","2026-06-12"
+  ],
+  "min_labeled_fit": 1500,
+  "min_labeled_calibration": 1500,
+  "attention_changed": false,
+  "entry_features_changed": false,
+  "economic_definition_changed": false,
+  "model_hyperparameters_changed": false,
+  "promotion_gate_changed": false
+}
