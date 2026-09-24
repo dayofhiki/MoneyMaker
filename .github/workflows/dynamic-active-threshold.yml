@@ -1,0 +1,74 @@
+name: MoneyMaker Dynamic Active Threshold
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/dynamic-active-threshold-request.json'
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+      MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test request 156
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q \
+            tests/test_dynamic_active_threshold.py \
+            tests/test_temporal_active_admission.py \
+            tests/test_market_wide_focus_hazard.py
+
+      - name: Restore market-wide Flat File cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-dynamic-active-threshold-flatfiles-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-temporal-admission-flatfiles-${{ runner.os }}-
+            moneymaker-direct-admission-flatfiles-${{ runner.os }}-
+
+      - name: Run request 156
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.dynamic_active_threshold \
+            2026-01-02 2026-05-28 \
+            --summary artifacts/dynamic-active-threshold-v10.json \
+            | tee artifacts/dynamic-active-threshold-v10.log
+
+      - name: Upload request 156 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-dynamic-active-threshold-v10-156
+          path: |
+            victory-trader/artifacts/dynamic-active-threshold-v10.json
+            victory-trader/artifacts/dynamic-active-threshold-v10.log
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Save market-wide Flat File cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-dynamic-active-threshold-flatfiles-${{ runner.os }}-${{ github.run_id }}
