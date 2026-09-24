@@ -83,7 +83,7 @@ def add_cross_within_horizon_targets(
         close_by_day[str(day_text)] = int(bounds[1].timestamp() * 1000)
 
     for horizon in horizons:
-        positive = pd.Series(False, index=base.index)
+        positive = np.zeros(len(base), dtype=bool)
         for minute in range(1, horizon + 1):
             future = crossings.copy()
             future["t"] = (
@@ -109,14 +109,15 @@ def add_cross_within_horizon_targets(
                 validate="one_to_one",
             )
             hit = base[f"cross_plus_{minute}m"].fillna(False).astype(bool)
-            positive |= hit
+            positive |= hit.to_numpy(dtype=bool)
 
         t = pd.to_numeric(base["t"], errors="raise").astype("int64")
         close_ms = base["trading_day"].map(close_by_day).astype("int64")
         full_horizon = (t + horizon * MINUTE_MS).le(close_ms)
         target = pd.Series(np.nan, index=base.index, dtype=float)
-        target.loc[positive] = 1.0
-        target.loc[full_horizon & ~positive] = 0.0
+        target.iloc[np.flatnonzero(positive)] = 1.0
+        negative = full_horizon.to_numpy(dtype=bool) & ~positive
+        target.iloc[np.flatnonzero(negative)] = 0.0
         base[f"target_cross_within_{horizon}m"] = target
 
     return base
