@@ -23,6 +23,6 @@
   ],
   "target_retention": 0.95,
   "material_gain_threshold": 0.01,
-  "note": "Development-only temporal attention test on already-opened dates. Three-minute cap=8 is the preregistered primary. Retry 1 fixes only pandas index alignment in target construction.",
-  "retry": 1
+  "note": "Development-only temporal attention test on already-opened dates. Three-minute cap=8 is the preregistered primary. Retry 2 only fixes temporary-column collisions in multi-horizon target construction.",
+  "retry": 2
 }
