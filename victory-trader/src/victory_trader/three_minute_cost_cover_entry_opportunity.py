@@ -15,7 +15,6 @@ import numpy as np
 import pandas as pd
 
 from .decomposed_cost_aware_entry_surplus import (
-    DECOMPOSED_FEATURES,
     EPISODE_KEYS,
     FRESH_DAYS,
     build_historical_states,
