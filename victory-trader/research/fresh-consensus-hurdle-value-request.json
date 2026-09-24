@@ -1,0 +1,21 @@
+{
+  "request_id": 178,
+  "operation": "fresh_consensus_hurdle_value",
+  "opens_new_dates": true,
+  "fresh_days": [
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-25",
+    "2026-06-26",
+    "2026-06-29"
+  ],
+  "consensus_rule": "min(row_weighted_hurdle_EV, day_weighted_hurdle_EV) > 0",
+  "upstream_entry_policy_changed": false,
+  "min_path_coverage": 0.85,
+  "min_context_coverage": 0.95,
+  "min_consensus_spearman": 0.08,
+  "min_selected_rate": 0.10,
+  "min_selected_realized_mean_pct": 0.20,
+  "min_good_days": 4,
+  "bootstrap_ci_low_must_be_positive": true
+}
