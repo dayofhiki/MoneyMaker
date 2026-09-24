@@ -4,7 +4,11 @@
   "opens_new_dates": false,
   "reuses_request178_dates": true,
   "promotion_eligible": false,
-  "support_levels": [0.8, 0.9, 0.95],
+  "support_levels": [
+    0.8,
+    0.9,
+    0.95
+  ],
   "threshold_source": "old calibration best-predicted action value distribution",
   "action_rule": "choose argmax ENTER_NOW vs WAIT_1M only when best score exceeds frozen calibration percentile threshold; otherwise ABSTAIN",
   "selection_rule": "least selective passing level: P80 then P90 then P95",
@@ -13,5 +17,7 @@
   "max_executed_rate": 0.4,
   "min_positive_days": 3,
   "bootstrap_samples": 10000,
-  "note": "Development-only support diagnostic. No new dates and no fresh-outcome threshold fitting."
+  "note": "Development-only support diagnostic. No new dates and no fresh-outcome threshold fitting.",
+  "execution_attempt": 2,
+  "execution_note": "Retry after lint-only unused-import fix; models, thresholds, gates and evaluation data unchanged."
 }
