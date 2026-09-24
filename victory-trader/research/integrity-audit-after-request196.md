@@ -68,6 +68,15 @@ Semantics remain exact-time and causal.
 6. Missing market activity must be represented as information, not implicitly
    converted into HOLD/EXIT labels or actions.
 
+7. Request-196's `strong_winner_3` label means that a +3% BASE opportunity
+   exists at some later executable point. It does not require that the +3%
+   opportunity occurs before a -3% risk stop would have fired. Therefore the
+   Request-196 winner score is an observability signal, not yet a
+   risk-compatible ENTER target. The next executable entry design must use
+   path-ordered/barrier-aware economics (for example, reward reached before
+   stop, or a full causal policy replay) rather than treating every eventual
+   +3% oracle winner as capturable.
+
 ## Goal
 
 The next executable experiment should be judged only by causal, realizable
