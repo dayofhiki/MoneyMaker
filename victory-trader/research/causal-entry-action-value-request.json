@@ -20,6 +20,6 @@
   "max_executed_rate": 0.8,
   "bootstrap_samples": 10000,
   "note": "Development-only entry-value bridge. No fresh-June threshold or price cutoff tuning.",
-  "execution_attempt": 2,
-  "execution_note": "Retry after pre-outcome implementation support guard was corrected from 500/250 to 300/150 rows; model settings, targets, action rule, gates and fresh block are unchanged."
+  "execution_attempt": 3,
+  "execution_note": "Retry after verifying the prior support-floor patch had not changed the source text; now corrected to 300 fit / 150 calibration rows. No model, target, action rule, gate or evaluation data changed."
 }
