@@ -1,0 +1,14 @@
+{
+  "request_id": 173,
+  "operation": "market_regime_position_remaining_value",
+  "opens_new_dates": false,
+  "source_rich_second_run_id": 36033120106,
+  "source_market_scan_run_id": 36001945920,
+  "market_regime_feature_count": 16,
+  "min_market_context_coverage": 0.95,
+  "min_pooled_spearman_improvement": 0.02,
+  "min_same_minute_median_improvement": 0.01,
+  "min_selected_rate": 0.10,
+  "min_good_days": 4,
+  "bootstrap_ci_low_must_be_positive": true
+}
