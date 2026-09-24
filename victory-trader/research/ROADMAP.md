@@ -791,6 +791,32 @@ controller. Do not tune individual rich features on June 8-12. The next branch
 should use fit/calibration history only for representation reduction or regime
 conditioning, then require a later unopened block before promotion.
 
+Requests 172-177 refined the post-entry value branch without opening new
+market dates. Request 172's uncertainty quantile became too sparse. Request 173
+showed market-wide regime context materially improves ranking, but not the
+absolute zero boundary. Request 174's positive-value classifier then failed
+because Platt calibration compressed probabilities near the roughly one-third
+base rate; Request 175 confirmed ranking survived while P>0.5 became
+semantically inappropriate.
+
+Request 176 therefore switched to a three-head hurdle expected-value
+decomposition: P(positive value), conditional positive magnitude, and
+conditional non-positive magnitude. On June 8-12 it produced EV Spearman
++0.1250, selected 21.42% of states, realized selected excess +1.3712%, and
+4/5 good days, but missed promotion only because the day-bootstrap lower bound
+was -0.0357%. Request 177 gave each trading day equal total learning/calibration
+weight and moved that lower bound to -0.0046%, again with 4/5 good days and
++1.2857% selected realized excess. The two estimators disagreed on the weak
+day, so June 8-12 is retired from selection rather than choosing a winner.
+
+Request 178 freezes a conservative consensus before opening a new block:
+consensus EV is the minimum of the Request-176 row-weighted EV and Request-177
+equal-day-weighted EV, and a state is positive only when both are positive.
+The new fresh block is June 23,24,25,26,29. Upstream attention/HOT/BUY policy,
+features, costs and the EV>0 semantics remain unchanged. A pass promotes only
+post-entry value observability; an honest executable recurrent HOLD/EXIT
+trajectory is still required afterward.
+
 The executable recurrent trader remains the architectural target. The immediate
 order of work is now: (1) keep the validated attention architecture frozen;
 (2) model causal executability/liquidity for BUY/WAIT/ABSTAIN, treating absent
