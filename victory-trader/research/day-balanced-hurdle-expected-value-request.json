@@ -1,0 +1,15 @@
+{
+  "request_id": 177,
+  "operation": "equal_trading_day_weighted_hurdle_expected_value",
+  "opens_new_dates": false,
+  "source_rich_second_run_id": 36033120106,
+  "source_scan_run_id": 36001945920,
+  "semantic_boundary": "hurdle_expected_value_pct > 0",
+  "equal_total_day_weight": true,
+  "min_context_coverage": 0.95,
+  "min_ev_spearman": 0.08,
+  "min_selected_rate": 0.10,
+  "min_selected_realized_mean_pct": 0.20,
+  "min_good_days": 4,
+  "bootstrap_ci_low_must_be_positive": true
+}
