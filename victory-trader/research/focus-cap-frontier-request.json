@@ -23,5 +23,5 @@
   "frozen_active_threshold": 0.0040281217293971616,
   "active_horizon_minutes": 3,
   "note": "Optimize fixed learned-Focus Top-K while holding request-156 dynamic Active threshold fixed.",
-  "rerun": 1
+  "rerun": 2
 }
