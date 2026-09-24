@@ -770,6 +770,27 @@ on the current Request-165 BUY population, keep action thresholds/model
 capacity frozen, and test whether dynamic HOLD/EXIT ranking returns before any
 new fresh block or full recurrent trajectory is opened.
 
+Request 170 tested historical tick-trade enrichment but the configured Massive
+entitlement returned HTTP 403 on the first historical trade query, so tick tape
+is currently unavailable as a research input.
+
+Request 171 then derived 20 new causal microstructure proxies from the still
+available one-second aggregate feed and tested them on the Request-165 BUY
+population. This was a meaningful partial success: pooled remaining-option
+Spearman improved from +0.0900 to +0.0954, same-held-minute median Spearman from
++0.0533 to +0.0628, selected realized excess from +0.5120% to +0.6054%, and
+day-balanced excess from +0.5782% to +0.6460%. The five-day cluster-bootstrap
+95% lower bound crossed from -0.0685% to +0.0576%, while 4/5 days retained both
+positive ranking and selected realized excess. However the preregistered
+material-improvement gate did not pass because the ranking gains (+0.0054 and
++0.0095) were below the frozen +0.03/+0.02 thresholds.
+
+This is evidence that post-entry one-second microstructure-like information has
+incremental value, but not yet enough to promote a recurrent HOLD/EXIT
+controller. Do not tune individual rich features on June 8-12. The next branch
+should use fit/calibration history only for representation reduction or regime
+conditioning, then require a later unopened block before promotion.
+
 The executable recurrent trader remains the architectural target. The immediate
 order of work is now: (1) keep the validated attention architecture frozen;
 (2) model causal executability/liquidity for BUY/WAIT/ABSTAIN, treating absent
