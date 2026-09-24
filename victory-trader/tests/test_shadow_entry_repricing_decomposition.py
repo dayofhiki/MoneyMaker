@@ -59,12 +59,14 @@ def test_build_labels_reconstructs_best_base():
 
 
 def test_shadow_features_are_causal_lags():
+    base_t = 1_000_000
     frame = pd.DataFrame(
         [
             {
                 "trading_day": "2026-06-23",
                 "ticker": "TEST",
-                "hot_t": 1,
+                "hot_t": base_t,
+                "state_t": base_t + MINUTE_MS,
                 "minutes_held": 1.0,
                 "entry_to_current_close_pct": 1.0,
                 "running_max_return_pct": 1.5,
@@ -74,7 +76,8 @@ def test_shadow_features_are_causal_lags():
             {
                 "trading_day": "2026-06-23",
                 "ticker": "TEST",
-                "hot_t": 1,
+                "hot_t": base_t,
+                "state_t": base_t + 2 * MINUTE_MS,
                 "minutes_held": 2.0,
                 "entry_to_current_close_pct": 3.0,
                 "running_max_return_pct": 3.5,
@@ -84,7 +87,8 @@ def test_shadow_features_are_causal_lags():
             {
                 "trading_day": "2026-06-23",
                 "ticker": "TEST",
-                "hot_t": 1,
+                "hot_t": base_t,
+                "state_t": base_t + 3 * MINUTE_MS,
                 "minutes_held": 3.0,
                 "entry_to_current_close_pct": 6.0,
                 "running_max_return_pct": 6.5,
@@ -106,3 +110,55 @@ def test_shadow_features_are_causal_lags():
         ]
         == 7.0
     )
+
+
+def test_shadow_multi_minute_features_require_exact_time():
+    base_t = 2_000_000
+    frame = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "hot_t": base_t,
+                "state_t": base_t + MINUTE_MS,
+                "minutes_held": 1.0,
+                "entry_to_current_close_pct": 1.0,
+                "running_max_return_pct": 1.0,
+                "running_min_return_pct": 0.0,
+                "log_current_close": 0.0,
+            },
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "hot_t": base_t,
+                "state_t": base_t + 4 * MINUTE_MS,
+                "minutes_held": 4.0,
+                "entry_to_current_close_pct": 4.0,
+                "running_max_return_pct": 4.0,
+                "running_min_return_pct": 0.0,
+                "log_current_close": 0.0,
+            },
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "hot_t": base_t,
+                "state_t": base_t + 6 * MINUTE_MS,
+                "minutes_held": 6.0,
+                "entry_to_current_close_pct": 6.0,
+                "running_max_return_pct": 6.0,
+                "running_min_return_pct": 0.0,
+                "log_current_close": 0.0,
+            },
+        ]
+    )
+    result = add_shadow_features(frame)
+    row4 = result.loc[
+        result["minutes_held"].eq(4.0)
+    ].iloc[0]
+    row6 = result.loc[
+        result["minutes_held"].eq(6.0)
+    ].iloc[0]
+    assert row4["shadow_move_3m_pct"] == 3.0
+    assert math.isnan(row6["shadow_move_3m_pct"])
+    assert row6["shadow_move_5m_pct"] == 5.0
+    assert math.isnan(row4["shadow_move_1m_pct"])
