@@ -1,0 +1,69 @@
+name: MoneyMaker Day-Balanced Hurdle EV
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'victory-trader/research/day-balanced-hurdle-expected-value-request.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: victory-trader
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+      - name: Test request 177
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_day_balanced_hurdle_expected_value.py
+      - name: Download Request 171 rich-second phases
+        uses: actions/download-artifact@v4
+        with:
+          pattern: request171-rich-second-*
+          path: victory-trader/prepared/rich
+          merge-multiple: true
+          repository: dayofhiki/MoneyMaker
+          run-id: 36033120106
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Request 163 opportunity scan
+        uses: actions/download-artifact@v4
+        with:
+          name: request163-opportunity-prepared
+          path: victory-trader/prepared/opportunity
+          repository: dayofhiki/MoneyMaker
+          run-id: 36001945920
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Evaluate request 177
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.day_balanced_hurdle_expected_value \
+            --fit prepared/rich/fit-rich-second.parquet \
+            --calibration prepared/rich/calibration-rich-second.parquet \
+            --evaluation prepared/rich/evaluation-rich-second.parquet \
+            --scan prepared/opportunity/opportunity-scan.parquet \
+            --output artifacts/day-balanced-hurdle-expected-value-v10.json \
+            --scored-output artifacts/day-balanced-hurdle-expected-value-v10.parquet \
+            | tee artifacts/day-balanced-hurdle-expected-value-v10.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-day-balanced-hurdle-expected-value-v10-177
+          path: |
+            victory-trader/artifacts/day-balanced-hurdle-expected-value-v10.json
+            victory-trader/artifacts/day-balanced-hurdle-expected-value-v10.parquet
+            victory-trader/artifacts/day-balanced-hurdle-expected-value-v10.log
+          if-no-files-found: error
+          retention-days: 90
