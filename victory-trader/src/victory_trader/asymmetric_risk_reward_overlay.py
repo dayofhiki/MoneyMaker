@@ -155,12 +155,15 @@ def build_policy_trajectories(
     positions: pd.DataFrame,
     spec: PolicySpec,
     scan: pd.DataFrame | None = None,
+    *,
+    opens: dict[tuple[str, str, int], float] | None = None,
 ) -> tuple[pd.DataFrame, dict[str, object]]:
-    opens = (
-        _open_map(scan)
-        if scan is not None and not scan.empty
-        else {}
-    )
+    if opens is None:
+        opens = (
+            _open_map(scan)
+            if scan is not None and not scan.empty
+            else {}
+        )
     total = int(
         positions.loc[:, EPISODE_KEYS].drop_duplicates().shape[0]
     )
@@ -384,6 +387,12 @@ def choose_policy(
     calibration_scan: pd.DataFrame | None = None,
 ) -> tuple[PolicySpec, dict[str, object]]:
     table: dict[str, object] = {}
+    calibration_opens = (
+        _open_map(calibration_scan)
+        if calibration_scan is not None
+        and not calibration_scan.empty
+        else {}
+    )
     eligible: list[
         tuple[float, float, float, float, float, float, PolicySpec]
     ] = []
@@ -399,7 +408,7 @@ def choose_policy(
         trajectory, coverage = build_policy_trajectories(
             calibration,
             spec,
-            calibration_scan,
+            opens=calibration_opens,
         )
         summary = summarize_enhanced(
             trajectory,
@@ -750,6 +759,7 @@ def evaluate(
         [pd.read_parquet(path) for path in scan_paths],
         ignore_index=True,
     )
+    fresh_opens = _open_map(fresh_scan)
     found = sorted(
         fresh["trading_day"].astype(str).unique()
     )
@@ -762,7 +772,7 @@ def evaluate(
         build_policy_trajectories(
             fresh,
             selected_spec,
-            fresh_scan,
+            opens=fresh_opens,
         )
     )
     minute1, minute1_coverage = build_trajectories(
@@ -772,7 +782,7 @@ def evaluate(
     hold30, hold30_coverage = build_policy_trajectories(
         fresh,
         PolicySpec(None, None, None),
-        fresh_scan,
+        opens=fresh_opens,
     )
 
     stop_only_spec = PolicySpec(
@@ -784,7 +794,7 @@ def evaluate(
         build_policy_trajectories(
             fresh,
             stop_only_spec,
-            fresh_scan,
+            opens=fresh_opens,
         )
     )
     profit_only_spec = PolicySpec(
@@ -796,7 +806,7 @@ def evaluate(
         build_policy_trajectories(
             fresh,
             profit_only_spec,
-            fresh_scan,
+            opens=fresh_opens,
         )
     )
     canonical_spec = PolicySpec(*CANONICAL)
@@ -804,7 +814,7 @@ def evaluate(
         build_policy_trajectories(
             fresh,
             canonical_spec,
-            fresh_scan,
+            opens=fresh_opens,
         )
     )
 
