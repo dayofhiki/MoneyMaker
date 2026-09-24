@@ -1,0 +1,21 @@
+{
+  "request_id": 158,
+  "operation": "focus180_temporal_retrain_v1",
+  "opens_new_dates": false,
+  "eval_days": [
+    "2026-05-21",
+    "2026-05-22",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28"
+  ],
+  "focus_cap": 180,
+  "baseline_training_cap": 60,
+  "broad_training_cap": 180,
+  "baseline_threshold": 0.0040281217293971616,
+  "primary_threshold_policy": "fit-period burden-matched",
+  "target_capture": 0.95,
+  "material_gain": 0.005,
+  "max_burden_ratio": 1.1,
+  "note": "Retrain the 3m Active model on Focus-180 and compare at matched fit-period observation burden."
+}
