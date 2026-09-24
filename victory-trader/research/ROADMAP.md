@@ -626,13 +626,33 @@ not simply insufficient Focus width: the request-156 temporal model was trained
 only on fit-period Focus-60 and may not rank the newly exposed lower-hazard
 population optimally.
 
-The current development candidate is Focus cap 180 plus the frozen request-156
-q65 Active threshold, but it is not promoted yet. Before opening later fresh
-sessions, decide whether to (a) freeze this finite-cap architecture as-is for
-validation or (b) finish the architecture cleanup by testing an absolute/dynamic
-Focus gate and/or retraining the temporal Active model on the broader Focus
-population. Request 148 remains blocked until the corrected attention handoff
-is promoted.
+Request 158 tested the broader-training hypothesis directly. With Focus fixed
+at 180, the baseline three-minute model trained on fit-period Focus-60 exactly
+reproduced Request 157: 645/684 supported crossings captured (94.30%) at mean
+Active count 22.60. Retraining the same model on fit-period Focus-180 and using
+a fit-period burden-matched threshold captured 647/684 (94.59%) at mean Active
+count 21.45. The +0.29pp gain was below the preregistered +0.50pp material
+threshold and remained below 95%, so the diagnosis was
+**focus180_training_no_material_gain**. Average precision on May Focus-180 also
+fell from 0.2584 to 0.2469.
+
+Most importantly, the mechanism test did not support the hypothesis that the
+old training population was the main reason lower-hazard candidates were
+missed. Among supported crossings ranked 61-180 by market hazard, both models
+captured exactly 4/14 (28.57%). The broad model's two additional captures came
+from ranks 1-60 (641 -> 643), not from the newly exposed tail. The same raw
+numeric threshold also underperformed, confirming that simple score-scale
+changes do not solve the issue.
+
+The current development baseline therefore remains Focus cap 180 with the
+request-156 Focus-60-trained three-minute Active model and its frozen q65
+threshold. Broad retraining alone is not promoted. The next diagnostic should
+target feature/representation quality for the Active handoff, especially the
+61-180 tail: the temporal model currently does not directly consume the learned
+market-hazard probability/rank that caused a ticker to enter learned Focus.
+Test hierarchical Focus-context features and inspect missed-tail separability
+before opening later fresh sessions. Request 148 remains blocked until the
+corrected attention handoff is promoted.
 
 Additional audit fixes now preserve active-subscription age through temporary
 unscoreable rows, preserve HOT episode memory through POSITION state, reset
