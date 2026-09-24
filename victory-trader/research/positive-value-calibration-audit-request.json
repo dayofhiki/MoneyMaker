@@ -5,5 +5,7 @@
   "policy_changed": false,
   "threshold_changed": false,
   "source_rich_second_run_id": 36033120106,
-  "source_market_scan_run_id": 36001945920
+  "source_market_scan_run_id": 36001945920,
+  "execution_attempt": 2,
+  "execution_note": "Retry after lint-only unused-import fix; scientific diagnostic unchanged."
 }
