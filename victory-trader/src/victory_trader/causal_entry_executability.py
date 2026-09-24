@@ -29,6 +29,7 @@ from .extended_history_economic_opportunity import (
 )
 from .flatfiles import MassiveFlatFilesClient, MassiveFlatFileStore
 from .fresh_validated_attention_economic_opportunity import _build_frozen_active
+from .hierarchical_active_features import HORIZON
 from .hierarchical_attention_runtime import add_stage2_scores, fit_stage2
 from .hot_economic_opportunity import ENTRY_FEATURES, _first_hot_feature_rows
 from .market_calendar import is_us_equity_trading_day
@@ -36,7 +37,7 @@ from .massive_client import MassiveClient
 from .multi_day import daterange
 from .second_path_attention_probe import SECOND_CACHE_DIR
 from .targeted_second_hot_reranker import add_second_features
-from .temporal_active_admission import HORIZON, add_cross_within_horizon_targets
+from .temporal_active_admission import add_cross_within_horizon_targets
 
 REQUEST_ID = 165
 FRESH_DAYS = [
