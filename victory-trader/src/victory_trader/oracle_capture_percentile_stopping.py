@@ -175,6 +175,53 @@ def _episode_rows(frame: pd.DataFrame) -> dict[int, pd.Series]:
     }
 
 
+def _first_later_exit(
+    by_minute: dict[int, pd.Series],
+    after_minute: int,
+) -> tuple[float, float] | None:
+    for later in sorted(
+        minute for minute in by_minute if minute > after_minute
+    ):
+        value = pd.to_numeric(
+            pd.Series(
+                [
+                    by_minute[later].get(
+                        "exit_now_base_return_pct"
+                    )
+                ]
+            ),
+            errors="coerce",
+        ).iloc[0]
+        if pd.notna(value):
+            return float(later), float(value)
+    return None
+
+
+def _complete_exit(
+    by_minute: dict[int, pd.Series],
+    minute: int,
+    current_exit: float | np.floating | None,
+    reason: str,
+) -> tuple[str, str, float, float]:
+    if pd.notna(current_exit):
+        return (
+            "completed",
+            reason,
+            float(current_exit),
+            float(minute),
+        )
+    later = _first_later_exit(by_minute, minute)
+    if later is not None:
+        later_minute, value = later
+        return (
+            "completed",
+            f"{reason}_delayed_open",
+            value,
+            later_minute,
+        )
+    return ("unresolved", f"{reason}_missing_open", np.nan, np.nan)
+
+
 def build_trajectories(
     scored: pd.DataFrame,
     *,
@@ -191,24 +238,33 @@ def build_trajectories(
         first = by_minute.get(1)
         if first is None:
             continue
+
         first_exit = pd.to_numeric(
             pd.Series([first.get("exit_now_base_return_pct")]),
             errors="coerce",
         ).iloc[0]
-        if pd.isna(first_exit):
-            continue
 
         if policy == "minute1_exit":
+            status, reason, realized, exit_minute = _complete_exit(
+                by_minute,
+                1,
+                first_exit,
+                "minute1_exit",
+            )
             records.append(
                 {
                     "trading_day": str(first["trading_day"]),
                     "ticker": str(first["ticker"]).upper(),
                     "hot_t": int(first["hot_t"]),
                     "policy": policy,
-                    "status": "completed",
-                    "exit_reason": "minute1_exit",
-                    "base_net_return_pct": float(first_exit),
-                    "minutes_held": 1.0,
+                    "status": status,
+                    "exit_reason": reason,
+                    "base_net_return_pct": (
+                        float(realized)
+                        if pd.notna(realized)
+                        else np.nan
+                    ),
+                    "minutes_held": exit_minute,
                 }
             )
             continue
@@ -222,22 +278,25 @@ def build_trajectories(
         while minute < MAX_HOLD_MINUTES:
             row = by_minute.get(minute)
             if row is None:
-                status = "unresolved"
-                reason = "missing_reached_state"
+                later = _first_later_exit(by_minute, minute)
+                if later is not None:
+                    later_minute, value = later
+                    status = "completed"
+                    reason = "missing_reached_state_delayed_open"
+                    realized = value
+                    exit_minute = later_minute
+                else:
+                    status = "unresolved"
+                    reason = "missing_reached_state"
                 break
 
             current_exit = pd.to_numeric(
                 pd.Series([row.get("exit_now_base_return_pct")]),
                 errors="coerce",
             ).iloc[0]
-            if pd.isna(current_exit):
-                status = "unresolved"
-                reason = "missing_current_exit"
-                break
 
             if policy == "hold30":
                 should_exit = False
-                score = np.nan
             else:
                 score = pd.to_numeric(
                     pd.Series(
@@ -247,18 +306,20 @@ def build_trajectories(
                 ).iloc[0]
                 if pd.isna(score) or not np.isfinite(float(score)):
                     should_exit = True
-                    reason = "unscoreable_exit"
+                    decision_reason = "unscoreable_exit"
                 else:
                     if threshold is None:
                         raise ValueError("threshold required")
                     should_exit = float(score) >= float(threshold)
-                    if should_exit:
-                        reason = "capture_percentile_exit"
+                    decision_reason = "capture_percentile_exit"
 
             if should_exit:
-                status = "completed"
-                realized = float(current_exit)
-                exit_minute = float(minute)
+                status, reason, realized, exit_minute = _complete_exit(
+                    by_minute,
+                    minute,
+                    current_exit,
+                    decision_reason,
+                )
                 break
 
             if minute == MAX_HOLD_MINUTES - 1:
@@ -292,8 +353,16 @@ def build_trajectories(
                     realized = float(next_return)
                     exit_minute = float(minute + 1)
                 else:
-                    status = "unresolved"
-                    reason = "missing_state_and_exit"
+                    later = _first_later_exit(by_minute, minute)
+                    if later is not None:
+                        later_minute, value = later
+                        status = "completed"
+                        reason = "missing_state_delayed_open_exit"
+                        realized = value
+                        exit_minute = later_minute
+                    else:
+                        status = "unresolved"
+                        reason = "missing_state_and_exit"
                 break
 
             minute += 1
@@ -322,7 +391,6 @@ def build_trajectories(
             float(started / total) if total else None
         ),
     }
-
 
 def _bootstrap_daily(
     frame: pd.DataFrame,
