@@ -1,0 +1,12 @@
+{
+  "request_id": 208,
+  "operation": "pullback_turn_transition_entry",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "parent_request": 207,
+  "representation_change": "add causal WATCH transition, pullback and rebound geometry",
+  "target": "BASE 3m ENTER-now return minus BASE 3m ENTER-one-minute-later return",
+  "runtime_rule": "ENTER if predicted relative advantage >= 0; otherwise WAIT one minute; final checkpoint enters when evaluable",
+  "note": "Development-only representation test. No threshold tuning and no new market dates."
+}
