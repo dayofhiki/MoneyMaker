@@ -1,0 +1,53 @@
+{
+  "request_id": 215,
+  "operation": "event_time_executable_recurrent_entry",
+  "parent_requests": [208, 212, 214],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request214 understates executable outcome coverage by requiring exact-minute checkpoints and exact +3m exits. Treat silent clock minutes as causal STALE/WAIT states and settle the fixed 3m diagnostic at the first actually executable observation at or after the target.",
+  "frozen": [
+    "validated attention/HOT architecture",
+    "Request214 causal feature family",
+    "Request208 relative ENTER-vs-WAIT timing model",
+    "Request214 hurdle entry model capacity and calibration procedure",
+    "EV>0 semantic entry boundary",
+    "BASE execution costs",
+    "five-minute entry decision window",
+    "three-minute diagnostic holding target"
+  ],
+  "entry_clock_rule": "Observed checkpoint: evaluate ENTER/WAIT. Silent exact minute: STALE/WAIT only, never ENTER. Continue causal clock through minute 5.",
+  "exit_execution_rule": "For an ENTER at minute m, target m+3 but settle at the first available executable observation at or after m+3. Never use an observation before the target.",
+  "accounting_rule": "ABSTAIN is cash. ENTER without a later executable observation is unresolved. Prediction failures and episodes with no observed decision state are unresolved. Missing execution is never zero-filled.",
+  "evaluation_scope": "same already-opened five Request178 development dates; no new holdout",
+  "comparators": [
+    "Request214 exact-checkpoint/exact-3m replay on identical frozen inputs",
+    "cash"
+  ],
+  "gate": {
+    "min_resolved_trades": 30,
+    "min_positive_days": 4,
+    "positive_day_balanced_base": true,
+    "positive_vs_cash_daily_bootstrap_low": true,
+    "complete_episode_and_entry_outcome_accounting": true
+  },
+  "diagnostics": [
+    "silent checkpoint rate",
+    "exact +3m outcome coverage",
+    "event-time +3m outcome coverage",
+    "newly resolved outcomes",
+    "execution-delay distribution",
+    "positive realized-state rate",
+    "entry-value rank correlation",
+    "nonzero predicted-EV state count"
+  ],
+  "forbidden": [
+    "evaluation threshold tuning",
+    "best future price or best future horizon labels",
+    "using pre-target prices as exits",
+    "treating unresolved entries as cash",
+    "opening new dates",
+    "claiming this fixed-horizon diagnostic is a finished trader"
+  ],
+  "input_runs": [36033120106, 36038233507],
+  "request214_reference_run": 36162158697
+}
