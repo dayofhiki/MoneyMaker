@@ -123,3 +123,62 @@ Interpretation map:
   an explicit hurdle action model, then select its threshold on calibration.
 
 Do not tune a new action threshold inside Request 198.
+
+
+## Result
+
+Request 198 completed on FIT -> chronological CALIBRATION only. No Request-178
+fresh outcome was evaluated.
+
+### Execution hurdles are learnable
+
+Entry fillability:
+- prevalence 53.65%;
+- AUC 0.8347;
+- AP 0.8762;
+- every calibration day AUC approximately 0.77-0.90.
+
+Terminal close conditional on a filled entry:
+- tight AUC 0.8011, AP 0.9335;
+- runner AUC 0.7984, AP 0.9280.
+
+Therefore the dominant failure in Request 197 is not inability to identify
+states with usable one-second activity or terminal executability.
+
+### Economic direction is weak
+
+Positive realized net among closed trades:
+- tight AUC 0.5157;
+- runner AUC 0.5712.
+
+Closed-return regression:
+- tight Spearman +0.0949;
+- runner Spearman +0.0287.
+
+Causal partial-take capture:
+- tight prevalence 12.26%, AUC 0.5802;
+- runner prevalence 3.25%, AUC 0.6053.
+
+The low runner partial-take prevalence confirms that a +10% first take is rare
+inside the current candidate population.
+
+### Composite ranking still loses
+
+Top calibration composite groups were much more executable but not profitable.
+
+Tight:
+- P80 closed-all-state 81.91%, day-balanced -1.535%;
+- P90 88.95%, -1.500%;
+- P95 91.16%, -1.295%.
+
+Runner:
+- P80 closed-all-state 81.91%, day-balanced -1.614%;
+- P90 88.40%, -1.706%;
+- P95 92.27%, -1.895%.
+
+Thus solving executability alone does not reveal a positive entry edge. The next
+diagnostic should remove trailing/terminal-fill noise and ask the more primitive
+price question directly: after a causal entry, does the upside barrier occur
+before the -3% stop barrier? It should also compare full rich-second features
+against a minute-level ablation to determine whether current one-second features
+add directional information.
