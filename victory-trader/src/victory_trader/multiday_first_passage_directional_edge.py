@@ -157,13 +157,6 @@ class DailyHistoryStore:
         }
         if sessions >= MIN_HISTORY_SESSIONS:
             close = pd.to_numeric(bars["c"], errors="coerce")
-            high = pd.to_numeric(bars["h"], errors="coerce")
-            low = pd.to_numeric(bars["l"], errors="coerce")
-            volume = (
-                pd.to_numeric(bars["v"], errors="coerce")
-                .fillna(0.0)
-                .clip(lower=0.0)
-            )
             daily_return = close.pct_change() * 100.0
             usable = bars.iloc[-FULL_HISTORY_SESSIONS:].copy()
             usable_close = pd.to_numeric(
