@@ -19,5 +19,5 @@
   ],
   "exit_policy": "fixed three-minute exit",
   "note": "Development-only additive supply-information test; no float/share thresholds and no threshold tuning.",
-  "rerun_reason": "lint-only cleanup; no research rule changed"
-}\n
+  "rerun_reason": "retrigger after verifying lint-clean source and repairing request JSON newline; no research rule changed"
+}
