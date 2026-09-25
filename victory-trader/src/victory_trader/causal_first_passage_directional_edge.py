@@ -17,18 +17,23 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 
 from .causal_second_risk_compatible_entry import (
     BASE_SCENARIO,
+    ENTRY_EXPIRY_MS,
+    LATENCY_MS,
     RULES,
     SecondStore,
     _bars_from_seconds,
-    prepare_states,
+    _enrich_rich_second,
+    _state_filter,
 )
 from .future_cost_cover_state_observability import (
     _day_weights,
     _safe_ap,
     _safe_auc,
 )
+from .execution_costs import modeled_buy_fill
+from .market_regime_position_value import attach_market_regime, build_market_regime
 from .rich_second_position_value import RICH_SECOND_FEATURES
-from .shadow_entry_repricing_decomposition import FEATURES
+from .shadow_entry_repricing_decomposition import FEATURES, add_shadow_features
 
 REQUEST_ID = 199
 MODEL_SEED = 20261130
@@ -54,6 +59,73 @@ def _columns(frame: pd.DataFrame, *, include_rich: bool) -> tuple[str, ...]:
 
 def _x(frame: pd.DataFrame, columns: tuple[str, ...]) -> pd.DataFrame:
     return frame.reindex(columns=columns).apply(pd.to_numeric, errors="coerce")
+
+
+def prepare_directional_states(
+    positions: pd.DataFrame,
+    scan: pd.DataFrame,
+    store: SecondStore,
+) -> pd.DataFrame:
+    """Build the exact Request-197 causal feature state plus entry fill only.
+
+    First-passage diagnostics do not need a full stop/take/trailing replay before
+    labeling. This preserves entry semantics while avoiding two redundant full
+    trajectory replays per state.
+    """
+    base = _state_filter(positions)
+    base = add_shadow_features(base)
+    regime = build_market_regime(scan)
+    base = attach_market_regime(base, regime)
+    base = _enrich_rich_second(base, store)
+
+    statuses: list[str] = []
+    fill_times: list[float] = []
+    modeled_prices: list[float] = []
+
+    for row in base.to_dict("records"):
+        day = str(row["trading_day"])
+        ticker = str(row["ticker"]).upper()
+        decision_t = int(row["state_t"])
+        seconds = store.seconds(day, ticker)
+        windows = store.halts(day)
+        start_t = decision_t + LATENCY_MS
+        end_t = start_t + ENTRY_EXPIRY_MS
+        path = seconds.loc[
+            pd.to_numeric(seconds["t"], errors="coerce").between(
+                start_t,
+                end_t,
+                inclusive="both",
+            )
+        ].copy()
+        bars = _bars_from_seconds(
+            path,
+            ticker=ticker,
+            intervals=windows,
+        )
+        eligible = next(
+            (
+                bar
+                for bar in bars
+                if not bar.halted
+                and start_t <= int(bar.t) <= end_t
+            ),
+            None,
+        )
+        if eligible is None:
+            statuses.append("entry_unavailable")
+            fill_times.append(np.nan)
+            modeled_prices.append(np.nan)
+            continue
+        statuses.append("entry_filled")
+        fill_times.append(float(eligible.t))
+        modeled_prices.append(
+            float(modeled_buy_fill(float(eligible.o), BASE_SCENARIO))
+        )
+
+    base["replay_status"] = statuses
+    base["entry_fill_t"] = fill_times
+    base["entry_modeled_price"] = modeled_prices
+    return base
 
 
 def add_first_passage(
@@ -345,14 +417,22 @@ def evaluate(
     cal_scan = scan.loc[scan["trading_day"].astype(str).isin(cal_days)].copy()
 
     store = SecondStore()
-    _, fit_by_rule = prepare_states(fit_positions, fit_scan, store)
-    _, cal_by_rule = prepare_states(cal_positions, cal_scan, store)
+    fit_states = prepare_directional_states(
+        fit_positions,
+        fit_scan,
+        store,
+    )
+    cal_states = prepare_directional_states(
+        cal_positions,
+        cal_scan,
+        store,
+    )
 
     diagnostics: dict[str, object] = {}
     for i, rule_name in enumerate(RULES):
         diagnostics[rule_name] = evaluate_rule(
-            fit_by_rule[rule_name],
-            cal_by_rule[rule_name],
+            fit_states,
+            cal_states,
             store,
             rule_name=rule_name,
             seed_offset=i,
