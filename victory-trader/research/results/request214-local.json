@@ -30,7 +30,7 @@
   },
   "decision": "EV>0 AND (relative advantage>=0 OR minute=5); otherwise WAIT/ABSTAIN",
   "development_gate_pass": false,
-  "entry_value_spearman": 0.041020164712484694,
+  "entry_value_spearman": 0.0400375303560006,
   "exit_policy": "fixed 3m, entry diagnostic only",
   "features": [
     "attention_score",
@@ -140,7 +140,7 @@
       "sha256": "370700b6dfab7b8e6e1ecd9ff50f3e89a83bb5e2c05045312b419eb8f87450d9"
     }
   ],
-  "mean_predicted_ev_pct": -1.3859962525527387,
+  "mean_predicted_ev_pct": -1.3850378947208766,
   "mean_realized_enter_pct": -1.2600520775508115,
   "observed_episodes": 223,
   "one_shot_same_model": {
@@ -169,8 +169,8 @@
   "opens_new_dates": false,
   "positive_ev_states": 0,
   "predicted_entry_ev_range_pct": [
-    -3.402848813992426,
-    -0.4528069320011582
+    -3.3603875705846207,
+    -0.47177465350655073
   ],
   "promotion_eligible": false,
   "promotion_gate_pass": false,
@@ -256,7 +256,7 @@
     "joblib": "1.6.0",
     "numpy": "2.4.6",
     "pandas": "3.0.6",
-    "python": "3.11.16",
+    "python": "3.12.14",
     "scikit-learn": "1.9.1",
     "scipy": "1.17.1",
     "threadpoolctl": "3.7.0"

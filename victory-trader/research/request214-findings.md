@@ -53,10 +53,16 @@ and calibration artifacts and Request178 development shards; their SHA256
 hashes are recorded in `results/request214.json`.
 
 There are 223 source episodes and 1,016 observed watch states. Predicted entry
-values range from -3.360388% to -0.471775%; none exceeds zero. The repeated
+values range from -3.402849% to -0.452807%; none exceeds zero. The repeated
 controller records 794 waits, 168 fully observed abstentions and 55 episodes
 whose observation sequence is incomplete. The one-shot controller abstains in
-all 223 episodes. Entry-value rank correlation is only +0.0400.
+all 223 episodes. Entry-value rank correlation is only +0.0410.
+
+A descriptive hindsight audit finds 152 positive realized labels among 814
+evaluable watch-state labels, spanning 78 of the 223 episodes. These overlapping
+labels are not 152 independent trades and cannot be selected using hindsight.
+They show that the zero-entry result is a failure to identify profitable states,
+not evidence that the sample contains no profitable price paths.
 
 The reproduced Request208 decisions expose an accounting limitation: 201 entry
 attempts include 32 whose 3-minute payoff cannot be evaluated; another 22
@@ -81,14 +87,22 @@ The initially available local numerical stack (scikit-learn 1.8.0, pandas
 numerical versions printed in Request213's job log, all its daily and overall
 mean returns were reproduced. The pinned stack is in
 `request214-requirements.txt`. This is a reproducibility correction, not a
-research-policy change. The numerical results above are the pinned run;
-Python locally is 3.12.14 and the remote replay uses Python 3.11.
+research-policy change. The canonical results above are the successful remote replay
+[36162158697](https://github.com/dayofhiki/MoneyMaker/actions/runs/36162158697),
+source commit `4eb38003c8ec09d1b1a3265e30556d0433518933`, artifact 10876506644.
+The pinned local run is retained in `results/request214-local.json`. Python
+locally is 3.12.14, remote 3.11.16. Predicted EV ranges and correlations differ
+slightly between runtimes (local correlation +0.0400, remote +0.0410); we do not
+claim bitwise model reproducibility. Both make exactly zero entries and
+reproduce the Request208 comparator returns.
 
 Validation: 636 full-suite tests passed under the installed local stack;
 11 focused tests also passed under the pinned numerical stack. The new tests
 cover waiting and re-entry decisions, terminal abstention, future-label
 independence, missing outcomes, duplicate checkpoints and rejection of
-zero-trade/negative/unresolved results. Critical Ruff checks passed.
+zero-trade/negative/unresolved results. Critical Ruff checks passed. Remote full-suite CI and the experiment
+workflow both completed successfully; workflow success is execution success,
+not a passed research/profitability gate.
 
 ## Next research boundary
 
