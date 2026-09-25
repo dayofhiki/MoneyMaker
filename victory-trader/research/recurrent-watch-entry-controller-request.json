@@ -4,6 +4,6 @@
   "run_reason": "Convert HOT discovery into a recurrent flat watch episode. At causal minute 1-10 checkpoints choose ENTER_NOW, WAIT, or DROP using separate enter-now and best-later value heads, with one-second legal execution and the frozen runner risk rule after entry. Train on Request171 FIT, evaluate Request171 chronological calibration only. Request178 remains sealed.",
   "opens_new_dates": false,
   "promotion_eligible": false,
-  "retry": 1,
-  "retry_reason": "Implementation-only lint cleanup before any Request204 model/data result. Preregistered actions, features, labels, split, and success gates unchanged."
+  "retry": 2,
+  "retry_reason": "Pre-result unit-test expectation fix for virtual HOT-origin trough age. Controller code, labels, actions, split and success gates unchanged."
 }
