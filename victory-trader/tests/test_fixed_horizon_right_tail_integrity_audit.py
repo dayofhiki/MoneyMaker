@@ -32,7 +32,7 @@ def test_fixed20_label_is_anchored_to_shadow_state():
                 "trading_day": "2026-06-23",
                 "ticker": "TEST",
                 "t": state_t + 20 * MINUTE_MS,
-                "o": 104.0,
+                "o": 106.0,
             },
             {
                 "trading_day": "2026-06-23",
@@ -46,7 +46,7 @@ def test_fixed20_label_is_anchored_to_shadow_state():
     row = result.iloc[0]
     assert row["fixed20_entry_open"] == 100.0
     assert row["fixed20_exit_count"] == 1
-    assert row["fixed20_best_base_pct"] < 4.0
+    assert 3.0 <= row["fixed20_best_base_pct"] < 6.0
     assert bool(row["fixed20_strong_winner_3"])
 
 
