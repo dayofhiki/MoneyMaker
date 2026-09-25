@@ -28,7 +28,7 @@ def test_attach_relative_advantage_is_local_one_minute_comparison() -> None:
     first = frame.loc[frame["minutes_since_hot"].eq(1)].iloc[0]
     assert first["enter_vs_wait1_advantage_pct"] == -0.5
     third = frame.loc[frame["minutes_since_hot"].eq(3)].iloc[0]
-    assert third["enter_vs_wait1_advantage_pct"] == 0.6
+    assert third["enter_vs_wait1_advantage_pct"] == pytest.approx(0.6)
 
 
 def test_recurrent_policy_waits_until_relative_advantage_turns_positive() -> None:
