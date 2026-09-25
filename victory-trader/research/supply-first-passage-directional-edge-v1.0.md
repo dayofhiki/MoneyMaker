@@ -126,3 +126,62 @@ on calibration outcomes.
 
 Move to a new causal information source rather than recombining two failed
 context branches.
+
+
+## Result — Request 201
+
+Request 201 completed on Request-171 FIT -> chronological CALIBRATION only.
+Request-178 remained sealed.
+
+Point-in-time supply coverage was strong and causal:
+- calibration request success: 100%;
+- weighted-share coverage: 100%;
+- share-class coverage: 94.56%;
+- all populated query dates strictly prior;
+- 906 first-run reference requests, zero retries.
+
+### Tight +5% before -3%
+
+- comparator AUC: 0.5765;
+- supply AUC: 0.5869;
+- uplift: +0.0104;
+- supply beat comparator on 4/8 days;
+- P90 day-balanced proxy: -1.4351% versus -0.8620% all-state.
+
+No useful tight-barrier signal.
+
+### Runner +10% before -3%
+
+- comparator AUC: 0.6159;
+- supply AUC: 0.6782;
+- uplift: +0.0622;
+- supply beat comparator on 6/8 days;
+- decisive-only AUC improved to 0.5925.
+
+This is the strongest clean directional uplift in the current first-passage
+series.
+
+However:
+- all-state day-balanced barrier proxy: -1.1880%;
+- supply P90 day-balanced proxy: -1.4377%;
+- P90 uplift: -0.2498pp.
+
+Therefore the frozen development-signal rule still failed.
+
+## Interpretation
+
+Supply/turnover context contains real information about the rare +10% first-
+passage branch, but a binary "take before stop or neither" target is economically
+misaligned. It treats stop_first (-3 proxy) and neither (0 proxy) as the
+same negative class. A high take-probability score can therefore concentrate
+high-volatility states that are also more likely to hit the stop.
+
+Do not tune a supply-score percentile.
+
+The next request must explicitly separate take-first, stop-first and neither,
+then estimate the barrier expected value:
+
+    +10 * P(take_first)
+    - 3 * P(stop_first)
+
+before any action threshold is considered.
