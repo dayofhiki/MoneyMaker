@@ -1,0 +1,13 @@
+{
+  "request_id": 211,
+  "operation": "receding_horizon_hold_exit",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "parent_request": 210,
+  "target": "three-minute BASE HOLD advantage over EXIT now",
+  "representation_change": "none; retain Request-210 causal transition features",
+  "runtime_rule": "each reached minute HOLD iff predicted 3m advantage > 0; re-evaluate one minute later",
+  "comparator": "retrained Request-210 one-minute transition controller",
+  "note": "Development-only horizon test. No threshold tuning and no new dates."
+}
