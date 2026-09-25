@@ -93,3 +93,116 @@ Semantics remain exact-time and causal.
 The next executable experiment should be judged only by causal, realizable
 account economics after modeled costs. Oracle opportunity, fresh diagnostic
 rankings, and calibration policy selection must remain clearly separated.
+
+
+## Additional structural findings from the final Request-194 audit
+
+### 4. The current stop/take overlay is minute-close risk management, not a true hard stop
+
+Request 194 evaluates the mark only on completed minute POSITION states. A stock
+can cross a stop or profit barrier intraminute and reverse before the minute
+closes without triggering the rule.
+
+Therefore labels such as "hard_stop" currently mean "minute-close stop rule".
+They must not be interpreted as broker-style stop-market behavior.
+
+Before promotion, the risk engine should replay barriers on the available
+one-second path (or finer live data) and execute only after the causal trigger
+time.
+
+### 5. Synthetic execution-cost predictability is not real spread/impact predictability
+
+The BASE execution scenario is generated from fixed half-spread/slippage
+parameters plus a minimum-cent spread floor. Consequently a high correlation
+when predicting synthetic drag can largely reflect deterministic price-level
+effects.
+
+Do not claim that real market execution cost is solved from the Request-184/195
+drag Spearman results. Final validation needs latency and friction sensitivity,
+and live/paper execution should later replace synthetic spread assumptions.
+
+### 6. The next entry target must be risk-compatible and path ordered
+
+The next model should predict an economically attainable outcome under the same
+risk rules it will actually execute. A useful target is not merely "a +3% exit
+exists later"; it must encode whether reward is reachable before the stop or
+otherwise replay the full frozen causal policy.
+
+### 7. One ticker must correspond to at most one live position unless scaling-in is explicit
+
+The attention runtime has a single POSITION state per ticker. The reference
+account previously allowed overlapping episodes with different HOT timestamps
+for the same ticker. The ledger now blocks overlapping same-ticker admissions.
+
+Scaling in can be researched later, but it must be a deliberate action, not an
+artifact of replay episode construction.
+
+### 8. Reference-account equity is not yet a production-grade account model
+
+The Request-194 account is intentionally interpretive. It sizes from cash plus
+remaining cost-basis principal and reports realized-ledger drawdown rather than
+continuous mark-to-market equity. It also assumes fractional sizing and ignores
+FX presentation effects.
+
+Before an untouched-date profitability claim, use one canonical account engine
+with:
+- mark-to-market equity and drawdown;
+- one-position-per-ticker invariant;
+- explicit whole-share/fractional-share assumptions;
+- explicit USD accounting, with KRW only as a display conversion if needed;
+- risk-normalized sizing rather than fixed 20% allocation alone.
+
+The existing `position_ledger.py` already has better mark-to-market mechanics
+and should be the base for consolidation rather than maintaining multiple
+independent ledgers.
+
+### 9. Stop-distance comparisons should be risk-normalized
+
+A fixed 20% allocation with a -3% stop risks much less account capital than the
+same 20% allocation with a -7% stop. Comparing those policies without adjusting
+position size mixes exit quality with different risk budgets.
+
+Future risk-policy comparisons should freeze an account-risk budget per trade
+and derive position size from the stop distance, subject to liquidity and
+capital caps.
+
+### 10. Repeated development rows are correlated
+
+Request-196 reports state-level AUC over many shadow states from the same
+episodes. Those rows are useful for recurrent observability research but are not
+independent trades.
+
+Executable evaluation must:
+- allow only the causal actions the runtime could actually take;
+- avoid counting multiple high-score states from one episode as independent
+  successes;
+- cluster uncertainty at least by trading day and preferably by ticker episode
+  where appropriate.
+
+### 11. The broad research session is currently regular-hours only
+
+The market-wide replay is intentionally restricted to the regular U.S. session.
+This is not leakage or a code bug, but it is a scope gap for a surge-stock trader
+because premarket can contain important discovery and price-formation
+information.
+
+Premarket should be a separately validated extension after the regular-session
+policy is structurally sound, not silently mixed into the existing history.
+
+### 12. Use one canonical execution/replay contract going forward
+
+Multiple historical research modules implement their own missing-state,
+delayed-fill, cap, and ledger rules. This flexibility helped exploration but
+also created semantic drift.
+
+The next executable policy should use one shared execution contract for:
+- decision timestamp;
+- first legally usable execution timestamp;
+- delayed/unfilled orders;
+- partial fills/exits;
+- stop/take/trailing triggers;
+- position uniqueness;
+- account cash/equity.
+
+Legacy modules can remain reproducible research artifacts, but they should not
+be imported as the live-policy execution engine.
