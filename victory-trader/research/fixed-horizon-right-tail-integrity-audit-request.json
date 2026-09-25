@@ -1,0 +1,7 @@
+{
+  "request_id": "196A",
+  "experiment": "fixed-horizon-right-tail-integrity-audit-v1.0",
+  "run_reason": "Audit whether Request 196 right-tail observability survives a fixed 20-minute future window and removal of direct clock features. No new dates.",
+  "opens_new_dates": false,
+  "promotion_eligible": false
+}
