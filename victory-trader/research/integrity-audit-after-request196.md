@@ -251,3 +251,45 @@ is not the same as a live current-price eligibility rule after large gaps.
 If a final strategy wants current-price constraints, apply them causally at the
 decision timestamp rather than treating the prior-close universe rule as the
 final trading mandate.
+
+
+## Request 196A fixed-horizon audit result
+
+Request 196A completed successfully on the already-open Request-178 development
+block. It used a fixed 20-minute future window from each shadow state and
+trained on Request-171 FIT only.
+
+Results:
+- evaluable states: 1,808;
+- fixed-horizon +3% winner prevalence: 13.55%;
+- full current-state AUC: 0.61296;
+- full average precision: 0.19095;
+- no-clock AUC: 0.58530;
+- no-clock average precision: 0.18573;
+- minutes-held-only AUC: 0.46993;
+- negative-minutes-held AUC: 0.53007.
+
+Per-day full AUC:
+- Jun23 0.6393;
+- Jun24 0.6136;
+- Jun25 0.6714;
+- Jun26 0.7040;
+- Jun29 0.4693.
+
+Fresh diagnostic top quartile:
+- winner rate 18.36% vs 13.55% all-state prevalence (+4.81pp);
+- fixed20 best-BASE mean +0.867% vs +0.606% all states (+0.261pp);
+- mean opportunity positive on all five days.
+
+Interpretation:
+- Request 196's previous ~0.73 state-level AUC materially overstated how strong
+  the reusable right-tail signal is under a fair constant future window and a
+  cleaner FIT-only training split.
+- Clock variables contribute some signal (0.613 vs 0.585), but minutes held by
+  itself is weak, so the result is not *only* a remaining-time shortcut.
+- A modest stock/state signal remains, but it should now be treated as
+  exploratory rather than a near-ready entry edge.
+- Because Request 196A changes both target horizon and training partition
+  relative to Request 196, the AUC drop cannot be attributed numerically to the
+  horizon shortcut alone. The safe conclusion is simply that the stronger
+  Request-196 interpretation does not survive the stricter integrity contract.
