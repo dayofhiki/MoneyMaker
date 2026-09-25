@@ -1,0 +1,18 @@
+{
+  "request_id": 213,
+  "operation": "supply_admission_transition_timing",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "parent_requests": [208, 209, 212],
+  "point_in_time_rule": "ticker details at D-1 calendar day only; no current fallback",
+  "admission_target": "best executable 3-minute BASE return within watch minutes 1..5",
+  "admission_rule": "admit iff predicted hurdle expected BASE value > 0",
+  "candidate": "state-only admission plus seven continuous D-1 supply features",
+  "comparators": [
+    "Request208 ungated recurrent timing",
+    "Request209 state-only admission plus Request208 timing"
+  ],
+  "exit_policy": "fixed three-minute exit",
+  "note": "Development-only additive supply-information test; no float/share thresholds and no threshold tuning."
+}
