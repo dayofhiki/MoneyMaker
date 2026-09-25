@@ -1,3 +1,4 @@
+import math
 from datetime import date
 
 import pandas as pd
@@ -59,6 +60,11 @@ def test_publication_safe_feature_change_is_causal():
     )
     row = _feature_row(records, date(2026, 5, 12))
     assert row["short_interest_change_pct"] == 50.0
-    assert row["short_interest_avg_daily_volume_change_pct"] == 20.0
+    assert math.isclose(
+        row["short_interest_avg_daily_volume_change_pct"],
+        20.0,
+        rel_tol=0,
+        abs_tol=1e-12,
+    )
     assert row["short_interest_days_to_cover_change"] == 0.5
     assert pd.notna(row["short_interest_publication_age_days"])
