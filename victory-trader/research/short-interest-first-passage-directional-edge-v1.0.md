@@ -121,3 +121,51 @@ calibration outcomes.
 Proceed to another genuinely different causal source. Only an independently
 successful branch may later be combined with Request-201 supply in a separately
 pre-registered interaction experiment.
+
+
+## Result — Request 203
+
+Request 203 completed successfully on Request-171 FIT -> chronological
+CALIBRATION only. Request-178 remained sealed.
+
+Data quality was strong:
+- short-interest query-complete coverage: 100%;
+- latest publication-safe record coverage: 99.20%;
+- two-record coverage: 98.23%;
+- days-to-cover coverage: 99.20%;
+- publication eligibility was enforced by official publication date strictly
+  before the trading day.
+
+### Tight +5% before -3%
+
+- comparator AUC: 0.5765;
+- short-interest AUC: 0.5874;
+- uplift: +0.0109;
+- short-interest beat comparator on 4/8 days;
+- decisive-only AUC: 0.4923;
+- P90 day-balanced barrier proxy: -1.4781%;
+- all-state proxy: -0.8620%;
+- P90 uplift: -0.6161pp.
+
+### Runner +10% before -3%
+
+- comparator AUC: 0.6159;
+- short-interest AUC: 0.5896;
+- uplift: -0.0263;
+- short-interest beat comparator on 3/8 days;
+- decisive-only AUC: 0.5047;
+- P90 day-balanced barrier proxy: -1.5832%;
+- all-state proxy: -1.1880%;
+- P90 uplift: -0.3952pp.
+
+Neither barrier passed the frozen signal rule.
+
+## Decision
+
+Retire this exact publication-safe short-interest feature branch. Do not tune
+days-to-cover thresholds, short-interest levels, report age, feature subsets,
+barrier sizes, or score quantiles on calibration outcomes.
+
+Short interest is distinct from daily short-sale volume, but in this sample it
+does not improve the risk-compatible directional edge. Proceed to another
+genuinely different causal source.
