@@ -23,6 +23,9 @@ from .second_path_adapter import HaltInterval, adapt_second_bars
 from .second_portfolio_replay import EntryAttempt, replay_portfolio
 
 DEVELOPMENT_DAY = "2026-06-23"
+DEVELOPMENT_DAYS = (
+    "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29",
+)
 MINUTE_MS = 60_000
 RULE = RiskRule(stop_pct=3, take_pct=10, trail_retrace_pct=7)
 LATENCIES_MS = (0, 1_000, 2_000, 5_000)
@@ -36,8 +39,8 @@ def build_attempts(
     session_close_t: int,
 ) -> tuple[list[EntryAttempt], dict[str, int]]:
     """Use only the exact previous completed minute close as sizing reference."""
-    if day != DEVELOPMENT_DAY:
-        raise ValueError("this diagnostic is restricted to the already-open development day")
+    if day not in DEVELOPMENT_DAYS:
+        raise ValueError("this diagnostic is restricted to already-open development days")
     required_positions = {"trading_day", "ticker", "hot_t"}
     required_scan = {"trading_day", "ticker", "t", "c"}
     if not required_positions.issubset(positions.columns):
@@ -62,22 +65,32 @@ def build_attempts(
         if pd.notna(row.c)
     }
     attempts: list[EntryAttempt] = []
-    missing = 0
+    missing_prior_minute = 0
+    invalid_prior_close = 0
+    after_session = 0
     for row in episodes.itertuples(index=False):
         ticker = str(row.ticker).upper()
         decision_t = int(row.hot_t)
         reference = closes.get((ticker, decision_t - MINUTE_MS))
-        if reference is None or not isfinite(reference) or reference <= 0:
-            missing += 1
+        if reference is None:
+            missing_prior_minute += 1
+            continue
+        if not isfinite(reference) or reference <= 0:
+            invalid_prior_close += 1
             continue
         if decision_t >= session_close_t:
-            missing += 1
+            after_session += 1
             continue
         attempts.append(EntryAttempt(ticker, decision_t, reference, session_close_t, RULE))
     return attempts, {
         "episodes": len(episodes),
         "causal_decision_refs": len(attempts),
-        "missing_decision_refs": missing,
+        "missing_decision_refs": (
+            missing_prior_minute + invalid_prior_close + after_session
+        ),
+        "missing_prior_minute": missing_prior_minute,
+        "invalid_prior_close": invalid_prior_close,
+        "after_session": after_session,
     }
 
 
@@ -137,10 +150,13 @@ def run_probe(
     *,
     second_bars_dir: Path | None = None,
     halt_json: Path | None = None,
+    day_text: str = DEVELOPMENT_DAY,
 ) -> dict[str, object]:
     if halt_json is not None and second_bars_dir is None:
         raise ValueError("offline halt manifest requires offline second bars")
-    day = date.fromisoformat(DEVELOPMENT_DAY)
+    if day_text not in DEVELOPMENT_DAYS:
+        raise ValueError("probe day must be already-open development data")
+    day = date.fromisoformat(day_text)
     bounds = regular_session_bounds(day)
     if bounds is None:
         raise ValueError("missing official session bounds")
@@ -152,7 +168,7 @@ def run_probe(
     positions = pd.read_parquet(position_files[0])
     scan = pd.read_parquet(scan_files[0])
     attempts, selection = build_attempts(
-        positions, scan, day=DEVELOPMENT_DAY, session_close_t=close_t,
+        positions, scan, day=day_text, session_close_t=close_t,
     )
 
     halt_records: list[HaltRecord] = []
@@ -163,7 +179,7 @@ def run_probe(
         if halt_json is None:
             halt_status = "unavailable:offline_no_halt_manifest"
         else:
-            offline_halts = load_offline_halts(halt_json, day=DEVELOPMENT_DAY)
+            offline_halts = load_offline_halts(halt_json, day=day_text)
             halt_status = "user_supplied_unverified"
     else:
         source = "massive_rest"
@@ -187,7 +203,7 @@ def run_probe(
                 not (char.isalnum() or char in "._-") for char in ticker
             ):
                 raise ValueError("unsafe ticker in offline second path")
-            second_path = second_bars_dir / f"{DEVELOPMENT_DAY}-{ticker}-seconds.parquet"
+            second_path = second_bars_dir / f"{day_text}-{ticker}-seconds.parquet"
             if not second_path.is_file():
                 data_audit[ticker] = {"status": "missing_offline_second_file"}
                 continue
@@ -224,13 +240,18 @@ def run_probe(
 
     report: dict[str, object] = {
         "development_only": True,
-        "day": DEVELOPMENT_DAY,
+        "day": day_text,
         "second_source": source,
         "policy": "all causal-reference HOT episodes; stop3/take10-half/trail7%-price",
         "halt_feed": halt_status,
         "selection": selection,
         "data_statuses": dict(Counter(str(item["status"]) for item in data_audit.values())),
         "data_audit": data_audit,
+        "observed_second_rows": {
+            "provider": sum(int(item.get("provider_rows", 0)) for item in data_audit.values()),
+            "regular_session": sum(int(item.get("session_rows", 0)) for item in data_audit.values()),
+            "halt_overlap": sum(int(item.get("halt_overlap_rows", 0)) for item in data_audit.values()),
+        },
         "api_stats": client.stats.to_dict() if client is not None else None,
         "scenarios": summarize_scenarios(attempts, bars_by_ticker),
         "interpretation": (
@@ -242,10 +263,11 @@ def run_probe(
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
     print(json.dumps({
-        "day": DEVELOPMENT_DAY,
+        "day": day_text,
         "selection": selection,
         "halt_feed": halt_status,
         "data_statuses": report["data_statuses"],
+        "observed_second_rows": report["observed_second_rows"],
         "scenarios": report["scenarios"],
     }, indent=2))
     return report
@@ -255,12 +277,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fresh-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--day", choices=DEVELOPMENT_DAYS, default=DEVELOPMENT_DAY)
     parser.add_argument("--second-bars-dir", type=Path)
     parser.add_argument("--halt-json", type=Path)
     args = parser.parse_args()
     run_probe(
         args.fresh_dir, args.output,
         second_bars_dir=args.second_bars_dir, halt_json=args.halt_json,
+        day_text=args.day,
     )
     return 0
 
