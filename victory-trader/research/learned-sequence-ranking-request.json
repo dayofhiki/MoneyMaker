@@ -1,0 +1,76 @@
+{
+  "request_id": 218,
+  "operation": "learned_sequence_position_ranking",
+  "parent_requests": [216, 217],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "A learned chronological representation of the last eight actually observed POSITION states can recover transferable HOLD-value ordering that current-state models and hand-crafted path summaries failed to capture.",
+  "frozen": [
+    "Request208 causal entry selection",
+    "Request216 event-time POSITION replay",
+    "Request216 next-executable-event BASE HOLD-advantage label",
+    "Request217 within-day percentile-rank target",
+    "Request178 development dates",
+    "no recurrent trading-policy replay in this representation experiment"
+  ],
+  "candidate_representation": {
+    "sequence_length": 8,
+    "sources": [
+      "entry_to_current_close_pct",
+      "drawdown_from_peak_pct",
+      "recovery_from_trough_pct",
+      "attention_score",
+      "attention_rank",
+      "log_minute_volume",
+      "log_minute_transactions",
+      "active_seconds_60",
+      "sec_last5_return_pct",
+      "sec_last10_return_pct",
+      "sec_close_vs_vwap_pct",
+      "sec_volume_burst_5",
+      "sec_transactions_burst_5",
+      "elapsed_since_previous_observation_min",
+      "minutes_held"
+    ],
+    "encoding": "Fixed chronological lag slots ending at the current observed state, with causal age features and padding masks. The MLP learns interactions directly; no manually chosen slope/std/range summaries are provided as the new representation.",
+    "model": {
+      "family": "MLPRegressor",
+      "hidden_layers": [64, 32],
+      "activation": "relu",
+      "alpha": 0.01,
+      "max_iter": 250
+    },
+    "causality": "Only current and prior observations are allowed. Future timestamps, future prices, future gaps, labels, and hindsight best values are forbidden."
+  },
+  "comparators": [
+    "Request216 expected-value score",
+    "current-state-only MLP with the same rank objective",
+    "Request217 hand-crafted recent-path rank model"
+  ],
+  "gate": {
+    "min_candidate_spearman": 0.05,
+    "min_gain_vs_current_mlp": 0.03,
+    "min_gain_vs_handcrafted": 0.03,
+    "min_calibration_spearman": 0.02,
+    "min_good_days": 3,
+    "top10_day_balanced_advantage_positive": true,
+    "top20_day_balanced_advantage_positive": true,
+    "min_top10_positive_rate_gain": 0.05,
+    "same_age_median_spearman_positive": true
+  },
+  "good_day_definition": "Daily Spearman > 0 and the top 10% of sequence scores have positive mean realized next-event HOLD advantage.",
+  "forbidden": [
+    "tuning sequence length, hidden size, source list or gate after seeing June 23/24/25/26/29 results",
+    "using future observation timing as an input",
+    "opening new dates",
+    "claiming a profitable trading policy from a ranking-only result"
+  ],
+  "next_if_pass": "Freeze the sequence representation, calibrate an absolute HOLD/EXIT value rule using historical fit/calibration only, then replay recurrent event-time trajectories.",
+  "next_if_fail": "Stop adding representation features and challenge the one-step next-event HOLD target itself with multi-event continuation / remaining-option-value objectives.",
+  "input_runs": {
+    "rich_second": 36033120106,
+    "opportunity_scan": 36001945920,
+    "development_block": 36038233507
+  },
+  "request217_reference_run": 36178628181
+}
