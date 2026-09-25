@@ -1,5 +1,3 @@
-import math
-
 import pandas as pd
 
 from victory_trader.attention_replay import MINUTE_MS
