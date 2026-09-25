@@ -148,3 +148,37 @@ coverage floors are unchanged. Fresh development data is not evaluated when no
 calibration policy is eligible.
 
 This is an observability/reporting change, not threshold tuning.
+
+
+## Calibration bridge result
+
+Request 197 stopped at calibration by design. No Request-178 fresh outcome was
+evaluated because none of the six frozen rule/threshold combinations met all
+support and closed-coverage floors.
+
+Calibration period: 2026-05-11 through 2026-05-20 (8 sessions).
+
+Runner rule:
+- P80: 122 admitted, 70.49% closed, day-balanced -2.1755%, 0/8 positive days;
+- P90: 74 admitted, 78.38% closed, day-balanced -2.0126%, 0/8 positive days;
+- P95: 40 admitted, 87.50% closed, day-balanced -2.0659%, 1/8 positive days.
+
+Tight rule:
+- P80: 141 admitted, 72.34% closed, day-balanced -2.0353%, 0/8 positive days;
+- P90: 94 admitted, 79.79% closed, day-balanced -2.2283%, 0/8 positive days;
+- P95: 50 admitted, 88.00% closed, day-balanced -2.1586%, 0/8 positive days.
+
+Across candidates, mean winner was only about +2.0% to +3.0% while mean loser
+was about -3.1% to -3.3%; payoff ratios were below 1.0. Entry-order expiry was
+also material even with retry semantics.
+
+Interpretation:
+- failure is not a near-miss on the 90% closed-coverage floor;
+- stricter score thresholds do not reveal a positive calibration edge;
+- the single realized-return regressor does not identify risk-policy-profitable
+  entry states;
+- unresolved/availability outcomes are informative censoring and should not be
+  ignored by fitting only on closed trades.
+
+Therefore Request 178 fresh data remains sealed for this experiment. The next
+bridge should decompose execution and economics into separate causal hurdles.
