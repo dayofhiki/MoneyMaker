@@ -3,6 +3,8 @@ import pandas as pd
 from victory_trader.causal_second_risk_compatible_entry import (
     _selection_rate,
     _summarize,
+    first_admitted_baseline,
+    first_admitted_qualifying,
     first_qualifying,
     first_state_baseline,
 )
@@ -78,3 +80,37 @@ def test_unresolved_trade_counts_against_coverage():
     assert summary["closed"] == 1
     assert summary["closed_coverage"] == 0.5
     assert summary["mean_net_return_pct"] == 4.0
+
+
+def test_expired_entry_returns_to_wait_and_retries():
+    frame = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "AAA",
+                "hot_t": 1,
+                "state_t": 61,
+                "minutes_held": 1.0,
+                "entry_score": 0.9,
+                "replay_status": "entry_unavailable",
+                "policy_net_return_pct": None,
+            },
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "AAA",
+                "hot_t": 1,
+                "state_t": 121,
+                "minutes_held": 2.0,
+                "entry_score": 0.85,
+                "replay_status": "closed",
+                "policy_net_return_pct": 3.0,
+            },
+        ]
+    )
+    selected, audit = first_admitted_qualifying(frame, 0.8)
+    assert len(selected) == 1
+    assert selected.iloc[0]["minutes_held"] == 2.0
+    assert audit["expired_entry_attempts"] == 1
+    baseline, base_audit = first_admitted_baseline(frame)
+    assert baseline.iloc[0]["minutes_held"] == 2.0
+    assert base_audit["expired_entry_attempts"] == 1
