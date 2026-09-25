@@ -32,6 +32,8 @@ def test_exact_previous_minute_close_is_required_for_sizing():
     )
     assert audit == {
         "episodes": 2, "causal_decision_refs": 1, "missing_decision_refs": 1,
+        "missing_prior_minute": 1, "invalid_prior_close": 0,
+        "after_session": 0,
     }
     assert attempts[0].ticker == "A"
     assert attempts[0].decision_price == 10
@@ -59,6 +61,20 @@ def test_nonfinite_prior_close_cannot_size_an_order():
     )
     assert attempts == []
     assert audit["missing_decision_refs"] == 1
+    assert audit["invalid_prior_close"] == 1
+
+
+def test_other_preopened_day_uses_same_frozen_selection():
+    day = "2026-06-24"
+    attempts, audit = build_attempts(
+        pd.DataFrame([{"trading_day": day, "ticker": "A", "hot_t": T}]),
+        pd.DataFrame([{
+            "trading_day": day, "ticker": "A", "t": T - 60_000, "c": 10,
+        }]),
+        day=day, session_close_t=T + 30_000,
+    )
+    assert len(attempts) == 1
+    assert audit["causal_decision_refs"] == 1
 
 
 def test_frozen_sensitivity_grid_has_twelve_reference_results():
