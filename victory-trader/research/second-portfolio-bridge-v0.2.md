@@ -47,6 +47,14 @@ coverage, halt coverage, entry expiry, ambiguous path rate, unresolved session
 positions, cash/capacity blocks, and BASE/light/stress equity curves at 0/1/2/5s
 latency. Do not drop unresolved trades or promote from these seen dates.
 
+The first probe is frozen to June 23. It can read credential-free local Parquet
+files via `--second-bars-dir`: one `2026-06-23-TICKER-seconds.parquet` per ticker,
+with provider-style `t,o,h,l,c` columns. An optional `--halt-json` file has
+`{"day":"2026-06-23","intervals":[{"ticker":"ABC","start_t":<UTC ms>,
+"resume_t":<UTC ms or null>}]}`. Without that manifest, halt coverage is
+explicitly unknown. A supplied manifest is marked unverified, not official.
+The probe never promotes a result, and missing files remain in its audit.
+
 Before a fresh evaluation, the policy needs one frozen rule for session-close
 liquidation versus unresolved overnight capital, a point-in-time entry feature
 set, FIT-only training, separate chronological calibration, and explicit net
