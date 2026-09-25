@@ -133,3 +133,44 @@ outcomes.
 
 Move to another genuinely different causal information axis, with point-in-time
 share supply / float-turnover context as the next pre-declared candidate.
+
+
+## Result — Request 200
+
+Request 200 completed on Request-171 FIT -> chronological CALIBRATION only.
+Request-178 remained sealed.
+
+Premarket activity was present for 93.86% of calibration states, so the branch
+did not fail for lack of data.
+
+### Tight +5% before -3%
+
+- comparator AUC: 0.5774;
+- premarket AUC: 0.5841;
+- uplift: +0.0067;
+- premarket beat comparator on 4/8 days;
+- P90 day-balanced barrier proxy: -1.2145%;
+- all-state proxy: -0.8620%;
+- P90 uplift: -0.3525pp.
+
+### Runner +10% before -3%
+
+- comparator AUC: 0.6154;
+- premarket AUC: 0.6298;
+- uplift: +0.0144;
+- premarket beat comparator on 5/8 days;
+- P90 day-balanced barrier proxy: -1.7341%;
+- all-state proxy: -1.1880%;
+- P90 uplift: -0.5462pp.
+
+Neither barrier satisfied the frozen development-signal rule.
+
+## Decision
+
+Retire this exact premarket representation without tuning its 04:00 start,
+feature subset, score threshold, or barrier pair on calibration outcomes.
+
+Premarket context contains a small amount of directional information but not
+enough to produce a useful selected tail. Proceed to the pre-declared next
+causal axis: point-in-time share supply / float-turnover context, evaluated on
+the same FIT -> CAL first-passage target before any fresh date is opened.
