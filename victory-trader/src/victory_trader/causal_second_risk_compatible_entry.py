@@ -481,7 +481,7 @@ def _selection_rate(selected: pd.DataFrame, all_states: pd.DataFrame) -> float:
 
 def choose_policy(
     calibration_by_rule: dict[str, pd.DataFrame],
-) -> tuple[SelectedPolicy, dict[str, object]]:
+) -> tuple[SelectedPolicy | None, dict[str, object]]:
     table: dict[str, object] = {}
     eligible: list[tuple[float, float, float, str, float, float]] = []
     for rule_name, frame in calibration_by_rule.items():
@@ -524,7 +524,7 @@ def choose_policy(
                     )
                 )
     if not eligible:
-        raise ValueError("request 197 no calibration policy meets support/coverage floors")
+        return None, table
     eligible.sort()
     best = eligible[0]
     chosen = SelectedPolicy(
@@ -621,6 +621,39 @@ def evaluate(
         frame["entry_score"] = score(frame, models[rule_name])
 
     chosen, calibration_table = choose_policy(cal_by_rule)
+
+    if chosen is None:
+        result = {
+            "schema_version": 1,
+            "request_id": REQUEST_ID,
+            "opens_new_dates": False,
+            "promotion_eligible": False,
+            "base_scenario": asdict(BASE_SCENARIO),
+            "latency_ms": LATENCY_MS,
+            "entry_expiry_ms": ENTRY_EXPIRY_MS,
+            "rules": {name: asdict(rule) for name, rule in RULES.items()},
+            "training_partition": "request171_fit_only",
+            "calibration_partition": "request171_calibration_only",
+            "development_days": list(FRESH_DAYS),
+            "selected_policy": None,
+            "calibration_table": calibration_table,
+            "calibration_bridge_pass": False,
+            "bridge_failure_reason": (
+                "no calibration rule/threshold combination met frozen "
+                "trade-count, selection-rate, and closed-coverage floors"
+            ),
+            "fresh_evaluated": False,
+            "development_gate_pass": False,
+            "second_client_stats": store.client.stats.to_dict(),
+            "halt_feed_by_day": dict(sorted(store.halt_status.items())),
+        }
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(
+            json.dumps(result, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
 
     _, fresh_by_rule = prepare_states(fresh_positions, fresh_scan, store)
     selected_frame = fresh_by_rule[chosen.rule_name]
