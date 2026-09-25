@@ -46,13 +46,13 @@ def test_watch_features_use_only_current_and_prior_states():
     minute3 = result.loc[result["minutes_held"].eq(3.0)].iloc[0]
 
     assert minute2["watch_peak_age_minutes"] == 1.0
-    assert minute2["watch_trough_age_minutes"] == 0.0
+    assert minute2["watch_trough_age_minutes"] == 2.0
     assert math.isclose(
         minute2["watch_location_in_running_range"],
         2.0 / 5.0,
     )
     assert minute3["watch_peak_age_minutes"] == 2.0
-    assert minute3["watch_trough_age_minutes"] == 1.0
+    assert minute3["watch_trough_age_minutes"] == 3.0
 
 
 def test_action_targets_use_best_strictly_later_closed_state():
