@@ -763,6 +763,7 @@ def simulate_reference_account(
     ] = {}
     admitted: set[tuple[str, str, int]] = set()
     skipped_capacity = 0
+    skipped_duplicate_ticker = 0
     skipped_cash = 0
     max_concurrent_seen = 0
 
@@ -789,6 +790,13 @@ def simulate_reference_account(
 
     for _, _, kind, key, payload in events:
         if kind == "entry":
+            ticker = key[1]
+            if any(
+                open_key[1] == ticker
+                for open_key in open_positions
+            ):
+                skipped_duplicate_ticker += 1
+                continue
             if len(open_positions) >= REFERENCE_MAX_POSITIONS:
                 skipped_capacity += 1
                 continue
@@ -889,6 +897,9 @@ def simulate_reference_account(
         "winning_trades": int(wins),
         "losing_trades": int(losses),
         "skipped_capacity": int(skipped_capacity),
+        "skipped_duplicate_ticker": int(
+            skipped_duplicate_ticker
+        ),
         "skipped_cash": int(skipped_cash),
         "max_concurrent_seen": int(
             max_concurrent_seen
