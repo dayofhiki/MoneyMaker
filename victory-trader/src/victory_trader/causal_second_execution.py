@@ -23,7 +23,7 @@ class SecondBar:
     t: int  # UTC epoch milliseconds at the start of the second
     o: float
     h: float
-    l: float
+    low: float
     c: float
     halted: bool = False
 
@@ -131,9 +131,9 @@ def replay_long(
     for b in bars:
         if b.halted:
             continue
-        if any(not isfinite(x) or x <= 0 for x in (b.o, b.h, b.l, b.c)):
+        if any(not isfinite(x) or x <= 0 for x in (b.o, b.h, b.low, b.c)):
             raise ValueError("active bars require finite positive OHLC")
-        if b.l > min(b.o, b.c) or b.h < max(b.o, b.c):
+        if b.low > min(b.o, b.c) or b.h < max(b.o, b.c):
             raise ValueError("inconsistent OHLC")
 
     entry: Fill | None = None
@@ -183,7 +183,7 @@ def replay_long(
             continue
         trigger_t = bar.t + SECOND_MS
         stop_level = entry.modeled_price * (1 - rule.stop_pct / 100)
-        stop_hit = bar.l <= stop_level
+        stop_hit = bar.low <= stop_level
         if not partial_done:
             take_hit = bar.h >= entry.modeled_price * (1 + rule.take_pct / 100)
             if stop_hit and take_hit:
@@ -197,12 +197,12 @@ def replay_long(
             old_trail = peak_after_partial * (1 - rule.trail_retrace_pct / 100)
             new_peak = max(peak_after_partial, bar.h)
             new_trail = new_peak * (1 - rule.trail_retrace_pct / 100)
-            if bar.l <= new_trail and bar.h > peak_after_partial and bar.l > old_trail:
+            if bar.low <= new_trail and bar.h > peak_after_partial and bar.low > old_trail:
                 return finish("ambiguous", "new_peak_and_trail_same_second")
             peak_after_partial = new_peak
             if stop_hit:
                 pending = ("stop", trigger_t, 1.0)
-            elif bar.l <= old_trail:
+            elif bar.low <= old_trail:
                 pending = ("trailing", trigger_t, 1.0)
 
         if pending is None and trigger_t >= entry.fill_t + rule.max_hold_ms:
