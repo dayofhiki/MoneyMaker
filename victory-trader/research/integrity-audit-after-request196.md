@@ -206,3 +206,48 @@ The next executable policy should use one shared execution contract for:
 
 Legacy modules can remain reproducible research artifacts, but they should not
 be imported as the live-policy execution engine.
+
+
+### 13. Trailing-gap semantics must be explicit
+
+Request 194's trailing rule subtracts a fixed number of percentage points from
+the peak marked BASE return. For example, a 7pp trail from a +20% marked return
+fires at +13%. This is not identical to a broker-style 7% trailing stop measured
+as a proportional price decline from the post-entry high.
+
+The legacy Request-194 result remains valid under its preregistered semantics,
+but the canonical engine must name and test the chosen trailing convention
+explicitly (return-points, proportional price retracement, volatility/R-based,
+or model-controlled).
+
+### 14. Halts are an execution state, not just missing bars
+
+The repository has historical halt tooling, but Request 194 does not explicitly
+model halt state. Delayed execution after a missing open is a conservative
+approximation of inability to fill, but a surge-stock live trader needs an
+explicit HALTED / RESUMING execution state. A stop cannot guarantee its loss
+limit across a volatility halt or gap.
+
+Future replay should preserve the causal halt/resume state and measure losses
+that occur when a stop trigger cannot execute until resumption.
+
+### 15. Minute-boundary fills still imply near-zero decision latency
+
+The timestamp ordering is causal: completed-minute features end before the
+execution open used as the next reference. However, using that immediate open
+still assumes the model, network, broker, and order routing react essentially at
+the boundary.
+
+Before untouched-date promotion, replay should stress first usable execution at
++1s, +2s, +5s (or another preregistered latency family) using the available
+one-second aggregate path where possible.
+
+### 16. Universe price bounds are prior-close bounds
+
+The current broad-scan research universe applies the $0.50-$20 filter to the
+point-in-time prior close. This avoids look-ahead and is causally valid, but it
+is not the same as a live current-price eligibility rule after large gaps.
+
+If a final strategy wants current-price constraints, apply them causally at the
+decision timestamp rather than treating the prior-close universe rule as the
+final trading mandate.
