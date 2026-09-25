@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from victory_trader.event_time_executable_entry import (
     attach_event_time_execution,
@@ -96,9 +97,9 @@ def test_event_time_exit_uses_first_available_after_target() -> None:
     )
     out = attach_event_time_execution(states, positions).iloc[0]
     assert pd.notna(out.enter_3m_event_base_pct)
-    assert out.event_exit_minute_after_hot == 5.5
-    assert out.event_exit_delay_after_3m_min == 1.5
-    assert out.gross_return_pct == 10.0
+    assert out.event_exit_minute_after_hot == pytest.approx(5.5)
+    assert out.event_exit_delay_after_3m_min == pytest.approx(1.5)
+    assert out.gross_return_pct == pytest.approx(10.0)
 
 
 def test_event_time_exit_does_not_use_pre_target_price() -> None:
