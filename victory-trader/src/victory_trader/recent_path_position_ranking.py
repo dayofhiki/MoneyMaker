@@ -134,8 +134,13 @@ def attach_recent_path_features(frame: pd.DataFrame) -> pd.DataFrame:
         )
 
         for source in PATH_SOURCES:
+            source_values = (
+                ordered[source]
+                if source in ordered.columns
+                else pd.Series(np.nan, index=ordered.index)
+            )
             values = pd.to_numeric(
-                ordered.get(source), errors="coerce"
+                source_values, errors="coerce"
             ).to_numpy(dtype=float)
 
             for position, index in enumerate(indices):
