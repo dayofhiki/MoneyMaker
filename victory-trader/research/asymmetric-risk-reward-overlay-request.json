@@ -2,7 +2,7 @@
   "request_id": 194,
   "experiment": "asymmetric-risk-reward-overlay-v1.0",
   "preregistered_commit": "14aace8fd502bc8b615dd2a85d485b647b5e5f34",
-  "run_reason": "Final integrity-audit rerun after adding delayed partial-fill semantics and counting delayed stop/trailing executions in diagnostics. Frozen policy family, dates, and thresholds unchanged.",
+  "run_reason": "Final account-consistency rerun after blocking overlapping same-ticker positions in the reference ledger. Trading policy, labels, thresholds, dates, and execution semantics unchanged.",
   "opens_new_dates": false,
-  "integrity_audit_revision": 6
+  "integrity_audit_revision": 7
 }
