@@ -18,5 +18,5 @@
   "relative_target": "BASE 3m return if enter now minus BASE 3m return if enter exactly one minute later",
   "runtime_rule": "ENTER if predicted relative advantage >= 0; otherwise WAIT one minute; force final checkpoint entry when evaluable",
   "note": "Development-only timing diagnostic. Removes absolute zero-value gating after request 206 over-waited.",
-  "rerun": 2
+  "rerun": 3
 }
