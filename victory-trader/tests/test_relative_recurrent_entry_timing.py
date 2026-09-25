@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from victory_trader.relative_recurrent_entry_timing import (
     _policy_trades,
