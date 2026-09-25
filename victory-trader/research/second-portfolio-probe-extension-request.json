@@ -1,0 +1,16 @@
+{
+  "kind": "development_only_execution_integrity_extension",
+  "parent_request": "second-portfolio-probe-request.json",
+  "baseline_day": "2026-06-23",
+  "baseline_run": 36108139920,
+  "additional_already_open_days": [
+    "2026-06-24",
+    "2026-06-25",
+    "2026-06-26",
+    "2026-06-29"
+  ],
+  "policy": "unchanged from parent request: all exact prior-minute HOT references, stop 3%, take 10% on half, 7% proportional trail, 30-minute cap, 1% account risk, 20% allocation cap, five positions, light/base/stress costs and 0/1/2/5-second latency",
+  "purpose": "Repeat the frozen June 23 implementation diagnostic on the other four already-open development days. Report missing reference reasons and observed second-row counts. Do not select a policy or claim out-of-sample profitability.",
+  "untouched_dates": "not accessed"
+}
+
