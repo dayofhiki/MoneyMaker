@@ -1,0 +1,65 @@
+{
+  "request_id": 216,
+  "operation": "event_time_position_replay",
+  "parent_requests": [208, 212, 215],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request212's exact-next-minute POSITION controller loses causal continuity when the market is silent. Replaying POSITION decisions only on actually observed executable states, using HOLD value to the next executable observation and only past observation gaps as timing context, may recover HOLD/EXIT ranking and improve executable economics.",
+  "frozen": [
+    "validated attention/HOT architecture",
+    "Request208 causal transition-relative ENTER/WAIT controller",
+    "Request212 state and transition feature family",
+    "Request212 model capacity and zero expected-advantage HOLD boundary",
+    "BASE execution costs",
+    "30 minute risk cap",
+    "Request178 development dates"
+  ],
+  "event_time_rules": {
+    "decision_rule": "Decide HOLD/EXIT only when an observed executable POSITION state exists.",
+    "silent_clock_rule": "No observation means forced HOLD/no action; do not synthesize a decision row.",
+    "target_rule": "HOLD advantage equals BASE return from exiting at the next actually executable observation minus BASE return from exiting now.",
+    "timing_feature_rule": "Elapsed time since the previous observed state is causal and allowed. Time to the next observation is future information and forbidden.",
+    "risk_cap_rule": "At 30 minutes, exit at the first executable observation at or after the cap. If none exists, keep the trajectory unresolved.",
+    "accounting_rule": "Missing future execution is never zero-filled or treated as cash."
+  },
+  "comparators": [
+    "Request212 exact-minute dynamic HOLD/EXIT reconstructed on identical inputs",
+    "Request208 frozen fixed-3m exit on identical selected entries"
+  ],
+  "gate": {
+    "min_start_coverage": 0.8,
+    "min_hold_advantage_spearman": 0.05,
+    "min_good_days": 3,
+    "selected_realized_hold_advantage_positive": true,
+    "candidate_day_balanced_base_positive": true,
+    "candidate_must_beat_request212": true,
+    "candidate_must_beat_fixed3m": true,
+    "matched_bootstrap_lows_positive": true
+  },
+  "diagnostics": [
+    "event-time row coverage",
+    "observation-gap distribution",
+    "forced-silence trajectory count",
+    "HOLD advantage Spearman",
+    "selected realized HOLD advantage",
+    "daily ranking stability",
+    "completion coverage",
+    "holding-time distribution",
+    "BASE return versus Request212",
+    "BASE return versus fixed 3m"
+  ],
+  "forbidden": [
+    "threshold tuning on June 23/24/25/26/29",
+    "using time to next observation as a feature",
+    "best future price or best future horizon labels",
+    "turning unresolved trajectories into cash",
+    "opening new dates",
+    "promoting this development-only result directly"
+  ],
+  "input_runs": {
+    "rich_second": 36033120106,
+    "opportunity_scan": 36001945920,
+    "development_block": 36038233507
+  },
+  "request215_reference_run": 36167161063
+}
