@@ -133,3 +133,25 @@ calibration outcomes.
 Proceed to another genuinely different causal information source. Only if an
 independent branch passes its own frozen signal rule should combination with the
 Request-201 supply family be preregistered.
+
+
+## Pre-result split-integrity amendment
+
+Before any Request-202 outcome was read, the implementation audit identified a
+semantic issue specific to low-priced small caps: unadjusted daily prices from
+before and after a reverse/forward split cannot be compared as one continuous
+price scale, while provider-adjusted historical prices can encode future
+corporate actions.
+
+The frozen solution is strictly causal:
+- query split records only through D-1;
+- if a split exists inside the daily lookback, discard all daily bars before the
+  latest strictly-prior split execution date;
+- compute the frozen multi-day features only from post-split bars;
+- if split-history retrieval fails, expose no multi-day vector for that
+  ticker-day rather than assuming no split;
+- the 90% >=5-session support rule remains unchanged and split-query success
+  must be complete.
+
+No outcome, model metric, threshold, date, or feature definition was inspected
+or changed by this amendment.
