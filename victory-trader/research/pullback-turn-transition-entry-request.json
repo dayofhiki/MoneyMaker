@@ -8,5 +8,6 @@
   "representation_change": "add causal WATCH transition, pullback and rebound geometry",
   "target": "BASE 3m ENTER-now return minus BASE 3m ENTER-one-minute-later return",
   "runtime_rule": "ENTER if predicted relative advantage >= 0; otherwise WAIT one minute; final checkpoint enters when evaluable",
-  "note": "Development-only representation test. No threshold tuning and no new market dates."
+  "note": "Development-only representation test. No threshold tuning and no new market dates.",
+  "rerun": 2
 }
