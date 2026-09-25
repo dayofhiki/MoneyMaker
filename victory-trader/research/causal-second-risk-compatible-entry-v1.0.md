@@ -133,3 +133,18 @@ WAIT and may retry at a later qualifying shadow state. Closed, unresolved, or
 ambiguous post-entry paths still terminate the entry search because capital was
 actually admitted. The baseline is likewise the earliest executable admitted
 shadow entry, not an unavailable minute-1 order.
+
+
+## Calibration bridge reporting amendment
+
+The first corrected no-fill-retry run reached calibration and found no
+rule/threshold pair satisfying the frozen support and coverage floors. No fresh
+Request-178 outcome was produced.
+
+The implementation is therefore changed only to serialize the full calibration
+candidate table and exit successfully with `calibration_bridge_pass=false`
+when this happens. The frozen 30-trade, 5-50% selection-rate and 90% closed
+coverage floors are unchanged. Fresh development data is not evaluated when no
+calibration policy is eligible.
+
+This is an observability/reporting change, not threshold tuning.
