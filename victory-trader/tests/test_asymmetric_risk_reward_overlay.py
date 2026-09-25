@@ -297,3 +297,43 @@ def test_enhanced_summary_counts_delayed_stop_and_trail():
     )
     assert summary["hard_stop_rate"] == 0.5
     assert summary["trailing_exit_rate"] == 0.5
+
+
+def test_reference_account_blocks_overlapping_same_ticker():
+    trajectories = pd.DataFrame(
+        [
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "hot_t": 1_000_000,
+                "status": "completed",
+                "base_net_return_pct": 5.0,
+                "minutes_held": 10.0,
+                "partial_taken": False,
+                "partial_return_pct": math.nan,
+                "partial_minute": math.nan,
+                "partial_fraction": 0.0,
+                "final_return_pct": 5.0,
+                "final_fraction": 1.0,
+            },
+            {
+                "trading_day": "2026-06-23",
+                "ticker": "TEST",
+                "hot_t": 1_000_000 + target.MINUTE_MS,
+                "status": "completed",
+                "base_net_return_pct": 7.0,
+                "minutes_held": 2.0,
+                "partial_taken": False,
+                "partial_return_pct": math.nan,
+                "partial_minute": math.nan,
+                "partial_fraction": 0.0,
+                "final_return_pct": 7.0,
+                "final_fraction": 1.0,
+            },
+        ]
+    )
+    account = target.simulate_reference_account(
+        trajectories
+    )
+    assert account["admitted_trades"] == 1
+    assert account["skipped_duplicate_ticker"] == 1
