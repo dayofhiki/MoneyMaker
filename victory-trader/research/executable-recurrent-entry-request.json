@@ -1,0 +1,24 @@
+{
+  "request_id": 214,
+  "operation": "executable_recurrent_entry",
+  "parent_requests": [206, 208, 209, 213],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Replace hindsight-best opportunity value with executable ENTER-now value at every causal checkpoint; retain Request208 relative timing.",
+  "entry_rule": "predicted 3m BASE EV > 0 and (relative ENTER-vs-WAIT advantage >= 0 or minute == 5)",
+  "terminal_rule": "Never force entry. Abstain if the terminal value is nonpositive.",
+  "reobservation": "Nonpositive current entry value causes WAIT, not permanent rejection; recompute on each exact observed minute.",
+  "comparators": ["Request208", "same executable-value model evaluated only at minute1"],
+  "exit_policy": "fixed 3m solely to isolate the entry intervention",
+  "evaluation_scope": "same already-opened five Request178 dates; development only",
+  "gate": {
+    "min_resolved_trades": 30,
+    "min_positive_days": 4,
+    "positive_day_balanced_base": true,
+    "positive_paired_all_opportunity_daily_bootstrap_low": true,
+    "complete_episode_and_outcome_accounting": true
+  },
+  "forbidden": ["threshold tuning on evaluation", "future-max value target", "treating missing outcomes as zero", "claiming no trades proves profitability"],
+  "input_runs": [36033120106, 36038233507],
+  "reference_result_run": 36156827652
+}

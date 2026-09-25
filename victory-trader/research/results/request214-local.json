@@ -1,0 +1,268 @@
+{
+  "account_return": null,
+  "dates": {
+    "calibration": [
+      "2026-05-11",
+      "2026-05-12",
+      "2026-05-13",
+      "2026-05-14",
+      "2026-05-15",
+      "2026-05-18",
+      "2026-05-19",
+      "2026-05-20"
+    ],
+    "development": [
+      "2026-06-23",
+      "2026-06-24",
+      "2026-06-25",
+      "2026-06-26",
+      "2026-06-29"
+    ],
+    "fit": [
+      "2026-04-30",
+      "2026-05-01",
+      "2026-05-04",
+      "2026-05-05",
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ]
+  },
+  "decision": "EV>0 AND (relative advantage>=0 OR minute=5); otherwise WAIT/ABSTAIN",
+  "development_gate_pass": false,
+  "entry_value_spearman": 0.0400375303560006,
+  "exit_policy": "fixed 3m, entry diagnostic only",
+  "features": [
+    "attention_score",
+    "attention_rank",
+    "return_from_previous_close_pct",
+    "minute_body_return_pct",
+    "minute_range_pct",
+    "log_minute_volume",
+    "log_minute_transactions",
+    "minute_return_1m_pct",
+    "return_accel_1m_pct",
+    "volume_ratio_prev1",
+    "transactions_ratio_prev1",
+    "active_seconds_60",
+    "active_seconds_10",
+    "last_activity_age_s",
+    "sec_last10_return_pct",
+    "sec_prev10_return_pct",
+    "sec_accel_10_pct",
+    "sec_first30_return_pct",
+    "sec_last30_return_pct",
+    "sec_accel_30_pct",
+    "sec_realized_vol_pct",
+    "sec_positive_fraction",
+    "sec_max_drawdown_pct",
+    "sec_max_runup_pct",
+    "sec_volume_last10_share",
+    "sec_transactions_last10_share",
+    "sec_volume_burst_10",
+    "sec_transactions_burst_10",
+    "sec_last5_return_pct",
+    "sec_prev5_return_pct",
+    "sec_accel_5_pct",
+    "sec_last15_return_pct",
+    "sec_prev15_return_pct",
+    "sec_accel_15_pct",
+    "sec_volume_burst_5",
+    "sec_transactions_burst_5",
+    "sec_volume_last5_share",
+    "sec_transactions_last5_share",
+    "sec_signed_volume_imbalance_60",
+    "sec_signed_transactions_imbalance_60",
+    "sec_return_efficiency_60",
+    "sec_sign_flip_rate_60",
+    "sec_seconds_since_high",
+    "sec_seconds_since_low",
+    "sec_close_location_60",
+    "sec_close_vs_vwap_pct",
+    "sec_volatility_ratio_10_to_prev50",
+    "sec_mean_trade_size_ratio_10_to_prev50",
+    "log_current_price",
+    "minutes_since_open",
+    "minutes_to_close",
+    "base_zero_move_cost_proxy_pct",
+    "minutes_since_hot",
+    "watch_price_change_1m_pct",
+    "watch_price_change_accel_pct",
+    "watch_return_from_start_pct",
+    "watch_drawdown_from_peak_pct",
+    "watch_rebound_from_trough_pct",
+    "watch_attention_change_1m",
+    "watch_attention_drawdown_from_peak",
+    "watch_rank_change_1m",
+    "watch_log_volume_change_1m",
+    "watch_log_transactions_change_1m",
+    "watch_active_seconds_change_1m",
+    "watch_sec_last5_return_change_1m",
+    "watch_sec_last10_return_change_1m",
+    "watch_close_vs_vwap_change_1m",
+    "watch_volume_burst5_change_1m",
+    "watch_transactions_burst5_change_1m"
+  ],
+  "frozen_gate": {
+    "all_source_episodes_and_outcomes_resolved": true,
+    "min_positive_days": 4,
+    "min_resolved_trades": 30,
+    "positive_day_balanced_base": true,
+    "positive_paired_daily_bootstrap_low": true
+  },
+  "inputs": [
+    {
+      "name": "fit-rich-second.parquet",
+      "sha256": "4ce9a7e386879ab3fe733627100813d0f1c9c94be7b43df04925d4df3e900b1d"
+    },
+    {
+      "name": "calibration-rich-second.parquet",
+      "sha256": "bb464510041dc75b6e03a8de70b290db7d5e6e6be96e54534138b22574d6d95c"
+    },
+    {
+      "name": "2026-06-23-positions.parquet",
+      "sha256": "26059519b5944d028db6075d13bed3acafe5a012d2e690d2b5103a9c18e1f868"
+    },
+    {
+      "name": "2026-06-24-positions.parquet",
+      "sha256": "e07c89924e3b1ff07c7ac86a970ba272add85d01e908856dd0e199fcebff0e2a"
+    },
+    {
+      "name": "2026-06-25-positions.parquet",
+      "sha256": "ddd704ded565a0af868abedfef68f5a48de4b02ccbe698a9a77bac35ff536464"
+    },
+    {
+      "name": "2026-06-26-positions.parquet",
+      "sha256": "d0791b5ba1011980a8e2e06ef7f5a6e52e8f7b64813b2f7bb2116e6aff5cf1f7"
+    },
+    {
+      "name": "2026-06-29-positions.parquet",
+      "sha256": "370700b6dfab7b8e6e1ecd9ff50f3e89a83bb5e2c05045312b419eb8f87450d9"
+    }
+  ],
+  "mean_predicted_ev_pct": -1.3850378947208766,
+  "mean_realized_enter_pct": -1.2600520775508115,
+  "observed_episodes": 223,
+  "one_shot_same_model": {
+    "all_opportunity_daily_base_pct": {
+      "2026-06-23": 0.0,
+      "2026-06-24": 0.0,
+      "2026-06-25": 0.0,
+      "2026-06-26": 0.0,
+      "2026-06-29": 0.0
+    },
+    "decisions": {
+      "ABSTAIN": 223
+    },
+    "entered_after_wait": 0,
+    "episodes": 223,
+    "fully_resolved": true,
+    "mean_gross_pct": null,
+    "mean_stress_pct": null,
+    "resolved_trade_metrics": {
+      "trades": 0
+    },
+    "unresolved_entry_outcomes": 0,
+    "unresolved_episodes": 0,
+    "wait_actions": 0
+  },
+  "opens_new_dates": false,
+  "positive_ev_states": 0,
+  "predicted_entry_ev_range_pct": [
+    -3.3603875705846207,
+    -0.47177465350655073
+  ],
+  "promotion_eligible": false,
+  "promotion_gate_pass": false,
+  "recurrent": {
+    "all_opportunity_daily_base_pct": null,
+    "decisions": {
+      "ABSTAIN": 168,
+      "COVERAGE_MISS": 55
+    },
+    "entered_after_wait": 0,
+    "episodes": 223,
+    "fully_resolved": false,
+    "mean_gross_pct": null,
+    "mean_stress_pct": null,
+    "resolved_trade_metrics": {
+      "trades": 0
+    },
+    "unresolved_entry_outcomes": 0,
+    "unresolved_episodes": 55,
+    "wait_actions": 794
+  },
+  "recurrent_minus_208_all_opportunity": {},
+  "request208_explicit_missing": {
+    "all_opportunity_daily_base_pct": null,
+    "decisions": {
+      "COVERAGE_MISS": 22,
+      "ENTER": 201
+    },
+    "entered_after_wait": 80,
+    "episodes": 223,
+    "fully_resolved": false,
+    "mean_gross_pct": 0.013816032908683893,
+    "mean_stress_pct": -3.1807011211645086,
+    "resolved_trade_metrics": {
+      "by_day": {
+        "2026-06-23": -1.174045407794046,
+        "2026-06-24": -2.086372303871065,
+        "2026-06-25": -0.7903573527216078,
+        "2026-06-26": -0.5761582022844768,
+        "2026-06-29": -0.9443560245780263
+      },
+      "day_balanced_mean_pct": -1.1142578582498444,
+      "days": 5,
+      "mean_pct": -1.1885906449319872,
+      "p05_pct": -4.403198157126358,
+      "positive_rate": 0.1834319526627219,
+      "severe_loss_rate": 0.01775147928994083,
+      "trades": 169
+    },
+    "unresolved_entry_outcomes": 32,
+    "unresolved_episodes": 54,
+    "wait_actions": 207
+  },
+  "request208_legacy_counts": {
+    "coverage_miss": 54,
+    "enter_minute_1": 89,
+    "enter_minute_2": 42,
+    "enter_minute_3": 20,
+    "enter_minute_4": 11,
+    "enter_minute_5": 7,
+    "entered": 169,
+    "episodes": 223,
+    "wait_actions": 207
+  },
+  "request208_legacy_resolved_only": {
+    "by_day": {
+      "2026-06-23": -1.174045407794046,
+      "2026-06-24": -2.086372303871065,
+      "2026-06-25": -0.7903573527216077,
+      "2026-06-26": -0.5761582022844767,
+      "2026-06-29": -0.9443560245780263
+    },
+    "day_balanced_mean_pct": -1.1142578582498444,
+    "days": 5,
+    "mean_pct": -1.1885906449319872,
+    "p05_pct": -4.403198157126358,
+    "positive_rate": 0.1834319526627219,
+    "severe_loss_rate": 0.01775147928994083,
+    "trades": 169
+  },
+  "request_id": 214,
+  "runtime": {
+    "joblib": "1.6.0",
+    "numpy": "2.4.6",
+    "pandas": "3.0.6",
+    "python": "3.12.14",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.17.1",
+    "threadpoolctl": "3.7.0"
+  },
+  "source_episodes_without_any_watch_state": 0,
+  "target": "realized 3m BASE return from ENTER at this checkpoint; no future maximum",
+  "total_source_episodes": 223,
+  "watch_states": 1016
+}
