@@ -1,0 +1,12 @@
+{
+  "request_id": 197,
+  "experiment": "causal-second-risk-compatible-entry-v1.0",
+  "run_reason": "Continue MoneyMaker after Work second-portfolio probe: learn FIT-only 1-10m entry timing against realized one-second risk-policy outcomes, freeze rule and ENTER threshold on chronological calibration, evaluate only already-open Request178 dates.",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "work_probe_context": {
+    "raw_hot_policy": "stop3_take10half_trail7",
+    "base_latency_ms": 1000,
+    "seen_days": "2026-06-23,24,25,26,29 all negative ending marked equity under base friction"
+  }
+}
