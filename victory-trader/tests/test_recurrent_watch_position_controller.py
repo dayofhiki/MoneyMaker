@@ -1,5 +1,3 @@
-import math
-
 import pandas as pd
 
 from victory_trader.recurrent_watch_position_controller import (
