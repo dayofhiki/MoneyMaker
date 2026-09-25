@@ -635,6 +635,7 @@ def evaluate_rule(
         >= MIN_P90_PROXY_UPLIFT_PCT
         and float(cov["support_ge_5_sessions"])
         >= MIN_SUPPORT_RATE
+        and float(cov["split_query_success"]) == 1.0
         and bool(cov["strict_prior_max_history_day"])
     )
     return {
