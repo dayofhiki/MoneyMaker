@@ -125,3 +125,52 @@ on calibration outcomes.
 
 Move to another genuinely different causal information source rather than
 recombining failed branches.
+
+
+## Result — Request 204
+
+Request 204 completed successfully on Request-171 FIT -> chronological
+CALIBRATION only. Request-178 remained sealed.
+
+Calibration filing coverage:
+- completed query coverage: 100%;
+- strict-prior coverage: 100%;
+- any frozen semantic filing in prior 30d: 24.94%;
+- equity-supply filing prevalence: 10.82%;
+- debt: 6.12%;
+- operating catalyst: 8.00%;
+- adverse: 8.24%.
+
+### Tight +5% before -3%
+
+- comparator AUC: 0.5765;
+- filing-semantic AUC: 0.5723;
+- uplift: -0.0042;
+- semantic model beat comparator on 6/8 days;
+- decisive-only AUC: 0.4970;
+- P90 day-balanced barrier proxy: -1.1923%;
+- all-state proxy: -0.8620%;
+- P90 uplift: -0.3303pp.
+
+### Runner +10% before -3%
+
+- comparator AUC: 0.6159;
+- filing-semantic AUC: 0.6327;
+- uplift: +0.0168;
+- semantic model beat comparator on 7/8 days;
+- decisive-only AUC: 0.5575;
+- P90 day-balanced barrier proxy: -1.2054%;
+- all-state proxy: -1.1880%;
+- P90 uplift: -0.0174pp.
+
+Neither barrier passed the frozen signal rule.
+
+## Decision
+
+Retire this exact filing-semantic first-passage branch. Do not tune semantic
+buckets, lookback windows, category thresholds, model capacity, barrier sizes,
+feature subsets, or score quantiles on calibration outcomes.
+
+The runner model shows a small and fairly broad ranking benefit, but it does not
+produce an economically superior selected tail. Proceed to a different causal
+state source.
