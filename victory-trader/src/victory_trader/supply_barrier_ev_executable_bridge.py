@@ -127,6 +127,22 @@ def _by_day_spearman(
     return out
 
 
+def _by_day_spearman(
+    frame: pd.DataFrame,
+    score_column: str,
+) -> dict[str, float | None]:
+    out: dict[str, float | None] = {}
+    for day, group in frame.groupby(
+        frame["trading_day"].astype(str),
+        sort=True,
+    ):
+        out[str(day)] = _safe_spearman(
+            group["barrier_proxy_pct"],
+            group[score_column],
+        )
+    return out
+
+
 def select_positive_ev(
     frame: pd.DataFrame,
     score_column: str,
