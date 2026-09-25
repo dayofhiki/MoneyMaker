@@ -1,0 +1,25 @@
+{
+  "kind": "development_only_execution_integrity_probe",
+  "day": "2026-06-23",
+  "source": "already-open Request 178 HOT POSITION episodes and market scan",
+  "admission": "all episodes with an exact previous-minute observed close",
+  "risk_rule": {
+    "stop_pct": 3,
+    "take_pct": 10,
+    "partial_fraction": 0.5,
+    "trail_price_retrace_pct": 7,
+    "max_hold_minutes": 30
+  },
+  "account": {
+    "initial_cash_usd": 10000,
+    "max_positions": 5,
+    "risk_fraction_per_attempt": 0.01,
+    "max_allocation_fraction": 0.20,
+    "whole_shares": true
+  },
+  "cost_scenarios": ["light", "base", "stress"],
+  "latency_ms": [0, 1000, 2000, 5000],
+  "purpose": "Diagnose causal timing, second-bar coverage, halt coverage, unresolved outcomes, and account accounting on a seen date. No selection or promotion from this result.",
+  "untouched_dates": "not accessed"
+}
+
