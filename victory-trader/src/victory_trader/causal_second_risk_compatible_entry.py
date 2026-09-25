@@ -313,9 +313,13 @@ def _replay_state(
     )
     entry_fill_t = result.entry.fill_t if result.entry is not None else None
     exit_fill_t = result.exits[-1].fill_t if result.exits else None
+    exit_reasons = [fill.reason for fill in result.exits]
     return {
         "replay_status": result.status,
         "replay_reason": result.reason,
+        "first_exit_reason": exit_reasons[0] if exit_reasons else None,
+        "exit_reason_sequence": ",".join(exit_reasons),
+        "partial_take_reached": "partial_take" in exit_reasons,
         "policy_net_return_pct": result.net_return_pct,
         "entry_fill_t": entry_fill_t,
         "exit_fill_t": exit_fill_t,
