@@ -31,6 +31,10 @@ PUBLICATION_SCHEDULE: dict[date, date] = {
     date(2026, 2, 27): date(2026, 3, 10),
     date(2026, 3, 13): date(2026, 3, 24),
     date(2026, 3, 31): date(2026, 4, 10),
+    date(2026, 4, 15): date(2026, 4, 24),
+    date(2026, 4, 30): date(2026, 5, 11),
+    date(2026, 5, 15): date(2026, 5, 27),
+    date(2026, 5, 29): date(2026, 6, 9),
 }
 
 OVERALL_ANY_MIN = 0.80
