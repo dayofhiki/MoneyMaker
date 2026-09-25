@@ -91,6 +91,22 @@ def halt_intervals_for(
     ]
 
 
+def load_offline_halts(path: Path, *, day: str) -> dict[str, list[HaltInterval]]:
+    """Read an explicit halt manifest without treating omissions as official no-halts."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("day") != day or not isinstance(payload.get("intervals"), list):
+        raise ValueError("offline halt manifest day or intervals is invalid")
+    intervals: dict[str, list[HaltInterval]] = {}
+    for row in payload["intervals"]:
+        ticker = str(row["ticker"]).upper()
+        start_t = int(row["start_t"])
+        resume_t = row.get("resume_t")
+        intervals.setdefault(ticker, []).append(HaltInterval(
+            start_t, int(resume_t) if resume_t is not None else None,
+        ))
+    return intervals
+
+
 def summarize_scenarios(
     attempts: list[EntryAttempt],
     bars_by_ticker: dict[str, list[SecondBar]],
@@ -115,7 +131,15 @@ def summarize_scenarios(
     return outputs
 
 
-def run_probe(fresh_dir: Path, output: Path) -> dict[str, object]:
+def run_probe(
+    fresh_dir: Path,
+    output: Path,
+    *,
+    second_bars_dir: Path | None = None,
+    halt_json: Path | None = None,
+) -> dict[str, object]:
+    if halt_json is not None and second_bars_dir is None:
+        raise ValueError("offline halt manifest requires offline second bars")
     day = date.fromisoformat(DEVELOPMENT_DAY)
     bounds = regular_session_bounds(day)
     if bounds is None:
@@ -131,25 +155,49 @@ def run_probe(fresh_dir: Path, output: Path) -> dict[str, object]:
         positions, scan, day=DEVELOPMENT_DAY, session_close_t=close_t,
     )
 
-    try:
-        halt_records = fetch_nasdaq_halts(day)
-        halt_status = "available"
-    except (requests.RequestException, ElementTree.ParseError, ValueError) as exc:
-        # Missing official feed is reported, never assumed to mean no halts.
-        halt_records = []
-        halt_status = f"unavailable:{type(exc).__name__}"
-
-    settings = load_settings()
-    client = MassiveClient(
-        settings.massive_api_key,
-        cache_dir=Path("data/cache/massive-second-attention"),
-        request_interval_seconds=0.2,
-    )
+    halt_records: list[HaltRecord] = []
+    offline_halts: dict[str, list[HaltInterval]] = {}
+    client: MassiveClient | None = None
+    if second_bars_dir is not None:
+        source = "offline_parquet"
+        if halt_json is None:
+            halt_status = "unavailable:offline_no_halt_manifest"
+        else:
+            offline_halts = load_offline_halts(halt_json, day=DEVELOPMENT_DAY)
+            halt_status = "user_supplied_unverified"
+    else:
+        source = "massive_rest"
+        try:
+            halt_records = fetch_nasdaq_halts(day)
+            halt_status = "available"
+        except (requests.RequestException, ElementTree.ParseError, ValueError) as exc:
+            # Missing official feed is reported, never assumed to mean no halts.
+            halt_status = f"unavailable:{type(exc).__name__}"
+        settings = load_settings()
+        client = MassiveClient(
+            settings.massive_api_key,
+            cache_dir=Path("data/cache/massive-second-attention"),
+            request_interval_seconds=0.2,
+        )
     bars_by_ticker: dict[str, list[SecondBar]] = {}
     data_audit: dict[str, object] = {}
     for ticker in sorted({attempt.ticker for attempt in attempts}):
-        payload = client.second_bars_range(ticker, day, day, adjusted=False)
-        raw = pd.DataFrame(payload.get("results") or [])
+        if second_bars_dir is not None:
+            if not ticker or ".." in ticker or any(
+                not (char.isalnum() or char in "._-") for char in ticker
+            ):
+                raise ValueError("unsafe ticker in offline second path")
+            second_path = second_bars_dir / f"{DEVELOPMENT_DAY}-{ticker}-seconds.parquet"
+            if not second_path.is_file():
+                data_audit[ticker] = {"status": "missing_offline_second_file"}
+                continue
+            raw = pd.read_parquet(second_path)
+            ticker_halts = offline_halts.get(ticker, [])
+        else:
+            assert client is not None
+            payload = client.second_bars_range(ticker, day, day, adjusted=False)
+            raw = pd.DataFrame(payload.get("results") or [])
+            ticker_halts = halt_intervals_for(ticker, halt_records)
         if raw.empty:
             data_audit[ticker] = {"status": "no_second_bars"}
             continue
@@ -158,7 +206,7 @@ def run_probe(fresh_dir: Path, output: Path) -> dict[str, object]:
                 raw,
                 session_open_t=open_t,
                 session_close_t=close_t,
-                halts=halt_intervals_for(ticker, halt_records),
+                halts=ticker_halts,
             )
         except ValueError as exc:
             data_audit[ticker] = {
@@ -177,12 +225,13 @@ def run_probe(fresh_dir: Path, output: Path) -> dict[str, object]:
     report: dict[str, object] = {
         "development_only": True,
         "day": DEVELOPMENT_DAY,
+        "second_source": source,
         "policy": "all causal-reference HOT episodes; stop3/take10-half/trail7%-price",
         "halt_feed": halt_status,
         "selection": selection,
         "data_statuses": dict(Counter(str(item["status"]) for item in data_audit.values())),
         "data_audit": data_audit,
-        "api_stats": client.stats.to_dict(),
+        "api_stats": client.stats.to_dict() if client is not None else None,
         "scenarios": summarize_scenarios(attempts, bars_by_ticker),
         "interpretation": (
             "Seen-day implementation diagnostic only. Synthetic second-bar opens are "
@@ -206,8 +255,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fresh-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--second-bars-dir", type=Path)
+    parser.add_argument("--halt-json", type=Path)
     args = parser.parse_args()
-    run_probe(args.fresh_dir, args.output)
+    run_probe(
+        args.fresh_dir, args.output,
+        second_bars_dir=args.second_bars_dir, halt_json=args.halt_json,
+    )
     return 0
 
 
