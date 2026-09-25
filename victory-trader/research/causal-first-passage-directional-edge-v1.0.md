@@ -92,3 +92,52 @@ The barrier proxy is not an executable P/L claim.
   bottleneck.
 
 No action policy is selected in Request 199.
+
+
+## Result — Request 199
+
+Request 199 completed on Request-171 FIT -> chronological CALIBRATION only.
+Request-178 fresh dates remained sealed.
+
+### Tight barrier: +5% before -3%
+
+- full-feature AUC: 0.5816;
+- no-rich-second AUC: 0.5765;
+- rich-second uplift: +0.0051;
+- decisive-only full AUC: 0.4977;
+- take-first prevalence: 12.26%.
+
+Full-score top groups remained economically unfavorable even as a barrier proxy:
+
+- P80 day-balanced proxy: -1.179%;
+- P90: -1.473%;
+- P95: -1.974%.
+
+### Runner barrier: +10% before -3%
+
+- full-feature AUC: 0.6057;
+- no-rich-second AUC: 0.6159;
+- rich-second uplift: -0.0102;
+- decisive-only full AUC: 0.5245;
+- take-first prevalence: 3.25%.
+
+Full-score top groups were also negative:
+
+- P80 day-balanced proxy: -1.527%;
+- P90: -1.171%;
+- P95: -0.890%.
+
+### Decision
+
+The current causal price/volume/path state has, at best, weak short-horizon
+directional information. Current rich one-second aggregate features do not add
+material directional edge and must not be promoted into a threshold-tuning loop.
+
+Do not open Request-178 for a Request-199 action policy.
+
+The next branch must test a genuinely different causal context axis. The first
+such branch will test same-day premarket structure because the current regular-
+session state omits whether a runner entered the open with prior extended-hours
+price discovery, volume concentration and premarket-high structure. This branch
+will compare a frozen premarket feature set directly against the Request-199
+no-rich-second comparator on the same FIT -> CAL first-passage target.
