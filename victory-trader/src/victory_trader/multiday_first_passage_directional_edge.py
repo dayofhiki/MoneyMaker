@@ -68,6 +68,8 @@ MULTIDAY_FEATURES = (
 @dataclass(frozen=True)
 class HistoryRecord:
     query_success: bool
+    split_query_success: bool
+    latest_prior_split_day: str | None
     max_history_day: str | None
     sessions: int
     values: dict[str, float]
@@ -132,6 +134,29 @@ class DailyHistoryStore:
                 columns=["t", "o", "h", "l", "c", "v", "vw", "n"]
             )
 
+        split_success = True
+        latest_split_day: date | None = None
+        try:
+            splits = self.client.splits(
+                str(ticker).upper(),
+                execution_date_gte=start,
+                execution_date_lte=end,
+            )
+            split_days = [
+                date.fromisoformat(str(item["execution_date"])[:10])
+                for item in splits
+                if item.get("execution_date")
+            ]
+            if split_days:
+                latest_split_day = max(split_days)
+        except Exception:
+            split_success = False
+
+        if not split_success:
+            # Unadjusted prices cannot be compared safely across an unknown
+            # split history. Keep the row but expose no multi-day vector.
+            bars = bars.iloc[0:0].copy()
+
         if not bars.empty:
             bars = bars.copy()
             bars["_day"] = bars["t"].map(
@@ -141,7 +166,13 @@ class DailyHistoryStore:
             bars = (
                 bars.sort_values("t", kind="stable")
                 .drop_duplicates("_day", keep="last")
-                .tail(FULL_HISTORY_SESSIONS + 1)
+            )
+            if latest_split_day is not None:
+                bars = bars.loc[
+                    bars["_day"].ge(latest_split_day)
+                ].copy()
+            bars = (
+                bars.tail(FULL_HISTORY_SESSIONS + 1)
                 .reset_index(drop=True)
             )
 
@@ -321,6 +352,12 @@ class DailyHistoryStore:
 
         record = HistoryRecord(
             query_success=success,
+            split_query_success=split_success,
+            latest_prior_split_day=(
+                latest_split_day.isoformat()
+                if latest_split_day is not None
+                else None
+            ),
             max_history_day=max_history_day,
             sessions=sessions,
             values=values,
@@ -378,6 +415,12 @@ def add_multiday_features(
                 ),
                 "history_query_success": float(
                     record.query_success
+                ),
+                "history_split_query_success": float(
+                    record.split_query_success
+                ),
+                "history_latest_prior_split_day": (
+                    record.latest_prior_split_day
                 ),
                 "history_sessions": float(record.sessions),
                 "history_max_day": record.max_history_day,
@@ -460,6 +503,10 @@ def coverage(frame: pd.DataFrame) -> dict[str, object]:
         frame["history_query_success"],
         errors="coerce",
     )
+    split_success = pd.to_numeric(
+        frame["history_split_query_success"],
+        errors="coerce",
+    )
     sessions = pd.to_numeric(
         frame["history_sessions"],
         errors="coerce",
@@ -477,6 +524,9 @@ def coverage(frame: pd.DataFrame) -> dict[str, object]:
         "rows": int(len(frame)),
         "request_success": float(
             success.eq(1.0).mean()
+        ),
+        "split_query_success": float(
+            split_success.eq(1.0).mean()
         ),
         "support_ge_5_sessions": float(
             sessions.ge(MIN_HISTORY_SESSIONS).mean()
