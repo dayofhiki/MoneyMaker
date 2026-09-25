@@ -34,6 +34,14 @@ jobs:
           ruff check src/victory_trader/causal_second_execution.py             src/victory_trader/causal_second_risk_compatible_entry.py             tests/test_causal_second_execution.py             tests/test_causal_second_risk_compatible_entry.py             --select E4,E7,E9,F
           pytest -q             tests/test_causal_second_execution.py             tests/test_causal_second_risk_compatible_entry.py
 
+      - name: Restore prior Request 197 second cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: request197-reuse-${{ github.run_id }}
+          restore-keys: |
+            request197-second-
+
       - name: Restore Request 171 FIT second cache
         uses: actions/cache/restore@v4
         with:
