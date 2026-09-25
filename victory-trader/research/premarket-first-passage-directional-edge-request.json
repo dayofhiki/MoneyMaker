@@ -1,0 +1,7 @@
+{
+  "request_id": 200,
+  "experiment": "premarket-first-passage-directional-edge-v1.0",
+  "run_reason": "After Request199 showed weak first-passage directional edge and negligible rich-second uplift, test frozen same-day 04:00-09:30 ET premarket structure against the Request199 no-rich-second comparator on FIT->chronological calibration only.",
+  "opens_new_dates": false,
+  "promotion_eligible": false
+}
