@@ -12,9 +12,8 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
 
 from .decomposed_cost_aware_entry_surplus import EPISODE_KEYS, FRESH_DAYS
-from .recurrent_wait_entry_action_value import MAX_WAIT_MINUTES, WATCH_FEATURES, build_watch_states
+from .recurrent_wait_entry_action_value import WATCH_FEATURES, build_watch_states
 from .relative_recurrent_entry_timing import (
-    BOOTSTRAP_SAMPLES,
     _matched_difference,
     _metrics,
     _policy_trades,
