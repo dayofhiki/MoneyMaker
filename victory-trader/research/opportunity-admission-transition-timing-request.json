@@ -1,0 +1,13 @@
+{
+  "request_id": 209,
+  "operation": "opportunity_admission_transition_timing",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "admission_state": "exact minute-1 post-HOT WAIT state",
+  "admission_target": "best fixed-3m BASE entry return among exact minute 1..5 candidate entries",
+  "admission_model": "calibrated hurdle expected value",
+  "admission_rule": "ADMIT iff predicted expected remaining opportunity > 0",
+  "timing_policy": "Request-208 transition relative ENTER vs WAIT",
+  "note": "Development-only composition test; no percentile threshold and no new dates."
+}
