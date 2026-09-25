@@ -15,12 +15,12 @@ RULE = RiskRule(stop_pct=3, take_pct=10, trail_retrace_pct=7)
 T = 1_800_000_000_000
 
 
-def bar(second, o, h=None, l=None, c=None, halted=False):
+def bar(second, o, h=None, low=None, c=None, halted=False):
     return SecondBar(
         T + second * 1_000,
         o,
         o if h is None else h,
-        o if l is None else l,
+        o if low is None else low,
         o if c is None else c,
         halted,
     )
@@ -37,7 +37,7 @@ class CausalSecondExecutionTests(unittest.TestCase):
         self.assertEqual(expired.reason, "entry_order_expired")
 
     def test_stop_crosses_within_second_then_rebounds_but_fills_at_next_open(self):
-        path = [bar(0, 10), bar(1, 10, h=10.2, l=9.5, c=9.9), bar(2, 8.5)]
+        path = [bar(0, 10), bar(1, 10, h=10.2, low=9.5, c=9.9), bar(2, 8.5)]
         result = replay_long(path, decision_t=T, rule=RULE, scenario=ZERO)
         self.assertEqual(result.status, "closed")
         self.assertEqual(result.exits[0].trigger_t, T + 2_000)
@@ -50,7 +50,7 @@ class CausalSecondExecutionTests(unittest.TestCase):
             bar(0, 10),
             bar(1, 10),
             bar(2, 10),
-            bar(3, 10, h=10, l=9.5, c=9.9),
+            bar(3, 10, h=10, low=9.5, c=9.9),
             bar(4, 9.8),
             bar(5, 9.7),
             bar(6, 9),
@@ -64,7 +64,7 @@ class CausalSecondExecutionTests(unittest.TestCase):
 
     def test_simultaneous_stop_and_take_is_unresolved_order(self):
         result = replay_long(
-            [bar(0, 10), bar(1, 10, h=11.2, l=9.5, c=10)],
+            [bar(0, 10), bar(1, 10, h=11.2, low=9.5, c=10)],
             decision_t=T, rule=RULE, scenario=ZERO,
         )
         self.assertEqual(result.status, "ambiguous")
@@ -74,10 +74,10 @@ class CausalSecondExecutionTests(unittest.TestCase):
     def test_partial_take_and_proportional_trailing_exit(self):
         path = [
             bar(0, 10),
-            bar(1, 10.5, h=11.1, l=10.4, c=11),
-            bar(2, 11, h=11.1, l=10.9, c=11),
-            bar(3, 11.5, h=12, l=11.4, c=12),
-            bar(4, 11.6, h=11.6, l=11.1, c=11.3),
+            bar(1, 10.5, h=11.1, low=10.4, c=11),
+            bar(2, 11, h=11.1, low=10.9, c=11),
+            bar(3, 11.5, h=12, low=11.4, c=12),
+            bar(4, 11.6, h=11.6, low=11.1, c=11.3),
             bar(5, 11),
         ]
         result = replay_long(path, decision_t=T, rule=RULE, scenario=ZERO, quantity=10)
@@ -89,7 +89,7 @@ class CausalSecondExecutionTests(unittest.TestCase):
     def test_halt_blocks_stop_fill_until_resume_gap(self):
         path = [
             bar(0, 10),
-            bar(1, 9.8, h=9.8, l=9.5, c=9.6),
+            bar(1, 9.8, h=9.8, low=9.5, c=9.6),
             bar(2, 0, halted=True),
             bar(3, 0, halted=True),
             bar(4, 7),
@@ -105,7 +105,7 @@ class CausalSecondExecutionTests(unittest.TestCase):
         self.assertEqual(result.exits, ())
 
     def test_pending_stop_without_resumed_open_is_unresolved(self):
-        result = replay_long([bar(0, 10, l=9)], decision_t=T, rule=RULE, scenario=ZERO)
+        result = replay_long([bar(0, 10, low=9)], decision_t=T, rule=RULE, scenario=ZERO)
         self.assertEqual(result.status, "unresolved")
         self.assertEqual(result.reason, "stop_unfilled")
         self.assertIsNone(result.net_return_pct)
