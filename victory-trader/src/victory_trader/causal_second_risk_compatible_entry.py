@@ -470,7 +470,7 @@ def matched_difference(
 ) -> dict[str, object]:
     left = selected.loc[
         selected["replay_status"].eq("closed"),
-        [*EPISODE_KEYS, "trading_day", "policy_net_return_pct"],
+        [*EPISODE_KEYS, "policy_net_return_pct"],
     ].rename(columns={"policy_net_return_pct": "selected_return"})
     right = baseline.loc[
         baseline["replay_status"].eq("closed"),
