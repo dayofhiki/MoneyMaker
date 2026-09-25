@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 import json
-from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 
@@ -35,7 +34,6 @@ from .opportunity_admission_transition_timing import (
     POSITIVE_SEED,
     HurdleAdmissionModel,
     _admitted_timing_policy,
-    _day_bootstrap,
     attach_episode_opportunity,
     minute1_states,
     predict_admission_ev,
