@@ -1,0 +1,14 @@
+{
+  "request_id": 206,
+  "operation": "recurrent_wait_entry_action_value",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "initial_state": "after one WAIT from original HOT",
+  "decision_actions": ["ENTER", "WAIT", "ABSTAIN"],
+  "decision_minutes_after_hot": [1, 2, 3, 4, 5],
+  "entry_value": "BASE net return from next causal executable open to exact three-minute-later executable open",
+  "wait_value": "recursive non-negative next-checkpoint value",
+  "runtime_rule": "ENTER if predicted ENTER > 0 and >= predicted WAIT; else WAIT if predicted WAIT > 0 and a later checkpoint exists; else ABSTAIN",
+  "note": "Development-only recurrent entry timing bridge; no fresh date opened and no promotion eligibility."
+}
