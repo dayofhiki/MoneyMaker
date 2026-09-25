@@ -13,9 +13,11 @@ import json
 from dataclasses import asdict, dataclass
 from datetime import date
 from pathlib import Path
+from xml.etree import ElementTree
 
 import numpy as np
 import pandas as pd
+import requests
 from sklearn.ensemble import HistGradientBoostingRegressor
 
 from .causal_second_execution import RiskRule, SecondBar, replay_long
@@ -228,6 +230,7 @@ class SecondStore:
         )
         self._seconds: dict[tuple[str, str], pd.DataFrame] = {}
         self._halts: dict[str, dict[str, list[tuple[int, int]]]] = {}
+        self.halt_status: dict[str, str] = {}
 
     def seconds(self, day: str, ticker: str) -> pd.DataFrame:
         key = (day, ticker.upper())
@@ -243,7 +246,21 @@ class SecondStore:
 
     def halts(self, day: str) -> dict[str, list[tuple[int, int]]]:
         if day not in self._halts:
-            self._halts[day] = _halt_intervals(day)
+            try:
+                self._halts[day] = _halt_intervals(day)
+                self.halt_status[day] = "available"
+            except (
+                requests.RequestException,
+                ElementTree.ParseError,
+                ValueError,
+            ) as exc:
+                # Unknown halt coverage is explicit. Missing second bars still
+                # cannot fill orders, but this development bridge must not
+                # pretend that an unavailable official feed proves no halts.
+                self._halts[day] = {}
+                self.halt_status[day] = (
+                    f"unavailable:{type(exc).__name__}"
+                )
         return self._halts[day]
 
 
@@ -586,6 +603,7 @@ def evaluate(
         "matched_selected_minus_minute1": matched,
         "development_gate_pass": gate,
         "second_client_stats": store.client.stats.to_dict(),
+        "halt_feed_by_day": dict(sorted(store.halt_status.items())),
     }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
