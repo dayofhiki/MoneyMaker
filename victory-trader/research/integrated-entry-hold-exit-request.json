@@ -1,0 +1,13 @@
+{
+  "request_id": 212,
+  "operation": "integrated_entry_hold_exit",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "parent_requests": [208, 210, 211],
+  "entry_policy": "Request208 transition-relative recurrent entry",
+  "position_reanchoring": "reset entry price/time and path-relative POSITION labels/features at chosen entry minute",
+  "hold_policy": "Request210 transition one-minute expected-advantage controller retrained on reanchored positions",
+  "comparator": "same Request208 entries with frozen three-minute exit",
+  "note": "Development-only structural interaction test before any new-date validation."
+}
