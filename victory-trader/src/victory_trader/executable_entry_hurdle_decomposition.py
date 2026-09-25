@@ -27,7 +27,6 @@ from .future_cost_cover_state_observability import (
     _safe_auc,
     _safe_spearman,
 )
-from .market_regime_position_value import build_market_regime
 from .shadow_entry_repricing_decomposition import FEATURES
 
 REQUEST_ID = 198
