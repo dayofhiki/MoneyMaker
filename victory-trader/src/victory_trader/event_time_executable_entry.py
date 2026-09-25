@@ -29,6 +29,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.metrics import roc_auc_score
 
 from .decomposed_cost_aware_entry_surplus import EPISODE_KEYS, FRESH_DAYS
 from .executable_recurrent_entry import (
@@ -308,6 +309,138 @@ def _cash_difference(report: dict) -> dict[str, object]:
     return _difference_bootstrap(candidate, comparator)
 
 
+
+def entry_model_diagnostics(
+    frame: pd.DataFrame,
+    expected: np.ndarray,
+    probability: np.ndarray,
+    positive: np.ndarray,
+    nonpositive: np.ndarray,
+) -> dict[str, object]:
+    """Audit whether probability ranking or magnitude calibration is the bottleneck."""
+    target = pd.to_numeric(
+        frame["enter_3m_event_base_pct"], errors="coerce"
+    )
+    expected_s = pd.Series(expected, index=frame.index, dtype=float)
+    probability_s = pd.Series(probability, index=frame.index, dtype=float)
+    positive_s = pd.Series(positive, index=frame.index, dtype=float)
+    nonpositive_s = pd.Series(nonpositive, index=frame.index, dtype=float)
+    valid = (
+        target.notna()
+        & expected_s.notna()
+        & probability_s.notna()
+        & positive_s.notna()
+        & nonpositive_s.notna()
+    )
+    y = target.loc[valid].gt(0).astype(int)
+    auc = None
+    if len(y) >= 20 and y.nunique() == 2:
+        auc = float(
+            roc_auc_score(
+                y,
+                probability_s.loc[valid].to_numpy(dtype=float),
+            )
+        )
+
+    denominator = positive_s - nonpositive_s
+    break_even = (-nonpositive_s / denominator).where(
+        denominator.gt(0)
+    )
+    margin = probability_s - break_even
+
+    ranked = pd.DataFrame(
+        {
+            "target": target.loc[valid],
+            "expected": expected_s.loc[valid],
+            "probability": probability_s.loc[valid],
+        }
+    ).sort_values("expected", ascending=False, kind="stable")
+
+    def top_fraction(fraction: float) -> dict[str, object]:
+        if ranked.empty:
+            return {"rows": 0, "mean_pct": None, "positive_rate": None}
+        count = max(1, int(np.ceil(len(ranked) * fraction)))
+        part = ranked.head(count)
+        return {
+            "rows": int(len(part)),
+            "mean_pct": float(part["target"].mean()),
+            "positive_rate": float(part["target"].gt(0).mean()),
+            "min_predicted_ev_pct": float(part["expected"].min()),
+        }
+
+    positive_outcomes = valid & target.gt(0)
+    nonpositive_outcomes = valid & target.le(0)
+    return {
+        "evaluable_states": int(valid.sum()),
+        "realized_positive_rate": float(y.mean()) if len(y) else None,
+        "positive_probability_auc": auc,
+        "expected_value_spearman": _safe_spearman(
+            target.loc[valid], expected_s.loc[valid]
+        ),
+        "predicted_ev_mean_pct": float(expected_s.loc[valid].mean())
+        if int(valid.sum())
+        else None,
+        "predicted_ev_range_pct": [
+            float(expected_s.loc[valid].min()),
+            float(expected_s.loc[valid].max()),
+        ]
+        if int(valid.sum())
+        else [None, None],
+        "positive_predicted_states": int(
+            expected_s.loc[valid].gt(0).sum()
+        ),
+        "probability": {
+            "mean": float(probability_s.loc[valid].mean())
+            if int(valid.sum())
+            else None,
+            "min": float(probability_s.loc[valid].min())
+            if int(valid.sum())
+            else None,
+            "max": float(probability_s.loc[valid].max())
+            if int(valid.sum())
+            else None,
+            "mean_on_positive_outcomes": float(
+                probability_s.loc[positive_outcomes].mean()
+            )
+            if int(positive_outcomes.sum())
+            else None,
+            "mean_on_nonpositive_outcomes": float(
+                probability_s.loc[nonpositive_outcomes].mean()
+            )
+            if int(nonpositive_outcomes.sum())
+            else None,
+        },
+        "magnitude_heads": {
+            "positive_mean_pct": float(positive_s.loc[valid].mean())
+            if int(valid.sum())
+            else None,
+            "nonpositive_mean_pct": float(
+                nonpositive_s.loc[valid].mean()
+            )
+            if int(valid.sum())
+            else None,
+        },
+        "break_even_probability": {
+            "mean": float(break_even.loc[valid].mean())
+            if break_even.loc[valid].notna().any()
+            else None,
+            "min": float(break_even.loc[valid].min())
+            if break_even.loc[valid].notna().any()
+            else None,
+            "margin_mean": float(margin.loc[valid].mean())
+            if margin.loc[valid].notna().any()
+            else None,
+            "states_probability_above_break_even": int(
+                margin.loc[valid].gt(0).sum()
+            ),
+        },
+        "ranking_slices": {
+            "top_10pct_by_predicted_ev": top_fraction(0.10),
+            "top_20pct_by_predicted_ev": top_fraction(0.20),
+        },
+    }
+
+
 def evaluate(
     fit_path: Path,
     calibration_path: Path,
@@ -366,9 +499,14 @@ def evaluate(
     exact_prediction = predict_admission_ev(
         fresh, exact_value_model
     )[0]
-    event_prediction = predict_admission_ev(
+    (
+        event_prediction,
+        event_probability,
+        event_positive,
+        event_nonpositive,
+    ) = predict_admission_ev(
         fresh_event, event_value_model
-    )[0]
+    )
 
     # Reproduce Request214 semantics on the same frozen inputs.
     exact_scored = add_execution_labels(
@@ -470,24 +608,13 @@ def evaluate(
             if int(event_valid.sum())
             else None,
         },
-        "entry_value_model": {
-            "spearman": _safe_spearman(
-                fresh_event["enter_3m_event_base_pct"],
-                pd.Series(event_prediction, index=fresh_event.index),
-            ),
-            "mean_predicted_ev_pct": float(
-                np.mean(event_prediction)
-            ),
-            "predicted_ev_range_pct": [
-                float(np.min(event_prediction)),
-                float(np.max(event_prediction)),
-            ],
-            "positive_predicted_states": int(
-                np.asarray(event_prediction).astype(float).reshape(-1)
-                .__gt__(0)
-                .sum()
-            ),
-        },
+        "entry_value_model": entry_model_diagnostics(
+            fresh_event,
+            event_prediction,
+            event_probability,
+            event_positive,
+            event_nonpositive,
+        ),
         "frozen_gate": {
             "min_resolved_trades": 30,
             "min_positive_days": 4,
@@ -533,6 +660,9 @@ def evaluate(
     fresh_event.assign(
         predicted_relative_advantage_pct=timing_prediction,
         predicted_entry_ev_pct=event_prediction,
+        predicted_positive_probability=event_probability,
+        predicted_positive_magnitude_pct=event_positive,
+        predicted_nonpositive_magnitude_pct=event_nonpositive,
     ).to_parquet(
         output.with_name(output.stem + "-states.parquet"),
         index=False,
