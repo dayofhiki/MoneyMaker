@@ -103,3 +103,53 @@ calibration outcomes.
 
 At that point, stop the sequence of one-off metadata branches and redesign the
 learning target / action formulation before testing more context sources.
+
+
+## Result — Request 205
+
+Request 205 completed successfully on Request-171 FIT -> chronological
+CALIBRATION only. Request-178 remained sealed.
+
+Calibration split support:
+- market-wide split query completion: 100%;
+- strict-prior coverage: 100%;
+- any split in prior 730d: 25.18%;
+- reverse split in prior 730d: 23.53%.
+
+### Tight +5% before -3%
+
+- comparator AUC: 0.5774;
+- split AUC: 0.6022;
+- uplift: +0.0248;
+- split beat comparator on 7/8 days;
+- decisive-only AUC: 0.5219;
+- P90 day-balanced barrier proxy: -1.4106%;
+- all-state proxy: -0.8620%;
+- P90 uplift: -0.5486pp.
+
+### Runner +10% before -3%
+
+- comparator AUC: 0.6154;
+- split AUC: 0.6269;
+- uplift: +0.0116;
+- split beat comparator on 5/8 days;
+- decisive-only AUC: 0.5493;
+- P90 day-balanced barrier proxy: -1.6305%;
+- all-state proxy: -1.1880%;
+- P90 uplift: -0.4425pp.
+
+Neither barrier passed the frozen signal rule.
+
+## Decision
+
+Retire this exact split-history first-passage branch. Do not tune split
+thresholds, lookbacks, consolidation cutoffs, model capacity, barriers, or score
+quantiles on calibration outcomes.
+
+This completes the planned one-off metadata sequence. The repeated pattern is
+now clear: several structural contexts can improve relative ranking, but none
+has produced an economically superior selected tail under the fixed -3% stop
+geometry.
+
+The next research stage changes the risk geometry itself rather than appending
+another context source.
