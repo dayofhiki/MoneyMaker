@@ -33,8 +33,8 @@ def test_hurdle_labels_keep_execution_failures_explicit():
     result = add_hurdle_labels(frame)
     assert result["entry_fillable"].tolist() == [False, True, True, True]
     assert pd.isna(result.loc[0, "terminal_closed"])
-    assert result.loc[1, "terminal_closed"] == False
-    assert result.loc[2, "terminal_closed"] == True
-    assert result.loc[2, "partial_take_captured"] == True
-    assert result.loc[3, "positive_net"] == False
+    assert not bool(result.loc[1, "terminal_closed"])
+    assert bool(result.loc[2, "terminal_closed"])
+    assert bool(result.loc[2, "partial_take_captured"])
+    assert not bool(result.loc[3, "positive_net"])
     assert pd.isna(result.loc[1, "positive_net"])
