@@ -1,0 +1,52 @@
+{
+  "request_id": 216,
+  "operation": "event_time_position_policy",
+  "parent_requests": [208, 210, 212, 215],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "purpose": "Test whether the recurrent HOLD/EXIT failure in Request212 is partly caused by exact-minute trajectory semantics rather than by the position-state signal itself.",
+  "support_entry_policy": "Request208 transition-relative recurrent ENTER/WAIT; used only to generate nonempty position trajectories for this structural HOLD/EXIT diagnostic because Request215 economically abstains on every development episode.",
+  "position_clock_rule": "Re-anchor to the selected executable entry. Make HOLD/EXIT decisions only at later observed executable position states. Silent clock time implies forced HOLD/no action until the next observed state.",
+  "hold_target": "Current-state HOLD advantage equals BASE return at the next actually executable observation minus BASE return from EXIT now.",
+  "causal_features": [
+    "Request210 state and transition features",
+    "elapsed minutes since chosen entry",
+    "elapsed minutes since the previous observed event",
+    "stale minutes already elapsed before the current event",
+    "transition changes normalized by the already-observed previous event gap"
+  ],
+  "outcome_only_fields": [
+    "time until the next executable event",
+    "next-event exit return",
+    "next-event HOLD advantage"
+  ],
+  "forbidden": [
+    "using future next-event spacing as a model feature",
+    "best-future-price or best-future-horizon labels",
+    "inventing exact-minute observations",
+    "treating unresolved held positions as cash",
+    "evaluation threshold tuning",
+    "opening new dates",
+    "claiming Request208 support entries are the final end-to-end policy"
+  ],
+  "comparison": [
+    "Request212 exact-minute dynamic HOLD/EXIT reference",
+    "Request208 fixed three-minute exit on identical support entries"
+  ],
+  "gate": {
+    "min_start_coverage": 0.80,
+    "min_completion_coverage": 0.90,
+    "min_hold_advantage_spearman": 0.05,
+    "min_good_days": 3,
+    "selected_realized_hold_advantage_must_be_positive": true,
+    "dynamic_day_balanced_return_must_be_positive": true,
+    "dynamic_must_beat_fixed_three_minute": true,
+    "matched_daily_bootstrap_ci_low_must_be_positive": true
+  },
+  "evaluation_scope": "Same already-opened Request178 development dates: 2026-06-23, 24, 25, 26, 29.",
+  "input_runs": {
+    "request171_rich_second": 36033120106,
+    "request163_opportunity": 36001945920,
+    "request178_fresh": 36038233507
+  }
+}
