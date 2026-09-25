@@ -71,7 +71,10 @@ frozen score quantiles P80 / P90 / P95 measured on calibration only.
 
 For each (rule, threshold), replay the executable decision policy:
 - observe states chronologically within an episode;
-- ENTER at the first score meeting the threshold;
+- submit ENTER at the first score meeting the threshold;
+- if that entry order expires without an eligible open, no position exists:
+  return to WAIT and permit a later qualifying state to submit a new order;
+- once an entry is admitted, never submit another entry for that episode;
 - otherwise WAIT through minute 10 and then ABSTAIN.
 
 A candidate must have:
@@ -115,3 +118,18 @@ Pass only if:
 
 A pass licenses portfolio integration and latency/friction sensitivity on the
 same development block. It does not license untouched-date validation yet.
+
+
+## Pre-result integrity amendment
+
+Before Request 197 produced any outcome result, the already-completed Work
+portfolio probe showed a high rate of entry-order expiry on illiquid HOT
+episodes. The initial Request-197 implementation incorrectly ended an episode
+after a qualifying ENTER signal even when no entry fill occurred.
+
+That is inconsistent with the continuous trader objective. The implementation
+was amended before reading Request-197 outcomes: an expired entry returns to
+WAIT and may retry at a later qualifying shadow state. Closed, unresolved, or
+ambiguous post-entry paths still terminate the entry search because capital was
+actually admitted. The baseline is likewise the earliest executable admitted
+shadow entry, not an unavailable minute-1 order.
