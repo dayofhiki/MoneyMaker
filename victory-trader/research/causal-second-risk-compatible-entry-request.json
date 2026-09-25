@@ -9,6 +9,6 @@
     "base_latency_ms": 1000,
     "seen_days": "2026-06-23,24,25,26,29 all negative ending marked equity under base friction"
   },
-  "retry": 1,
-  "retry_reason": "Pre-result integrity correction: expired/unavailable entry orders now return to WAIT and may retry at later qualifying shadow states; prior second cache reused. No outcome, threshold, rule, date, or success gate was inspected or changed."
+  "retry": 2,
+  "retry_reason": "Reporting-only retry: preserve all frozen calibration floors and emit the complete calibration candidate table when no policy is eligible; do not evaluate fresh development data in that case."
 }
