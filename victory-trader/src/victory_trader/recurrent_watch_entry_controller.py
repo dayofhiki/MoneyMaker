@@ -18,7 +18,6 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 
 from .causal_second_risk_compatible_entry import (
     MODEL_SEED,
-    RULES,
     SecondStore,
     _summarize,
     first_admitted_baseline,
