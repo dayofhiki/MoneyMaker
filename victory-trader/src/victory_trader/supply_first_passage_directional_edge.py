@@ -404,6 +404,7 @@ def coverage(frame: pd.DataFrame) -> dict[str, object]:
 def evaluate_rule(
     fit: pd.DataFrame,
     calibration: pd.DataFrame,
+    second_store: SecondStore,
     *,
     rule_name: str,
     seed_offset: int,
@@ -411,12 +412,12 @@ def evaluate_rule(
     take_pct = RULES[rule_name].take_pct
     fit_labeled = add_first_passage(
         fit,
-        calibration.attrs["second_store"],
+        second_store,
         take_pct=take_pct,
     )
     cal_labeled = add_first_passage(
         calibration,
-        calibration.attrs["second_store"],
+        second_store,
         take_pct=take_pct,
     )
 
@@ -540,16 +541,12 @@ def evaluate(
         volume_index,
     )
 
-    # Preserve the exact causal second store for first-passage labels without
-    # threading another mutable service through every helper.
-    fit.attrs["second_store"] = second_store
-    cal.attrs["second_store"] = second_store
-
     diagnostics: dict[str, object] = {}
     for i, rule_name in enumerate(RULES):
         diagnostics[rule_name] = evaluate_rule(
             fit,
             cal,
+            second_store,
             rule_name=rule_name,
             seed_offset=i,
         )
