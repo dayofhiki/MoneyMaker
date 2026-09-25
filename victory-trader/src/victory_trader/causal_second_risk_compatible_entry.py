@@ -405,6 +405,75 @@ def first_state_baseline(frame: pd.DataFrame) -> pd.DataFrame:
     return work.groupby(EPISODE_KEYS, sort=False, as_index=False).head(1).copy()
 
 
+def first_admitted_qualifying(
+    frame: pd.DataFrame,
+    threshold: float,
+) -> tuple[pd.DataFrame, dict[str, int]]:
+    """Reattempt after an expired/unavailable entry, but never after admission.
+
+    A score crossing submits an order. If no eligible open arrives before the
+    entry expiry, no position exists and the trader may keep observing. Closed,
+    unresolved and ambiguous paths all imply an admitted position and terminate
+    that episode's entry search.
+    """
+    work = frame.copy()
+    work["_score"] = pd.to_numeric(work["entry_score"], errors="coerce")
+    work = work.loc[work["_score"].notna()].sort_values(
+        EPISODE_KEYS + ["state_t"], kind="stable"
+    )
+    chosen: list[pd.Series] = []
+    signaled_episodes = 0
+    expired_attempts = 0
+    for _, group in work.groupby(EPISODE_KEYS, sort=False):
+        qualified = group.loc[group["_score"].ge(float(threshold))]
+        if qualified.empty:
+            continue
+        signaled_episodes += 1
+        for _, row in qualified.iterrows():
+            if str(row["replay_status"]) == "entry_unavailable":
+                expired_attempts += 1
+                continue
+            chosen.append(row)
+            break
+    selected = (
+        pd.DataFrame(chosen).drop(columns=["_score"], errors="ignore")
+        if chosen
+        else work.iloc[0:0].drop(columns=["_score"], errors="ignore").copy()
+    )
+    return selected, {
+        "signaled_episodes": int(signaled_episodes),
+        "expired_entry_attempts": int(expired_attempts),
+        "admitted_episodes": int(len(selected)),
+    }
+
+
+def first_admitted_baseline(
+    frame: pd.DataFrame,
+) -> tuple[pd.DataFrame, dict[str, int]]:
+    work = frame.sort_values(EPISODE_KEYS + ["state_t"], kind="stable")
+    chosen: list[pd.Series] = []
+    expired_attempts = 0
+    episodes = 0
+    for _, group in work.groupby(EPISODE_KEYS, sort=False):
+        episodes += 1
+        for _, row in group.iterrows():
+            if str(row["replay_status"]) == "entry_unavailable":
+                expired_attempts += 1
+                continue
+            chosen.append(row)
+            break
+    selected = (
+        pd.DataFrame(chosen)
+        if chosen
+        else work.iloc[0:0].copy()
+    )
+    return selected, {
+        "episodes": int(episodes),
+        "expired_entry_attempts": int(expired_attempts),
+        "admitted_episodes": int(len(selected)),
+    }
+
+
 def _selection_rate(selected: pd.DataFrame, all_states: pd.DataFrame) -> float:
     total = int(all_states.loc[:, EPISODE_KEYS].drop_duplicates().shape[0])
     return float(len(selected) / total) if total else 0.0
@@ -419,7 +488,9 @@ def choose_policy(
         scores = pd.to_numeric(frame["entry_score"], errors="coerce").dropna()
         for quantile in QUANTILES:
             threshold = float(scores.quantile(quantile))
-            selected = first_qualifying(frame, threshold)
+            selected, action_audit = first_admitted_qualifying(
+                frame, threshold
+            )
             summary = _summarize(selected)
             rate = _selection_rate(selected, frame)
             key = f"{rule_name}_p{int(round(100 * quantile))}"
@@ -428,6 +499,7 @@ def choose_policy(
                 "quantile": quantile,
                 "threshold": threshold,
                 "selection_rate": rate,
+                "action_audit": action_audit,
                 "summary": summary,
             }
             day_mean = summary["day_balanced_net_return_pct"]
@@ -555,8 +627,12 @@ def evaluate(
     selected_frame["entry_score"] = score(
         selected_frame, models[chosen.rule_name]
     )
-    selected = first_qualifying(selected_frame, chosen.score_threshold)
-    baseline = first_state_baseline(selected_frame)
+    selected, selected_action_audit = first_admitted_qualifying(
+        selected_frame, chosen.score_threshold
+    )
+    baseline, baseline_action_audit = first_admitted_baseline(
+        selected_frame
+    )
 
     selected_summary = _summarize(selected)
     baseline_summary = _summarize(baseline)
@@ -599,7 +675,9 @@ def evaluate(
         "calibration_table": calibration_table,
         "fresh_selection_rate": selected_rate,
         "fresh_selected": selected_summary,
-        "fresh_minute1_baseline": baseline_summary,
+        "fresh_selected_action_audit": selected_action_audit,
+        "fresh_earliest_executable_baseline": baseline_summary,
+        "fresh_baseline_action_audit": baseline_action_audit,
         "matched_selected_minus_minute1": matched,
         "development_gate_pass": gate,
         "second_client_stats": store.client.stats.to_dict(),
