@@ -1,0 +1,51 @@
+{
+  "request_id": 217,
+  "operation": "pullback_phase_cost_cover_ranking",
+  "parent_requests": [208, 214, 215, 216],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "The current state vector mixes falling, stabilizing, turning and re-accelerating pullbacks. Explicit causal phase/turn interactions plus a direct cost-cover ranking objective can separate profitable executable entry states better than the same-capacity baseline feature set.",
+  "target": "enter_3m_event_base_pct > 0 using Request215 event-time executable outcome semantics",
+  "models": {
+    "baseline": "same HistGradientBoostingClassifier capacity using the frozen pre-217 feature family",
+    "phase": "same classifier capacity plus preregistered causal pullback phase/turn features"
+  },
+  "training_weight": "equalized by trading-day and target class so rare positive states cannot be erased by the negative majority",
+  "calibration": "Platt calibration on the calibration block only",
+  "selection": "first recurrent state per episode crossing the 90th percentile of that model's calibration probability distribution",
+  "cross_sectional_audit": "among above-threshold states observed in the same real clock minute, retain the highest phase probability and then the first leader per episode",
+  "phase_concepts": [
+    "pullback depth",
+    "recovery fraction",
+    "negative-to-positive 5/10/15-second turn",
+    "selloff deceleration",
+    "recent-low rebound",
+    "VWAP reclaim",
+    "signed flow agreement",
+    "return efficiency / sign-flip cleanliness",
+    "volume and transaction confirmation",
+    "attention resilience during turn"
+  ],
+  "forbidden": [
+    "evaluation-tuned probability threshold",
+    "future next-event timing as a feature",
+    "best future price/horizon feature",
+    "using event-time outcome columns as features",
+    "opening new dates",
+    "claiming overlapping watch-state AUC is an end-to-end trading result"
+  ],
+  "gate": {
+    "min_phase_auc": 0.63,
+    "min_phase_auc_uplift_vs_same_capacity_baseline": 0.03,
+    "min_resolved_selection_coverage": 0.90,
+    "min_selected_trades": 20,
+    "selected_mean_base_return_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_positive_days": 4
+  },
+  "evaluation_scope": "Same already-opened Request178 development dates: 2026-06-23, 24, 25, 26, 29.",
+  "input_runs": {
+    "request171_rich_second": 36033120106,
+    "request178_fresh": 36038233507
+  }
+}
