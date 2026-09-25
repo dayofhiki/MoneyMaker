@@ -13,6 +13,8 @@ class FakeHistory:
     def record(self, day, ticker):
         return HistoryRecord(
             query_success=True,
+            split_query_success=True,
+            latest_prior_split_day=None,
             max_history_day="2026-05-08",
             sessions=20,
             values={
@@ -69,6 +71,8 @@ def test_short_history_is_retained_as_missing_context():
         def record(self, day, ticker):
             return HistoryRecord(
                 query_success=True,
+                split_query_success=True,
+                latest_prior_split_day=None,
                 max_history_day="2026-05-08",
                 sessions=3,
                 values={},
