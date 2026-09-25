@@ -193,3 +193,86 @@ Use the failure diagnostics to determine whether the problem is:
 - insufficient causal path description;
 - watch window too impoverished;
 - or the candidate population itself.
+
+
+## Result — Request 204
+
+Request 204 completed on Request-171 FIT -> chronological CALIBRATION only.
+Request-178 remained sealed.
+
+### What worked
+
+The recurrent structure produced genuinely non-fixed behavior.
+
+PATH_CONTROLLER:
+- 425 watch episodes;
+- 145 admitted entries;
+- 251 DROP decisions;
+- mean chosen entry minute 4.32;
+- entries occurred across all minutes 1 through 10;
+- largest single-minute concentration only 26.9%;
+- 966 WAIT decisions;
+- 188 unavailable-entry retries that correctly returned to flat observation.
+
+Against the earliest-admitted baseline on matched closed episodes:
+- mean improvement: +0.434 percentage points;
+- day-balanced improvement: +0.376 percentage points;
+- 6 of 8 days had non-negative matched improvement.
+
+Tail behavior also improved:
+- severe-loss rate fell from 6.25% to 3.0%;
+- positive-trade rate rose from 14.6% to 22.0%.
+
+This confirms that "discover -> keep watching -> sometimes wait -> sometimes
+enter" is a meaningful control structure rather than a fixed-delay disguise.
+
+### What did not work
+
+Absolute economics remained clearly negative.
+
+Earliest-admitted baseline:
+- day-balanced return: -2.332%;
+- 0/8 positive days.
+
+BASE_FEATURE_CONTROLLER:
+- day-balanced return: -2.080%;
+- 1/8 positive days.
+
+PATH_CONTROLLER:
+- day-balanced return: -2.197%;
+- 0/8 positive days;
+- bootstrap 95% interval: [-2.802%, -1.528%];
+- closed coverage: 68.97%.
+
+The ten newly added watch-path features did not improve on the simpler recurrent
+controller. Retire those exact additions rather than tuning them.
+
+Most importantly, even the non-executable hindsight best entry among minutes
+1-10, while keeping the frozen runner exit rule, remained negative:
+- day-balanced return: -0.753%;
+- bootstrap upper bound: -0.200%;
+- only 2/8 positive days.
+
+### Decision
+
+The recurrent flat-state architecture is retained.
+
+However, entry timing alone cannot solve the economics under the frozen
+post-entry rule. Even perfect hindsight entry selection inside the tested watch
+window cannot make that rule positive on this calibration block.
+
+The next experiment therefore keeps the simpler recurrent entry controller and
+replaces the mechanical post-entry take/trail behavior with a recurrent
+HOLD/EXIT decision:
+
+- hard downside protection remains active;
+- while no stop is triggered, the model repeatedly asks whether the remaining
+  upside appears better than exiting now;
+- HOLD when the predicted remaining opportunity exceeds the causal current
+  mark;
+- EXIT otherwise;
+- no fixed +10% profit ceiling is required.
+
+This directly implements the desired trader behavior:
+"if it still looks likely to continue, keep it; if the setup is breaking, get
+out."
