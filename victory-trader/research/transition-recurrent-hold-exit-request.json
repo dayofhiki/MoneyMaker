@@ -1,0 +1,13 @@
+{
+  "request_id": 210,
+  "operation": "transition_recurrent_hold_exit",
+  "opens_new_dates": false,
+  "reuses_request178_dates": true,
+  "promotion_eligible": false,
+  "parent_request": 179,
+  "target": "one-minute BASE HOLD advantage over EXIT now",
+  "representation_change": "add causal within-position transition features",
+  "runtime_rule": "HOLD iff predicted one-minute advantage > 0; otherwise EXIT",
+  "comparator": "retrained Request-179 direct expected-advantage controller",
+  "note": "Development-only HOLD/EXIT representation test; no threshold tuning."
+}
