@@ -83,7 +83,7 @@
     "request224_reference": 36239499439
   },
   "rerun": {
-    "reason": "Fix lint-only test expression before Request225 evaluation.",
-    "prior_run": 36239845508
+    "reason": "Handle immediate terminal probe segments with no first-post-onset decision row.",
+    "prior_failed_run": 36239876886
   }
 }
