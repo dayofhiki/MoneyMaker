@@ -532,11 +532,6 @@ def evaluate(
         calibration_sequence_diag,
     )
 
-    selected_score = (
-        "option_sequence_score"
-        if selected == "learned_sequence"
-        else "option_current_score"
-    )
     fresh_current_diag = option_diagnostics(
         fresh_seq, "option_current_score"
     )
