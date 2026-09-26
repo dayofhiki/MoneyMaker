@@ -1,0 +1,68 @@
+{
+  "request_id": 219,
+  "operation": "multi_event_remaining_option_value",
+  "parent_requests": [216, 217, 218],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "The recurrent HOLD bottleneck is partly caused by the one-step next-event target. A fixed five-executable-event remaining-option target should be materially more learnable from the same causal state information.",
+  "frozen": [
+    "Request208 causal entry selection",
+    "Request216 event-time POSITION replay",
+    "Request218 current-state feature family",
+    "Request218 eight-observation learned sequence representation",
+    "Request218 MLP architecture and seed",
+    "Request178 development dates",
+    "30-minute risk cap",
+    "no recurrent trading-policy replay in Request219"
+  ],
+  "target": {
+    "name": "five_event_remaining_option_upper_bound",
+    "horizon_executable_events": 5,
+    "definition": "For each state, take the best BASE exit return among the next five actually observed executable POSITION states and subtract BASE EXIT-now.",
+    "requires_full_horizon": true,
+    "censor_if_fifth_event_exceeds_30m_cap": true,
+    "future_used_only_for_supervised_label": true,
+    "deployable_policy": false,
+    "warning": "This is deliberately a hindsight upper-bound diagnostic to test learnability of remaining opportunity. It must not be treated as an oracle trading rule."
+  },
+  "model_selection": {
+    "candidates": [
+      "current-state-only MLP",
+      "Request218 eight-observation sequence MLP"
+    ],
+    "selection_data": "calibration only",
+    "selection_metric": "Spearman correlation with five-event option value",
+    "fresh_block_used_for_selection": false
+  },
+  "fresh_comparators": [
+    "current-state MLP trained on new option-value rank target",
+    "sequence MLP trained on new option-value rank target",
+    "Request218 sequence MLP trained on old one-step HOLD rank target"
+  ],
+  "gate": {
+    "min_calibration_spearman": 0.05,
+    "min_fresh_spearman": 0.08,
+    "min_gain_vs_request218_old_target": 0.05,
+    "min_good_days": 3,
+    "min_top10_day_balanced_mean_lift_pct": 0.10,
+    "min_top20_day_balanced_mean_lift_pct": 0.05,
+    "min_top10_day_balanced_positive_rate_lift": 0.05,
+    "min_same_age_median_spearman": 0.03
+  },
+  "good_day_definition": "Daily Spearman is positive and the selected model's top 10% has higher mean five-event option value than that day's overall evaluable population.",
+  "forbidden": [
+    "changing the five-event horizon after seeing Request178 fresh results",
+    "tuning the MLP architecture after seeing Request178 fresh results",
+    "using option_horizon_last_t, future exit returns, future timestamps, or future gaps as input features",
+    "opening new dates",
+    "claiming a deployable or profitable exit policy from the hindsight upper-bound label"
+  ],
+  "next_if_pass": "Replace the hindsight maximum with a causal fitted continuation-value recursion using fit/calibration only, then replay full recurrent event-time HOLD/EXIT trajectories.",
+  "next_if_fail": "Stop modifying HOLD targets on the same state representation and revisit entry-conditioned state construction and higher-resolution observable information.",
+  "input_runs": {
+    "rich_second": 36033120106,
+    "opportunity_scan": 36001945920,
+    "development_block": 36038233507,
+    "request218_reference": 36225037556
+  }
+}
