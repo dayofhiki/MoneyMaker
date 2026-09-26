@@ -1,0 +1,84 @@
+{
+  "request_id": 224,
+  "operation": "pullback_geometry_audit_and_causal_eligibility_gate",
+  "parent_requests": [221, 223],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request223 is being diluted by structurally bad pullbacks. A causal gate decided once at pullback onset should identify which pullbacks are worth handing to the adaptive controller.",
+  "frozen": [
+    "Request208 causal entry selection",
+    "Request216 event-time POSITION replay",
+    "Request220 entry-conditioned information set",
+    "Request221 pullback_onset and reacceleration definitions",
+    "Request223 entry-conditioned adaptive pullback controller",
+    "Request178 development dates",
+    "30-minute risk cap"
+  ],
+  "eligibility_target": {
+    "definition": "BASE return at first causal reacceleration or observed 30-minute cap minus EXIT-now at pullback onset.",
+    "future_information_used_as_input": false,
+    "hindsight_best_price_used": false
+  },
+  "onset_geometry": [
+    "size of first down move",
+    "size of immediately preceding up move",
+    "reversal ratio",
+    "return acceleration",
+    "entry-to-current profit cushion",
+    "drawdown and recovery state",
+    "one-minute attention, rank, volume, transaction and active-second changes",
+    "current one-second momentum, VWAP position, burst, imbalance, efficiency and volatility proxies",
+    "change in selected one-second features since entry"
+  ],
+  "model": {
+    "family": "HistGradientBoostingRegressor",
+    "learning_rate": 0.04,
+    "max_iter": 180,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 60,
+    "l2_regularization": 2.0,
+    "seed": 20261224
+  },
+  "threshold_selection": {
+    "data": "calibration only",
+    "quantiles": [0.4, 0.5, 0.6, 0.7, 0.8],
+    "objective": "maximum day-balanced local uplift of the geometry-gated Request223 controller",
+    "min_calibration_eligible_rate": 0.15,
+    "max_calibration_eligible_rate": 0.60,
+    "fresh_block_used_for_selection": false
+  },
+  "policy": {
+    "ineligible": "EXIT immediately at pullback onset",
+    "eligible": "hand the pullback to frozen Request223 adaptive redecision logic",
+    "gate_decided_once": true
+  },
+  "comparators": [
+    "ungated Request223 entry-conditioned adaptive controller",
+    "EXIT at pullback onset with local uplift zero"
+  ],
+  "gate": {
+    "min_fresh_eligible_rate": 0.10,
+    "max_fresh_eligible_rate": 0.70,
+    "min_fresh_eligibility_spearman": 0.03,
+    "eligible_terminal_advantage_must_be_positive": true,
+    "gated_day_balanced_uplift_must_be_positive": true,
+    "gated_bootstrap_ci_low_must_be_positive": true,
+    "min_good_days": 3,
+    "gated_must_beat_ungated_request223": true,
+    "matched_difference_bootstrap_ci_low_must_be_positive": true
+  },
+  "forbidden": [
+    "changing geometry features or threshold quantiles after seeing Request178 results",
+    "using future terminal price or future timing as model input",
+    "opening new dates",
+    "tuning Request223's zero WAIT boundary",
+    "claiming a local pullback gate is a validated full trading strategy"
+  ],
+  "next_if_pass": "Freeze pullback eligibility and adaptive management, then build the reacceleration continuation/exit handoff and replay full Request208-entry trajectories.",
+  "next_if_fail": "Move eligibility one observed event into the pullback and test causal early-shape gating instead of onset-only geometry.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "opportunity_scan": 36001945920,
+    "request223_fresh_states": 36238987365
+  }
+}
