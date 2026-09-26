@@ -1,0 +1,89 @@
+{
+  "request_id": 243,
+  "operation": "chronological_policy_rollout_action_value",
+  "parent_requests": [
+    241,
+    242
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "A chronological policy improvement using realized causal teacher continuations is a better training objective for recurrent ENTER/WAIT/ABSTAIN and HOLD/EXIT than hindsight-best WATCH classification.",
+  "population": "Existing Request171/178 BUY-gated positions, NOT full-HOT or full-market selection. No availability p75 gate is added in this isolated controller experiment.",
+  "fit": {
+    "teacher_dates": [
+      "2026-04-30",
+      "2026-05-01",
+      "2026-05-04"
+    ],
+    "student_dates": [
+      "2026-05-05",
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ],
+    "base_teacher": "enter at first eligible state, exit at next observed decision",
+    "student_targets": "forced action now, thereafter frozen earlier-day teacher; never max realized future return",
+    "min_action_rows": 300,
+    "min_distinct_episodes_per_action": 50,
+    "sample_weights": "equal days, then equal episodes",
+    "capacity": {
+      "max_iter": 120,
+      "max_leaf_nodes": 7,
+      "min_samples_leaf": 60,
+      "learning_rate": 0.05,
+      "l2": 2.0,
+      "early_stopping": false
+    },
+    "passes": 1
+  },
+  "execution": {
+    "source_timestamps": "completed bar availability; same timestamp next bar open is execution reference only",
+    "watch": "first five observed states within five clock minutes",
+    "precommitted_exit_minute": 29,
+    "why_29": "source artifact has states 1..29; last observed row is never used as an implicit timeout",
+    "missing_fill_or_exit": "unresolved; invalidates day and gate, never cash",
+    "entry_cost": "BASE once per roundtrip; HOLD compares sell proceeds only",
+    "new_trades_per_episode": 1
+  },
+  "calibration": "May11-20 eight existing dates, used ONLY for locked validation, no threshold fitting or offsets",
+  "development": "June23-29 five already-opened dates, loaded only after calibration gate passes",
+  "gate": {
+    "min_resolved_trades": 20,
+    "max_unresolved_trades": 0,
+    "trade_mean_positive": true,
+    "equal_episode_notional_day_mean_positive": true,
+    "day_bootstrap_95pct_lower_positive": true,
+    "positive_day_strict_majority": true,
+    "min_wait_actions": 5,
+    "min_hold_actions": 5,
+    "must_beat": [
+      "earlier_teacher",
+      "no_wait",
+      "no_hold",
+      "first_event_one_step",
+      "cash"
+    ]
+  },
+  "forbidden": [
+    "using future execution references as decision features",
+    "hindsight future argmax targets",
+    "same-day teacher fitting",
+    "tuning after calibration results",
+    "marking missing returns zero",
+    "claiming portfolio or whole-market validation",
+    "opening new holdout dates"
+  ],
+  "input_runs": {
+    "request171": 36033120106,
+    "request178": 36038233507
+  },
+  "limitations": [
+    "single chronological policy-improvement pass",
+    "teacher cannot bootstrap arbitrary long-horizon value from nothing",
+    "one trade per episode; no reentry or shared capital",
+    "selection bias of BUY-gated source population remains",
+    "censored training targets reported but not economically identified",
+    "minute decision cadence with available second features; not continuous tick execution"
+  ]
+}
