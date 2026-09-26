@@ -591,7 +591,7 @@ def evaluate(fit_path, cal_path, dev_dir, output, rows_output):
         rows_output.with_name("request243-student-targets.parquet"), index=False
     )
     joblib.dump(
-        {"teacher": teacher, "student": student},
+        {"teacher": vars(teacher), "student": vars(student)},
         rows_output.with_name("request243-policies.joblib"),
     )
     print(json.dumps(result, indent=2, allow_nan=False))

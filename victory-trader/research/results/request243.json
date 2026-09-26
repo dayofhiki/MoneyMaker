@@ -1,0 +1,326 @@
+{
+  "request_id": 243,
+  "development_only": true,
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "promotion_gate_pass": false,
+  "population": "Request171/178 BUY-gated archived episodes; not full-HOT or full-market coverage",
+  "runtime": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "pyarrow": "25.0.1"
+  },
+  "python": "3.11.16",
+  "teacher_days": [
+    "2026-04-30",
+    "2026-05-01",
+    "2026-05-04"
+  ],
+  "student_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07",
+    "2026-05-08"
+  ],
+  "calibration_days": [
+    "2026-05-11",
+    "2026-05-12",
+    "2026-05-13",
+    "2026-05-14",
+    "2026-05-15",
+    "2026-05-18",
+    "2026-05-19",
+    "2026-05-20"
+  ],
+  "development_days": [
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-25",
+    "2026-06-26",
+    "2026-06-29"
+  ],
+  "teacher_support": {
+    "enter_value": {
+      "rows": 704,
+      "episodes": 160,
+      "unresolved_target_rows": 117,
+      "winsor_low": -5.78767278847163,
+      "winsor_high": 3.865374893149128
+    },
+    "wait_value": {
+      "rows": 737,
+      "episodes": 183,
+      "unresolved_target_rows": 84,
+      "winsor_low": -4.899949001331738,
+      "winsor_high": 3.6730598188026433
+    },
+    "hold_advantage": {
+      "rows": 3538,
+      "episodes": 175,
+      "unresolved_target_rows": 657,
+      "winsor_low": -4.153764806606971,
+      "winsor_high": 4.655620689874575
+    }
+  },
+  "student_support": {
+    "enter_value": {
+      "rows": 1146,
+      "episodes": 259,
+      "unresolved_target_rows": 235,
+      "winsor_low": -8.071380455372223,
+      "winsor_high": 6.052366501138047
+    },
+    "wait_value": {
+      "rows": 1380,
+      "episodes": 306,
+      "unresolved_target_rows": 1,
+      "winsor_low": 0,
+      "winsor_high": 0.2059666823067865
+    },
+    "hold_advantage": {
+      "rows": 5866,
+      "episodes": 280,
+      "unresolved_target_rows": 1243,
+      "winsor_low": -5.324018649378654,
+      "winsor_high": 6.533312691367893
+    }
+  },
+  "features": [
+    "attention_score",
+    "attention_rank",
+    "return_from_previous_close_pct",
+    "minute_body_return_pct",
+    "minute_range_pct",
+    "log_minute_volume",
+    "log_minute_transactions",
+    "minute_return_1m_pct",
+    "return_accel_1m_pct",
+    "volume_ratio_prev1",
+    "transactions_ratio_prev1",
+    "active_seconds_60",
+    "active_seconds_10",
+    "last_activity_age_s",
+    "sec_last10_return_pct",
+    "sec_prev10_return_pct",
+    "sec_accel_10_pct",
+    "sec_first30_return_pct",
+    "sec_last30_return_pct",
+    "sec_accel_30_pct",
+    "sec_realized_vol_pct",
+    "sec_positive_fraction",
+    "sec_max_drawdown_pct",
+    "sec_max_runup_pct",
+    "sec_volume_last10_share",
+    "sec_transactions_last10_share",
+    "sec_volume_burst_10",
+    "sec_transactions_burst_10",
+    "sec_last5_return_pct",
+    "sec_prev5_return_pct",
+    "sec_accel_5_pct",
+    "sec_last15_return_pct",
+    "sec_prev15_return_pct",
+    "sec_accel_15_pct",
+    "sec_volume_burst_5",
+    "sec_transactions_burst_5",
+    "sec_volume_last5_share",
+    "sec_transactions_last5_share",
+    "sec_signed_volume_imbalance_60",
+    "sec_signed_transactions_imbalance_60",
+    "sec_return_efficiency_60",
+    "sec_sign_flip_rate_60",
+    "sec_seconds_since_high",
+    "sec_seconds_since_low",
+    "sec_close_location_60",
+    "sec_close_vs_vwap_pct",
+    "sec_volatility_ratio_10_to_prev50",
+    "sec_mean_trade_size_ratio_10_to_prev50",
+    "elapsed_minutes",
+    "event_index",
+    "gap_minutes",
+    "path_return_pct",
+    "path_drawdown_pct",
+    "path_rebound_pct",
+    "event_return_pct",
+    "lag1_event_return_pct",
+    "lag2_event_return_pct",
+    "log_current_price",
+    "base_zero_move_cost_proxy_pct",
+    "minutes_since_open",
+    "minutes_to_close"
+  ],
+  "calibration": {
+    "policies": {
+      "full": {
+        "episodes": 433,
+        "entries": 173,
+        "resolved_trades": 100,
+        "unresolved_trades": 73,
+        "execution_rate": 0.3995381062355658,
+        "resolved_trade_mean_pct": -1.6463507679274525,
+        "resolved_stress_trade_mean_pct": -3.6270069495144917,
+        "day_balanced_episode_mean_pct": null,
+        "note": "equal episode-notional research proxy; not portfolio return or compounded balance",
+        "by_day_episode_mean_pct": {
+          "2026-05-11": null,
+          "2026-05-12": null,
+          "2026-05-13": null,
+          "2026-05-14": null,
+          "2026-05-15": null,
+          "2026-05-18": null,
+          "2026-05-19": null,
+          "2026-05-20": null
+        },
+        "positive_days": 0,
+        "day_cluster_bootstrap_low_pct": null,
+        "severe_loss_rate_le_minus2": 0.48,
+        "wait_actions": 442,
+        "hold_actions": 1437
+      },
+      "earlier_teacher": {
+        "episodes": 433,
+        "entries": 14,
+        "resolved_trades": 7,
+        "unresolved_trades": 7,
+        "execution_rate": 0.03233256351039261,
+        "resolved_trade_mean_pct": -0.3554813612514101,
+        "resolved_stress_trade_mean_pct": -2.2958563786113766,
+        "day_balanced_episode_mean_pct": null,
+        "note": "equal episode-notional research proxy; not portfolio return or compounded balance",
+        "by_day_episode_mean_pct": {
+          "2026-05-11": 0.023730897001471882,
+          "2026-05-12": null,
+          "2026-05-13": 0.0012536996040535264,
+          "2026-05-14": null,
+          "2026-05-15": 0,
+          "2026-05-18": null,
+          "2026-05-19": null,
+          "2026-05-20": null
+        },
+        "positive_days": 2,
+        "day_cluster_bootstrap_low_pct": null,
+        "severe_loss_rate_le_minus2": 0.2857142857142857,
+        "wait_actions": 43,
+        "hold_actions": 45
+      },
+      "no_wait": {
+        "episodes": 433,
+        "entries": 119,
+        "resolved_trades": 70,
+        "unresolved_trades": 49,
+        "execution_rate": 0.2748267898383372,
+        "resolved_trade_mean_pct": -1.65352984332235,
+        "resolved_stress_trade_mean_pct": -3.6410051365285447,
+        "day_balanced_episode_mean_pct": null,
+        "note": "equal episode-notional research proxy; not portfolio return or compounded balance",
+        "by_day_episode_mean_pct": {
+          "2026-05-11": null,
+          "2026-05-12": null,
+          "2026-05-13": null,
+          "2026-05-14": null,
+          "2026-05-15": null,
+          "2026-05-18": null,
+          "2026-05-19": null,
+          "2026-05-20": null
+        },
+        "positive_days": 0,
+        "day_cluster_bootstrap_low_pct": null,
+        "severe_loss_rate_le_minus2": 0.5142857142857142,
+        "wait_actions": 0,
+        "hold_actions": 1031
+      },
+      "no_hold": {
+        "episodes": 433,
+        "entries": 173,
+        "resolved_trades": 110,
+        "unresolved_trades": 63,
+        "execution_rate": 0.3995381062355658,
+        "resolved_trade_mean_pct": -1.5007992369218826,
+        "resolved_stress_trade_mean_pct": -3.4942184049250113,
+        "day_balanced_episode_mean_pct": null,
+        "note": "equal episode-notional research proxy; not portfolio return or compounded balance",
+        "by_day_episode_mean_pct": {
+          "2026-05-11": null,
+          "2026-05-12": null,
+          "2026-05-13": null,
+          "2026-05-14": null,
+          "2026-05-15": null,
+          "2026-05-18": null,
+          "2026-05-19": null,
+          "2026-05-20": null
+        },
+        "positive_days": 0,
+        "day_cluster_bootstrap_low_pct": null,
+        "severe_loss_rate_le_minus2": 0.3,
+        "wait_actions": 442,
+        "hold_actions": 0
+      },
+      "first_event_one_step": {
+        "episodes": 433,
+        "entries": 433,
+        "resolved_trades": 345,
+        "unresolved_trades": 88,
+        "execution_rate": 1,
+        "resolved_trade_mean_pct": -1.2835508261357274,
+        "resolved_stress_trade_mean_pct": -3.286829223343997,
+        "day_balanced_episode_mean_pct": null,
+        "note": "equal episode-notional research proxy; not portfolio return or compounded balance",
+        "by_day_episode_mean_pct": {
+          "2026-05-11": null,
+          "2026-05-12": null,
+          "2026-05-13": null,
+          "2026-05-14": null,
+          "2026-05-15": null,
+          "2026-05-18": null,
+          "2026-05-19": null,
+          "2026-05-20": null
+        },
+        "positive_days": 0,
+        "day_cluster_bootstrap_low_pct": null,
+        "severe_loss_rate_le_minus2": 0.263768115942029,
+        "wait_actions": 0,
+        "hold_actions": 0
+      },
+      "cash": {
+        "day_balanced_episode_mean_pct": 0
+      }
+    },
+    "checks": {
+      "all_trades_resolved": false,
+      "at_least_20_trades": true,
+      "positive_episode_mean": false,
+      "positive_trade_mean": false,
+      "positive_cluster_lower_bound": false,
+      "positive_day_majority": false,
+      "uses_wait_and_hold": true,
+      "beats_earlier_teacher": false,
+      "beats_no_wait": false,
+      "beats_no_hold": false,
+      "beats_first_event_one_step": false
+    },
+    "gate_pass": false
+  },
+  "development": {
+    "status": "not_opened_calibration_gate_failed"
+  },
+  "execution": {
+    "source_state_time": "completed bar availability; execution_open is next-bar open label",
+    "watch_minutes": 5,
+    "watch_events": 5,
+    "precommitted_exit_minute": 29,
+    "missing_execution": "unresolved, never zero or hindsight last-row exit",
+    "reentry": false,
+    "portfolio_capital_constraints": false
+  },
+  "input_sha256": {
+    "prepared/rich/fit-rich-second.parquet": "4ce9a7e386879ab3fe733627100813d0f1c9c94be7b43df04925d4df3e900b1d",
+    "prepared/rich/calibration-rich-second.parquet": "bb464510041dc75b6e03a8de70b290db7d5e6e6be96e54534138b22574d6d95c"
+  },
+  "development_gate_pass": false,
+  "provenance": {
+    "run_id": 36259470906,
+    "source_sha": "fb3bc70f2c6753d314e25939824e136f0fef69f6",
+    "authoritative_environment": "GitHub pinned Request214 numerical stack"
+  }
+}
+
