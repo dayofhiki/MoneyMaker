@@ -9,6 +9,12 @@ on:
       - 'victory-trader/src/victory_trader/second_execution_reconstruction.py'
       - 'victory-trader/tests/test_second_execution_reconstruction.py'
       - '.github/workflows/second-execution-reconstruction.yml'
+  pull_request:
+    paths:
+      - 'victory-trader/research/second-execution-reconstruction-request.json'
+      - 'victory-trader/src/victory_trader/second_execution_reconstruction.py'
+      - 'victory-trader/tests/test_second_execution_reconstruction.py'
+      - '.github/workflows/second-execution-reconstruction.yml'
   workflow_dispatch:
 
 permissions:
