@@ -1,0 +1,73 @@
+{
+  "request_id": 230,
+  "operation": "hot_second_scale_tradability_admission",
+  "parent_requests": [227, 229],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request229's minute-level HOT context contains tradability signal but does not isolate profitable admitted episodes or preserve Request227 timing. Causal one-second microstructure immediately before HOT may distinguish structurally usable momentum from superficially similar minute bars.",
+  "frozen": [
+    "same Request229 BUY-anchor episode population",
+    "same Request229 persistent tradability target",
+    "same Request178 development dates",
+    "same Request227 relative ENTER-vs-WAIT timing head",
+    "same Request208 comparator",
+    "same BASE cost accounting",
+    "semantic HOT admission boundary at predicted persistent tradability > 0"
+  ],
+  "intervention": {
+    "baseline": "Request229 minute-level HOT and market-wide context",
+    "candidate": "baseline plus causal completed-second HOT microstructure",
+    "second_feature_families": [
+      "10/30-second path activity, acceleration, realized volatility, drawdown/runup, volume/transaction burst",
+      "5/15-second momentum, VWAP position, signed volume/transaction imbalance, return efficiency, sign flips, high/low age, close location, short/long volatility and mean-trade-size ratios"
+    ],
+    "second_window": "strictly completed seconds from HOT-60s through HOT-1s",
+    "future_information_used_as_input": false
+  },
+  "target": {
+    "definition": "same Request229 best mean Request227 multi-event value across any two consecutive WATCH checkpoints",
+    "hindsight_single_spike_used": false
+  },
+  "runtime": {
+    "admit_if": "candidate predicted persistent tradability > 0",
+    "within_admitted": "same frozen Request227 relative ENTER-vs-WAIT controller",
+    "fresh_threshold_tuning": false
+  },
+  "gate": {
+    "min_second_feature_coverage": 0.85,
+    "min_candidate_spearman": 0.15,
+    "min_spearman_gain_vs_request229": 0.03,
+    "min_candidate_auc": 0.62,
+    "min_auc_gain_vs_request229": 0.01,
+    "min_admission_rate": 0.10,
+    "max_admission_rate": 0.70,
+    "admitted_mean_persistent_tradability_must_be_positive": true,
+    "min_admitted_positive_rate": 0.50,
+    "min_relative_timing_spearman_within_admitted": 0.05,
+    "min_execution_rate": 0.10,
+    "max_execution_rate": 0.80,
+    "min_trades": 30,
+    "trade_mean_must_be_positive": true,
+    "portfolio_day_balanced_mean_must_be_positive": true,
+    "must_beat_request208": true,
+    "matched_vs_request208_bootstrap_ci_low_must_be_positive": true,
+    "min_improved_days_vs_request208": 4,
+    "severe_loss_rate_no_worse_than_request208": true
+  },
+  "forbidden": [
+    "changing admission threshold after seeing Request178",
+    "changing second feature windows after seeing Request178",
+    "using any second at or after HOT as an admission input",
+    "changing the Request229 target",
+    "opening new dates",
+    "claiming a local HOT admission result validates the complete trader"
+  ],
+  "next_if_pass": "Freeze HOT second-scale tradability admission, rebuild the full upstream HOT promotion population before old BUY gating, and replay the recurrent trader.",
+  "next_if_fail": "Treat runner discovery and downstream tradability as separate latent tasks and learn tradability from the full HOT promotion population instead of only already BUY-selected episodes.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "opportunity_scan": 36001945920,
+    "development_block": 36038233507,
+    "request229_reference": 36242084075
+  }
+}
