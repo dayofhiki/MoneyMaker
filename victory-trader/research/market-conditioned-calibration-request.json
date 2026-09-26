@@ -1,0 +1,73 @@
+{
+  "request_id": 235,
+  "operation": "market_conditioned_economic_calibration",
+  "parent_requests": [
+    232,
+    233,
+    234
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request232 ranking is useful but Requests233-234 show that a global economic zero boundary is unstable. Conditioning the frozen Request232 scores on strictly prior same-day first-HOT market context may recover a transferable positive admission boundary.",
+  "frozen": [
+    "Request232 tradability target, ranking learner and probability p75 gate",
+    "Request232 development and fresh dates",
+    "Request233 economic gate thresholds",
+    "Request233 frozen scored-HOT artifact",
+    "BASE cost accounting"
+  ],
+  "market_context": {
+    "source": "strictly earlier first-HOT episodes on the same day",
+    "excludes_same_timestamp_peers": true,
+    "causal": true,
+    "features": [
+      "prior HOT count",
+      "prior HOT mean return from previous close",
+      "prior HOT mean attention score",
+      "prior HOT mean second-rerank probability",
+      "prior HOT mean minute body return",
+      "prior HOT mean 10-second return",
+      "prior HOT mean second realized volatility",
+      "minutes since open"
+    ]
+  },
+  "calibrator": {
+    "model": "low-capacity HistGradientBoostingRegressor",
+    "inputs": "frozen Request232 regression score, frozen Request232 positive probability, and causal market context",
+    "monotonic_positive_constraints": [
+      "predicted_persistent_tradability_pct",
+      "tradability_positive_probability"
+    ],
+    "calibration_check": "leave-one-calibration-day-out across all eight calibration days",
+    "row_weight": "equal total weight per training day",
+    "admission": "frozen Request232 p75 AND market-conditioned expected persistent value > 0",
+    "threshold_search": false
+  },
+  "gates": {
+    "min_selected_rows": 40,
+    "min_selected_rate": 0.03,
+    "max_selected_rate": 0.25,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_selected_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_calibration_positive_mean_days": 5,
+    "min_fresh_positive_mean_days": 4,
+    "min_mean_gain_vs_request232_pct": 0.25
+  },
+  "forbidden": [
+    "future same-day HOT observations in market context",
+    "same-timestamp peers in market context",
+    "June fresh outcomes in fitting or threshold selection",
+    "opening new dates",
+    "changing Request232 rank learner",
+    "adding downstream timing before economic admission is stable"
+  ],
+  "next_if_pass": "Freeze market-conditioned economic admission and train a new causal ENTER-vs-WAIT controller only inside admitted episodes; repair target coverage separately.",
+  "next_if_fail_calibration": "Current Request232 representation cannot support a stable positive economic boundary even with causal market context. Revisit tradability target/representation rather than stacking more admission gates.",
+  "next_if_fail_fresh": "Market-conditioned boundary is development-stable but not June-stable. Inspect regime transport before timing.",
+  "input_runs": {
+    "request232": 36249380599,
+    "request233": 36251239308,
+    "request234": 36253413812
+  }
+}
