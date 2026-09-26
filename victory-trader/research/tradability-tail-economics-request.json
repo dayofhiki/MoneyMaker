@@ -1,0 +1,51 @@
+{
+  "request_id": 236,
+  "operation": "tradability_tail_economics_diagnostic",
+  "parent_requests": [
+    232,
+    233,
+    234,
+    235
+  ],
+  "opens_new_dates": false,
+  "fresh_outcomes_opened": false,
+  "promotion_eligible": false,
+  "hypothesis": "The Request232 rank signal may contain a small economically positive tail, or may mainly improve win frequency while leaving severe downside large. Calibration-only tail decomposition can distinguish these cases before redesigning the target.",
+  "frozen": [
+    "Request232 scores and event-time persistent-tradability labels",
+    "Request233 frozen scored-HOT artifact",
+    "Request163 calibration dates"
+  ],
+  "predeclared_top_fractions": [
+    0.01,
+    0.02,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25
+  ],
+  "score_families": [
+    "predicted persistent tradability",
+    "positive tradability probability",
+    "equal-weight percentile average of those two frozen scores"
+  ],
+  "metrics": [
+    "mean and day-balanced mean",
+    "median and positive rate",
+    "loss rates below -2% and -5%",
+    "mean positive and mean non-positive outcome",
+    "10th and 90th percentile",
+    "positive-mean calibration days"
+  ],
+  "forbidden": [
+    "opening June fresh outcomes",
+    "choosing a new threshold and claiming policy success",
+    "changing Request232 scores",
+    "using future information as an input"
+  ],
+  "next_if_positive_tail": "Freeze the strongest predeclared tail family and test a risk-controlled entry/exit policy without threshold search.",
+  "next_if_downside_asymmetry": "Separate upside opportunity from downside survivability and train a causal risk head.",
+  "next_if_no_tail_signal": "Redesign the tradability target/representation because the current ranking is economically misaligned.",
+  "input_run": 36251239308
+}
