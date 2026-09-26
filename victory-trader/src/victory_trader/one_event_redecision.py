@@ -19,7 +19,6 @@ from .chronological_action_value import (
     rollout,
 )
 from .direct_action_advantage import (
-    MAX_SEVERE_LOSS,
     DirectPolicy,
     decision_quality,
     fit_binary,
