@@ -1,0 +1,72 @@
+name: MoneyMaker Monotonic Economic Calibration
+
+on:
+  push:
+    branches:
+      - research/monotonic-economic-calibration-234
+    paths:
+      - 'victory-trader/research/monotonic-economic-calibration-request.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen numerical stack
+        run: python -m pip install -e '.[dev]' -c research/request214-requirements.txt
+      - name: Check request 234 monotonic calibration contract
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_monotonic_economic_calibration.py tests/test_event_time_full_hot_tradability.py tests/test_hot_economic_opportunity.py
+      - name: Download Request 163 stage2 population
+        uses: actions/download-artifact@v4
+        with:
+          name: request163-stage2-prepared
+          path: victory-trader/prepared/stage2
+          repository: dayofhiki/MoneyMaker
+          run-id: 36001945920
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Request 163 opportunity population
+        uses: actions/download-artifact@v4
+        with:
+          name: request163-opportunity-prepared
+          path: victory-trader/prepared/opportunity
+          repository: dayofhiki/MoneyMaker
+          run-id: 36001945920
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Evaluate request 234
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          git rev-parse HEAD > artifacts/source-sha.txt
+          python -m victory_trader.monotonic_economic_calibration \
+            --stage2-candidates prepared/stage2/stage2-candidates.parquet \
+            --opportunity-candidates prepared/opportunity/opportunity-candidates.parquet \
+            --opportunity-scan prepared/opportunity/opportunity-scan.parquet \
+            --output artifacts/request234.json \
+            --rows-output artifacts/request234-full-hot-states.parquet \
+            | tee artifacts/request234.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-monotonic-economic-calibration-234
+          path: |
+            victory-trader/artifacts/request234.json
+            victory-trader/artifacts/request234-full-hot-states.parquet
+            victory-trader/artifacts/request234.log
+            victory-trader/artifacts/source-sha.txt
+          if-no-files-found: error
+          retention-days: 90
