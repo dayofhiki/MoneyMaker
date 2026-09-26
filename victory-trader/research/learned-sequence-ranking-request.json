@@ -1,7 +1,10 @@
 {
   "request_id": 218,
   "operation": "learned_sequence_position_ranking",
-  "parent_requests": [216, 217],
+  "parent_requests": [
+    216,
+    217
+  ],
   "opens_new_dates": false,
   "promotion_eligible": false,
   "hypothesis": "A learned chronological representation of the last eight actually observed POSITION states can recover transferable HOLD-value ordering that current-state models and hand-crafted path summaries failed to capture.",
@@ -35,7 +38,10 @@
     "encoding": "Fixed chronological lag slots ending at the current observed state, with causal age features and padding masks. The MLP learns interactions directly; no manually chosen slope/std/range summaries are provided as the new representation.",
     "model": {
       "family": "MLPRegressor",
-      "hidden_layers": [64, 32],
+      "hidden_layers": [
+        64,
+        32
+      ],
       "activation": "relu",
       "alpha": 0.01,
       "max_iter": 250
@@ -72,5 +78,9 @@
     "opportunity_scan": 36001945920,
     "development_block": 36038233507
   },
-  "request217_reference_run": 36178628181
+  "request217_reference_run": 36178628181,
+  "rerun": {
+    "reason": "Fix pandas-backed read-only NumPy view during missing-value imputation in Request218 transform.",
+    "prior_failed_run": 36180071125
+  }
 }
