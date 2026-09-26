@@ -77,7 +77,7 @@
     "request222_reference": 36237795551
   },
   "rerun": {
-    "reason": "Remove unused local alias caught by Ruff before Request223 evaluation.",
+    "reason": "Remove unused selected_score alias caught by Ruff before Request223 evaluation.",
     "prior_failed_run": 36238205095
   }
 }
