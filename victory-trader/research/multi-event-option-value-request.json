@@ -1,7 +1,11 @@
 {
   "request_id": 219,
   "operation": "multi_event_remaining_option_value",
-  "parent_requests": [216, 217, 218],
+  "parent_requests": [
+    216,
+    217,
+    218
+  ],
   "opens_new_dates": false,
   "promotion_eligible": false,
   "hypothesis": "The recurrent HOLD bottleneck is partly caused by the one-step next-event target. A fixed five-executable-event remaining-option target should be materially more learnable from the same causal state information.",
@@ -44,7 +48,7 @@
     "min_fresh_spearman": 0.08,
     "min_gain_vs_request218_old_target": 0.05,
     "min_good_days": 3,
-    "min_top10_day_balanced_mean_lift_pct": 0.10,
+    "min_top10_day_balanced_mean_lift_pct": 0.1,
     "min_top20_day_balanced_mean_lift_pct": 0.05,
     "min_top10_day_balanced_positive_rate_lift": 0.05,
     "min_same_age_median_spearman": 0.03
@@ -64,5 +68,9 @@
     "opportunity_scan": 36001945920,
     "development_block": 36038233507,
     "request218_reference": 36225037556
+  },
+  "rerun": {
+    "reason": "Remove unused local variable caught by Ruff before evaluation.",
+    "prior_run": 36234728532
   }
 }
