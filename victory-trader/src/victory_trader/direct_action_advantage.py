@@ -22,7 +22,6 @@ from .chronological_action_value import (
     CAUSAL_SOURCE_FEATURES,
     KEYS,
     PATH_FEATURES,
-    STRESS,
     build_states,
     chronological_fit,
     episode_results,
