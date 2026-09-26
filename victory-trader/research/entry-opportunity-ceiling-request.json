@@ -1,0 +1,33 @@
+{
+  "request_id": 242,
+  "operation": "availability_admitted_entry_opportunity_ceiling",
+  "parent_requests": [
+    241
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request241 availability transfers, but learned timing is negative. Hindsight ceiling decomposition can identify whether the admitted episodes lack positive entry economics, the multi-event timing target is misaligned with event-3 economics, or the target is good but poorly learned.",
+  "frozen": [
+    "Request241 event-time WATCH construction",
+    "Request241 continuation-availability head and calibration p75 gate",
+    "Request178 June23-29 development dates",
+    "BASE cost accounting"
+  ],
+  "diagnostics": [
+    "first observed WATCH event event-3 return",
+    "event-3 return at the WATCH state with highest positive multi-event value",
+    "best positive event-3 return across first five observed WATCH states",
+    "state-level Spearman between multi-event value and event-3 return"
+  ],
+  "forbidden": [
+    "treating hindsight oracles as deployable policies",
+    "opening new dates",
+    "using Request242 to tune a threshold"
+  ],
+  "input_runs": {
+    "request171": 36033120106,
+    "request178": 36038233507,
+    "request241": 36255116247
+  }
+}
