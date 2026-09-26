@@ -193,7 +193,7 @@ def _transform(
     matrix = (
         frame.reindex(columns=columns)
         .apply(pd.to_numeric, errors="coerce")
-        .to_numpy(dtype=float)
+        .to_numpy(dtype=float, copy=True)
     )
     missing = ~np.isfinite(matrix)
     if missing.any():
