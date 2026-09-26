@@ -49,5 +49,9 @@
     "request178": 36038233507,
     "request227": 36240962752,
     "request240": 36254403075
+  },
+  "rerun": {
+    "reason": "Request178 lacks the optional second_rerank_probability comparator column. Make that reporting comparator nullable; policy, labels, models and gates unchanged.",
+    "prior_run": 36254978502
   }
 }
