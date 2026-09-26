@@ -1,0 +1,42 @@
+{
+  "request_id": 247,
+  "operation": "one_observed_event_redecision_bootstrap",
+  "parent_requests": [246],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request246 lacks WAIT support because WAIT value depends on a sparse learned flat teacher that usually abstains. A fixed one-observed-event redecision bootstrap can teach patience without selecting a best future price or variable hindsight horizon.",
+  "training": {
+    "source": "same Request243 chronological teacher position policy on May5-8",
+    "enter_now_value": "forced ENTER at current eligible state under frozen teacher HOLD/EXIT continuation",
+    "wait_one_event_value": "forced ENTER value at exactly the next actually observed eligible state under the same frozen position continuation",
+    "enter_label": "ENTER-now > max(wait-one-event, cash 0)",
+    "wait_label": "when ENTER-now is not best, wait-one-event > cash 0",
+    "hold_label": "same direct HOLD-vs-EXIT target as Request246",
+    "class_balancing": false,
+    "threshold": 0.5
+  },
+  "inference": "Re-evaluate the same ENTER/WAIT/ABSTAIN questions at every observed state, so consecutive WAITs emerge from repeated one-step decisions.",
+  "gate": {
+    "min_entries": 20,
+    "min_resolved_trades": 20,
+    "resolved_trade_mean_must_be_positive": true,
+    "min_wait_actions": 20,
+    "min_chosen_enter_advantage_positive_rate": 0.55,
+    "min_chosen_hold_advantage_positive_rate": 0.55,
+    "max_severe_loss_rate": 0.35
+  },
+  "forbidden": [
+    "best future state or best future price selection",
+    "variable hindsight WAIT horizon",
+    "future event availability as a decision feature",
+    "class balancing or May-tuned thresholds",
+    "new dates or holdout",
+    "promotion or portfolio claims"
+  ],
+  "comparators": ["Request246 direct-action policy", "Request243 refit"],
+  "input_runs": {
+    "request171": 36033120106,
+    "request246": 36261741736
+  }
+}
