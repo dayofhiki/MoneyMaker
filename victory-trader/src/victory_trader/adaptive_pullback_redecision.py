@@ -625,12 +625,6 @@ def evaluate(
     selected = _choose_representation_on_calibration(
         cal_baseline_policy, cal_candidate_policy
     )
-    selected_score = (
-        "entry_conditioned_score"
-        if selected == "entry_conditioned"
-        else "current_state_score"
-    )
-
     fresh_baseline_policy_rows = simulate_adaptive_policy(
         fresh_states,
         "current_state_score",
