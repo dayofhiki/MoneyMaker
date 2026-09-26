@@ -1,0 +1,7 @@
+{
+  "request_id": 199,
+  "experiment": "causal-first-passage-directional-edge-v1.0",
+  "run_reason": "Test whether current causal entry-state features predict +5%/+10% upside before the -3% stop using the same one-second causal entry reference; compare full rich-second features against a no-rich-second ablation. FIT only, calibration evaluation only, no Request178 fresh dates.",
+  "opens_new_dates": false,
+  "promotion_eligible": false
+}

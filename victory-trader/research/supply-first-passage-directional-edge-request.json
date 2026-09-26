@@ -1,0 +1,7 @@
+{
+  "request_id": 201,
+  "experiment": "supply-first-passage-directional-edge-v1.0",
+  "run_reason": "After Requests199-200 showed weak directional edge from current state and premarket context, test strictly-prior D-1 share-supply and causal turnover context on the same FIT->chronological calibration first-passage target. Request178 remains sealed.",
+  "opens_new_dates": false,
+  "promotion_eligible": false
+}

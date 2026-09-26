@@ -1,0 +1,9 @@
+{
+  "request_id": 203,
+  "experiment": "short-interest-first-passage-directional-edge-v1.0",
+  "run_reason": "After Request202 failed to create a positive selected tail, test publication-safe FINRA short-interest position context as an independent structural feature family on the same FIT->chronological calibration first-passage target. Request178 remains sealed.",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "retry": 1,
+  "retry_reason": "Implementation-only floating-point assertion fix before any Request203 model/data result. Preregistered data split, features, barriers, and signal rule unchanged."
+}

@@ -1,0 +1,9 @@
+{
+  "request_id": 205,
+  "experiment": "recurrent-watch-position-controller-v1.0",
+  "run_reason": "Keep the recurrent Request204 flat-state watch/enter behavior, retire the failed extra watch-path feature additions, and replace fixed +10%-partial/trailing profit-taking with recurrent HOLD/EXIT based on predicted remaining opportunity versus causal current mark. Preserve an independent causal one-second -3% hard stop. Train Request171 FIT only, evaluate chronological Request171 CALIBRATION only. Request178 remains sealed.",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "retry": 1,
+  "retry_reason": "Implementation-only test lint cleanup before any Request205 model/data result. Preregistered entry controller, HOLD/EXIT semantics, hard stop, split and success gates unchanged."
+}

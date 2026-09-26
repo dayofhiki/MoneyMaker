@@ -1,0 +1,10 @@
+{
+  "request_id": 198,
+  "experiment": "executable-entry-hurdle-decomposition-v1.0",
+  "run_reason": "Decompose Request197 calibration failure into entry fillability, terminal resolvability, causal partial-take capture, positive closed economics, and closed-return ranking. FIT-only training, calibration-only diagnostics, no fresh Request178 outcomes.",
+  "opens_new_dates": false,
+  "fresh_evaluated": false,
+  "promotion_eligible": false,
+  "retry": 1,
+  "retry_reason": "Implementation-only lint correction in unit-test boolean assertions; experiment design and data partitions unchanged."
+}

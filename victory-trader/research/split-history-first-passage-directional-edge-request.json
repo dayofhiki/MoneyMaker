@@ -1,0 +1,7 @@
+{
+  "request_id": 205,
+  "experiment": "split-history-first-passage-directional-edge-v1.0",
+  "run_reason": "After Request204 failed to produce an economic selected tail, test the frozen strictly-prior split/reverse-split state as the final one-off metadata branch on the same FIT->chronological calibration first-passage target. Request178 remains sealed.",
+  "opens_new_dates": false,
+  "promotion_eligible": false
+}
