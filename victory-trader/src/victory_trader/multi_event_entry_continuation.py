@@ -51,6 +51,7 @@ from .recurrent_wait_entry_action_value import (
     _base_return,
     build_watch_states,
 )
+from .relative_recurrent_entry_timing import attach_relative_advantage
 from .state_action_risk import SEVERE_LOSS_PCT
 from .wait_reobserve_entry_confirmation import _day_weights, _feature_frame
 
