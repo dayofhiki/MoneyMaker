@@ -1,7 +1,11 @@
 {
   "request_id": 226,
   "operation": "entry_survivability_admission_gate",
-  "parent_requests": [208, 223, 225],
+  "parent_requests": [
+    208,
+    223,
+    225
+  ],
   "opens_new_dates": false,
   "promotion_eligible": false,
   "hypothesis": "Request225 shows that pullback quality becomes meaningfully predictable only after paying for one post-entry observation. The upstream fix is to admit only Request208 entries whose entry-time state predicts positive cushion through the first post-entry stress event.",
@@ -14,7 +18,7 @@
     "semantic admission boundary at predicted first-stress BASE return > 0"
   ],
   "first_stress_label": {
-    "entry_anchor_return_pct": 0.0,
+    "entry_anchor_return_pct": 0,
     "adverse_event": "first actually observed post-entry BASE return below the previous observed BASE return",
     "immediate_adverse": "if the first observed post-entry return is below 0, that first observation is the stress event",
     "fallback": "first observed state at or after the 30-minute risk cap if no adverse step occurs earlier",
@@ -29,7 +33,7 @@
     "max_iter": 180,
     "max_leaf_nodes": 15,
     "min_samples_leaf": 60,
-    "l2_regularization": 2.0,
+    "l2_regularization": 2,
     "seed": 20261226,
     "calibration": "equal-day residual offset on calibration only"
   },
@@ -45,11 +49,11 @@
     "purpose": "isolate whether survivability admission removes weak entries before POSITION management"
   },
   "gate": {
-    "min_first_stress_label_coverage": 0.80,
+    "min_first_stress_label_coverage": 0.8,
     "min_fresh_first_stress_spearman": 0.08,
     "min_admitted_rate": 0.15,
     "max_admitted_rate": 0.75,
-    "min_admitted_first_stress_positive_rate": 0.60,
+    "min_admitted_first_stress_positive_rate": 0.6,
     "min_good_days": 4,
     "candidate_day_balanced_fixed3m_mean_must_be_positive": true,
     "candidate_must_beat_request208_fixed3m": true,
@@ -69,5 +73,9 @@
     "rich_second_fit_calibration": 36033120106,
     "development_block": 36038233507,
     "request225_reference": 36239930065
+  },
+  "rerun": {
+    "reason": "Remove unused import caught by lint before Request226 evaluation.",
+    "prior_run": 36240599727
   }
 }
