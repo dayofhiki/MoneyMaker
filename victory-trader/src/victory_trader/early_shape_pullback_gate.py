@@ -353,7 +353,13 @@ def simulate_probe_gated_policy(
     threshold: float,
     score_column: str,
 ) -> pd.DataFrame:
-    decision_map = decisions.set_index("pullback_segment_id")
+    if decisions.empty:
+        decision_map = pd.DataFrame()
+        decision_map.index = pd.Index(
+            [], name="pullback_segment_id", dtype="object"
+        )
+    else:
+        decision_map = decisions.set_index("pullback_segment_id")
     records: list[dict[str, object]] = []
 
     for segment_id, group in states.groupby(
