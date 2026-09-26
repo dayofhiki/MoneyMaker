@@ -1,0 +1,53 @@
+{
+  "request_id": 241,
+  "operation": "availability_conditioned_event_time_entry",
+  "parent_requests": [
+    227,
+    240
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request227 failed because it mixed continuation availability with absolute economic-value calibration. A separate continuation/executability head plus a classification target for whether ENTER now is the best remaining positive WATCH opportunity should produce a more usable recurrent entry controller.",
+  "architecture": {
+    "availability_head": "episode-level classifier from first actually observed WATCH state",
+    "availability_label": "at least two evaluable multi-event entry states among first five observed WATCH states",
+    "timing_head": "state-level classifier",
+    "timing_label": "current multi-event value is positive and no later WATCH state in the five-state window has greater value",
+    "watch_semantics": "first five actually observed executable states, not fixed clock minutes",
+    "economic_outcome": "BASE return at third subsequently observed executable state"
+  },
+  "leakage_controls": {
+    "availability_probability_for_timing_fit": "leave-one-fit-day-out predictions",
+    "availability_gate": "calibration p75",
+    "entry_gate": "calibration p75 among availability-admitted evaluable timing rows",
+    "development_dates_used_for_fit_or_thresholds": false
+  },
+  "gate": {
+    "min_availability_auc": 0.75,
+    "min_admitted_availability_rate": 0.85,
+    "min_entry_auc": 0.58,
+    "min_execution_rate": 0.03,
+    "max_execution_rate": 0.4,
+    "min_trades": 20,
+    "trade_mean_must_be_positive": true,
+    "portfolio_day_balanced_mean_must_be_positive": true,
+    "must_beat_availability_first_event_baseline": true,
+    "min_positive_portfolio_days": 3,
+    "severe_loss_no_worse_than_baseline": true
+  },
+  "forbidden": [
+    "using raw predicted return > 0 as an action boundary",
+    "exact-minute WATCH requirements",
+    "using June23-29 outcomes to choose thresholds",
+    "claiming promotion from the already-opened development block"
+  ],
+  "next_if_pass": "Integrate a causal HOLD/EXIT controller and validate complete trajectories on a genuinely new holdout block.",
+  "next_if_fail": "Separate whether availability transfer or entry economics failed; do not return to global HOT admission thresholds.",
+  "input_runs": {
+    "request171": 36033120106,
+    "request178": 36038233507,
+    "request227": 36240962752,
+    "request240": 36254403075
+  }
+}
