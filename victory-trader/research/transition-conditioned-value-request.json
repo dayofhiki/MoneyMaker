@@ -1,7 +1,10 @@
 {
   "request_id": 221,
   "operation": "transition_conditioned_remaining_option_value",
-  "parent_requests": [219, 220],
+  "parent_requests": [
+    219,
+    220
+  ],
   "opens_new_dates": false,
   "promotion_eligible": false,
   "hypothesis": "Request220 signals are being diluted because the same observable changes have different meanings during reacceleration, pullback onset, continuing strength, and continuing weakness. Phase-specific specialists selected only on calibration should improve transfer without changing the target or information set.",
@@ -56,5 +59,9 @@
     "rich_second_fit_calibration": 36033120106,
     "opportunity_scan": 36001945920,
     "request220_fresh_states": 36235273868
+  },
+  "rerun": {
+    "reason": "Fix nested Request220 artifact path in workflow.",
+    "prior_failed_run": 36237364357
   }
 }
