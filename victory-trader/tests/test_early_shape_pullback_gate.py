@@ -142,5 +142,5 @@ def test_no_decision_when_probe_reaches_terminal() -> None:
         threshold=0.0,
         score_column="entry_conditioned_score",
     )
-    assert rows.iloc[0]["decision_available"] == False
+    assert not rows.iloc[0]["decision_available"]
     assert np.isclose(rows.iloc[0]["local_uplift_pct"], 0.8)
