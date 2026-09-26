@@ -1,0 +1,80 @@
+{
+  "request_id": 228,
+  "operation": "watch_option_admission_plus_relative_multi_event_timing",
+  "parent_requests": [209, 227],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request227's relative ENTER-vs-WAIT timing transfers better than its absolute per-state value head. Separate episode-level tradability admission from within-episode timing: admit only WATCH episodes predicted to contain a positive multi-event opportunity, then use the relative timing head alone to choose when to enter.",
+  "frozen": [
+    "Request178 development dates",
+    "BASE execution-cost accounting",
+    "WATCH checkpoints at minutes 1 through 5 after HOT",
+    "Request227 multi-event horizons [1,2,3,5]",
+    "Request227 relative ENTER-vs-WAIT target",
+    "semantic zero boundary for WATCH option admission",
+    "semantic zero boundary for relative ENTER-vs-WAIT timing"
+  ],
+  "admission_target": {
+    "definition": "Maximum Request227 multi-event continuation value across WATCH minutes 1 through 5.",
+    "role": "Episode-level value of continuing to monitor for an entry opportunity; not an executable price oracle.",
+    "future_information_used_as_input": false,
+    "runtime_decision_time": "first causal WATCH checkpoint"
+  },
+  "admission_model": {
+    "value_family": "HistGradientBoostingRegressor",
+    "positive_probability_family": "HistGradientBoostingClassifier with Platt calibration",
+    "features": "Request208 causal WATCH + transition features at minute 1 only",
+    "learning_rate": 0.05,
+    "max_iter": 180,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 60,
+    "l2_regularization": 2.0,
+    "value_seed": 20261229,
+    "classifier_seed": 20261230,
+    "calibration": "equal-day regression residual offset and Platt scaling on calibration only"
+  },
+  "timing_model": {
+    "target": "Request227 ENTER-vs-WAIT multi-event advantage",
+    "runtime": "Within admitted episodes, ENTER at the first WATCH minute whose predicted advantage is >= 0; otherwise WAIT through minute 5, then ABSTAIN if still negative.",
+    "absolute_request227_value_head_used_at_runtime": false
+  },
+  "economic_comparator": {
+    "baseline": "Request208 recurrent entry timing",
+    "candidate": "Request228 WATCH option admission + relative multi-event timing",
+    "outcome_for_both": "fixed three-minute BASE return after selected entry, cash zero when no trade"
+  },
+  "gate": {
+    "min_state_coverage": 0.80,
+    "min_fresh_option_value_spearman": 0.08,
+    "min_fresh_option_positive_auc": 0.60,
+    "min_admission_rate": 0.10,
+    "max_admission_rate": 0.70,
+    "min_admitted_actual_positive_option_rate": 0.55,
+    "min_relative_timing_spearman_within_admitted": 0.05,
+    "min_execution_rate": 0.10,
+    "max_execution_rate": 0.80,
+    "min_trades": 30,
+    "trade_mean_must_be_positive": true,
+    "portfolio_day_balanced_mean_must_be_positive": true,
+    "candidate_must_beat_request208": true,
+    "matched_bootstrap_ci_low_must_be_positive": true,
+    "min_improved_days": 4,
+    "severe_loss_rate_no_worse_than_request208": true
+  },
+  "forbidden": [
+    "changing the admission target after seeing Request178",
+    "using post-minute1 future observations as admission inputs",
+    "using hindsight best price as the executable entry rule",
+    "using the weak Request227 absolute state-value head at runtime",
+    "opening new dates",
+    "fresh threshold tuning",
+    "claiming the admission/timing controller validates a complete trading system"
+  ],
+  "next_if_pass": "Freeze WATCH admission plus relative timing, integrate with the least-damaging causal POSITION controller, and replay complete trajectories before untouched validation.",
+  "next_if_fail": "Move admission upstream to HOT promotion and train on downstream tradability using market-wide attention and HOT context instead of adding more downstream rescue logic.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "development_block": 36038233507,
+    "request227_reference": 36240962752
+  }
+}
