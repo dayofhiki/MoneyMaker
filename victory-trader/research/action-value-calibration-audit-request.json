@@ -1,0 +1,44 @@
+{
+  "request_id": 245,
+  "operation": "same_policy_action_value_calibration_audit",
+  "parent_requests": [243, 244],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request243's sequential controller fails because separately trained ENTER, WAIT and HOLD value heads are not calibrated to comparable same-policy economic values. The especially compressed WAIT target may make ENTER look preferable even when waiting has greater realized continuation value.",
+  "population": "Request243 May11-20 locked calibration episodes only; same Apr30-May8 chronological fit and identical causal state representation.",
+  "diagnostics": [
+    "predicted versus realized same-policy ENTER value",
+    "predicted versus realized same-policy WAIT continuation",
+    "predicted versus realized HOLD-minus-EXIT advantage",
+    "predicted ENTER-minus-WAIT advantage versus realized advantage",
+    "positive-sign precision and Spearman rank correlation",
+    "decision-reachable chosen-action advantage over its best alternative",
+    "student target support, zero mass and scale mismatch"
+  ],
+  "reachable_semantics": {
+    "flat": "initial consecutive WAIT states plus the first ENTER or ABSTAIN state only",
+    "position": "states strictly after the actual policy entry through its selected exit"
+  },
+  "adequacy_gate": {
+    "min_enter_spearman": 0.20,
+    "min_flat_advantage_spearman": 0.20,
+    "min_enter_chosen_advantage_positive_rate": 0.55,
+    "min_hold_spearman": 0.20,
+    "min_hold_chosen_advantage_positive_rate": 0.55
+  },
+  "forbidden": [
+    "changing policy actions or model capacity",
+    "fitting any threshold or offset from May results",
+    "opening June or any new holdout",
+    "dropping unresolved values and calling the remaining subset a portfolio return",
+    "using a best-future-price or hindsight argmax target",
+    "claiming promotion or profitability"
+  ],
+  "next_if_fail": "Replace independently scaled flat-state value comparison with a directly learned ENTER-vs-WAIT-vs-CASH advantage objective under chronological cross-fitting; retain HOLD-vs-EXIT as a directly comparable advantage target.",
+  "input_runs": {
+    "request171": 36033120106,
+    "request243": 36259470906,
+    "request244": 36260935213
+  }
+}
