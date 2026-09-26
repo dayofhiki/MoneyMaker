@@ -1,0 +1,34 @@
+{
+  "request_id": 237,
+  "operation": "frozen_extreme_tail_transport",
+  "parent_requests": [
+    232,
+    236
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request236 calibration-only diagnostics found positive economic evidence only in the predeclared top 1% tail of the frozen Request232 regression score. The calibration 99th-percentile score threshold should transport to the frozen June fresh block if that pocket is real.",
+  "frozen_rule": {
+    "score": "predicted_persistent_tradability_pct",
+    "threshold": "99th percentile computed from labeled calibration rows only",
+    "alternate_fractions_after_fresh": false,
+    "alternate_score_families_after_fresh": false
+  },
+  "fresh_gate": {
+    "min_selected_rows": 8,
+    "min_days_with_selection": 3,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_positive_mean_days": 3,
+    "min_positive_rate": 0.45
+  },
+  "forbidden": [
+    "changing the 1% fraction after fresh outcomes",
+    "switching to the joint or classifier score after fresh outcomes",
+    "opening new dates",
+    "calling persistent tradability a complete executable profit result"
+  ],
+  "next_if_pass": "Freeze extreme-tail admission and test a causal risk-controlled ENTER/HOLD/EXIT policy inside selected episodes.",
+  "next_if_fail": "Redesign tradability representation before any further timing/controller work.",
+  "input_run": 36251239308
+}
