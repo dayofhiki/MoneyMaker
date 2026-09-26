@@ -42,15 +42,12 @@ from sklearn.metrics import roc_auc_score
 from .decomposed_cost_aware_entry_surplus import EPISODE_KEYS, FRESH_DAYS
 from .multi_event_entry_continuation import (
     ADVANTAGE_SEED,
-    BOOTSTRAP_SAMPLES,
-    FEATURES as TIMING_FEATURES,
     MAX_WAIT_MINUTES,
     attach_multi_event_entry_labels,
     matched_portfolio_difference,
     portfolio_metrics,
     portfolio_rows,
     predict_head,
-    request208_policy,
     train_head,
 )
 from .pullback_turn_transition_entry import (
@@ -66,8 +63,6 @@ from .wait_reobserve_entry_confirmation import _day_weights, _feature_frame
 REQUEST_ID = 228
 OPTION_REGRESSION_SEED = 20261229
 OPTION_CLASSIFIER_SEED = 20261230
-BOOTSTRAP_SEED = 20261231
-
 ADMISSION_FEATURES = MODEL_FEATURES
 
 MIN_STATE_COVERAGE = 0.80
