@@ -1,0 +1,43 @@
+{
+  "request_id": 238,
+  "operation": "causal_relative_extreme_tail",
+  "parent_requests": [
+    232,
+    236,
+    237
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request232 ranking transports better than its absolute score scale. A causal rolling top-1% threshold based only on previously observed HOT scores may preserve the economically useful extreme tail under score-distribution drift.",
+  "rule": {
+    "score": "predicted_persistent_tradability_pct",
+    "quantile": 0.99,
+    "rolling_window": "median calibration HOT rows per day",
+    "seed": "last rolling-window calibration scores",
+    "update": "prior development HOT scores only",
+    "same_timestamp_peers_excluded": true,
+    "outcome_free": true
+  },
+  "gate": {
+    "min_selected_rows": 8,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_positive_rate": 0.45,
+    "min_positive_mean_days": 3
+  },
+  "integrity": {
+    "june_block_already_opened": true,
+    "june_treated_as_development_not_fresh": true,
+    "new_holdout_required_if_pass": true
+  },
+  "forbidden": [
+    "using outcome labels to update percentile threshold",
+    "changing the 1% quantile after seeing Request238 results",
+    "claiming June is fresh validation",
+    "building timing policy before admission survives a new holdout"
+  ],
+  "next_if_pass": "Freeze relative-tail admission and open a genuinely new holdout block.",
+  "next_if_fail": "Redesign tradability target/representation before further admission/timing work.",
+  "input_run": 36251239308
+}
