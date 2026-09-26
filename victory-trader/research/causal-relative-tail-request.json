@@ -39,5 +39,8 @@
   ],
   "next_if_pass": "Freeze relative-tail admission and open a genuinely new holdout block.",
   "next_if_fail": "Redesign tradability target/representation before further admission/timing work.",
-  "input_run": 36251239308
+  "input_run": 36251239308,
+  "rerun": {
+    "reason": "Workflow file landed after the initial request commit; retrigger with no research-contract change."
+  }
 }
