@@ -95,3 +95,14 @@ def test_learned_sequence_features_exclude_future_fields() -> None:
         "event_exit_minute_after_hot",
     }
     assert forbidden.isdisjoint(LEARNED_SEQUENCE_FEATURES)
+
+
+def test_transform_can_impute_missing_values_on_pandas_backed_arrays() -> None:
+    from victory_trader.learned_sequence_position_ranking import _transform
+
+    frame = pd.DataFrame({"a": [1.0, np.nan], "b": [2.0, 3.0]})
+    center = np.array([1.0, 2.5], dtype=float)
+    scale = np.array([1.0, 0.5], dtype=float)
+    transformed = _transform(frame, ("a", "b"), center, scale)
+    assert transformed.shape == (2, 2)
+    assert np.isfinite(transformed).all()
