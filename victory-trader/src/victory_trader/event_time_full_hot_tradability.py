@@ -769,15 +769,17 @@ def evaluate(
             "tradability head predicts persistent usable entry windows"
         ),
         "target": {
-            "watch_event_indices": list(WATCH_EVENT_INDICES),\n            "watch_window_minutes": WATCH_WINDOW_MINUTES,\n            "risk_cap_minutes": RISK_CAP_MINUTES,
+            "watch_event_indices": list(WATCH_EVENT_INDICES),
+            "watch_window_minutes": WATCH_WINDOW_MINUTES,
+            "risk_cap_minutes": RISK_CAP_MINUTES,
             "event_horizons": list(EVENT_HORIZONS),
             "checkpoint_value": (
-                "equal-weight BASE net return at exact +1/+2/+3/+5 "
-                "minute references after hypothetical WATCH entry"
+                "equal-weight BASE net return at the 1st/2nd/3rd/5th "
+                "observed executable states after each WATCH event"
             ),
             "persistent_value": (
                 "best mean checkpoint value across any two consecutive "
-                "WATCH entry minutes"
+                "observed WATCH events inside the first five minutes"
             ),
             "single_hindsight_spike_sufficient": False,
             "silent_exact_minutes_discard_episode": False,
