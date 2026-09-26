@@ -1,0 +1,34 @@
+{
+  "request_id": 248,
+  "operation": "one_event_wait_followthrough_audit",
+  "parent_requests": [247],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request247's WAIT training signal may identify profitable next-event entry opportunities, but recurrent redecision may discard those opportunities by WAITing again or ABSTAINing at the next state.",
+  "population": "Request247 May11-20 calibration trajectories only",
+  "diagnostics": [
+    "next observed eligible state's forced ENTER value after every reached WAIT",
+    "actual recurrent WAIT continuation value",
+    "next policy action ENTER/WAIT/ABSTAIN",
+    "rate at which next-event forced entry justifies WAIT over current ENTER and cash",
+    "rate at which actual recurrent continuation justifies WAIT",
+    "opportunity loss when a justified one-event WAIT is not followed by ENTER"
+  ],
+  "mismatch_gate": {
+    "min_next_event_wait_justified_rate": 0.30,
+    "max_next_action_enter_rate": 0.50,
+    "min_justified_wait_loss_gap": 0.20
+  },
+  "forbidden": [
+    "changing Request247 actions",
+    "forcing diagnostic follow-through in the reported policy",
+    "new dates or holdout",
+    "threshold tuning",
+    "portfolio or profitability claims"
+  ],
+  "next_if_mismatch_confirmed": "Make WAIT semantics self-consistent: either train a chronological recurrent continuation policy or model an explicit DEFER_ONE_EVENT action whose follow-through contract matches its label.",
+  "input_runs": {
+    "request247": 36262004252
+  }
+}
