@@ -1,7 +1,10 @@
 {
   "request_id": 230,
   "operation": "hot_second_scale_tradability_admission",
-  "parent_requests": [227, 229],
+  "parent_requests": [
+    227,
+    229
+  ],
   "opens_new_dates": false,
   "promotion_eligible": false,
   "hypothesis": "Request229's minute-level HOT context contains tradability signal but does not isolate profitable admitted episodes or preserve Request227 timing. Causal one-second microstructure immediately before HOT may distinguish structurally usable momentum from superficially similar minute bars.",
@@ -39,13 +42,13 @@
     "min_spearman_gain_vs_request229": 0.03,
     "min_candidate_auc": 0.62,
     "min_auc_gain_vs_request229": 0.01,
-    "min_admission_rate": 0.10,
-    "max_admission_rate": 0.70,
+    "min_admission_rate": 0.1,
+    "max_admission_rate": 0.7,
     "admitted_mean_persistent_tradability_must_be_positive": true,
-    "min_admitted_positive_rate": 0.50,
+    "min_admitted_positive_rate": 0.5,
     "min_relative_timing_spearman_within_admitted": 0.05,
-    "min_execution_rate": 0.10,
-    "max_execution_rate": 0.80,
+    "min_execution_rate": 0.1,
+    "max_execution_rate": 0.8,
     "min_trades": 30,
     "trade_mean_must_be_positive": true,
     "portfolio_day_balanced_mean_must_be_positive": true,
@@ -69,5 +72,9 @@
     "opportunity_scan": 36001945920,
     "development_block": 36038233507,
     "request229_reference": 36242084075
+  },
+  "rerun": {
+    "reason": "Remove unused import caught by Ruff before Request230 evaluation.",
+    "prior_run": 36243443626
   }
 }
