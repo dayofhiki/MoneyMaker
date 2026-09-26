@@ -1,0 +1,76 @@
+{
+  "request_id": 225,
+  "operation": "one_observation_early_shape_pullback_gate",
+  "parent_requests": [223, 224],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request224 failed because pullback onset is too early to know whether the reversal is healthy. Paying for exactly one observed event should reveal early depth, speed, recovery, and microstructure changes that transfer better.",
+  "frozen": [
+    "Request208 causal entry selection",
+    "Request216 event-time POSITION replay",
+    "Request220 entry-conditioned information set",
+    "Request221 pullback and reacceleration definitions",
+    "Request223 adaptive entry-conditioned pullback controller",
+    "Request178 development dates",
+    "30-minute risk cap"
+  ],
+  "probe_policy": {
+    "at_pullback_onset": "always observe exactly one additional actual event",
+    "if_terminal_on_probe": "handoff or resolve naturally",
+    "if_still_pullback": "score eligibility using first-post-onset causal shape",
+    "ineligible": "EXIT at first post-onset state",
+    "eligible": "hand remaining pullback to Request223",
+    "probe_pnl_is_included": true
+  },
+  "early_shape_information": {
+    "current_request223_state": true,
+    "onset_snapshot_for_key_state_and_microstructure_features": true,
+    "delta_from_onset_to_first_post_onset_state": true,
+    "pullback_depth_after_one_event": true,
+    "pullback_slope_per_minute": true,
+    "recovery_fraction": true,
+    "future_information_used_as_input": false
+  },
+  "eligibility_target": "Value at first causal reacceleration or 30-minute cap minus EXIT at the first post-onset decision state.",
+  "model": {
+    "family": "HistGradientBoostingRegressor",
+    "learning_rate": 0.04,
+    "max_iter": 180,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 50,
+    "l2_regularization": 2.0,
+    "seed": 20261225
+  },
+  "threshold_selection": {
+    "data": "calibration only",
+    "quantiles": [0.4, 0.5, 0.6, 0.7, 0.8],
+    "objective": "maximum day-balanced local uplift measured from original pullback onset",
+    "fresh_block_used_for_selection": false
+  },
+  "gate": {
+    "min_fresh_eligible_rate": 0.10,
+    "max_fresh_eligible_rate": 0.70,
+    "min_fresh_spearman": 0.03,
+    "policy_day_balanced_uplift_must_be_positive": true,
+    "policy_bootstrap_ci_low_must_be_positive": true,
+    "min_good_days": 3,
+    "must_beat_ungated_request223": true,
+    "matched_difference_bootstrap_ci_low_must_be_positive": true
+  },
+  "forbidden": [
+    "using more than one probe event before the eligibility decision",
+    "changing the threshold grid after seeing Request178",
+    "using terminal value or future event timing as model input",
+    "opening new dates",
+    "tuning Request223 zero WAIT threshold on Request178",
+    "ignoring the P&L cost of the one-event probe"
+  ],
+  "next_if_pass": "Freeze the one-event probe gate, then build the reacceleration continuation/exit handoff and replay full Request208-entry trajectories.",
+  "next_if_fail": "Stop local pullback gate refinements and move upstream to improve entry timing so fewer weak positions reach pullback management.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "opportunity_scan": 36001945920,
+    "request223_fresh_states": 36238987365,
+    "request224_reference": 36239499439
+  }
+}
