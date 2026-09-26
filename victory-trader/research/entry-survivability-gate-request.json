@@ -1,0 +1,73 @@
+{
+  "request_id": 226,
+  "operation": "entry_survivability_admission_gate",
+  "parent_requests": [208, 223, 225],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request225 shows that pullback quality becomes meaningfully predictable only after paying for one post-entry observation. The upstream fix is to admit only Request208 entries whose entry-time state predicts positive cushion through the first post-entry stress event.",
+  "frozen": [
+    "Request208 causal transition-relative recurrent entry proposals",
+    "Request178 development dates",
+    "BASE execution-cost accounting",
+    "30-minute risk cap",
+    "Request208 WATCH and transition feature families",
+    "semantic admission boundary at predicted first-stress BASE return > 0"
+  ],
+  "first_stress_label": {
+    "entry_anchor_return_pct": 0.0,
+    "adverse_event": "first actually observed post-entry BASE return below the previous observed BASE return",
+    "immediate_adverse": "if the first observed post-entry return is below 0, that first observation is the stress event",
+    "fallback": "first observed state at or after the 30-minute risk cap if no adverse step occurs earlier",
+    "target": "BASE return at first stress observation",
+    "hindsight_best_price_used": false,
+    "future_information_used_as_input": false
+  },
+  "model": {
+    "family": "HistGradientBoostingRegressor",
+    "features": "Request208 causal WATCH + transition state at the selected entry, Request208 predicted relative entry advantage, and selected minute after HOT",
+    "learning_rate": 0.05,
+    "max_iter": 180,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 60,
+    "l2_regularization": 2.0,
+    "seed": 20261226,
+    "calibration": "equal-day residual offset on calibration only"
+  },
+  "candidate_policy": {
+    "request208_proposes_entry": true,
+    "admit_if": "predicted first-stress BASE return > 0",
+    "otherwise": "ABSTAIN from the episode",
+    "fresh_threshold_tuning": false
+  },
+  "economic_comparator": {
+    "baseline": "all frozen Request208 proposed entries with their fixed-3m BASE outcome",
+    "candidate": "same Request208 fixed-3m outcome when admitted, otherwise cash zero",
+    "purpose": "isolate whether survivability admission removes weak entries before POSITION management"
+  },
+  "gate": {
+    "min_first_stress_label_coverage": 0.80,
+    "min_fresh_first_stress_spearman": 0.08,
+    "min_admitted_rate": 0.15,
+    "max_admitted_rate": 0.75,
+    "min_admitted_first_stress_positive_rate": 0.60,
+    "min_good_days": 4,
+    "candidate_day_balanced_fixed3m_mean_must_be_positive": true,
+    "candidate_must_beat_request208_fixed3m": true,
+    "matched_difference_bootstrap_ci_low_must_be_positive": true,
+    "severe_loss_rate_no_worse_than_request208": true
+  },
+  "forbidden": [
+    "using any post-entry observation as a model feature",
+    "changing the zero admission boundary after seeing Request178",
+    "opening new dates",
+    "using hindsight best future price as the survivability label",
+    "claiming the admission gate validates a complete trading strategy"
+  ],
+  "next_if_pass": "Freeze survivability admission and test whether survivability value can be blended with Request208 timing to enter earlier on strong-cushion setups, then replay the full recurrent trader.",
+  "next_if_fail": "Replace Request208's one-minute relative/fixed-3m entry objective with a multi-event pre-entry continuation-value objective instead of further tuning downstream pullback management.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "development_block": 36038233507,
+    "request225_reference": 36239930065
+  }
+}
