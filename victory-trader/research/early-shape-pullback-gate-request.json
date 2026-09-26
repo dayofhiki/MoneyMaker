@@ -1,7 +1,10 @@
 {
   "request_id": 225,
   "operation": "one_observation_early_shape_pullback_gate",
-  "parent_requests": [223, 224],
+  "parent_requests": [
+    223,
+    224
+  ],
   "opens_new_dates": false,
   "promotion_eligible": false,
   "hypothesis": "Request224 failed because pullback onset is too early to know whether the reversal is healthy. Paying for exactly one observed event should reveal early depth, speed, recovery, and microstructure changes that transfer better.",
@@ -38,18 +41,24 @@
     "max_iter": 180,
     "max_leaf_nodes": 15,
     "min_samples_leaf": 50,
-    "l2_regularization": 2.0,
+    "l2_regularization": 2,
     "seed": 20261225
   },
   "threshold_selection": {
     "data": "calibration only",
-    "quantiles": [0.4, 0.5, 0.6, 0.7, 0.8],
+    "quantiles": [
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8
+    ],
     "objective": "maximum day-balanced local uplift measured from original pullback onset",
     "fresh_block_used_for_selection": false
   },
   "gate": {
-    "min_fresh_eligible_rate": 0.10,
-    "max_fresh_eligible_rate": 0.70,
+    "min_fresh_eligible_rate": 0.1,
+    "max_fresh_eligible_rate": 0.7,
     "min_fresh_spearman": 0.03,
     "policy_day_balanced_uplift_must_be_positive": true,
     "policy_bootstrap_ci_low_must_be_positive": true,
@@ -72,5 +81,9 @@
     "opportunity_scan": 36001945920,
     "request223_fresh_states": 36238987365,
     "request224_reference": 36239499439
+  },
+  "rerun": {
+    "reason": "Fix lint-only test expression before Request225 evaluation.",
+    "prior_run": 36239845508
   }
 }
