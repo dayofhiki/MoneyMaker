@@ -61,5 +61,10 @@
     "request163": 36001945920,
     "request232": 36249380599,
     "request233": 36251239308
+  },
+  "rerun": {
+    "reason": "Reuse the frozen Request233 scored-HOT artifact so Request234 evaluates only the monotonic calibration layer; no research contract change.",
+    "prior_run": 36253243925,
+    "source_run": 36251239308
   }
 }
