@@ -47,10 +47,7 @@ from .pullback_turn_transition_entry import (
     train_model as train_entry_model,
 )
 from .recurrent_wait_entry_action_value import build_watch_states
-from .relative_recurrent_entry_timing import (
-    _metrics,
-    attach_relative_advantage,
-)
+from .relative_recurrent_entry_timing import attach_relative_advantage
 from .state_action_risk import SEVERE_LOSS_PCT
 from .wait_reobserve_entry_confirmation import _day_weights, _feature_frame
 
