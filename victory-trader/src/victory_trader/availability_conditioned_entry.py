@@ -758,9 +758,13 @@ def evaluate(
         fresh_first["episode_continuation_available"],
         fresh_first["episode_availability_probability"],
     )
-    runner_auc = _safe_auc(
-        fresh_first["episode_continuation_available"],
-        fresh_first["second_rerank_probability"],
+    runner_auc = (
+        _safe_auc(
+            fresh_first["episode_continuation_available"],
+            fresh_first["second_rerank_probability"],
+        )
+        if "second_rerank_probability" in fresh_first.columns
+        else None
     )
     admitted_first = fresh_first.loc[
         pd.to_numeric(
