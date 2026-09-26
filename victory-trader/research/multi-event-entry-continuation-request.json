@@ -1,7 +1,10 @@
 {
   "request_id": 227,
   "operation": "multi_event_pre_entry_continuation_controller",
-  "parent_requests": [208, 226],
+  "parent_requests": [
+    208,
+    226
+  ],
   "opens_new_dates": false,
   "promotion_eligible": false,
   "hypothesis": "Request208's one-minute relative timing and fixed-3m economic target are too myopic. A recurrent controller trained on multi-event post-entry continuation value plus ENTER-versus-WAIT advantage should choose more durable entry moments without relying on post-entry rescue.",
@@ -13,18 +16,29 @@
     "semantic zero boundaries for expected value and ENTER-vs-WAIT advantage"
   ],
   "multi_event_value_target": {
-    "observed_event_horizons": [1, 2, 3, 5],
+    "observed_event_horizons": [
+      1,
+      2,
+      3,
+      5
+    ],
     "definition": "Equal-weight mean BASE return at the 1st, 2nd, 3rd and 5th actually observed events after a hypothetical entry at the current WATCH state.",
     "hindsight_best_price_used": false,
     "future_information_used_as_input": false
   },
   "relative_timing_target": {
     "definition": "Current multi-event value minus max(0, next WATCH minute's multi-event value).",
-    "abstain_value_pct": 0.0,
+    "abstain_value_pct": 0,
     "future_information_used_as_input": false
   },
   "runtime_policy": {
-    "minutes": [1, 2, 3, 4, 5],
+    "minutes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
     "enter_before_minute5": "ENTER iff predicted multi-event value > 0 and predicted ENTER-vs-WAIT advantage >= 0; otherwise WAIT.",
     "minute5": "ENTER iff predicted multi-event value > 0; otherwise ABSTAIN.",
     "fresh_threshold_tuning": false
@@ -41,17 +55,17 @@
     "max_iter": 180,
     "max_leaf_nodes": 15,
     "min_samples_leaf": 75,
-    "l2_regularization": 2.0,
+    "l2_regularization": 2,
     "value_seed": 20261227,
     "advantage_seed": 20261228,
     "calibration": "equal-day residual offsets on calibration only"
   },
   "gate": {
-    "min_state_coverage": 0.80,
-    "min_fresh_value_spearman": 0.10,
+    "min_state_coverage": 0.8,
+    "min_fresh_value_spearman": 0.1,
     "min_fresh_advantage_spearman": 0.05,
-    "min_execution_rate": 0.10,
-    "max_execution_rate": 0.80,
+    "min_execution_rate": 0.1,
+    "max_execution_rate": 0.8,
     "min_trades": 50,
     "candidate_day_balanced_portfolio_mean_must_be_positive": true,
     "candidate_must_beat_request208": true,
@@ -73,5 +87,9 @@
     "rich_second_fit_calibration": 36033120106,
     "development_block": 36038233507,
     "request226_reference": 36240640812
+  },
+  "rerun": {
+    "reason": "Import Request208 relative-advantage helper required by comparator path.",
+    "prior_failed_run": 36240931752
   }
 }
