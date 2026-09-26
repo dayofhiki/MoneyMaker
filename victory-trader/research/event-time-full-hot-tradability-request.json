@@ -1,0 +1,64 @@
+{
+  "request_id": 232,
+  "operation": "event_time_full_first_hot_persistent_tradability",
+  "parent_requests": [
+    163,
+    215,
+    219,
+    231
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "diagnosis": "Request231 stopped before model evaluation because its exact-minute target produced only 941 fit labels against the frozen 1500-row support guard. Request163 had 2782 fit first-HOT rows and 1808 labeled rows, so the bottleneck is label accounting rather than absence of HOT candidates.",
+  "hypothesis": "Persistent downstream tradability is learnable from the full validated-attention first-HOT population once silent exact-minute gaps stop deleting otherwise executable episodes.",
+  "frozen": [
+    "Request163 full validated-attention first-HOT population and causal ENTRY_FEATURES",
+    "Request163 fit/calibration and June8-12 fresh development dates",
+    "Request231 regression/classification model families and capacities",
+    "Request231 calibration-only probability p75 selection gate",
+    "Request231 1500-row fit and calibration support guards",
+    "Request231 fresh performance gates",
+    "BASE execution-cost accounting"
+  ],
+  "structural_repair": {
+    "watch_window": "actual observed executable states occurring within the first five clock minutes after HOT",
+    "watch_states_used": "first five observed states in that window",
+    "checkpoint_value": "equal-weight BASE net return at the 1st, 2nd, 3rd and 5th subsequently observed executable states after each WATCH state",
+    "persistent_tradability": "best mean checkpoint value across any two consecutive observed WATCH states",
+    "risk_cap": "the fifth future executable state must occur no later than HOT+30 minutes",
+    "exact_minute_presence_required": false,
+    "silent_minutes_are_cash": false,
+    "future_information_used_as_input": false,
+    "hindsight_single_spike_sufficient": false
+  },
+  "gate": {
+    "min_fit_labels": 1500,
+    "min_calibration_labels": 1500,
+    "min_target_coverage": 0.9,
+    "min_candidate_value_spearman": 0.1,
+    "min_candidate_positive_auc": 0.6,
+    "min_spearman_gain_vs_runner_score": 0.03,
+    "min_auc_gain_vs_runner_score": 0.03,
+    "min_selected_rate": 0.1,
+    "max_selected_rate": 0.4,
+    "selected_persistent_tradability_mean_must_be_positive": true,
+    "min_selected_positive_rate_gain_vs_population": 0.1,
+    "min_positive_spearman_days": 4,
+    "min_auc_above_random_days": 4,
+    "min_positive_selected_mean_days": 4
+  },
+  "forbidden": [
+    "lowering the 1500-row support guards merely to force evaluation",
+    "changing model capacity or fresh gates after seeing Request232 results",
+    "using future prices or future event timing as model inputs",
+    "using previously rejected exact-minute missing states as cash zeros",
+    "opening new dates",
+    "claiming a tradability diagnostic validates the complete trader"
+  ],
+  "next_if_pass": "Freeze full-HOT tradability admission and train a new ENTER-vs-WAIT timing model only inside tradability-selected episodes, then replay complete recurrent trajectories.",
+  "next_if_fail": "If support is recovered but learnability still fails, stop downstream gate refinements and test a shared/raw representation for runner discovery versus tradability. If support remains below 1500, audit the first-five-minute observation population before changing any learning threshold.",
+  "input_run": {
+    "request163": 36001945920,
+    "request231_failed_support_run": 36244141552
+  }
+}
