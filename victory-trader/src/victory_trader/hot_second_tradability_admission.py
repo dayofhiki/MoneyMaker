@@ -38,7 +38,7 @@ from sklearn.ensemble import (
 from sklearn.linear_model import LogisticRegression
 
 from .config import load_settings
-from .decomposed_cost_aware_entry_surplus import EPISODE_KEYS, FRESH_DAYS
+from .decomposed_cost_aware_entry_surplus import FRESH_DAYS
 from .hot_tradability_admission import (
     CLASSIFIER_SEED,
     HOT_CONTEXT_FEATURES,
