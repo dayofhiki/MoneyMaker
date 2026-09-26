@@ -1,0 +1,77 @@
+{
+  "request_id": 227,
+  "operation": "multi_event_pre_entry_continuation_controller",
+  "parent_requests": [208, 226],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request208's one-minute relative timing and fixed-3m economic target are too myopic. A recurrent controller trained on multi-event post-entry continuation value plus ENTER-versus-WAIT advantage should choose more durable entry moments without relying on post-entry rescue.",
+  "frozen": [
+    "Request178 development dates",
+    "BASE execution-cost accounting",
+    "WATCH checkpoints at minutes 1 through 5 after HOT",
+    "Request208 causal WATCH and transition feature family",
+    "semantic zero boundaries for expected value and ENTER-vs-WAIT advantage"
+  ],
+  "multi_event_value_target": {
+    "observed_event_horizons": [1, 2, 3, 5],
+    "definition": "Equal-weight mean BASE return at the 1st, 2nd, 3rd and 5th actually observed events after a hypothetical entry at the current WATCH state.",
+    "hindsight_best_price_used": false,
+    "future_information_used_as_input": false
+  },
+  "relative_timing_target": {
+    "definition": "Current multi-event value minus max(0, next WATCH minute's multi-event value).",
+    "abstain_value_pct": 0.0,
+    "future_information_used_as_input": false
+  },
+  "runtime_policy": {
+    "minutes": [1, 2, 3, 4, 5],
+    "enter_before_minute5": "ENTER iff predicted multi-event value > 0 and predicted ENTER-vs-WAIT advantage >= 0; otherwise WAIT.",
+    "minute5": "ENTER iff predicted multi-event value > 0; otherwise ABSTAIN.",
+    "fresh_threshold_tuning": false
+  },
+  "economic_comparator": {
+    "baseline": "Request208 recurrent entry timing",
+    "candidate": "Request227 multi-event recurrent entry timing",
+    "outcome_for_both": "fixed three-minute BASE return after each selected entry, cash zero when no trade",
+    "reason": "hold the downstream exit horizon fixed so only entry timing and admission change"
+  },
+  "models": {
+    "family": "HistGradientBoostingRegressor",
+    "learning_rate": 0.05,
+    "max_iter": 180,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 75,
+    "l2_regularization": 2.0,
+    "value_seed": 20261227,
+    "advantage_seed": 20261228,
+    "calibration": "equal-day residual offsets on calibration only"
+  },
+  "gate": {
+    "min_state_coverage": 0.80,
+    "min_fresh_value_spearman": 0.10,
+    "min_fresh_advantage_spearman": 0.05,
+    "min_execution_rate": 0.10,
+    "max_execution_rate": 0.80,
+    "min_trades": 50,
+    "candidate_day_balanced_portfolio_mean_must_be_positive": true,
+    "candidate_must_beat_request208": true,
+    "matched_bootstrap_ci_low_must_be_positive": true,
+    "min_improved_days": 4,
+    "trade_severe_loss_rate_no_worse_than_request208": true
+  },
+  "forbidden": [
+    "using hindsight best future price as the entry value target",
+    "changing event horizons or weights after seeing Request178 results",
+    "using post-entry observations as runtime input before entry",
+    "opening new dates",
+    "tuning zero action boundaries on Request178",
+    "claiming a successful entry controller is a complete validated trading system"
+  ],
+  "next_if_pass": "Freeze the multi-event entry controller, integrate it with the best causal POSITION management nodes, and replay full trajectories before opening untouched dates.",
+  "next_if_fail": "Move upstream again and revisit HOT-to-WATCH candidate admission because current WATCH state does not transfer enough entry continuation information.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "development_block": 36038233507,
+    "request226_reference": 36240640812
+  }
+}
