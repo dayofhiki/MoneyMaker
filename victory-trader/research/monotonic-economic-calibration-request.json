@@ -1,0 +1,65 @@
+{
+  "request_id": 234,
+  "operation": "monotonic_economic_calibration",
+  "parent_requests": [
+    232,
+    233
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request232 ranks persistent tradability well, while Request233 shows the raw zero boundary is economically miscalibrated. A day-balanced monotonic map from the frozen Request232 regression score to realized persistent tradability may recover a stable positive economic boundary.",
+  "frozen": [
+    "Request232 event-time tradability target and first-HOT population",
+    "Request232 causal feature set and learner",
+    "Request232 probability p75 gate",
+    "Request232 fit/calibration/fresh dates",
+    "Request233 economic gate thresholds",
+    "BASE cost accounting"
+  ],
+  "calibration": {
+    "model": "one-dimensional increasing isotonic regression",
+    "input": "Request232 predicted_persistent_tradability_pct",
+    "target": "persistent_tradability_pct",
+    "row_weight": "inverse rows per trading day so each calibration day has equal total weight",
+    "development_check": "leave one of the eight calibration days out, fit on the other seven, predict the held-out day; repeat for all days",
+    "final_fit": "all eight calibration days only if the out-of-day gate passes",
+    "admission": "Request232 probability p75 AND calibrated expected persistent tradability > 0",
+    "threshold_search": false
+  },
+  "calibration_oof_gate": {
+    "min_selected_rows": 40,
+    "min_selected_rate": 0.03,
+    "max_selected_rate": 0.25,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_selected_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_positive_selected_mean_days": 5,
+    "min_mean_gain_vs_request232_pct": 0.25
+  },
+  "fresh_gate": {
+    "min_selected_rows": 40,
+    "min_selected_rate": 0.03,
+    "max_selected_rate": 0.25,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_selected_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_positive_selected_mean_days": 4,
+    "min_mean_gain_vs_request232_pct": 0.25
+  },
+  "forbidden": [
+    "using June fresh outcomes to fit the isotonic map or choose the zero boundary",
+    "searching multiple mappings after observing fresh results",
+    "changing Request232 ranking learner",
+    "opening new dates",
+    "claiming positive tradability means a complete profitable trading policy",
+    "ignoring the unresolved target-coverage promotion blocker"
+  ],
+  "next_if_pass": "Freeze economic HOT admission and train a new causal ENTER-vs-WAIT controller only inside admitted episodes. Repair target coverage separately before promotion.",
+  "next_if_fail_calibration": "The rank signal cannot be translated into a stable positive boundary with a global monotonic map. Test market-conditioned economic calibration while keeping Request232 ranking frozen.",
+  "next_if_fail_fresh": "The global monotonic mapping is development-stable but not June-stable. Test market-conditioned calibration, not more downstream timing logic.",
+  "input_runs": {
+    "request163": 36001945920,
+    "request232": 36249380599,
+    "request233": 36251239308
+  }
+}
