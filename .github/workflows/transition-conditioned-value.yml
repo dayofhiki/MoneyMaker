@@ -66,7 +66,7 @@ jobs:
             --fit-positions prepared/rich/fit-rich-second.parquet \
             --calibration-positions prepared/rich/calibration-rich-second.parquet \
             --history-scan prepared/opportunity/opportunity-scan.parquet \
-            --fresh-states prepared/request220/request220-states.parquet \
+            --fresh-states prepared/request220/artifacts/request220-states.parquet \
             --output artifacts/request221.json \
             --states-output artifacts/request221-states.parquet \
             | tee artifacts/request221.log
