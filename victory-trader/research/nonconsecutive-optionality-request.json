@@ -1,0 +1,47 @@
+{
+  "request_id": 239,
+  "operation": "nonconsecutive_multi_opportunity_tradability",
+  "parent_requests": [
+    232,
+    238
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The Request232 consecutive-pair target is too rigid for a trader that can wait through weak intervals. Requiring two distinct good WATCH opportunities anywhere in the first five observed WATCH states may better represent continuing entry optionality.",
+  "frozen": [
+    "Request232 first-HOT causal feature representation",
+    "Request232 WATCH multi-event values",
+    "Request232 model family and capacity",
+    "Request163 fit/calibration dates",
+    "already-opened June8-12 development block"
+  ],
+  "target": {
+    "name": "nonconsecutive_top2_tradability",
+    "definition": "mean of the two highest WATCH multi-event values among watch events 1..5",
+    "minimum_evaluable_watch_states": 2,
+    "adjacency_required": false,
+    "single_future_spike_sufficient": false
+  },
+  "development_gate": {
+    "min_coverage": 0.8,
+    "min_spearman": 0.25,
+    "min_auc": 0.65,
+    "selected_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.4,
+    "min_positive_selected_mean_days": 3
+  },
+  "integrity": {
+    "june_already_opened": true,
+    "june_not_claimed_as_fresh": true,
+    "new_holdout_required_if_pass": true
+  },
+  "forbidden": [
+    "changing target after June results",
+    "claiming promotion from June development block",
+    "adding timing logic before target economics stabilize"
+  ],
+  "next_if_pass": "Freeze target and validate it on a genuinely new holdout block.",
+  "next_if_fail": "Redesign tradability around risk-controlled upside/downside survivability.",
+  "input_run": 36251239308
+}
