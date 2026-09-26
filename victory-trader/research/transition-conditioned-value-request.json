@@ -1,0 +1,60 @@
+{
+  "request_id": 221,
+  "operation": "transition_conditioned_remaining_option_value",
+  "parent_requests": [219, 220],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request220 signals are being diluted because the same observable changes have different meanings during reacceleration, pullback onset, continuing strength, and continuing weakness. Phase-specific specialists selected only on calibration should improve transfer without changing the target or information set.",
+  "frozen": [
+    "Request208 causal entry selection",
+    "Request216 event-time POSITION replay",
+    "Request219 five-executable-event remaining-option upper-bound target",
+    "Request220 entry-conditioned information set",
+    "Request178 development dates",
+    "30-minute risk cap",
+    "MLP hidden layers [64,32]",
+    "no recurrent trading-policy replay in Request221"
+  ],
+  "phase_definition": {
+    "reacceleration": "current observed return change > 0 and previous observed return change <= 0",
+    "pullback_onset": "current observed return change < 0 and previous observed return change >= 0",
+    "continuing_strength": "current observed return change > 0 and previous observed return change > 0",
+    "continuing_weakness": "current observed return change < 0 and previous observed return change < 0",
+    "flat_or_sparse": "all remaining states or insufficient two-step causal history",
+    "future_information_used": false
+  },
+  "specialist_training": {
+    "target": "same Request219 within-day rank of five-event remaining option value",
+    "features": "same Request220 entry-conditioned feature family",
+    "min_fit_target_rows_per_phase": 400,
+    "min_calibration_target_rows_per_phase": 150,
+    "selection_data": "calibration only",
+    "selection_rule": "Use a phase specialist only if calibration Spearman improves by at least 0.015 over the global model and phase top-20 mean option-value lift is no worse than the global model.",
+    "fresh_block_used_for_selection": false
+  },
+  "gate": {
+    "min_selected_specialist_phases": 1,
+    "min_fresh_spearman": 0.05,
+    "min_fresh_spearman_gain_vs_global": 0.02,
+    "min_good_days": 4,
+    "min_top10_day_balanced_option_value_lift_pct": 0.45,
+    "min_top10_day_balanced_positive_rate_lift": 0.03,
+    "min_same_age_median_spearman": 0.03,
+    "min_selected_phase_positive_transfer_fraction": 0.5
+  },
+  "forbidden": [
+    "changing phase definitions after seeing Request178 fresh results",
+    "changing the Request219 target or five-event horizon",
+    "adding new indicator families",
+    "using future observations to define phase",
+    "opening new dates",
+    "claiming a deployable HOLD/EXIT policy from the hindsight option-value target"
+  ],
+  "next_if_pass": "Freeze transition conditioning, replace the hindsight option upper bound with a causal fitted continuation-value recursion, then replay recurrent HOLD/EXIT decisions.",
+  "next_if_fail": "Do not hand-split the state more finely. Test an event-triggered controller focused on entry, pullback onset, and reversal events instead of scoring every POSITION observation.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "opportunity_scan": 36001945920,
+    "request220_fresh_states": 36235273868
+  }
+}
