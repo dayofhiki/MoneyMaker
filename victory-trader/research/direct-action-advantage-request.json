@@ -1,0 +1,49 @@
+{
+  "request_id": 246,
+  "operation": "direct_action_advantage_classifier",
+  "parent_requests": [243, 245],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request243 failed because independently scaled regressors were compared as if their outputs were calibrated action values. Directly classifying action advantage should remove scale-comparison error and suppress regression-noise WAIT/HOLD actions.",
+  "training": {
+    "source": "Request243 chronological teacher continuations on May5-8",
+    "features": "identical causal Request243 feature family",
+    "enter_label": "ENTER realized value > max(WAIT realized continuation, cash 0), where both ENTER and WAIT are identified",
+    "wait_population": "rows where ENTER is not the realized best action and both ENTER/WAIT are identified",
+    "wait_label": "WAIT realized continuation > cash 0",
+    "hold_label": "HOLD-minus-EXIT realized advantage > 0",
+    "class_balancing": false,
+    "threshold": 0.5,
+    "model_capacity": "same HistGradientBoosting family/capacity as Request243"
+  },
+  "policy": {
+    "flat": "if P(ENTER-best)>=0.5 ENTER; else if P(WAIT-positive)>=0.5 WAIT; else ABSTAIN",
+    "position": "if P(HOLD-better)>=0.5 HOLD else EXIT"
+  },
+  "calibration": "May11-20 existing locked block only",
+  "gate": {
+    "min_entries": 20,
+    "min_resolved_trades": 20,
+    "resolved_trade_mean_must_be_positive": true,
+    "min_wait_actions": 5,
+    "min_chosen_enter_advantage_positive_rate": 0.55,
+    "min_chosen_hold_advantage_positive_rate": 0.55,
+    "max_severe_loss_rate": 0.48
+  },
+  "forbidden": [
+    "class balancing to manufacture rare WAIT support",
+    "May-tuned thresholds or offsets",
+    "changing features or model capacity",
+    "opening June or any new holdout",
+    "best-future-price or horizon labels",
+    "dropping unresolved trades from daily portfolio claims",
+    "promotion or live-trading claims"
+  ],
+  "next_if_wait_support_sparse": "Redesign chronological teacher/bootstrap so WAIT receives identifiable positive continuation support rather than tuning the classifier.",
+  "input_runs": {
+    "request171": 36033120106,
+    "request243": 36259470906,
+    "request245": 36261424680
+  }
+}
