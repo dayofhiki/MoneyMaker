@@ -60,5 +60,9 @@
   "input_run": {
     "request163": 36001945920,
     "request231_failed_support_run": 36244141552
+  },
+  "rerun": {
+    "reason": "Fix generated result-metadata newline syntax before first valid Request232 evaluation.",
+    "prior_run": 36249323280
   }
 }
