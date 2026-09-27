@@ -20,9 +20,9 @@ def test_tradable_label_requires_entry_and_continuation():
     times = np.array(
         [
             11_000,
-            70_000,
-            130_000,
-            190_000,
+            71_000,
+            131_000,
+            191_000,
             400_000,
         ],
         dtype=np.int64,
