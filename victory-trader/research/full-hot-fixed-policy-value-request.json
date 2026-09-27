@@ -1,0 +1,39 @@
+{
+  "request_id": 249,
+  "operation": "full_hot_fixed_policy_value",
+  "parent_requests": [232, 248],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The current BUY-gated population may be economically weak before timing decisions are made. In the full first-HOT population, causal first-HOT features may predict the economic value of one fixed non-hindsight entry policy.",
+  "population": "full validated-attention first-HOT population before downstream BUY selection",
+  "target_policy": {
+    "entry": "first observed executable state after HOT within five clock minutes",
+    "exit_horizons": [1,2,3,5],
+    "value": "equal-weight BASE net return to those four precommitted future observed states",
+    "risk_cap_minutes": 30,
+    "future_best_search": false,
+    "best_watch_selection": false
+  },
+  "fit_days": "Request232 EXTENDED_FIT_DAYS",
+  "calibration_days": "Request232 EXTENDED_CAL_DAYS",
+  "fresh_days": "Request232 FRESH_EVAL_DAYS",
+  "gate": {
+    "min_fresh_spearman": 0.08,
+    "min_fresh_auc": 0.58,
+    "min_selected_rate": 0.10,
+    "max_selected_rate": 0.40,
+    "selected_mean_must_be_positive": true,
+    "min_selected_positive_rate_gain": 0.08,
+    "min_positive_selected_mean_days": 4
+  },
+  "forbidden": [
+    "choosing the best future WATCH state",
+    "choosing the best future exit horizon",
+    "opening new dates",
+    "claiming minute opens are actual broker fills",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Use the fixed-policy full-HOT economic admission upstream of causal tradability and ENTER-vs-WAIT timing.",
+  "next_if_fail": "Candidate quality itself is not predictable from current first-HOT representation; revisit upstream attention representation rather than downstream timing."
+}
