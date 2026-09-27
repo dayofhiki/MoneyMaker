@@ -396,7 +396,7 @@ def evaluate(
     threshold, threshold_table = choose_threshold(threshold_block, threshold_probs)
     test_probs = probability(model, columns, test)
 
-    teacher, student, _ = chronological_fit(fit_states)
+    _teacher, student, _ = chronological_fit(fit_states)
     scored = rollout(test_states, student, "full")
     scored_probs = probability(model, columns, scored)
     base_decisions = execution_decisions(episode_results(scored))
