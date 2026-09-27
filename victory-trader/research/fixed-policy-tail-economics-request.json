@@ -1,0 +1,42 @@
+{
+  "request_id": 250,
+  "operation": "fixed_policy_tail_economics_diagnostic",
+  "parent_request": 249,
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request249 shows meaningful full-HOT ranking signal but a negative top-quartile mean. The signal may contain a narrower economically positive tail under the same non-hindsight fixed first-WATCH policy.",
+  "population": "Request249 full validated-attention first-HOT population",
+  "target": "Request249 fixed_first_watch_value_pct",
+  "model": "Request249 fit-day regressor/classifier family, unchanged",
+  "calibration_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "score_families": [
+    "predicted_fixed_value_pct",
+    "positive_probability",
+    "equal-weight percentile average of those two"
+  ],
+  "predeclared_top_fractions": [0.01,0.02,0.05,0.10,0.15,0.20],
+  "selection": {
+    "threshold_source": "calibration scores only",
+    "outcomes_used_only_for_gate": true,
+    "if_multiple_pass": "choose the largest passing fraction; at equal fraction prefer predicted value, then joint, then probability",
+    "new_holdout_not_opened_until_a_rule_passes": true
+  },
+  "gate": {
+    "min_selected_rows": 40,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_positive_mean_days": 5,
+    "severe_loss_rate_le_minus2_must_not_exceed_population": true
+  },
+  "forbidden": [
+    "using June 8-12 outcomes to choose a score family or tail fraction",
+    "searching fractions outside the preregistered set after results",
+    "changing Request249 features or fixed-policy target",
+    "opening new dates unless a calibration rule passes",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Freeze the selected score family and calibration threshold, then open June15-19 as a genuinely new holdout.",
+  "next_if_fail": "The relative ranking signal is not sufficient for positive fixed-policy economics; add a causal downside-survivability representation before more timing work."
+}
