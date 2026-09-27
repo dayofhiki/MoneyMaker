@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 
 from victory_trader import tradable_opportunity_ceiling as r248
