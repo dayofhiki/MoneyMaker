@@ -259,3 +259,18 @@ def evaluate(
     print(json.dumps(result, indent=2, allow_nan=False))
     return 0
 
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--first-hot", type=Path, required=True)
+    parser.add_argument("--opportunity-scan", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    return evaluate(
+        args.first_hot,
+        args.opportunity_scan,
+        args.output,
+    )
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
