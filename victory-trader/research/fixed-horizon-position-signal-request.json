@@ -1,0 +1,28 @@
+{
+  "request_id": 248,
+  "operation": "fixed_horizon_position_signal_audit",
+  "parent_request": 247,
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request247 may have failed because one-step continuation is too myopic. Precommitted 1, 2, 3, and 5-observation continuation targets should reveal whether causal state features contain a learnable position-management signal at a slightly longer horizon.",
+  "admission_threshold": 0.60,
+  "training_days": ["2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "horizons_observed_states": [1,2,3,5],
+  "target": "modeled executable sell-value change from now to the precommitted Nth next observed state under the Request244 1s latency / 5s window",
+  "future_best_search": false,
+  "controller_changes": false,
+  "gate": {
+    "min_test_rows": 250,
+    "min_sign_auc": 0.55,
+    "min_spearman": 0.05,
+    "min_top_bottom_spread_pct": 0.30
+  },
+  "forbidden": [
+    "choosing the best future horizon per row",
+    "tuning on June or new dates",
+    "changing entry or exit controller",
+    "claiming brokerage fills or promotion"
+  ]
+}
