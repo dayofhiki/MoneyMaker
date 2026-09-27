@@ -1,0 +1,47 @@
+{
+  "request_id": 248,
+  "operation": "tradable_positive_opportunity_ceiling_and_learnability",
+  "parent_requests": [245, 246, 247],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "After execution, ENTER/WAIT timing, and HOLD/EXIT each improved but remained negative, the remaining bottleneck is either a low positive-opportunity ceiling in the current BUY-gated tradable population or poor economic ranking of otherwise available positive opportunities.",
+  "frozen_components": {
+    "tradability_admission": "Request245 model with threshold 0.60",
+    "position_policy": "Request247 one-step HOLD/EXIT learner",
+    "execution": "Request244 one-second contract, 1s latency, 5s expiry, BASE primary",
+    "candidate_population": "existing Request171 BUY-gated episodes"
+  },
+  "learnability_training_days": ["2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08"],
+  "test_days": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20"],
+  "forced_state_value": "For every causally admitted WATCH state, force ENTER at that state, then follow the frozen Request247 HOLD/EXIT policy and reconstruct one-second BASE return. Missing entry/exit remains unknown.",
+  "diagnostic_oracle": {
+    "episode_best_return": "maximum resolved forced-state BASE return among admitted states in the episode",
+    "episode_has_positive_opportunity": "at least one resolved admitted forced-state return > 0",
+    "usage": "diagnostic only; never a training target and never deployable"
+  },
+  "learnability_model": {
+    "target": "resolved forced-state BASE return at the current admitted state",
+    "training": "May5-8 only",
+    "features": "causal Request243 source/path features plus causal tradability probability; no future fills, oracle max, future-best state, or Request246/247 outcomes",
+    "evaluation": [
+      "Spearman correlation between predicted and realized forced-state return",
+      "ROC AUC and average precision for realized return > 0",
+      "top predicted quintile realized mean and positive rate"
+    ],
+    "threshold_tuning_on_test": false
+  },
+  "diagnostic_interpretation": {
+    "candidate_population_bottleneck": "positive-opportunity episode rate < 0.30 OR oracle episode-best mean <= 0",
+    "representation_bottleneck": "positive-opportunity episode rate >= 0.30 AND oracle episode-best mean > 0 BUT test ROC AUC < 0.60 AND Spearman < 0.10",
+    "controller_composition_bottleneck": "positive-opportunity ceiling healthy and ranking metrics materially positive, while frozen deployed controller remains negative"
+  },
+  "forbidden": [
+    "training on the episode oracle maximum",
+    "using any best-future state as a supervised label",
+    "opening June or a new holdout",
+    "retuning Request245 admission threshold",
+    "changing Request247 position policy after reading May11-20",
+    "claiming profitability or promotion from an oracle diagnostic"
+  ]
+}
