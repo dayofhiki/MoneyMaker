@@ -1,0 +1,54 @@
+{
+  "request_id": 245,
+  "operation": "causal_tradability_admission",
+  "parent_requests": [243, 244],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The dominant Request244 failure is not merely bad P&L but attempting to trade sparse symbols at states where an order cannot be promptly executed. A causal admission head trained only on pre-decision activity features should identify states where an entry is immediately executable and near-term execution remains available, then improve execution coverage when overlaid on the frozen Request243 controller.",
+  "training_days": ["2026-04-30", "2026-05-01", "2026-05-04"],
+  "threshold_calibration_days": ["2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08"],
+  "test_days": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20"],
+  "new_market_dates": "none",
+  "label": {
+    "primary_latency_ms": 1000,
+    "order_expiry_ms": 5000,
+    "immediate_entry_available": "first observed positive one-second open within 5 seconds after state_t + 1 second",
+    "continuation_anchors_minutes": [1, 2, 3, 4, 5],
+    "continuation_requirement": "at least 3 of 5 future minute anchors have an observed positive one-second open within the same 5-second execution window",
+    "tradable": "immediate_entry_available AND continuation_requirement"
+  },
+  "features": "Request243 causal source/path features only; no future one-second bars, fill labels, exit_reference_open, or policy outcomes",
+  "model": "single HistGradientBoostingClassifier trained on Apr30-May4",
+  "threshold_rule": {
+    "grid": "0.05 through 0.95 in steps of 0.05",
+    "selection_block": "May5-May8 only",
+    "choose": "lowest threshold with tradable precision >=0.80, recall >=0.20 and at least 30 admitted states",
+    "test_block": "May11-May20 never used to choose threshold"
+  },
+  "controller_overlay": {
+    "base": "frozen Request243 student policy",
+    "rejected_enter": "convert ENTER to WAIT and allow the next observed WATCH decision to reconsider",
+    "accepted_enter": "execute under Request244 one-second contract",
+    "held_exit": "unchanged Request243 HOLD/EXIT sequence; missing exit falls to the precommitted hot_t + 29 minute deadline",
+    "reentry_after_abstain": false
+  },
+  "structural_gate": {
+    "threshold_found": true,
+    "test_tradable_precision_min": 0.75,
+    "test_admitted_states_min": 30,
+    "overlay_entries_min": 20,
+    "overlay_entry_fill_coverage_min": 0.70,
+    "overlay_closed_resolution_uplift_vs_request244_min": 0.15
+  },
+  "forbidden": [
+    "choosing a threshold from May11-May20",
+    "using future one-second bars as model features",
+    "using Request244 P&L to tune the classifier",
+    "changing Request243 value heads or HOLD/EXIT logic",
+    "opening June or any new holdout",
+    "claiming profitability or live readiness from this diagnostic"
+  ],
+  "next_if_pass": "Request246 should relearn ENTER versus WAIT action values inside the causally admitted tradable population and evaluate them chronologically under the same one-second execution contract.",
+  "next_if_fail": "Do not return to action-value tuning. Redesign the observed-liquidity state or execution contract because the model still cannot identify reliably tradable moments."
+}
