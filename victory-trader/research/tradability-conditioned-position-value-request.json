@@ -1,0 +1,43 @@
+{
+  "request_id": 247,
+  "operation": "tradability_conditioned_position_value",
+  "parent_requests": [245, 246],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request246 improved entry timing but remained negative under the weak frozen HOLD/EXIT teacher. Keeping the Request245 admission gate and Request246 ENTER/WAIT model fixed, a causal one-step position-value learner should improve HOLD versus EXIT decisions on later observed states.",
+  "admission_threshold": 0.60,
+  "admission_training_days": ["2026-04-30", "2026-05-01", "2026-05-04"],
+  "entry_value_training_days": ["2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08"],
+  "position_value_training_days": ["2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08"],
+  "test_days": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20"],
+  "position_target": {
+    "hold_advantage": "incremental BASE percentage change from selling at the next observed position state instead of selling at the current state, both under the Request244 one-second execution contract",
+    "next_state": "chronologically next observed state in the same episode, never best future state",
+    "missing_current_or_next_execution": "unknown, never zero",
+    "fixed_horizon_minutes": null
+  },
+  "decision_rule": "After Request246 chooses ENTER, evaluate each later observed position state. HOLD iff predicted one-step hold_advantage > 0; otherwise EXIT. If no EXIT occurs, use the precommitted hot_t + 29 minute deadline.",
+  "features": "Request243 causal source/path features plus causal Request245 tradability probability; no future fills or outcomes",
+  "baseline": "Request246 learned ENTER/WAIT with the frozen Request243 earlier HOLD/EXIT teacher",
+  "gate": {
+    "min_position_target_rows": 1000,
+    "min_joint_entries": 20,
+    "min_entry_fill_coverage": 0.70,
+    "min_closed_resolution_rate": 0.50,
+    "joint_closed_base_mean_must_beat_request246_baseline": true,
+    "paired_mean_delta_must_be_positive": true,
+    "joint_closed_base_mean_must_be_positive": true,
+    "joint_closed_positive_rate_min": 0.50
+  },
+  "forbidden": [
+    "retuning the Request245 admission threshold",
+    "retuning the Request246 entry rule on May11-May20",
+    "using a best-future-state HOLD target",
+    "using May11-May20 to fit or tune the position model",
+    "opening June or a new holdout",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Request248 should perform one joint chronological policy-improvement iteration because changing HOLD/EXIT changes the value of ENTER/WAIT.",
+  "next_if_fail": "Audit positive-opportunity learnability within the tradable population; execution and entry timing are no longer the dominant bottlenecks."
+}
