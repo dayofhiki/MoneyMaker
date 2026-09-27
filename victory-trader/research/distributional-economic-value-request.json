@@ -1,0 +1,40 @@
+{
+  "request_id": 252,
+  "operation": "distributional_expected_value",
+  "parent_requests": [249, 250, 251],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The Request249 fixed-policy return distribution is highly imbalanced. A single mean regressor and a blended risk score can suppress rare winners. Separately learning win probability, conditional gain magnitude, and conditional loss magnitude may produce a better causal expected-value ranking.",
+  "population": "Request249 full validated-attention first-HOT population",
+  "target": "Request249 fixed_first_watch_value_pct",
+  "fit_days": ["2026-04-30","2026-05-01","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "calibration_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "heads": {
+    "win_probability": "P(fixed return > 0)",
+    "gain_magnitude": "E[fixed return | fixed return > 0]",
+    "loss_magnitude": "E[-fixed return | fixed return <= 0]",
+    "expected_value": "P(win)*gain - (1-P(win))*loss"
+  },
+  "features": "same causal Request249 first-HOT feature set",
+  "predeclared_top_fractions": [0.02,0.05,0.10,0.15,0.20],
+  "gate": {
+    "min_win_auc": 0.60,
+    "min_expected_value_spearman": 0.10,
+    "min_selected_rows": 40,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_positive_mean_days": 5,
+    "max_selected_severe_loss_rate_le_minus2": 0.20
+  },
+  "forbidden": [
+    "using June8-12 outcomes to fit or select the model",
+    "fitting any head on May11-20",
+    "choosing future WATCH or exit states by hindsight",
+    "opening June15-19 unless the May gate passes",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Freeze the distributional expected-value model and largest passing fraction, then open June15-19 as a genuinely new holdout.",
+  "next_if_fail": "The existing first-HOT features are insufficient for stable positive economics even under distributional modeling; redesign the upstream state representation."
+}
