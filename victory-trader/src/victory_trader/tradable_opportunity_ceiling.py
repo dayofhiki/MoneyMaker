@@ -25,6 +25,8 @@ from .causal_tradability_admission import (
     probability,
 )
 from .chronological_action_value import (
+    BASE,
+    STRESS,
     CAL_DAYS,
     CAUSAL_SOURCE_FEATURES,
     EXIT_DEADLINE,
@@ -146,16 +148,10 @@ def forced_state_values(
                 record["forced_status"] = "exit_unavailable"
             else:
                 record["forced_base_return"] = modeled_return(
-                    float(entry_ref), float(exit_ref), __import__(
-                        "victory_trader.chronological_action_value",
-                        fromlist=["BASE"],
-                    ).BASE
+                    float(entry_ref), float(exit_ref), BASE
                 )
                 record["forced_stress_return"] = modeled_return(
-                    float(entry_ref), float(exit_ref), __import__(
-                        "victory_trader.chronological_action_value",
-                        fromlist=["STRESS"],
-                    ).STRESS
+                    float(entry_ref), float(exit_ref), STRESS
                 )
             rows.append(record)
     return pd.DataFrame(rows)
