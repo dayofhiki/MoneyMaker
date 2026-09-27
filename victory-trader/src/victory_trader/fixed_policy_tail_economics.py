@@ -15,8 +15,6 @@ from .full_hot_fixed_policy_value import (
     train,
     xframe,
 )
-from .hierarchical_attention_runtime import add_stage2_scores, fit_stage2
-from .hot_economic_opportunity import _first_hot_feature_rows
 
 REQUEST_ID = 250
 FRACTIONS = (0.01, 0.02, 0.05, 0.10, 0.15, 0.20)
@@ -172,19 +170,34 @@ def choose_rule(results: list[dict]) -> dict | None:
 
 
 def evaluate(
-    stage2_candidates_path: Path,
-    opportunity_candidates_path: Path,
+    first_hot_path: Path,
     opportunity_scan_path: Path,
     output_path: Path,
 ) -> int:
-    stage2 = pd.read_parquet(stage2_candidates_path)
-    candidates = pd.read_parquet(opportunity_candidates_path)
+    first_hot = pd.read_parquet(first_hot_path)
     scan = pd.read_parquet(opportunity_scan_path)
-
-    minute_model, second_model = fit_stage2(stage2)
-    scored = add_stage2_scores(candidates, minute_model, second_model)
-    first_hot, runtime_audit = _first_hot_feature_rows(scored, scan)
+    required = {
+        "trading_day",
+        "ticker",
+        "t",
+        "fixed_first_watch_value_pct",
+    }
+    # Request233 is the frozen full first-HOT population. Its old outcome
+    # columns are ignored; Request250 attaches the new Request249 fixed policy
+    # target from the original scan.
+    base_required = {"trading_day", "ticker", "t"}
+    missing = base_required - set(first_hot.columns)
+    if missing:
+        raise ValueError(
+            f"Request233 first-HOT artifact missing: {sorted(missing)}"
+        )
+    first_hot = first_hot.drop(
+        columns=["fixed_first_watch_value_pct", "fixed_entry_elapsed_minutes"],
+        errors="ignore",
+    )
     first_hot = attach_fixed_value(first_hot, scan)
+    if not required.issubset(first_hot.columns):
+        raise ValueError("Request250 fixed target attachment failed")
     calibration = score_calibration(first_hot)
 
     results = []
@@ -199,10 +212,14 @@ def evaluate(
         "development_only": True,
         "opens_new_dates": False,
         "promotion_eligible": False,
+        "input_population": (
+            "frozen Request233 full first-HOT artifact; old Request232/233 "
+            "outcomes and scores are not used for the Request250 gate"
+        ),
         "calibration_days": list(EXTENDED_CAL_DAYS),
         "predeclared_fractions": list(FRACTIONS),
         "score_families": list(FAMILY_ORDER),
-        "runtime_audit": runtime_audit,
+        "first_hot_rows": int(len(first_hot)),
         "calibration_rows": int(len(calibration)),
         "results": results,
         "chosen_rule": (
@@ -242,21 +259,3 @@ def evaluate(
     print(json.dumps(result, indent=2, allow_nan=False))
     return 0
 
-
-def main() -> int:
-    p = argparse.ArgumentParser()
-    p.add_argument("--stage2-candidates", type=Path, required=True)
-    p.add_argument("--opportunity-candidates", type=Path, required=True)
-    p.add_argument("--opportunity-scan", type=Path, required=True)
-    p.add_argument("--output", type=Path, required=True)
-    a = p.parse_args()
-    return evaluate(
-        a.stage2_candidates,
-        a.opportunity_candidates,
-        a.opportunity_scan,
-        a.output,
-    )
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
