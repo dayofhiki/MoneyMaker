@@ -1,0 +1,43 @@
+{
+  "request_id": 253,
+  "operation": "causal_pullback_entry_audit",
+  "parent_requests": [249, 250, 252],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Requests249-252 show that first-HOT features can rank relative outcomes, but the immediate first-WATCH policy is structurally negative. A precommitted causal pullback/rebound entry rule may convert the ranking signal into positive economics without hindsight-best entry selection.",
+  "population": "Request249 full validated-attention first-HOT population",
+  "candidate_score": "fit-only Request249 positive-return classifier probability",
+  "candidate_top_fractions": [0.05,0.10,0.20],
+  "entry_window_minutes": 10,
+  "risk_cap_minutes": 30,
+  "entry_rules": {
+    "immediate": "first observed event after HOT",
+    "pullback_1": "first observed event at least 1% below the running post-HOT high",
+    "pullback_2": "first observed event at least 2% below the running post-HOT high",
+    "pullback_3": "first observed event at least 3% below the running post-HOT high",
+    "rebound_2_1": "after a >=2% pullback from the running high, enter on the first >=1% rebound from the post-pullback low"
+  },
+  "exit_value": "equal-weight BASE return to the 1st, 2nd, 3rd and 5th subsequently observed events after entry, all inside the 30-minute risk cap",
+  "calibration_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "gate": {
+    "min_resolved_rows": 40,
+    "min_entry_coverage": 0.25,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.40,
+    "min_positive_mean_days": 5,
+    "max_severe_loss_rate_le_minus2": 0.20,
+    "min_mean_gain_vs_same_subset_immediate_pct": 0.50
+  },
+  "forbidden": [
+    "choosing the best future entry event",
+    "choosing the best exit horizon",
+    "changing pullback thresholds after reading May outcomes",
+    "using June8-12 outcomes",
+    "opening June15-19 unless a May rule passes",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Freeze candidate threshold and causal entry rule, then open June15-19 as a new holdout.",
+  "next_if_fail": "Simple causal waiting cannot rescue the fixed-policy economics; redesign the candidate/state representation or learn a richer causal entry state before any new holdout."
+}
