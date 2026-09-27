@@ -1,0 +1,52 @@
+{
+  "request_id": 247,
+  "operation": "one_step_position_value",
+  "parent_requests": [245, 246],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request246 improved entry timing but remained negative because the downstream HOLD/EXIT teacher is weak. A causal one-step position-value learner should decide whether waiting until the next observed state improves the executable sell value, then reconsider repeatedly without any best-future search.",
+  "admission": {
+    "training_days": ["2026-04-30", "2026-05-01", "2026-05-04"],
+    "threshold": 0.60,
+    "source": "Request245 frozen causal tradability admission"
+  },
+  "entry_policy": {
+    "source": "authoritative Request246 learned_enter_wait test rows",
+    "workflow_run_id": 36305654173,
+    "frozen": true,
+    "must_preserve_entry_times": true
+  },
+  "position_value_training_days": ["2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08"],
+  "test_days": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20"],
+  "target": {
+    "name": "hold_one_step_value",
+    "definition": "percentage improvement in modeled executable sell value from exiting at the current observed state versus waiting to the immediately next observed state",
+    "execution_contract": "first positive one-second aggregate open within 5 seconds after a 1-second latency",
+    "missing_reference": "unknown",
+    "future_best_search": false,
+    "fixed_horizon_search": false
+  },
+  "decision_rule": "After the frozen Request246 entry, at each later state: if terminal, EXIT. If causal tradability probability is below 0.60, HOLD. Otherwise HOLD iff predicted one-step hold value > 0; else EXIT. Reconsider at the next observed state. Missing final policy exit falls to hot_t + 29 minute deadline.",
+  "gate": {
+    "min_position_target_rows": 300,
+    "entry_times_identical_to_request246": true,
+    "min_closed_resolution_rate": 0.70,
+    "closed_base_mean_must_beat_request246": true,
+    "paired_mean_delta_must_be_positive": true,
+    "closed_base_mean_must_be_positive": true,
+    "closed_positive_rate_min": 0.50,
+    "severe_loss_rate_must_not_worsen": true
+  },
+  "forbidden": [
+    "changing Request246 entry decisions",
+    "choosing the best future exit",
+    "tuning the hold threshold on May11-20",
+    "using future one-second bars as features",
+    "opening June or any new holdout",
+    "claiming live brokerage fills from one-second aggregates",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Request248 should jointly retrain ENTER/WAIT with the improved position controller, then test the integrated sequential policy.",
+  "next_if_fail": "Audit whether one-step continuation is too myopic or whether the causal state cannot distinguish favorable continuation from decay."
+}
