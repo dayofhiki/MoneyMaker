@@ -1,0 +1,35 @@
+{
+  "request_id": 265,
+  "operation": "causal_opportunity_ceiling",
+  "parent_requests": [263,264],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Before redesigning the model again, determine whether the corrected full-HOT population actually contains profitable causal entry opportunities and whether first-HOT features can identify them.",
+  "population": "all May11-20 full validated-attention first-HOT episodes with corrected causal minute-open references",
+  "diagnostics": {
+    "first_state": "first causal executable observed state after HOT",
+    "fixed_2pct_pullback": "first causal state at least 2% below the running post-HOT high; no trigger is cash",
+    "oracle_best_state": "diagnostic-only maximum fixed value among causal states inside the first 10 minutes; never used as a policy",
+    "candidate_signal": "Apr30-May4 first-HOT causal regressor/classifier evaluated on May11-20"
+  },
+  "opportunity_gate": {
+    "min_oracle_mean_pct": 0.50,
+    "min_any_positive_state_rate": 0.50
+  },
+  "candidate_signal_gate": {
+    "min_spearman": 0.08,
+    "min_positive_auc": 0.58
+  },
+  "forbidden": [
+    "using oracle-best state as a deployable policy",
+    "retroactive minute-open references",
+    "opening June15-19",
+    "tuning model thresholds from May11-20"
+  ],
+  "interpretation": {
+    "opportunity_pass_signal_fail": "There is exploitable path opportunity but current first-HOT representation cannot identify it.",
+    "opportunity_fail": "The current attention population / fixed-value contract itself lacks sufficient causal opportunity.",
+    "both_pass": "Keep the causal candidate selector and focus on learning the entry state."
+  }
+}
