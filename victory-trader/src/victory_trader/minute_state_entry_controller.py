@@ -19,7 +19,6 @@ from .learned_pullback_entry import (
     build_episode_states,
     controller_columns,
     controller_x,
-    fit_candidate_model,
     policy_metrics,
 )
 from .rich_post_hot_state import (
