@@ -1,0 +1,32 @@
+{
+  "request_id": 270,
+  "operation": "causal_continuation_horizon_signal",
+  "parent_requests": [267,268,269],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The future-best HOLD label is predictive but not policy-consistent. Fixed continuation horizons may produce a more deployable value target: hold exactly N more observed states, then exit (or terminal fallback).",
+  "train_candidate_fraction": 0.20,
+  "test_candidate_fraction": 0.05,
+  "model_fit_days": ["2026-05-05","2026-05-06","2026-05-07"],
+  "horizon_calibration_day": "2026-05-08",
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "continuation_horizons_states": [1,2,3,5],
+  "target": "return from exiting after exactly N later observed states (terminal fallback) minus exit-now return",
+  "horizon_selection": "On May8 choose the horizon with highest AUC among horizons having AUC >=0.55 and Spearman >=0.03; tie-break by higher Spearman then shorter horizon.",
+  "test_gate": {
+    "min_rows": 500,
+    "min_auc": 0.58,
+    "min_spearman": 0.05,
+    "min_top_bottom_quartile_spread_pct": 0.25
+  },
+  "forbidden": [
+    "using May11-20 to choose the horizon",
+    "using future-best exit as the policy target",
+    "changing candidate admission after viewing test results",
+    "opening June15-19",
+    "using retroactive minute opens"
+  ],
+  "next_if_pass": "Build a recurrent HOLD/EXIT controller using the frozen selected continuation horizon.",
+  "next_if_fail": "Move to fitted policy-iteration continuation values rather than fixed-horizon oracles."
+}
