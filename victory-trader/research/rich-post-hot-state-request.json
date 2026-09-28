@@ -1,0 +1,46 @@
+{
+  "request_id": 257,
+  "operation": "rich_post_hot_state_representation",
+  "parent_requests": [254, 256],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Requests254-256 show that coarse post-HOT price-path state weakly predicts WAIT value but does not produce positive economics. Current minute activity plus causal one-second microstructure may contain the missing information needed to distinguish productive pullbacks from continuing decay.",
+  "candidate_model_days": ["2026-04-30","2026-05-01","2026-05-04"],
+  "representation_train_days": ["2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "training_candidate_fraction": 0.20,
+  "test_candidate_fraction": 0.05,
+  "pullback_trigger_pct": 2.0,
+  "representations": {
+    "baseline": "Request254 first-HOT static + coarse post-HOT path",
+    "minute": "baseline + current minute body/range/volume/transactions/momentum/activity ratios and deltas from first post-HOT state",
+    "rich": "minute + causal completed-second features over the previous 60 seconds, including 5/10/15/30-second momentum, activity density, volatility, drawdown/runup, signed volume/transaction imbalance, path efficiency, high/low recency, VWAP location and mean trade-size ratio, plus deltas from the first post-HOT state"
+  },
+  "targets": [
+    "fixed entry value at the current pullback state",
+    "positive fixed entry value",
+    "severe fixed loss <= -2%"
+  ],
+  "gate": {
+    "min_train_pullback_rows": 150,
+    "min_test_pullback_rows": 100,
+    "min_rich_second_coverage": 0.80,
+    "min_rich_value_spearman": 0.10,
+    "min_value_spearman_gain_vs_baseline": 0.05,
+    "min_rich_positive_auc": 0.60,
+    "min_positive_auc_gain_vs_baseline": 0.03,
+    "min_rich_severe_auc": 0.60,
+    "rich_severe_auc_must_not_trail_baseline": true
+  },
+  "forbidden": [
+    "using future seconds in state features",
+    "using May11-20 outcomes to select features or candidate thresholds",
+    "changing the 2% pullback trigger after seeing results",
+    "opening June15-19",
+    "claiming one-second aggregates are tick trades or NBBO",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Use the frozen rich representation in a recurrent ENTER/WAIT controller under the same 2% structural trigger.",
+  "next_if_fail": "Current aggregate data do not reveal enough post-HOT state information; revisit candidate/state construction rather than adding more WAIT-target variants."
+}
