@@ -46,7 +46,7 @@ jobs:
           path: victory-trader/prepared/request233
           repository: dayofhiki/MoneyMaker
           run-id: 36251239308
-          github-token: \${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Download Request163 opportunity population
         uses: actions/download-artifact@v4
         with:
@@ -54,7 +54,7 @@ jobs:
           path: victory-trader/prepared/opportunity
           repository: dayofhiki/MoneyMaker
           run-id: 36001945920
-          github-token: \${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Evaluate Request275
         run: |
           set -o pipefail
