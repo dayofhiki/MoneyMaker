@@ -1,0 +1,45 @@
+{
+  "request_id": 256,
+  "operation": "multistep_wait_option",
+  "parent_requests": [254, 255],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request255 can predict one-step ENTER-vs-WAIT direction at pullback states, but that local target does not improve economics. A fixed three-opportunity WAIT option target may better represent the value of preserving future entry choices without selecting a hindsight-best future state.",
+  "candidate_fraction": 0.05,
+  "pullback_trigger_pct": 2.0,
+  "wait_option_horizon_states": 3,
+  "wait_option_target": "mean fixed entry value of the next 1st, 2nd, and 3rd observed states; if the window ends before one of those opportunities, that missing opportunity contributes cash=0; if an existing future state's fixed entry value is unresolved, the target is unresolved",
+  "advantage_target": "current fixed entry value minus the three-opportunity WAIT option value",
+  "model": "causal binary classifier for advantage > 0 trained on controller-train states only",
+  "policy": "After a 2% pullback from the running post-HOT high, ENTER iff P(current entry better than fixed three-opportunity WAIT option) >= 0.5. Otherwise WAIT and reconsider at the next observed state. If the window ends, remain in cash.",
+  "comparators": [
+    "immediate entry",
+    "first fixed 2% pullback entry",
+    "Request255 one-step advantage gate"
+  ],
+  "gate": {
+    "min_train_target_rows": 180,
+    "min_test_pullback_states": 80,
+    "min_pullback_auc": 0.55,
+    "min_entries": 20,
+    "min_entry_rate": 0.10,
+    "max_entry_rate": 0.45,
+    "min_resolution_or_cash_rate": 0.95,
+    "policy_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_positive_mean_days": 5,
+    "max_severe_loss_rate_le_minus2": 0.08,
+    "min_gain_vs_fixed_2pct_pullback_pct": 0.10
+  },
+  "forbidden": [
+    "maximizing over future entry states",
+    "choosing the best future entry state",
+    "tuning the three-state horizon on May11-20",
+    "tuning the 2% trigger or 0.5 classifier threshold on May11-20",
+    "opening June15-19",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Freeze the multi-step wait option gate and audit one-second execution support.",
+  "next_if_fail": "The recurrent entry problem is not solved by local option-value targets; redesign the post-HOT state representation or move to a richer policy learner before using a new holdout."
+}
