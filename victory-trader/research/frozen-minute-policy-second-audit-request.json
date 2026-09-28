@@ -1,0 +1,36 @@
+{
+  "request_id": 259,
+  "operation": "frozen_minute_policy_second_execution_audit",
+  "parent_request": 258,
+  "policy_changed": false,
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The positive Request258 minute-state policy remains structurally executable and economically positive when the frozen entry decisions and precommitted 1st/2nd/3rd/5th exit anchors are repriced from observed historical one-second aggregate opens.",
+  "population": "Frozen Request258 May11-20 top-5% development policy",
+  "execution_reference": {
+    "source": "historical one-second aggregate opens",
+    "primary_latency_ms": 1000,
+    "expiry_ms": 5000,
+    "latency_sensitivity_ms": [0,1000,2000,5000],
+    "claim_limit": "execution reference only; not tick/NBBO/brokerage fill evidence"
+  },
+  "exit_contract": "For each frozen Request258 entry, preserve the Request249/258 fixed 1st, 2nd, 3rd and 5th later observed event anchors inside the 30-minute risk cap. Reprice each anchor with the first observed positive one-second aggregate open after anchor+latency within 5 seconds. Never choose a better future anchor.",
+  "gate": {
+    "min_entry_reference_coverage": 0.80,
+    "min_all_exit_anchor_coverage_given_entry_reference": 0.70,
+    "min_full_trade_resolution": 0.60,
+    "resolved_mean_must_be_positive": true,
+    "max_resolved_severe_loss_rate_le_minus2": 0.10,
+    "min_paired_mean_delta_vs_minute_pct": -0.50
+  },
+  "forbidden": [
+    "changing Request258 candidate, entry, or risk thresholds",
+    "choosing the best future second or exit anchor",
+    "treating missing one-second aggregate bars as proof that a market fill was impossible",
+    "opening June15-19",
+    "claiming observed aggregate opens are actual fills"
+  ],
+  "next_if_pass": "Freeze Request258 policy plus the second-reference contract and preregister June15-19 untouched validation.",
+  "next_if_fail": "Keep Request258 as development evidence only and repair execution-support/tradability before any new holdout."
+}
