@@ -38,6 +38,7 @@ CONTROLLER_TRAIN_DAYS = [
 TEST_DAYS = EXTENDED_CAL_DAYS
 CANDIDATE_FRACTION = 0.05
 MIN_CONTROLLER_TRAIN_STATES = 250
+MIN_TARGET_ROWS = 200
 MIN_TEST_STATES = 250
 MIN_ENTER_SPEARMAN = 0.10
 MIN_ADVANTAGE_SPEARMAN = 0.03
@@ -325,9 +326,9 @@ def fit_regressor(
         train[target_column],
         errors="coerce",
     ).to_numpy(float)
-    if len(train) < MIN_CONTROLLER_TRAIN_STATES:
+    if len(train) < MIN_TARGET_ROWS:
         raise ValueError(
-            f"Request254 {target_column} support only {len(train)}"
+            f"Request254 {target_column} finite target support only {len(train)}"
         )
     low, high = np.quantile(y, [0.005, 0.995])
     model = HistGradientBoostingRegressor(
