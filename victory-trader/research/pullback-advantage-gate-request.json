@@ -1,0 +1,45 @@
+{
+  "request_id": 255,
+  "operation": "pullback_advantage_gate",
+  "parent_requests": [253, 254],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request254 nearly reached break-even, but its absolute enter-value head anti-ranked outcomes while the local ENTER-vs-WAIT signal remained weakly positive. Keep the structural 2% pullback trigger and learn only whether entering now is better than waiting one more observed state.",
+  "candidate_model_days": ["2026-04-30","2026-05-01","2026-05-04"],
+  "controller_train_days": ["2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "candidate_fraction": 0.05,
+  "pullback_trigger_pct": 2.0,
+  "advantage_target": "enter_value_at_current_state - enter_value_at_immediately_next_observed_state",
+  "advantage_model": "causal binary classifier for advantage > 0, trained on all finite controller-train states",
+  "policy": "Within a selected candidate, ignore states before a 2% drawdown from the running post-HOT high. At each pullback-qualified state, ENTER iff P(enter-now better than wait-one-state) >= 0.5; otherwise WAIT. If no qualifying ENTER occurs in the 10-minute window, remain in cash.",
+  "comparators": [
+    "immediate entry",
+    "first fixed 2% pullback entry"
+  ],
+  "gate": {
+    "min_train_advantage_rows": 200,
+    "min_test_pullback_states": 80,
+    "min_pullback_advantage_auc": 0.55,
+    "min_entries": 20,
+    "min_entry_rate": 0.10,
+    "max_entry_rate": 0.45,
+    "min_resolution_or_cash_rate": 0.95,
+    "policy_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_positive_mean_days": 5,
+    "max_severe_loss_rate_le_minus2": 0.08,
+    "min_gain_vs_fixed_2pct_pullback_pct": 0.10
+  },
+  "forbidden": [
+    "using absolute enter-value prediction as an admission condition",
+    "tuning the 2% pullback threshold on May11-20",
+    "tuning the 0.5 classifier threshold on May11-20",
+    "choosing a best future entry state",
+    "opening June15-19",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Freeze candidate threshold, 2% structural trigger, and advantage classifier; then audit one-second execution support before any new holdout.",
+  "next_if_fail": "The one-step local advantage is too weak to turn pullback waiting positive. Test a causal multi-step wait option target rather than adding more thresholds."
+}
