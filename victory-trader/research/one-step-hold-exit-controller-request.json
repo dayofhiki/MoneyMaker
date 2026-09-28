@@ -1,0 +1,38 @@
+{
+  "request_id": 271,
+  "operation": "one_step_causal_hold_exit_controller",
+  "parent_request": 270,
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request270 shows the frozen one-state continuation target generalizes on top-5% candidates. Recurrently applying that one-step value should outperform static exits without using future-best stopping labels.",
+  "train_candidate_fraction": 0.20,
+  "test_candidate_fraction": 0.05,
+  "model_fit_days": ["2026-05-05","2026-05-06","2026-05-07"],
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "frozen_horizon_states": 1,
+  "policy": "At each position state HOLD iff predicted one-step continuation advantage > 0 and P(one-step advantage > 0) >= 0.50. Reconsider at the next state. Terminal state always exits.",
+  "comparators": [
+    "first observed post-entry exit",
+    "fifth observed post-entry exit with terminal fallback",
+    "terminal exit inside 30-minute cap"
+  ],
+  "gate": {
+    "min_test_position_episodes": 80,
+    "dynamic_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_positive_rate": 0.40,
+    "max_severe_loss_rate_le_minus2": 0.15,
+    "min_positive_mean_days": 5,
+    "min_gain_vs_best_static_pct": 0.10
+  },
+  "forbidden": [
+    "changing the horizon after May11-20",
+    "using future-best exit labels",
+    "changing candidate admission or entry timing",
+    "opening June15-19",
+    "using retroactive minute opens"
+  ],
+  "next_if_pass": "Add learned causal entry timing on top of candidate admission plus one-step HOLD/EXIT.",
+  "next_if_fail": "Use fitted policy iteration so HOLD targets reflect the value of the frozen downstream policy rather than a single fixed step."
+}
