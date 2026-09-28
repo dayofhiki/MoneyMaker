@@ -1,0 +1,36 @@
+{
+  "request_id": 272,
+  "operation": "cross_fitted_policy_iteration_hold_exit",
+  "parent_requests": [270,271],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "One-step continuation is predictive but a recurrent one-step controller is policy-inconsistent. One fitted policy-improvement iteration should align the HOLD target with the realized value of the downstream recurrent policy.",
+  "train_candidate_fraction": 0.20,
+  "test_candidate_fraction": 0.05,
+  "policy_iteration_days": ["2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "base_policy_target": "one-state continuation advantage from Request270",
+  "improved_target": "For each state, HOLD one state, then follow the frozen out-of-fold base recurrent policy to its realized exit; subtract EXIT-now return.",
+  "cross_fitting": "For each May5-8 day, fit the base one-step model on the other three days, then generate policy-consistent targets only on the held-out day.",
+  "decision_rule": "HOLD iff predicted policy-consistent advantage > 0 and P(advantage > 0) >= 0.50; otherwise EXIT, terminal always EXIT.",
+  "gate": {
+    "min_oof_target_rows": 3000,
+    "improved_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_positive_rate": 0.40,
+    "max_severe_loss_rate_le_minus2": 0.15,
+    "min_positive_mean_days": 5,
+    "min_gain_vs_base_learned_pct": 0.10,
+    "min_gain_vs_best_static_pct": 0.10
+  },
+  "forbidden": [
+    "using May11-20 to generate or tune policy targets",
+    "using future-best exits as labels",
+    "changing candidate admission or entry timing",
+    "opening June15-19",
+    "using retroactive minute opens"
+  ],
+  "next_if_pass": "Use this HOLD/EXIT stack as the downstream teacher while rebuilding causal ENTER/WAIT.",
+  "next_if_fail": "The exit problem needs richer policy-state/history or a different reward horizon before integrated trading."
+}
