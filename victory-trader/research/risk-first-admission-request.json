@@ -1,0 +1,31 @@
+{
+  "request_id": 278,
+  "parent_request": 277,
+  "operation": "risk_first_pullback_admission",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Completed-minute context is more useful for identifying dangerous pullbacks than direct winners. A risk veto followed by return-rank admission can combine the two signals into a positive causal policy.",
+  "crossfit_days": ["2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08"],
+  "risk_reject_fractions": [0.30, 0.50],
+  "value_retain_fractions": [0.30, 0.50],
+  "development_test_days": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20"],
+  "stage_contract": "May11-20 is evaluated only after a positive leave-one-day-out May5-8 economic gate.",
+  "fixed_entry": "first causal 2% pullback",
+  "fixed_downstream_policy": {
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10,
+    "missing_exact_deadline": "unresolved"
+  },
+  "features": "Request277 pre-HOT + price-path + strictly lagged completed-minute context",
+  "forbidden": [
+    "current execution-minute high/low/close/volume",
+    "one-second data",
+    "future-best entry or exit labels",
+    "opening May11-20 when the OOF economic gate fails",
+    "opening June15-19"
+  ],
+  "next_if_pass": "Restore recurrent HOLD/EXIT around the risk-first admitted set.",
+  "next_if_fail": "Redesign candidate-level state and regime context before opening June15-19."
+}
