@@ -1,0 +1,62 @@
+{
+  "request_id": 254,
+  "operation": "learned_pullback_enter_wait",
+  "parent_requests": [249, 253],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request253 shows that waiting for a pullback materially improves entry economics, but no fixed drawdown threshold is positive. A causal recurrent ENTER/WAIT controller using candidate quality plus the observed post-HOT path should learn when to enter, when to keep waiting, and when to abstain.",
+  "population": "Request249 full validated-attention first-HOT population",
+  "candidate_model_days": ["2026-04-30","2026-05-01","2026-05-04"],
+  "controller_train_days": ["2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "candidate_fraction": 0.05,
+  "candidate_threshold_source": "95th percentile of candidate probability on controller-train days only",
+  "state_window_minutes": 10,
+  "state_features": [
+    "frozen first-HOT causal features",
+    "candidate probability",
+    "elapsed minutes and event index",
+    "return from first observed post-HOT event",
+    "running high/low",
+    "drawdown from running high",
+    "recovery from running low",
+    "one- and two-event momentum",
+    "path range, efficiency, and time since high/low"
+  ],
+  "targets": {
+    "enter_value": "fixed non-hindsight Request249 value if entering at the current observed state",
+    "enter_minus_wait_one_state": "current enter value minus the fixed value from entering at the immediately next observed state; final-state WAIT is cash=0"
+  },
+  "policy": "At every observed state, ENTER iff predicted enter value > 0 and predicted enter-minus-next-WAIT advantage >= 0. Otherwise WAIT and reconsider at the next state. If the window ends without ENTER, remain in cash.",
+  "comparators": [
+    "immediate first observed post-HOT entry",
+    "precommitted 2% pullback entry from Request253, with no pullback treated as cash"
+  ],
+  "gate": {
+    "min_controller_train_states": 250,
+    "min_test_states": 250,
+    "min_enter_value_spearman": 0.10,
+    "min_advantage_spearman": 0.03,
+    "min_learned_entries": 20,
+    "min_entry_rate": 0.10,
+    "max_entry_rate": 0.70,
+    "min_resolution_or_cash_rate": 0.90,
+    "learned_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_positive_mean_days": 5,
+    "max_severe_loss_rate_le_minus2": 0.15,
+    "min_gain_vs_immediate_pct": 0.50,
+    "min_gain_vs_fixed_2pct_pullback_pct": 0.20
+  },
+  "forbidden": [
+    "choosing the best future entry state",
+    "choosing the best future exit horizon",
+    "using May11-20 outcomes to fit the controller or candidate threshold",
+    "opening June15-19 in this request",
+    "claiming minute aggregate opens are brokerage fills",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Freeze the learned ENTER/WAIT controller and candidate threshold, then audit execution support and only then consider opening June15-19.",
+  "next_if_fail": "Inspect whether local entry-value/WAIT targets are learnable; if signal exists but economics fail, add multi-step option value, otherwise redesign the post-HOT state representation."
+}
