@@ -1,0 +1,34 @@
+{
+  "request_id": 269,
+  "operation": "calibrated_causal_hold_exit_controller",
+  "parent_requests": [267,268],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request267 contains real causal HOLD/EXIT discrimination, but Request268 converts it into an overly permissive recurrent policy. Fit on May5-7 and calibrate HOLD confidence only on May8 before evaluating May11-20.",
+  "population": "Request267 frozen top-20% candidate population",
+  "entry": "first causal post-HOT state",
+  "hold_model_fit_days": ["2026-05-05","2026-05-06","2026-05-07"],
+  "hold_threshold_calibration_day": "2026-05-08",
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "probability_thresholds": [0.50,0.60,0.70,0.80,0.90],
+  "advantage_thresholds_pct": [0.00,0.25,0.50,1.00],
+  "calibration_rule": "HOLD iff predicted HOLD advantage exceeds the advantage floor and HOLD probability exceeds the probability threshold. Otherwise EXIT. Choose the calibration pair with the largest mean gain over first-state exit, subject to at least +0.25pp mean gain and no more than +2pp severe-loss-rate degradation.",
+  "test_gate": {
+    "dynamic_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_positive_rate": 0.40,
+    "max_severe_loss_rate_le_minus2": 0.15,
+    "min_positive_mean_days": 5,
+    "min_gain_vs_best_static_pct": 0.10
+  },
+  "forbidden": [
+    "using May11-20 to choose thresholds",
+    "changing candidate admission or entry timing",
+    "using future information as a feature",
+    "opening June15-19",
+    "using retroactive minute opens"
+  ],
+  "next_if_calibration_fails": "Replace oracle-best-future HOLD labels with policy-consistent continuation-value targets.",
+  "next_if_test_passes": "Integrate causal learned entry with the frozen calibrated HOLD/EXIT policy before untouched validation."
+}
