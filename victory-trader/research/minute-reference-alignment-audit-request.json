@@ -1,0 +1,33 @@
+{
+  "request_id": 262,
+  "operation": "minute_reference_alignment_audit",
+  "parent_requests": [258,259,261],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "policy_changed": false,
+  "hypothesis": "Request258's strong development economics may be inflated because scan timestamps were shifted from minute-start to minute-complete availability while the same row's minute open remained the pre-decision bar open.",
+  "audit": {
+    "legacy_reference": "scan row o at decision timestamp t",
+    "causal_minute_reference": "open of the minute bar whose original bar_start_t equals the decision timestamp",
+    "entry_and_exit_policy_times": "frozen Request258 decisions and fixed 1st/2nd/3rd/5th later event anchors"
+  },
+  "bug_confirmed_if": {
+    "min_shifted_bar_rate": 0.99,
+    "required_reference_lag_ms": 60000
+  },
+  "economic_survival_checks": {
+    "min_causal_reference_coverage": 0.70,
+    "causal_minute_mean_must_be_positive": true,
+    "max_causal_severe_loss_rate_le_minus2": 0.10,
+    "min_paired_delta_vs_legacy_pct": -0.50
+  },
+  "forbidden": [
+    "changing Request258 policy decisions",
+    "choosing alternative future entry or exit anchors",
+    "opening new dates",
+    "using May11-20 to tune a replacement rule"
+  ],
+  "next_if_bug_confirmed_and_economics_fail": "Invalidate Request258 economic promotion evidence and rebuild entry-value targets/controllers with causal post-decision references.",
+  "next_if_bug_not_material": "Continue execution-support work without changing the Request258 economic target contract."
+}
