@@ -1,0 +1,37 @@
+{
+  "request_id": 277,
+  "parent_request": 276,
+  "operation": "strictly_lagged_completed_minute_context",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Price-path shape alone cannot distinguish recoverable pullbacks from deterioration. Volume, range, activity, and momentum from the fully completed minute immediately before the decision may add causal information.",
+  "crossfit_days": ["2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08"],
+  "evaluation": "leave-one-trading-day-out predictions only",
+  "execution_reference": "open of the minute whose original bar_start_t equals decision_t",
+  "context_reference": "raw scan row whose shifted t equals decision_t, therefore bar_start_t equals decision_t-60s",
+  "fixed_entry": "first causal 2% pullback",
+  "fixed_downstream_policy": {
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10,
+    "missing_exact_deadline": "unresolved"
+  },
+  "added_context": [
+    "attention score/rank",
+    "return from previous close",
+    "completed-minute body and range",
+    "completed-minute volume and transaction activity",
+    "one-minute return/acceleration",
+    "volume and transaction ratios versus the prior completed minute"
+  ],
+  "forbidden": [
+    "current execution-minute high/low/close/volume",
+    "future-best entry or exit labels",
+    "one-second data",
+    "May11-20 outcomes",
+    "June15-19 outcomes"
+  ],
+  "next_if_pass": "Build a cross-fitted economic admission policy from the enriched context.",
+  "next_if_fail": "Redesign the candidate-level state before adding more entry/exit rules."
+}
