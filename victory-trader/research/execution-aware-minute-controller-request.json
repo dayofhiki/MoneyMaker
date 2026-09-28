@@ -1,0 +1,40 @@
+{
+  "request_id": 260,
+  "operation": "execution_aware_minute_controller",
+  "parent_requests": [258, 259],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request258 has positive development economics, while Request259 fails because sparse historical one-second aggregates rarely support a 5-second execution reference. A causal execution-support classifier using only pre-decision minute/path and completed-second activity can filter Request258 entries without destroying its economic edge.",
+  "population": "Request258 top-20% train / top-5% development-test candidate stack",
+  "economic_policy": "Frozen Request258 minute-state controller",
+  "execution_label": {
+    "immediate": "one-second aggregate open exists after state+1s within 5s",
+    "continuation": "at least 3 of the next 5 clock-minute anchors have a one-second aggregate open after anchor+1s within 5s",
+    "positive": "immediate AND continuation"
+  },
+  "execution_probability_threshold": 0.60,
+  "policy": "At each >=2% pullback state, ENTER only if all frozen Request258 economic conditions pass and execution-support probability >=0.60; otherwise WAIT and reconsider later. Window exhaustion means cash.",
+  "gate": {
+    "min_train_execution_rows": 150,
+    "min_test_execution_rows": 100,
+    "min_execution_auc": 0.65,
+    "min_entries": 10,
+    "minute_policy_mean_must_be_positive": true,
+    "min_minute_gain_vs_fixed_2pct_pullback_pct": 0.10,
+    "min_second_entry_reference_coverage": 0.70,
+    "min_second_full_trade_resolution": 0.40,
+    "second_resolved_mean_must_be_positive": true,
+    "max_second_resolved_severe_loss_rate_le_minus2": 0.15
+  },
+  "forbidden": [
+    "changing Request258 economic model or thresholds",
+    "using future seconds as execution features",
+    "tuning the 0.60 threshold on May11-20",
+    "treating missing aggregate bars as proof of market fill impossibility",
+    "opening June15-19",
+    "claiming brokerage-fill realism"
+  ],
+  "next_if_pass": "Freeze the economic+execution-aware controller and preregister June15-19 validation.",
+  "next_if_fail": "Historical one-second aggregate support remains too sparse; preserve Request258 economic evidence and separate live quote/broker execution validation from historical aggregate backtesting."
+}
