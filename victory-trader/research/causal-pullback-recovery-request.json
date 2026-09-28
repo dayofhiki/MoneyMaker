@@ -1,0 +1,34 @@
+{
+  "request_id": 276,
+  "parent_request": 275,
+  "operation": "causal_pullback_recovery_trigger",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The first 2% pullback state is often a falling knife. Requiring an observable recovery from the running pullback low before entry can separate recoverable pullbacks from continued deterioration without future information.",
+  "candidate_population": "frozen top-20% candidate probability threshold",
+  "drawdown_activation_pct": 2.0,
+  "recovery_thresholds_pct": [0.5, 1.0, 1.5],
+  "entry_window_minutes": 10,
+  "fixed_downstream_policy": {
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10,
+    "missing_exact_deadline": "unresolved"
+  },
+  "fit_days": ["2026-05-05", "2026-05-06", "2026-05-07"],
+  "calibration_day": "2026-05-08",
+  "development_test_days": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20"],
+  "stage_contract": "May11-20 is evaluated only if one threshold passes May5-7 fitting gates and then the unchanged threshold passes May8.",
+  "forbidden": [
+    "using future-best entry or exit",
+    "changing the frozen exit policy after seeing trigger results",
+    "using May8 to select among recovery thresholds",
+    "touching May11-20 before fit and May8 pass",
+    "opening June15-19",
+    "settling absent deadlines at a different timestamp",
+    "using one-second data"
+  ],
+  "next_if_pass": "Learn admission around the confirmed recovery state and then restore recurrent HOLD/EXIT.",
+  "next_if_fail": "Redesign candidate state or add strictly lagged completed-minute context without opening June15-19."
+}
