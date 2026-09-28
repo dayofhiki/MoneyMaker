@@ -1,0 +1,32 @@
+{
+  "request_id": 274,
+  "parent_request": 273,
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "evaluated_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07"
+  ],
+  "hypothesis": "Remove hindsight settlement at last available price before an absent deadline.",
+  "entry_rule": "unchanged causal 2 percent pullback",
+  "exit_rule": "same stop/trailing family; exact deadline required unless earlier stop",
+  "stop_loss_pct": [
+    -1.5,
+    -2.5,
+    -4.0
+  ],
+  "trail_pct": [
+    1.0,
+    2.0,
+    3.0
+  ],
+  "max_hold_minutes": [
+    5,
+    10,
+    20,
+    30
+  ],
+  "missing_outcome": "unresolved; never zero or last-price settlement",
+  "next_if_fail": "Joint candidate/pullback-state admission using causal fixed-policy labels; June15-19 unopened."
+}
