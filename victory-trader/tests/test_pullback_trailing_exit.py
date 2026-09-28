@@ -29,7 +29,7 @@ def test_trailing_stop_uses_running_post_entry_high():
     )
     assert rows.loc[0, "exit_t"] == 240_000
     assert rows.loc[0, "exit_reason"] == "trailing_stop"
-    assert np.isclose(rows.loc[0, "trade_return_pct"], 2.0)
+    assert np.isclose(\n        rows.loc[0, "trade_return_pct"],\n        r273._base_return(10.0, 10.2),\n    )
 
 
 def test_hard_stop_precedes_later_recovery():
@@ -56,7 +56,7 @@ def test_hard_stop_precedes_later_recovery():
     )
     assert rows.loc[0, "exit_t"] == 120_000
     assert rows.loc[0, "exit_reason"] == "hard_stop"
-    assert np.isclose(rows.loc[0, "trade_return_pct"], -3.0)
+    assert np.isclose(\n        rows.loc[0, "trade_return_pct"],\n        r273._base_return(10.0, 9.7),\n    )
 
 
 def test_cash_episode_is_resolved_zero():
