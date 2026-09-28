@@ -1,0 +1,40 @@
+{
+  "request_id": 268,
+  "operation": "causal_recurrent_hold_exit_controller",
+  "parent_requests": [262, 266, 267],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request266 shows a strong causal best-exit ceiling and Request267 shows current-state HOLD/EXIT signal near AUC 0.70. A simple recurrent controller can convert that signal into positive realized economics without hindsight exit selection.",
+  "population": "Request267 frozen top-20% candidate population",
+  "entry": "first causal post-HOT state, unchanged",
+  "train_days": ["2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "features": "Request267 path-only causal position features",
+  "policy": "At each observed position state, HOLD iff predicted HOLD advantage > 0 and P(HOLD-optimal) >= 0.50. Otherwise EXIT immediately. If no EXIT fires, exit at the last observed causal state inside the 30-minute cap.",
+  "comparators": [
+    "exit at first observed post-entry state",
+    "exit at fifth observed post-entry state with terminal fallback",
+    "exit at terminal observed state inside the 30-minute cap"
+  ],
+  "gate": {
+    "min_train_position_states": 3000,
+    "min_test_position_states": 5000,
+    "min_test_position_episode_coverage": 0.80,
+    "dynamic_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_dynamic_positive_rate": 0.40,
+    "max_dynamic_severe_loss_rate_le_minus2": 0.15,
+    "min_positive_mean_days": 5,
+    "min_mean_gain_vs_best_static_pct": 0.10
+  },
+  "forbidden": [
+    "using future-best exit directly in the deployed policy",
+    "tuning the 0.50 HOLD probability threshold on May11-20",
+    "changing candidate admission or entry timing",
+    "opening June15-19",
+    "using retroactive minute opens"
+  ],
+  "next_if_pass": "Add a causal learned entry policy on top of the frozen candidate+HOLD/EXIT stack, then reserve June15-19 for untouched integrated validation.",
+  "next_if_fail": "Diagnose policy calibration/optimal-stopping target mismatch before adding more features."
+}
