@@ -1,0 +1,32 @@
+{
+  "request_id": 263,
+  "operation": "causal_minute_controller_rebuild",
+  "parent_requests": [258,262],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The Request258 architecture may still contain economic signal after replacing retroactive minute-open labels with post-decision causal minute-open references.",
+  "causal_reference_contract": {
+    "decision_time": "shifted completed-minute availability timestamp t",
+    "execution_reference": "open of the minute bar whose original bar_start_t equals the decision time",
+    "state_path_price": "same causal post-decision minute-open reference",
+    "future_anchor_policy": "fixed 1st/2nd/3rd/5th later observed causal execution states",
+    "future_best_search": false
+  },
+  "data_split": {
+    "candidate_model_days": ["2026-04-30","2026-05-01","2026-05-04"],
+    "controller_fit_days": ["2026-05-05","2026-05-06","2026-05-07"],
+    "controller_calibration_day": "2026-05-08",
+    "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"]
+  },
+  "architecture": "Request258 top-20% training / top-5% test candidate stack, >=2% pullback, value>0, P(positive)>=0.5, P(severe)<0.5",
+  "gate": "exactly reuse Request258 preregistered economic gate thresholds",
+  "forbidden": [
+    "using stale shifted-row open as an execution label",
+    "changing Request258 thresholds after seeing causal results",
+    "opening June15-19",
+    "future-best entry or exit selection"
+  ],
+  "next_if_pass": "Freeze causal controller, audit one-second support, then preregister untouched June validation.",
+  "next_if_fail": "Keep the causal contract and redesign candidate/entry learning; do not return to retroactive references."
+}
