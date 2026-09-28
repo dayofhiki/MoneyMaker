@@ -138,9 +138,16 @@ def apply_exit_rule(
         entry_t = int(raw["entry_t"])
         entry_price = float(raw["entry_price"])
         running_high = entry_price
-        chosen_t, chosen_price = path[-1]
-        reason = "terminal_cap"
+        deadline = min(
+            int(raw["hot_t"]) + RISK_CAP_MINUTES * 60_000,
+            entry_t + int(max_hold_minutes) * 60_000,
+        )
+        chosen_t, chosen_price = None, None
+        reason = "missing_deadline_state"
         for state_t, price in path:
+            # A missing deadline cannot be settled at an earlier/later price.
+            if int(state_t) > deadline:
+                break
             running_high = max(running_high, float(price))
             ret = _base_return(entry_price, float(price))
             drawdown = (
@@ -157,10 +164,23 @@ def apply_exit_rule(
                 chosen_t, chosen_price = int(state_t), float(price)
                 reason = "trailing_stop"
                 break
-            if elapsed >= int(max_hold_minutes):
+            if int(state_t) == deadline:
                 chosen_t, chosen_price = int(state_t), float(price)
-                reason = "max_hold"
+                reason = (
+                    "max_hold" if elapsed >= int(max_hold_minutes)
+                    else "terminal_cap"
+                )
                 break
+        if chosen_t is None:
+            rows.append({
+                **base,
+                "resolved": False,
+                "economic_return_pct": np.nan,
+                "trade_return_pct": np.nan,
+                "exit_t": None,
+                "exit_reason": reason,
+            })
+            continue
         trade_return = _base_return(entry_price, chosen_price)
         rows.append(
             {
