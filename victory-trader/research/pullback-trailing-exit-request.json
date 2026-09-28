@@ -1,0 +1,51 @@
+{
+  "request_id": 273,
+  "operation": "causal_pullback_trailing_exit",
+  "parent_requests": [263,266,272],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The first causal post-HOT entry is structurally poor, while a fixed 2% pullback materially improves entry quality and retains a positive best-exit ceiling. A simple causal risk/trailing exit may capture enough of that ceiling to become a useful downstream teacher.",
+  "candidate_train_fraction": 0.20,
+  "candidate_test_fraction": 0.05,
+  "entry_rule": "first causal state within 10 clock minutes that is at least 2% below the running post-HOT high; otherwise cash",
+  "position_cap": "30 clock minutes after HOT",
+  "rule_fit_days": ["2026-05-05","2026-05-06","2026-05-07"],
+  "rule_check_day": "2026-05-08",
+  "development_test_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "hard_stop_loss_pct": [-1.5,-2.5,-4.0],
+  "trailing_drawdown_pct": [1.0,2.0,3.0],
+  "max_hold_minutes": [5,10,20,30],
+  "exit_rule": "After pullback entry, EXIT at the first observed causal state where return from entry <= hard stop, drawdown from running post-entry high <= -trail, or elapsed time >= max hold; otherwise terminal exit.",
+  "fit_selection_gate": {
+    "min_entries": 25,
+    "min_resolution_or_cash_rate": 0.95,
+    "min_candidate_mean_gain_vs_first_exit_pct": 0.10,
+    "max_trade_severe_loss_rate_le_minus2": 0.25,
+    "min_positive_candidate_mean_days": 2
+  },
+  "check_day_gate": {
+    "min_resolution_or_cash_rate": 0.95,
+    "mean_gain_vs_first_exit_must_be_nonnegative": true,
+    "max_trade_severe_loss_rate_le_minus2": 0.25
+  },
+  "test_gate": {
+    "min_entries": 20,
+    "min_resolution_or_cash_rate": 0.95,
+    "candidate_mean_must_be_positive": true,
+    "day_balanced_candidate_mean_must_be_positive": true,
+    "min_positive_candidate_mean_days": 5,
+    "min_trade_positive_rate": 0.40,
+    "max_trade_severe_loss_rate_le_minus2": 0.15,
+    "min_candidate_mean_gain_vs_first_exit_pct": 0.10
+  },
+  "forbidden": [
+    "using May8 or May11-20 to select the exit rule",
+    "changing the 2% pullback entry after seeing results",
+    "using future-best exit as a deployed rule",
+    "opening June15-19",
+    "using retroactive minute opens"
+  ],
+  "next_if_pass": "Use the pullback+trailing policy as the downstream teacher for causal learned ENTER/WAIT and HOLD/EXIT.",
+  "next_if_fail": "Revisit candidate admission and pullback-state admission jointly; the simple exit family does not capture the causal ceiling."
+}
