@@ -1,5 +1,35 @@
 {
-  "request_id": 100,
-  "operation": "expanded_history_dual_horizon_patience_override_v42",
-  "note": "Preregistered v4.2 after v4.1 failed to beat v3.8. Preserve v3.8 short-horizon controller; when v3.8 would EXIT, use an honest Calibration-B override model with exactly two inputs: v3.7 short HOLD probability and v3.9 predicted excess remaining-option value. Override grants one minute only, then re-evaluate. Freeze costs, thresholds, lags and 30m cap. Report monthly and chained Jan-Mar synthetic account balances. April+ sealed."
+  "request_id": 291,
+  "operation": "module",
+  "module": "victory_trader.hierarchical_crack_entry_controller",
+  "pytest": [
+    "tests/test_hierarchical_crack_entry_controller.py"
+  ],
+  "dependencies": [
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36251239308,
+      "name": "moneymaker-economic-full-hot-admission-233",
+      "path": "prepared/request233"
+    },
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36001945920,
+      "name": "request163-opportunity-prepared",
+      "path": "prepared/opportunity"
+    }
+  ],
+  "args": [
+    "--first-hot",
+    "prepared/request233/request233-full-hot-states.parquet",
+    "--opportunity-scan",
+    "prepared/opportunity/opportunity-scan.parquet",
+    "--output",
+    "artifacts/request291.json",
+    "--setup-output",
+    "artifacts/request291-setup-oof.parquet",
+    "--entry-output",
+    "artifacts/request291-entry-oof.parquet"
+  ],
+  "note": "Full first-HOT crack setup selection followed by event-driven active-second entry timing. First 2% pullback is baseline only. May5-8 development crossfit only."
 }
