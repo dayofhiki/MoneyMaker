@@ -34,7 +34,6 @@ from .hierarchical_crack_entry_controller import (
     EVENT_FEATURES,
     EXPLOSIVE_LEVELS,
     MAX_ACTIVE_STATES,
-    MINUTE_MS,
     SECOND_MS,
     _event_features,
     _fit,
