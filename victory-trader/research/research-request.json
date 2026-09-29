@@ -1,11 +1,17 @@
 {
-  "request_id": 291,
+  "request_id": 292,
   "operation": "module",
-  "module": "victory_trader.hierarchical_crack_entry_controller",
+  "module": "victory_trader.fixed_horizon_fitted_entry",
   "pytest": [
-    "tests/test_hierarchical_crack_entry_controller.py"
+    "tests/test_fixed_horizon_fitted_entry.py"
   ],
   "dependencies": [
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36591422686,
+      "name": "moneymaker-research-request-291",
+      "path": "prepared/request291"
+    },
     {
       "repo": "dayofhiki/MoneyMaker",
       "run_id": 36251239308,
@@ -20,16 +26,18 @@
     }
   ],
   "args": [
+    "--setup-oof",
+    "prepared/request291/request291-setup-oof.parquet",
     "--first-hot",
     "prepared/request233/request233-full-hot-states.parquet",
     "--opportunity-scan",
     "prepared/opportunity/opportunity-scan.parquet",
     "--output",
-    "artifacts/request291.json",
-    "--setup-output",
-    "artifacts/request291-setup-oof.parquet",
-    "--entry-output",
-    "artifacts/request291-entry-oof.parquet"
+    "artifacts/request292.json",
+    "--state-output",
+    "artifacts/request292-state-oof.parquet",
+    "--decision-output",
+    "artifacts/request292-decisions.parquet"
   ],
-  "note": "Full first-HOT crack setup selection followed by event-driven active-second entry timing. First 2% pullback is baseline only. May5-8 development crossfit only."
+  "note": "Freeze Request291 crack selection. Fix entry only: HOT+60m common terminal, fitted next-state WAIT value, nested action-margin calibration, and ENTER/WAIT/SKIP."
 }
