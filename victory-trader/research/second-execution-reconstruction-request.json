@@ -1,0 +1,44 @@
+{
+  "request_id": 244,
+  "operation": "second_aggregate_execution_reconstruction",
+  "parent_requests": [243],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "A large fraction of Request243's unresolved trades is an artifact of sparse minute next-open references. Replaying the already-chosen policy decisions against actually observed historical one-second aggregate opens, with a predeclared expiry and deadline, should materially reduce unresolved execution without changing the policy.",
+  "population": "Request243 May11-20 locked calibration episodes only; policy is refit exactly from the same Apr30-May8 chronological training blocks.",
+  "policy_change": "none",
+  "execution_contract": {
+    "source": "Massive historical one-second aggregates, already verified available under current entitlement",
+    "decision_feature_use": "none; second bars are execution labels only and are fetched after policy actions are frozen",
+    "entry_order": "first observed positive one-second open at or after policy ENTER decision plus latency",
+    "exit_order": "first observed positive one-second open at or after policy EXIT decision plus latency",
+    "missing_policy_exit": "use Request243's precommitted hot_t + 29 minute liquidation deadline, never hindsight last row",
+    "order_expiry_ms": 5000,
+    "latency_ms": [0, 1000, 2000, 5000],
+    "missing_observed_open": "unresolved, never cash and never a favorable later price",
+    "costs": ["base", "stress"]
+  },
+  "primary_latency_ms": 1000,
+  "structural_gate": {
+    "min_entry_fill_coverage": 0.90,
+    "min_exit_fill_coverage_conditional_on_entry": 0.90,
+    "min_resolution_rate": 0.80,
+    "min_resolution_uplift_vs_request243": 0.20
+  },
+  "forbidden": [
+    "changing Request243 ENTER/WAIT/HOLD/EXIT actions",
+    "using one-second future data as decision features",
+    "choosing a favorable fill within the expiry window",
+    "using a hindsight last observed row as liquidation",
+    "opening June or any new holdout because of this result",
+    "claiming synthetic one-second aggregate opens are actual broker fills",
+    "claiming profitability or promotion from this diagnostic"
+  ],
+  "next_if_pass": "Request245 should audit ENTER-now versus WAIT continuation values under the same frozen policy using reconstructed execution, strictly chronological out-of-sample blocks.",
+  "next_if_fail": "Keep the action-value experiment frozen and repair execution observability or the order contract before another policy-learning experiment.",
+  "input_runs": {
+    "request171": 36033120106,
+    "request243": 36259470906
+  }
+}

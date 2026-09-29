@@ -1,0 +1,30 @@
+{
+  "request_id": 266,
+  "operation": "causal_exit_opportunity_ceiling",
+  "parent_request": 265,
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request265's causal opportunity ceiling may be negative because the fixed 1st/2nd/3rd/5th-state exit contract forces exits too early. A diagnostic best-later-exit ceiling can distinguish weak candidates from a weak exit contract.",
+  "population": "May11-20 full validated-attention first-HOT causal episodes",
+  "entry_window_minutes": 10,
+  "exit_window_minutes_after_hot": 30,
+  "diagnostics": {
+    "first_entry_best_exit": "first causal entry state, hindsight best later causal exit within risk cap",
+    "pullback_2_best_exit": "first >=2% causal pullback entry, hindsight best later causal exit",
+    "joint_entry_exit_oracle": "hindsight best entry in first 10m and best later exit within 30m",
+    "fixed_exit_oracle": "Request265 diagnostic best entry under fixed 1/2/3/5-state value"
+  },
+  "candidate_slice": "also evaluate frozen Apr30-May4 candidate classifier top 20% on May11-20",
+  "forbidden": [
+    "treating any oracle as deployable policy",
+    "retroactive execution prices",
+    "opening June15-19",
+    "using oracle outcomes to tune a threshold"
+  ],
+  "diagnosis": {
+    "dynamic_oracle_positive_fixed_oracle_negative": "Exit contract is a major bottleneck; next learn causal HOLD/EXIT.",
+    "dynamic_oracle_still_negative": "Attention population lacks sufficient causal price expansion; improve candidate/attention target.",
+    "top20_dynamic_oracle_strong": "Candidate ranking is useful and dynamic position management is the next research axis."
+  }
+}

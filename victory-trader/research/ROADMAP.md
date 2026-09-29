@@ -846,3 +846,18 @@ The goal is not to discover a backtest that happened to make money.
 Success means building a trader that, using only information genuinely available at each moment, can continuously observe the market, move its attention to developing opportunities, decide when not to trade, enter selectively, adapt its holding duration and exit to evolving conditions, account for realistic execution, and demonstrate repeatable positive economic value on genuinely unseen future periods.
 
 That criterion is the North Star for future MoneyMaker research.
+
+## 2026-09-26 update — Request 214
+
+Request213's supply filter failed: 85 resolved trades averaged -1.4570% BASE,
+versus -1.1886% for the 169 Request208 timing trades. Request214 replaces the
+hindsight-best admission target with executable ENTER-now return and jointly
+requires positive value plus causal transition timing on every observation.
+It removes the mandatory minute-5 purchase and records missing outcomes
+separately from deliberate cash decisions. It produced zero entries on the
+opened five-day development block and **is not promoted**. Request208 also
+leaves 54/223 episodes unresolved; full-opportunity returns must not silently
+zero-fill those observations. See `request214-findings.md` and
+`results/request214.json`. The next boundary is complete event-time observation
+and executable policy-consistent entry/holding labels, not tuning a threshold
+to revive trading on this retired development sample.

@@ -1,0 +1,74 @@
+{
+  "request_id": 217,
+  "operation": "recent_path_position_ranking",
+  "parent_requests": [216],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request216 failed because current-state features do not encode the recent path shape well enough. Causal recent-path features plus a within-day rank-oriented learning objective can recover transferable ordering of next-executable-event HOLD value.",
+  "frozen": [
+    "Request208 causal entry selection",
+    "Request216 event-time POSITION replay",
+    "Request216 BASE next-executable-event HOLD-advantage label",
+    "Request216 current-state feature family",
+    "HistGradientBoosting model capacity",
+    "Request178 development dates",
+    "no absolute HOLD threshold or recurrent policy replay in this experiment"
+  ],
+  "candidate_representation": {
+    "sources": [
+      "entry_to_current_close_pct",
+      "drawdown_from_peak_pct",
+      "recovery_from_trough_pct",
+      "attention_score",
+      "attention_rank",
+      "log_minute_volume",
+      "log_minute_transactions",
+      "active_seconds_60",
+      "sec_last5_return_pct",
+      "sec_last10_return_pct",
+      "sec_close_vs_vwap_pct",
+      "sec_volume_burst_5",
+      "sec_transactions_burst_5"
+    ],
+    "path_features": [
+      "last-observation delta",
+      "3-observation time-aware slope",
+      "5-observation time-aware slope",
+      "3-observation standard deviation",
+      "5-observation standard deviation",
+      "3-observation range",
+      "5-observation range"
+    ],
+    "causality": "Only current and prior observed POSITION states are allowed. No next-event timestamp, next-event price, future gap, best future price or future horizon enters the feature set."
+  },
+  "rank_target": "Within each training trading day, percentile rank of realized next-executable-event BASE HOLD advantage. The target changes the learning emphasis from exact return magnitude to relative ordering.",
+  "comparators": [
+    "Request216 expected-value score using current-state/event-time features",
+    "same rank objective with current-state/event-time features only"
+  ],
+  "gate": {
+    "min_candidate_spearman": 0.05,
+    "min_spearman_gain_vs_current_state_rank": 0.03,
+    "min_good_days": 3,
+    "top10_day_balanced_advantage_positive": true,
+    "top20_day_balanced_advantage_positive": true,
+    "min_top10_positive_rate_gain": 0.05,
+    "same_age_median_spearman_positive": true
+  },
+  "good_day_definition": "Daily Spearman > 0 and the top 10% of candidate scores have positive mean realized HOLD advantage.",
+  "forbidden": [
+    "threshold tuning on June 23/24/25/26/29",
+    "using fresh outcomes to choose path windows or sources",
+    "using future observation timing as a feature",
+    "opening new market dates",
+    "claiming a profitable trading policy from a ranking-only result"
+  ],
+  "next_if_pass": "Use fit/calibration history only to map ranking into an absolute HOLD/EXIT value gate, then run a recurrent event-time trajectory experiment.",
+  "next_if_fail": "Stop hand-crafted path expansion and test a learned sequence representation over chronological observed-state histories.",
+  "input_runs": {
+    "rich_second": 36033120106,
+    "opportunity_scan": 36001945920,
+    "development_block": 36038233507
+  },
+  "request216_reference_run": 36176143276
+}

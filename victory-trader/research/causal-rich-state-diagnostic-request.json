@@ -1,0 +1,21 @@
+{
+  "request_id": 264,
+  "operation": "causal_rich_state_diagnostic",
+  "parent_requests": [257,263],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The Request263 causal target may still be predictable if current completed-second microstructure is added to the post-HOT state representation.",
+  "population": "causal-target top-20% train / top-5% May11-20 development-test candidates",
+  "target": "causal minute-open entry value under fixed 1st/2nd/3rd/5th later observed causal states",
+  "representations": ["baseline_path","minute","rich_minute_plus_completed_second"],
+  "gate": "reuse Request257 representation thresholds unchanged",
+  "forbidden": [
+    "retroactive shifted-row opens",
+    "future seconds as features",
+    "policy optimization in this request",
+    "opening June15-19"
+  ],
+  "next_if_pass": "Build the causal controller with the passing rich representation using May5-7 fit and May8 calibration.",
+  "next_if_fail": "Redesign the causal post-HOT representation/candidate state before more policy thresholding."
+}

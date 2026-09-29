@@ -1,0 +1,67 @@
+{
+  "request_id": 233,
+  "operation": "economic_full_first_hot_admission",
+  "parent_requests": [
+    163,
+    232
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "Request232 already contains useful tradability ranking information, but its classifier-only p75 admission admits relatively better yet still negative episodes. Requiring both frozen high positive probability and positive calibrated predicted persistent value should isolate an economically positive subset without changing the learner.",
+  "frozen": [
+    "Request232 event-time persistent-tradability target",
+    "Request232 first-HOT population and causal feature set",
+    "Request232 regressor and classifier families, capacities, seeds and fit days",
+    "Request232 calibration residual offset",
+    "Request232 classifier probability p75 threshold",
+    "Request232 calibration and June8-12 fresh dates",
+    "BASE cost accounting"
+  ],
+  "admission_rule": {
+    "probability": "tradability_positive_probability >= frozen Request232 calibration p75",
+    "value": "predicted_persistent_tradability_pct > 0",
+    "both_required": true,
+    "learned_new_model": false,
+    "threshold_search": false
+  },
+  "methodology": {
+    "calibration_first": true,
+    "fresh_evaluated_only_if_calibration_gate_passes": true,
+    "fresh_used_to_choose_rule": false,
+    "target_coverage_is_not_redefined": "Request232 coverage remains a separate promotion blocker"
+  },
+  "calibration_gate": {
+    "min_selected_rows": 40,
+    "min_selected_rate": 0.03,
+    "max_selected_rate": 0.25,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_selected_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_positive_selected_mean_days": 5,
+    "min_mean_gain_vs_request232_pct": 0.25
+  },
+  "fresh_gate": {
+    "min_selected_rows": 40,
+    "min_selected_rate": 0.03,
+    "max_selected_rate": 0.25,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_selected_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_positive_selected_mean_days": 4,
+    "min_mean_gain_vs_request232_pct": 0.25
+  },
+  "forbidden": [
+    "searching or tuning the zero value boundary after seeing fresh results",
+    "lowering Request232 support rules",
+    "opening new dates",
+    "calling a positive persistent-tradability diagnostic a profitable executable trading policy",
+    "ignoring unresolved target coverage"
+  ],
+  "next_if_pass": "Freeze economic HOT admission and train a new causal ENTER-vs-WAIT timing controller only inside economically admitted episodes. Keep target coverage as a separate promotion blocker.",
+  "next_if_fail_calibration": "The Request232 score is rank-useful but its zero boundary is not economically calibrated. Fit a calibration-only monotonic map from frozen score to persistent economic value before changing representation.",
+  "next_if_fail_fresh": "The zero boundary is not stable out of sample. Test calibration-only monotonic or market-conditioned economic mapping while keeping the underlying Request232 learner frozen.",
+  "input_runs": {
+    "request163": 36001945920,
+    "request232": 36249380599
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "request_id": 229,
+  "operation": "selected_hot_downstream_tradability_admission",
+  "parent_requests": [227, 228],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "population": "Only frozen upstream BUY-anchor episodes. Previously rejected HOT promotions remain closed in this request.",
+  "hypothesis": "The first WATCH checkpoint is too late and too local. Causal market-wide and ticker context at the HOT anchor may better identify which selected HOT episodes will develop a persistent, practically usable entry window. Once admitted, Request227's relative ENTER-vs-WAIT timing should choose the entry.",
+  "tradability_target": {
+    "definition": "Best mean Request227 multi-event continuation value across any two consecutive WATCH checkpoints from minutes 1 through 5.",
+    "reason": "Require a persistent entry window rather than a single hindsight spike.",
+    "hindsight_best_executable_price_used": false,
+    "future_information_used_as_input": false
+  },
+  "hot_input_information": [
+    "ticker attention score and cross-sectional rank",
+    "return from previous close",
+    "minute body/range",
+    "minute volume and transactions",
+    "one-minute return acceleration and activity ratios",
+    "cross-sectional return/volume/transaction ranks",
+    "market positive breadth",
+    "market >=5% and >=10% runner breadth",
+    "market median return, volume and transaction activity",
+    "current price and session clock"
+  ],
+  "runtime_policy": {
+    "hot_admit_if": "calibrated predicted persistent tradability value > 0",
+    "within_admitted_episode": "Use Request227 relative ENTER-vs-WAIT model only. ENTER at first nonnegative predicted advantage; otherwise WAIT through minute 5 then ABSTAIN.",
+    "request227_absolute_value_head_used": false,
+    "fresh_threshold_tuning": false
+  },
+  "economic_comparator": {
+    "baseline": "Request208 recurrent entry timing over the same frozen BUY-anchor episodes",
+    "candidate": "Request229 HOT tradability admission plus Request227 relative timing",
+    "outcome_for_both": "fixed three-minute BASE return after selected entry, cash zero when no trade"
+  },
+  "gate": {
+    "min_hot_context_coverage": 0.90,
+    "min_fresh_tradability_spearman": 0.08,
+    "min_fresh_tradability_positive_auc": 0.60,
+    "min_admission_rate": 0.10,
+    "max_admission_rate": 0.70,
+    "min_admitted_actual_positive_rate": 0.55,
+    "min_relative_timing_spearman_within_admitted": 0.05,
+    "min_execution_rate": 0.10,
+    "max_execution_rate": 0.80,
+    "min_trades": 30,
+    "trade_mean_must_be_positive": true,
+    "portfolio_day_balanced_mean_must_be_positive": true,
+    "candidate_must_beat_request208": true,
+    "matched_bootstrap_ci_low_must_be_positive": true,
+    "min_improved_days": 4,
+    "severe_loss_rate_no_worse_than_request208": true
+  },
+  "forbidden": [
+    "using WATCH/post-HOT observations as HOT admission inputs",
+    "changing the two-consecutive-checkpoint target after seeing Request178",
+    "opening new dates",
+    "reopening previously rejected HOT promotions in this diagnostic",
+    "fresh threshold tuning",
+    "claiming success as complete strategy validation"
+  ],
+  "next_if_pass": "Freeze selected-HOT tradability admission, rebuild the full HOT promotion population, and test the same target before the old BUY gate.",
+  "next_if_fail": "Test second-scale HOT microstructure as the missing admission information; if that also fails, separate runner discovery from tradability selection more fundamentally.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "opportunity_scan": 36001945920,
+    "development_block": 36038233507,
+    "request228_reference": 36241726385
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "request_id": 275,
+  "parent_request": 274,
+  "operation": "joint_candidate_pullback_state_admission",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The failed fixed pullback policy mixes recoverable pullbacks with genuine deterioration. A causal admission model using the pre-HOT candidate state and the observed path through the first 2% pullback can reject bad states while keeping a positive subset.",
+  "fit_days": ["2026-05-05", "2026-05-06", "2026-05-07"],
+  "calibration_day": "2026-05-08",
+  "development_test_days": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20"],
+  "population": "all scored full-HOT candidates on already-opened dates; no candidate-probability prefilter",
+  "entry_trigger": "first causal state within 10 clock minutes that is at least 2% below the running post-HOT high",
+  "fixed_downstream_policy": {
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10,
+    "missing_exact_deadline": "unresolved"
+  },
+  "model_inputs": [
+    "existing causal pre-HOT candidate features",
+    "candidate probability from the frozen earlier-day candidate model",
+    "causal post-HOT open-price path features observed only through the pullback trigger"
+  ],
+  "targets": "realized return and positive-return class under the one frozen downstream policy; never future-best value",
+  "admission_fraction_grid_on_may8": [0.05, 0.10, 0.20, 0.30, 0.40],
+  "development_rule": "May11-20 is evaluated only if one May8 admission gate passes; the selected numerical threshold is frozen.",
+  "forbidden": [
+    "future-best entry or exit labels",
+    "candidate-probability prefilter before joint admission learning",
+    "using May11-20 to choose the admission threshold",
+    "opening June15-19",
+    "using one-second data in this clean causal diagnostic",
+    "settling missing deadlines at earlier or later prices"
+  ],
+  "next_if_pass": "Learn recurrent ENTER/WAIT and then HOLD/EXIT around the admitted pullback state.",
+  "next_if_fail": "Add causal completed-minute state features or redesign the pullback trigger without tuning on June15-19."
+}

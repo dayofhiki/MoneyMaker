@@ -1,0 +1,41 @@
+{
+  "request_id": 261,
+  "operation": "calibrated_execution_admission",
+  "parent_request": 260,
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request260's execution-support model has useful discrimination but the inherited 0.60 threshold admits too few states. Training the support model on all causal post-HOT states and selecting the threshold only on May8 can improve usable coverage without consulting May11-20 outcomes.",
+  "execution_model_fit_days": ["2026-05-05","2026-05-06","2026-05-07"],
+  "execution_threshold_calibration_day": "2026-05-08",
+  "threshold_candidates": [0.20,0.30,0.40,0.50,0.60,0.70,0.80],
+  "threshold_gate": {
+    "min_admitted_rows": 15,
+    "min_precision": 0.55,
+    "min_recall": 0.25,
+    "min_admitted_rate": 0.05,
+    "max_admitted_rate": 0.40
+  },
+  "selection": "Among passing May8 thresholds choose the one with highest recall; ties prefer higher precision, then higher threshold.",
+  "economic_policy": "Request258 unchanged",
+  "execution_features": "causal post-HOT path, minute dynamics, and completed-second activity",
+  "test_population": "May11-20 top-5% candidate pullback states",
+  "gate": {
+    "threshold_calibration_must_pass": true,
+    "min_test_execution_auc": 0.65,
+    "min_entries": 10,
+    "minute_policy_mean_must_be_positive": true,
+    "min_minute_gain_vs_fixed_2pct_pullback_pct": 0.10,
+    "min_second_entry_reference_coverage": 0.60,
+    "min_second_full_trade_resolution": 0.30,
+    "second_resolved_mean_must_be_positive": true,
+    "max_second_resolved_severe_loss_rate_le_minus2": 0.15
+  },
+  "forbidden": [
+    "using May11-20 outcomes to choose the execution threshold",
+    "changing Request258 economic thresholds",
+    "using future seconds as features",
+    "opening June15-19",
+    "claiming aggregate references are brokerage fills"
+  ]
+}

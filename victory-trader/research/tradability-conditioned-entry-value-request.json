@@ -1,0 +1,61 @@
+{
+  "request_id": 246,
+  "operation": "tradability_conditioned_entry_wait_value",
+  "parent_requests": [243, 244, 245],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "After Request245 makes execution observability largely predictable, the remaining loss comes from ENTER versus WAIT timing. Inside the frozen causally tradable population, a chronological value model should learn whether entering now is better than waiting for the next admitted WATCH state under one fixed downstream HOLD/EXIT teacher.",
+  "admission": {
+    "model_training_days": ["2026-04-30", "2026-05-01", "2026-05-04"],
+    "threshold": 0.60,
+    "threshold_source": "Request245 preregistered May5-8 threshold calibration; frozen before Request246 scoring",
+    "label_contract": "same Request245 immediate plus continuation tradability label",
+    "features": "causal only"
+  },
+  "downstream_teacher": {
+    "source": "Request243 earlier teacher trained only on Apr30-May4",
+    "use": "HOLD/EXIT actions only",
+    "frozen_on_value_training_and_test": true,
+    "no_student_hold_policy": true
+  },
+  "entry_value_training_days": ["2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08"],
+  "test_days": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20"],
+  "targets": {
+    "enter_value": "BASE return from entering at this admitted state and following the frozen teacher HOLD/EXIT sequence under the Request244 one-second execution contract",
+    "wait_value": "BASE return from skipping this state, entering at the next admitted WATCH state if one exists, then following the same frozen teacher HOLD/EXIT sequence; cash=0 only when no later admitted state exists",
+    "missing_execution": "unknown, never zero",
+    "future_best_search": false
+  },
+  "decision_rule": "At an admitted state ENTER iff predicted enter_value > 0 and predicted enter_value >= predicted wait_value; otherwise WAIT and reconsider at the next observed WATCH state. Non-admitted states automatically WAIT.",
+  "execution": {
+    "latency_ms": 1000,
+    "order_expiry_ms": 5000,
+    "missing_exit": "precommitted hot_t + 29 minute deadline",
+    "cost_scenario": "BASE primary, STRESS reported"
+  },
+  "baselines": [
+    "first admitted state under the same frozen downstream HOLD/EXIT teacher",
+    "cash"
+  ],
+  "gate": {
+    "min_enter_target_rows": 150,
+    "min_wait_target_rows": 150,
+    "min_learned_entries": 20,
+    "min_entry_fill_coverage": 0.70,
+    "min_closed_resolution_rate": 0.50,
+    "closed_base_mean_must_beat_first_admitted": true,
+    "closed_base_mean_must_be_positive": true,
+    "closed_positive_rate_min": 0.50
+  },
+  "forbidden": [
+    "changing the Request245 admission threshold after reading May11-20",
+    "using May11-20 to fit or tune entry-value models",
+    "using a best-future-state or max-future-return label",
+    "changing the frozen downstream HOLD/EXIT teacher",
+    "opening June or any new holdout",
+    "claiming promotion or live readiness from this development experiment"
+  ],
+  "next_if_pass": "Request247 should replace the weak frozen HOLD/EXIT teacher with a tradability-aware position-value learner, then join entry and position control.",
+  "next_if_fail": "Audit whether the causal state can rank positive versus negative economic opportunity inside the tradable set before another controller iteration."
+}

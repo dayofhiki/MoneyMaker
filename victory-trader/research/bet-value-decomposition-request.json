@@ -1,0 +1,39 @@
+{
+  "request_id": 287,
+  "parent_request": 286,
+  "operation": "payoff_decomposed_bet_value_at_original_pullback",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "A skilled momentum trader need not classify every trade correctly. A causal score that prices both upside magnitude and downside magnitude can identify better bets even when winner classification is imperfect.",
+  "crossfit_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07",
+    "2026-05-08"
+  ],
+  "population": "first causal 2% pullback states, evaluated inside the outer-fold stage1 top-20 shortlist",
+  "bet_value": {
+    "formula": "P(win)*E[gain|win] - (1-P(win))*E[loss|non-win]",
+    "action": "ENTER when predicted EV > 0, otherwise CASH",
+    "position_size": "not changed in Request287; first validate ordering and sign"
+  },
+  "representation": "Request286 causal pullback representation plus completed-second features and causal stage1 predicted value/margin",
+  "fixed_policy": {
+    "entry": "original first causal 2% pullback",
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10,
+    "missing_exact_deadline": "unresolved"
+  },
+  "success_question": "Do higher predicted bet values correspond to higher realized returns, and does EV>0 improve realized economics without requiring perfect winner classification?",
+  "forbidden": [
+    "post-decision features",
+    "best-future wait selection",
+    "new trading dates",
+    "threshold tuning on held-out labels",
+    "position sizing before bet-value ordering is validated",
+    "opening May11-20",
+    "opening June15-19"
+  ]
+}

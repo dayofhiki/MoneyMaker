@@ -1,0 +1,62 @@
+{
+  "request_id": 220,
+  "operation": "entry_conditioned_rich_second_option_value",
+  "parent_requests": [171, 219],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "The Request219 multi-event target is directionally better, but remaining opportunity is not reliably ranked because POSITION state lacks sufficiently entry-conditioned microstructure. Full causal one-second features plus their change from the entry observation should improve transfer.",
+  "frozen": [
+    "Request208 causal entry selection",
+    "Request216 event-time POSITION replay",
+    "Request219 five-executable-event remaining-option upper-bound target",
+    "Request219 target horizon of five actual observations",
+    "Request178 development dates",
+    "30-minute risk cap",
+    "Request219 MLP architecture and seed",
+    "no recurrent trading-policy replay in Request220"
+  ],
+  "information_intervention": {
+    "current_microstructure": "Full Request171 20-feature one-second family, recomputed causally on the Request178 POSITION states.",
+    "entry_conditioning": "For every rich-second feature, add current value minus the same feature at the first observed POSITION state after entry.",
+    "future_information_used": false
+  },
+  "comparators": [
+    "Request219-style current state only",
+    "current state plus full rich-second features",
+    "current state plus full rich-second features plus entry-conditioned deltas"
+  ],
+  "candidate_selection": {
+    "data": "calibration only",
+    "eligible_candidates": [
+      "rich_current",
+      "entry_conditioned"
+    ],
+    "metric": "Spearman with Request219 five-event option value",
+    "fresh_block_used_for_selection": false
+  },
+  "gate": {
+    "min_fresh_rich_second_coverage": 0.85,
+    "min_calibration_spearman_gain_vs_baseline": 0.015,
+    "min_fresh_spearman": 0.05,
+    "min_fresh_spearman_gain_vs_baseline": 0.02,
+    "min_good_days": 3,
+    "min_top10_day_balanced_option_value_lift_pct": 0.30,
+    "min_top10_day_balanced_positive_rate_lift": 0.03,
+    "min_same_age_median_spearman": 0.03
+  },
+  "forbidden": [
+    "changing the Request219 target or five-event horizon after seeing Request178 results",
+    "tuning the rich-second feature family after seeing Request178 results",
+    "using future bars or future observation timing as model input",
+    "opening new dates",
+    "claiming a deployable exit policy from the hindsight option-value label"
+  ],
+  "next_if_pass": "Freeze the entry-conditioned rich-second state and replace the hindsight maximum with a causal fitted continuation-value recursion before replaying recurrent HOLD/EXIT trajectories.",
+  "next_if_fail": "Do not add more indicator families. Test whether information is concentrated specifically around entry, pullback, and re-acceleration transition events rather than uniformly across every POSITION observation.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "opportunity_scan": 36001945920,
+    "development_block": 36038233507,
+    "request219_reference": 36234765157
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "request_id": 290,
+  "parent_request": 289,
+  "development_only": true,
+  "promotion_eligible": false,
+  "opens_new_dates": false,
+  "crossfit_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07",
+    "2026-05-08"
+  ],
+  "goals": [
+    "learn continuous 60-minute explosive upside from the original causal pullback state",
+    "measure incremental information from completed one-second context",
+    "learn a recurrent ENTER-versus-WAIT-5s value signal",
+    "test whether repeated five-second rechecks improve entry price without reducing future upside"
+  ],
+  "entry_anchor": "first causal 2% pullback only; not treated as the final entry rule",
+  "recheck_seconds": [0, 5, 10, 15, 20, 25, 30],
+  "max_wait_seconds": 30,
+  "primary_crack_target": "max future one-second close return over 60 minutes",
+  "future_data_are_labels_only": true,
+  "forbidden": [
+    "selecting the best wait duration per episode for the learned policy",
+    "using any post-decision second as a feature",
+    "opening May11-20",
+    "opening June15-19",
+    "tuning the frozen exit policy in this request"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "request_id": 240,
+  "operation": "continuation_availability_head",
+  "parent_requests": [
+    232,
+    239
+  ],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The persistent 38% unresolved Request232/239 population may represent a distinct continuation/executability risk. Predicting whether at least two WATCH opportunities will remain evaluable should be treated separately from conditional economic value.",
+  "label": {
+    "continuation_available": "at least two non-null Request232 WATCH multi-event values",
+    "coverage": 1,
+    "missing_returns_are_not_zero": true
+  },
+  "gate": {
+    "min_auc": 0.7,
+    "min_auc_gain_vs_runner": 0.05,
+    "min_selected_availability_rate": 0.8,
+    "min_positive_auc_days": 4
+  },
+  "forbidden": [
+    "assigning missing returns a cash-zero economic value",
+    "claiming availability alone implies profitable trading",
+    "opening new dates"
+  ],
+  "next_if_pass": "Freeze continuation availability head and combine it with opportunity value in a new causal entry-timing experiment.",
+  "next_if_fail": "Inspect raw liquidity/executability features before timing.",
+  "input_run": 36251239308
+}

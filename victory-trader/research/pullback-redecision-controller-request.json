@@ -1,0 +1,62 @@
+{
+  "request_id": 222,
+  "operation": "pullback_onset_redecision_action_value",
+  "parent_requests": [219, 220, 221],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "hypothesis": "The transferable signal found by Request221 at pullback onset can support a concrete local action decision: exit now versus wait briefly for a causal reacceleration/redecision event.",
+  "frozen": [
+    "Request208 causal entry selection",
+    "Request216 event-time POSITION replay",
+    "Request220 entry-conditioned information set",
+    "Request221 pullback_onset causal phase definition",
+    "Request178 development dates",
+    "30-minute risk cap",
+    "MLP hidden layers [64,32]",
+    "no full recurrent trade replay in Request222"
+  ],
+  "action_template": {
+    "scope": "pullback_onset states only",
+    "exit_now": "Take the current BASE executable exit value.",
+    "wait": "Continue for at most three actually observed events. Stop the local option step at the first causal reacceleration event; if no reacceleration appears, exit at the third observed event.",
+    "max_wait_events": 3,
+    "reacceleration_is_a_redecision_point": true,
+    "future_information_used_as_input": false
+  },
+  "target": {
+    "name": "pullback_wait_advantage_pct",
+    "definition": "BASE value at the deterministic reacceleration/redecision or three-event timeout state minus BASE EXIT-now at pullback onset.",
+    "hindsight_best_price_used": false
+  },
+  "comparators": [
+    "current-state feature model trained directly on pullback wait advantage",
+    "entry-conditioned feature model trained directly on pullback wait advantage"
+  ],
+  "gate": {
+    "min_target_coverage": 0.70,
+    "min_candidate_spearman": 0.05,
+    "min_spearman_gain_vs_current_state": 0.02,
+    "min_wait_rate": 0.10,
+    "max_wait_rate": 0.80,
+    "selected_wait_advantage_must_be_positive": true,
+    "policy_day_balanced_uplift_must_be_positive": true,
+    "policy_must_beat_current_state_baseline": true,
+    "policy_bootstrap_ci_low_must_be_positive": true,
+    "min_good_days": 3
+  },
+  "forbidden": [
+    "changing the three-event wait horizon after seeing Request178 results",
+    "changing pullback/reacceleration definitions after seeing Request178 results",
+    "adding new indicator families",
+    "using future events as model input",
+    "opening new dates",
+    "treating the reacceleration mark as a final full-trade exit policy"
+  ],
+  "next_if_pass": "Integrate this pullback decision as a recurrent event-time controller node and hand control to a continuation/exit value model at reacceleration.",
+  "next_if_fail": "Audit pullback duration/depth and learn the redecision hazard rather than forcing a fixed three-event timeout.",
+  "input_runs": {
+    "rich_second_fit_calibration": 36033120106,
+    "opportunity_scan": 36001945920,
+    "request221_fresh_states": 36237423860
+  }
+}

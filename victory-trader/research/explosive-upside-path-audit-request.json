@@ -1,0 +1,31 @@
+{
+  "request_id": 289,
+  "parent_request": 287,
+  "operation": "explosive_upside_path_audit",
+  "development_only": true,
+  "promotion_eligible": false,
+  "opens_new_dates": false,
+  "crossfit_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07",
+    "2026-05-08"
+  ],
+  "question": "Does the current selector already find +5/+10/+20% future excursions, and if so does the frozen exit policy monetize them or leave before the explosion?",
+  "entry": "first causal 2% pullback",
+  "frozen_exit": {
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10
+  },
+  "future_diagnostic_horizons_minutes": [10, 20, 30, 60],
+  "explosive_thresholds_pct": [5, 10, 20],
+  "future_labels_only": true,
+  "forbidden": [
+    "using future excursion in any causal decision",
+    "changing the entry rule",
+    "changing the frozen exit rule in this request",
+    "opening May11-20",
+    "opening June15-19"
+  ]
+}

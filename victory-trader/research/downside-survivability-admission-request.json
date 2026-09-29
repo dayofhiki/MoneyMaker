@@ -1,0 +1,38 @@
+{
+  "request_id": 251,
+  "operation": "downside_survivability_admission",
+  "parent_requests": [249, 250],
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request249 ranks relative opportunity, while Request250 shows even the extreme tail remains economically unstable. A separate causal severe-loss head may identify candidates that are both relatively attractive and less likely to suffer a <= -2% fixed-policy loss.",
+  "population": "Request249 full validated-attention first-HOT population",
+  "target": "Request249 fixed_first_watch_value_pct",
+  "risk_label": "fixed_first_watch_value_pct <= -2.0",
+  "fit_days": ["2026-04-30","2026-05-01","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08"],
+  "calibration_days": ["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20"],
+  "score": {
+    "name": "risk_adjusted_opportunity",
+    "definition": "equal-weight percentile average of predicted fixed value, positive-return probability, and severe-loss survivability (1 - severe-loss probability)",
+    "future_information_as_feature": false
+  },
+  "predeclared_top_fractions": [0.02,0.05,0.10,0.15,0.20],
+  "gate": {
+    "min_severe_loss_auc": 0.58,
+    "min_selected_rows": 40,
+    "selected_mean_must_be_positive": true,
+    "day_balanced_mean_must_be_positive": true,
+    "min_selected_positive_rate": 0.35,
+    "min_positive_mean_days": 5,
+    "max_selected_severe_loss_rate_le_minus2": 0.15
+  },
+  "forbidden": [
+    "using June8-12 outcomes to fit or choose the risk head or fraction",
+    "changing Request249 fixed-policy target",
+    "adding future prices or future one-second bars as features",
+    "opening June15-19 unless the May calibration rule passes",
+    "claiming promotion or live readiness"
+  ],
+  "next_if_pass": "Freeze the risk-adjusted score family and largest passing calibration fraction, then open June15-19 as a genuinely new holdout.",
+  "next_if_fail": "Current first-HOT representation can rank relative opportunity but cannot isolate positive economics even with explicit downside risk; redesign upstream state representation before more entry/exit policy work."
+}

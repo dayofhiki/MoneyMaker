@@ -101,9 +101,11 @@ def _fit_regressor(
 def train_admission_model(
     fit: pd.DataFrame,
     calibration: pd.DataFrame,
+    *,
+    target_column: str = "episode_best_entry_3m_base_pct",
 ) -> HurdleAdmissionModel:
     target = pd.to_numeric(
-        fit["episode_best_entry_3m_base_pct"], errors="coerce"
+        fit[target_column], errors="coerce"
     )
     valid = target.notna()
     train = fit.loc[valid].copy()
@@ -152,7 +154,7 @@ def train_admission_model(
     )
 
     cal_target = pd.to_numeric(
-        calibration["episode_best_entry_3m_base_pct"], errors="coerce"
+        calibration[target_column], errors="coerce"
     )
     cal_valid = cal_target.notna()
     cal = calibration.loc[cal_valid].copy()
@@ -183,13 +185,13 @@ def train_admission_model(
     neg_raw = nonpositive.predict(_feature_frame(neg_cal, columns))
     positive_offset = float(
         pd.to_numeric(
-            pos_cal["episode_best_entry_3m_base_pct"], errors="coerce"
+            pos_cal[target_column], errors="coerce"
         ).mean()
         - float(np.mean(pos_raw))
     )
     nonpositive_offset = float(
         pd.to_numeric(
-            neg_cal["episode_best_entry_3m_base_pct"], errors="coerce"
+            neg_cal[target_column], errors="coerce"
         ).mean()
         - float(np.mean(neg_raw))
     )

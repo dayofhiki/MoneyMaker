@@ -1,0 +1,37 @@
+{
+  "request_id": 286,
+  "parent_request": 285,
+  "operation": "completed_second_context_at_original_pullback",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request285 shows that more information becomes useful one minute later but the delayed entry is economically too late. Completed one-second context available before the original pullback decision may recover that information without delaying entry.",
+  "crossfit_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07",
+    "2026-05-08"
+  ],
+  "population": "first causal 2% pullback states, evaluated only inside the outer-fold stage1 top-20 shortlist",
+  "representations": [
+    "Request282 causal preHOT + pullback-prefix + completed-minute representation",
+    "baseline plus completed one-second path/rich-second features"
+  ],
+  "second_timing_contract": "Only one-second aggregates with timestamps through decision_t - 1 second are features. The decision second and all future seconds are forbidden.",
+  "fixed_policy": {
+    "entry": "original first causal 2% pullback, unchanged",
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10,
+    "missing_exact_deadline": "unresolved"
+  },
+  "forbidden": [
+    "post-decision one-second features",
+    "delaying entry in this request",
+    "one-second prices as brokerage fill guarantees",
+    "opening May11-20",
+    "opening June15-19"
+  ],
+  "next_if_pass": "Build sub-minute causal ENTER/WAIT rechecks around the first pullback.",
+  "next_if_fail": "Test fixed 5/15/30-second WAIT windows before any recurrent policy."
+}
