@@ -1,0 +1,83 @@
+name: MoneyMaker Asymmetric Tail Bet Value
+
+on:
+  push:
+    branches:
+      - research/asymmetric-tail-bet-value-288
+    paths:
+      - 'victory-trader/research/asymmetric-tail-bet-value-request.json'
+      - 'victory-trader/src/victory_trader/asymmetric_tail_bet_value.py'
+      - 'victory-trader/tests/test_asymmetric_tail_bet_value.py'
+      - '.github/workflows/asymmetric-tail-bet-value.yml'
+  pull_request:
+    paths:
+      - 'victory-trader/research/asymmetric-tail-bet-value-request.json'
+      - 'victory-trader/src/victory_trader/asymmetric_tail_bet_value.py'
+      - 'victory-trader/tests/test_asymmetric_tail_bet_value.py'
+      - '.github/workflows/asymmetric-tail-bet-value.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen numerical stack
+        run: python -m pip install -e '.[dev]' -c research/request214-requirements.txt
+      - name: Check Request288 contracts
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_asymmetric_tail_bet_value.py tests/test_bet_value_decomposition.py
+      - name: Download frozen Request233 full-HOT population
+        uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-economic-full-hot-admission-233
+          path: victory-trader/prepared/request233
+          repository: dayofhiki/MoneyMaker
+          run-id: 36251239308
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Request163 opportunity population
+        uses: actions/download-artifact@v4
+        with:
+          name: request163-opportunity-prepared
+          path: victory-trader/prepared/opportunity
+          repository: dayofhiki/MoneyMaker
+          run-id: 36001945920
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Evaluate Request288
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          git rev-parse HEAD > artifacts/source-sha.txt
+          python -m victory_trader.asymmetric_tail_bet_value \
+            --first-hot prepared/request233/request233-full-hot-states.parquet \
+            --opportunity-scan prepared/opportunity/opportunity-scan.parquet \
+            --output artifacts/request288.json \
+            --rows-output artifacts/request288-rows.parquet \
+            | tee artifacts/request288.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: moneymaker-asymmetric-tail-bet-value-288
+          path: |
+            victory-trader/artifacts/request288.json
+            victory-trader/artifacts/request288.log
+            victory-trader/artifacts/request288-rows.parquet
+            victory-trader/artifacts/source-sha.txt
+          if-no-files-found: warn
+          retention-days: 90
