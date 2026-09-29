@@ -1,0 +1,38 @@
+{
+  "request_id": 283,
+  "parent_request": 282,
+  "operation": "stage1_shortlist_conditioned_pullback_risk_audit",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request282's global pullback severe-loss AUC may overstate the signal available inside the stage-1 top-20 shortlist. The correct diagnostic is risk discrimination conditional on the shortlist where the veto is actually used.",
+  "crossfit_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07",
+    "2026-05-08"
+  ],
+  "frozen_contract": {
+    "stage1": "Request280 pre-HOT ticker-history downstream-value top-20 selector",
+    "stage2_features": "Request277-style pullback prefix plus strictly completed prior-minute context",
+    "risk_threshold": "outer-fold training median severe probability",
+    "entry": "first causal 2% pullback",
+    "exit": "-2.5% hard stop, 2% trailing drawdown, 10-minute exact max hold"
+  },
+  "diagnostics": [
+    "global severe-loss AUC and average precision",
+    "stage1-shortlist-conditioned severe-loss AUC and average precision",
+    "rejected versus accepted severe-loss rate",
+    "rejected versus accepted trade mean and positive rate",
+    "risk quartile economics inside the shortlist"
+  ],
+  "forbidden": [
+    "changing any trading action",
+    "retuning the risk threshold on held-out days",
+    "relabeling unresolved trades as zero",
+    "opening May11-20",
+    "opening June15-19"
+  ],
+  "next_if_pass": "Build causal ENTER/WAIT/REJECT at the pullback, using repeated re-evaluation rather than permanent veto.",
+  "next_if_fail": "Rebuild stage2 risk representation conditional on the stage1 shortlist before adding action complexity."
+}
