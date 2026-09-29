@@ -693,10 +693,11 @@ def recurrent_policy(oof: pd.DataFrame) -> pd.DataFrame:
         if ordered.empty:
             continue
         chosen = None
-        for raw in ordered.to_dict("records"):
+        records = ordered.to_dict("records")
+        for position, raw in enumerate(records):
             score = raw.get("predicted_wait_option_advantage_pct")
-            has_future = pd.notna(raw.get("wait_option_advantage_pct"))
-            if has_future and pd.notna(score) and float(score) > 0:
+            can_wait = position < len(records) - 1
+            if can_wait and pd.notna(score) and float(score) > 0:
                 continue
             chosen = raw
             break
