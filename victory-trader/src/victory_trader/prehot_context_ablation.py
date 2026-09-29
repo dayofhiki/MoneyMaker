@@ -80,10 +80,10 @@ def _numeric(series: pd.Series) -> pd.Series:
     return pd.to_numeric(series, errors="coerce")
 
 
-def build_ticker_context(
-    raw_scan: pd.DataFrame,
+def _build_ticker_context_from_annotated(
+    annotated: pd.DataFrame,
 ) -> tuple[pd.DataFrame, tuple[str, ...]]:
-    annotated = _annotate_scan(raw_scan).sort_values(
+    annotated = annotated.sort_values(
         ["trading_day", "ticker", "t"],
         kind="stable",
     ).copy()
@@ -116,10 +116,17 @@ def build_ticker_context(
     return context, tuple(created)
 
 
-def build_market_context(
+def build_ticker_context(
     raw_scan: pd.DataFrame,
+) -> tuple[pd.DataFrame, tuple[str, ...]]:
+    annotated = _annotate_scan(raw_scan)
+    return _build_ticker_context_from_annotated(annotated)
+
+
+def _build_market_context_from_annotated(
+    annotated: pd.DataFrame,
 ) -> pd.DataFrame:
-    annotated = _annotate_scan(raw_scan).copy()
+    annotated = annotated.copy()
     annotated["_ret"] = _numeric(
         annotated["return_from_previous_close_pct"]
     )
@@ -188,6 +195,13 @@ def build_market_context(
     return pd.DataFrame(rows)
 
 
+def build_market_context(
+    raw_scan: pd.DataFrame,
+) -> pd.DataFrame:
+    annotated = _annotate_scan(raw_scan)
+    return _build_market_context_from_annotated(annotated)
+
+
 def attach_context(
     candidates: pd.DataFrame,
     raw_scan: pd.DataFrame,
@@ -196,8 +210,11 @@ def attach_context(
     tuple[str, ...],
     tuple[str, ...],
 ]:
-    ticker_context, ticker_names = build_ticker_context(raw_scan)
-    market_context = build_market_context(raw_scan)
+    annotated = _annotate_scan(raw_scan)
+    ticker_context, ticker_names = (
+        _build_ticker_context_from_annotated(annotated)
+    )
+    market_context = _build_market_context_from_annotated(annotated)
     result = candidates.merge(
         ticker_context,
         on=["trading_day", "ticker", "t"],
@@ -338,6 +355,9 @@ def evaluate(
     rows_output: Path,
 ) -> int:
     raw_scan = pd.read_parquet(scan_path)
+    raw_scan = raw_scan.loc[
+        raw_scan.trading_day.astype(str).isin(CROSSFIT_DAYS)
+    ].copy()
     causal_scan = causal_execution_scan(raw_scan)
     first_hot = pd.read_parquet(first_hot_path).drop(
         columns=[
