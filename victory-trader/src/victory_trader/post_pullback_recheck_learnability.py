@@ -17,6 +17,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.ensemble import (
+    HistGradientBoostingClassifier,
+    HistGradientBoostingRegressor,
+)
 from sklearn.metrics import roc_auc_score
 
 from .causal_minute_controller_rebuild import causal_execution_scan
@@ -32,7 +36,8 @@ from .joint_pullback_admission import (
     FIXED_TRAIL_PCT,
     feature_x,
 )
-from .lagged_minute_context import CROSSFIT_DAYS, fit_triplet
+from .lagged_minute_context import CROSSFIT_DAYS
+from .joint_pullback_admission import day_weights
 from .learned_pullback_entry import (
     build_episode_states,
     controller_columns,
@@ -187,6 +192,68 @@ def representation_columns(
         and _numeric(states[name]).notna().any()
     )
     return tuple(dict.fromkeys([*base, *ticker, *minute]))
+
+
+def fit_recheck_triplet(
+    train: pd.DataFrame,
+    columns: tuple[str, ...],
+    seed: int,
+):
+    """Smaller fixed-capacity diagnostic model for shrinking delayed support."""
+    target = _numeric(train.trade_return_pct)
+    fit = train.loc[
+        train.resolved.astype(bool) & target.notna()
+    ].copy()
+    y = _numeric(fit.trade_return_pct).to_numpy(float)
+    if len(fit) < 60:
+        raise ValueError(
+            f"Request285 delayed fold has only {len(fit)} training rows"
+        )
+    positive = (y > 0).astype(int)
+    severe = (y <= -2.0).astype(int)
+    if np.unique(positive).size != 2:
+        raise ValueError("Request285 positive target lacks both classes")
+    if np.unique(severe).size != 2:
+        raise ValueError("Request285 severe target lacks both classes")
+    low, high = np.quantile(y, [0.01, 0.99])
+    weights = day_weights(fit)
+    kwargs = {
+        "learning_rate": 0.04,
+        "max_iter": 160,
+        "max_leaf_nodes": 11,
+        "min_samples_leaf": 15,
+        "l2_regularization": 3.0,
+        "early_stopping": False,
+    }
+    reg = HistGradientBoostingRegressor(
+        **kwargs,
+        random_state=seed,
+    )
+    pos = HistGradientBoostingClassifier(
+        **kwargs,
+        random_state=seed + 1,
+    )
+    sev = HistGradientBoostingClassifier(
+        **kwargs,
+        random_state=seed + 2,
+    )
+    x = feature_x(fit, columns)
+    reg.fit(
+        x,
+        np.clip(y, low, high),
+        sample_weight=weights,
+    )
+    pos.fit(
+        x,
+        positive,
+        sample_weight=weights,
+    )
+    sev.fit(
+        x,
+        severe,
+        sample_weight=weights,
+    )
+    return reg, pos, sev
 
 
 def _safe_spearman(
@@ -348,7 +415,7 @@ def evaluate(
             if train.empty or held.empty:
                 continue
 
-            reg, positive, severe = fit_triplet(
+            reg, positive, severe = fit_recheck_triplet(
                 train,
                 columns,
                 20261900 + horizon * 100 + fold_index * 10,
