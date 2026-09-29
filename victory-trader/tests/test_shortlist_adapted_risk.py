@@ -8,9 +8,9 @@ from victory_trader.shortlist_adapted_risk import (
 
 
 def test_threshold_prefers_training_shortlist_support():
-    probabilities = [0.1, 0.2, 0.8, 0.9, 0.95] * 5
+    probabilities = [0.1, 0.2, 0.8, 0.9, 0.95] * 7
     selected = pd.Series(
-        [False, False, True, True, True] * 5
+        [False, False, True, True, True] * 7
     )
     threshold = threshold_from_shortlist_train(
         probabilities,
