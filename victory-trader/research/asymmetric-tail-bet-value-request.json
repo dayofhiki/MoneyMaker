@@ -1,0 +1,38 @@
+{
+  "request_id": 288,
+  "parent_request": 287,
+  "operation": "asymmetric_tail_state_bet_value",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "The generic return>0 win target hides the payoff asymmetry that matters for small-cap momentum. Modeling meaningful upside, noise, and severe downside directly may produce a more useful causal bet-value ordering.",
+  "crossfit_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07",
+    "2026-05-08"
+  ],
+  "outcome_regimes": {
+    "severe_downside": "trade_return_pct <= -2",
+    "middle": "-2 < trade_return_pct < 2",
+    "meaningful_upside": "trade_return_pct >= 2"
+  },
+  "bet_value": "sum(P(regime) * outer-training mean payoff for regime)",
+  "action": "ENTER iff predicted EV > 0, otherwise CASH",
+  "fixed_policy": {
+    "entry": "original first causal 2% pullback",
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10,
+    "missing_exact_deadline": "unresolved"
+  },
+  "forbidden": [
+    "held-out payoff calibration",
+    "post-decision features",
+    "best-future wait selection",
+    "new trading dates",
+    "position sizing before EV ordering is validated",
+    "opening May11-20",
+    "opening June15-19"
+  ]
+}
