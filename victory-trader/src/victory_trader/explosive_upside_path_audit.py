@@ -17,7 +17,6 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from .causal_minute_controller_rebuild import causal_execution_scan
@@ -36,7 +35,6 @@ from .pullback_trailing_exit import (
     apply_exit_rule,
     build_pullback_episodes,
 )
-from .recurrent_wait_entry_action_value import _base_return
 from .two_stage_risk_veto import (
     attach_ticker_history,
     fold_stage1,
