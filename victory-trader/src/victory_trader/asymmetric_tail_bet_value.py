@@ -59,7 +59,7 @@ from .two_stage_risk_veto import (
 REQUEST_ID = 288
 DOWNSIDE_THRESHOLD_PCT = -2.0
 UPSIDE_THRESHOLD_PCT = 2.0
-MIN_CLASS_SUPPORT = 15
+MIN_CLASS_SUPPORT = 10
 MIN_CONDITIONED_RESOLVED = 30
 MIN_ACCEPTED_RESOLVED = 10
 MIN_EV_SPEARMAN_GAIN = 0.05
@@ -116,7 +116,7 @@ def fit_tail_models(
         learning_rate=0.04,
         max_iter=180,
         max_leaf_nodes=11,
-        min_samples_leaf=15,
+        min_samples_leaf=10,
         l2_regularization=3.0,
         early_stopping=False,
         random_state=seed,
