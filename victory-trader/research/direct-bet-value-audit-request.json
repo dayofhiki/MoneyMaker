@@ -1,0 +1,35 @@
+{
+  "request_id": 289,
+  "parent_request": 288,
+  "operation": "direct_bet_value_oof_audit",
+  "development_only": true,
+  "promotion_eligible": false,
+  "opens_new_dates": false,
+  "model_refit": false,
+  "market_data_refetch": false,
+  "source_artifact": {
+    "workflow_run_id": 36528818160,
+    "artifact": "moneymaker-asymmetric-tail-bet-value-288",
+    "rows": "request288-rows.parquet"
+  },
+  "question": "Does the outer-fold direct expected-return prediction from Request288 actually order realized returns inside the held-out stage1 shortlist?",
+  "absolute_action_audit": "ENTER iff direct predicted return > 0",
+  "diagnostic_only": [
+    "score quartiles",
+    "top-half OOF score bucket",
+    "top-quartile OOF score bucket"
+  ],
+  "success": {
+    "minimum_resolved_rows": 30,
+    "minimum_spearman": 0.20,
+    "q4_realized_mean_positive": true,
+    "q4_beats_q1": true
+  },
+  "forbidden": [
+    "refitting a model",
+    "refetching market data",
+    "tuning a deployable threshold on held-out outcomes",
+    "opening May11-20",
+    "opening June15-19"
+  ]
+}
