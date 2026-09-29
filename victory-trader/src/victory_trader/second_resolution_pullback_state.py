@@ -15,7 +15,6 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
