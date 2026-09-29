@@ -12,7 +12,7 @@ def test_second_execution_reference_and_future_excursion():
     t0 = 1_000_000
     sec = 1_000
     seconds = pd.DataFrame({
-        "t": [t0, t0 + sec, t0 + 5 * sec, t0 + 60 * 60 * sec],
+        "t": [t0, t0 + sec, t0 + 5 * sec, t0 + (60 * 60 + 1) * sec],
         "o": [100.0, 99.0, 98.0, 110.0],
         "h": [101.0, 100.0, 105.0, 112.0],
         "l": [99.0, 97.0, 97.5, 109.0],
