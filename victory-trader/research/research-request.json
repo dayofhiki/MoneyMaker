@@ -39,5 +39,5 @@
     "--decision-output",
     "artifacts/request292-decisions.parquet"
   ],
-  "note": "Freeze Request291 crack selection. Fix entry only: HOT+60m common terminal, fitted next-state WAIT value, nested action-margin calibration, and ENTER/WAIT/SKIP."
+  "note": "Freeze Request291 crack selection. Fix entry only: HOT+60m common terminal, fitted next-state WAIT value, nested action-margin calibration, and ENTER/WAIT/SKIP. Retry after lint fix."
 }
