@@ -51,10 +51,6 @@ def test_second_features_ignore_decision_and_future_seconds():
         ]),
     ], ignore_index=True)
 
-    assert second_path_features(
-        base,
-        decision_t,
-    ) == second_path_features(
-        with_future,
-        decision_t,
-    )
+    left = pd.Series(second_path_features(base, decision_t))
+    right = pd.Series(second_path_features(with_future, decision_t))
+    pd.testing.assert_series_equal(left, right)
