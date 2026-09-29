@@ -14,7 +14,6 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from sklearn.metrics import average_precision_score, roc_auc_score
 
@@ -30,10 +29,6 @@ from .joint_pullback_admission import (
     FIXED_TRAIL_PCT,
 )
 from .lagged_minute_context import CROSSFIT_DAYS
-from .prehot_context_ablation import (
-    build_ticker_context,
-    usable_context_columns,
-)
 from .pullback_trailing_exit import (
     apply_exit_rule,
     build_pullback_episodes,
