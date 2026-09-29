@@ -486,7 +486,7 @@ def evaluate(
             train,
             held,
             prehot_columns,
-            20262700 + fold_index * 10,
+            20262000 + fold_index * 10,
         )
         scored["fold_holdout_day"] = held_day
         stage1_parts.append(scored)
