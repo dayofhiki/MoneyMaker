@@ -1,16 +1,16 @@
 {
-  "request_id": 292,
+  "request_id": 293,
   "operation": "module",
-  "module": "victory_trader.fixed_horizon_fitted_entry",
+  "module": "victory_trader.direct_attractive_entry",
   "pytest": [
-    "tests/test_fixed_horizon_fitted_entry.py"
+    "tests/test_direct_attractive_entry.py"
   ],
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36591422686,
-      "name": "moneymaker-research-request-291",
-      "path": "prepared/request291"
+      "run_id": 36594860901,
+      "name": "moneymaker-research-request-292",
+      "path": "prepared/request292"
     },
     {
       "repo": "dayofhiki/MoneyMaker",
@@ -26,18 +26,20 @@
     }
   ],
   "args": [
-    "--setup-oof",
-    "prepared/request291/request291-setup-oof.parquet",
+    "--state-oof",
+    "prepared/request292/request292-state-oof.parquet",
     "--first-hot",
     "prepared/request233/request233-full-hot-states.parquet",
     "--opportunity-scan",
     "prepared/opportunity/opportunity-scan.parquet",
+    "--request292-json",
+    "prepared/request292/request292.json",
     "--output",
-    "artifacts/request292.json",
-    "--state-output",
-    "artifacts/request292-state-oof.parquet",
-    "--decision-output",
-    "artifacts/request292-decisions.parquet"
+    "artifacts/request293.json",
+    "--scored-output",
+    "artifacts/request293-scored-oof.parquet",
+    "--decisions-output",
+    "artifacts/request293-decisions.parquet"
   ],
-  "note": "Freeze Request291 crack selection. Fix entry only: HOT+60m common terminal, fitted next-state WAIT value, nested action-margin calibration, and ENTER/WAIT/SKIP. Retry after lint fix."
+  "note": "Freeze Request291 setup and Request292 fixed-horizon state labels. Remove separate WAIT model. Repeatedly ENTER at first active-second state whose directly predicted current entry utility clears a nested-calibrated threshold; otherwise keep observing and SKIP if never attractive."
 }
