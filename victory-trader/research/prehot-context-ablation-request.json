@@ -1,0 +1,44 @@
+{
+  "request_id": 280,
+  "parent_request": 279,
+  "operation": "prehot_ticker_and_market_context_ablation",
+  "opens_new_dates": false,
+  "promotion_eligible": false,
+  "development_only": true,
+  "hypothesis": "Request279's downstream target is better aligned, but the HOT-time representation lacks multi-minute trajectory and regime context. Exact completed-minute ticker history and same-time market crowding may separate recoverable pullbacks from structurally weak candidates.",
+  "crossfit_days": [
+    "2026-05-05",
+    "2026-05-06",
+    "2026-05-07",
+    "2026-05-08"
+  ],
+  "selection_fraction": 0.20,
+  "representations": [
+    "Request279 base pre-HOT features",
+    "base plus exact 1/3/5-minute ticker history and deltas",
+    "ticker history plus same-time cross-sectional market regime"
+  ],
+  "isolation": "The downstream target, model family, folds, selection fraction, entry rule and exit rule are frozen. Only input representation changes.",
+  "timing_contract": {
+    "ticker_history": "only exact completed-minute rows at or before HOT",
+    "market_context": "only the cross-section timestamped at HOT",
+    "future_rows": "forbidden"
+  },
+  "fixed_downstream_policy": {
+    "entry": "first causal 2% pullback",
+    "hard_stop_loss_pct": -2.5,
+    "trailing_drawdown_pct": 2.0,
+    "max_hold_minutes": 10,
+    "missing_exact_deadline": "unresolved"
+  },
+  "forbidden": [
+    "post-HOT candidate features",
+    "future market rows",
+    "held-out-day threshold calibration",
+    "new entry or exit parameters",
+    "opening May11-20",
+    "opening June15-19"
+  ],
+  "next_if_pass": "Validate the chosen representation on May11-20, then combine it with Request277 pullback risk context.",
+  "next_if_fail": "Inspect candidate outcome modes and conditional risk; do not return to entry/exit micro-tuning."
+}
