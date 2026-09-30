@@ -41,5 +41,5 @@
     "--decisions-output",
     "artifacts/request296-decisions.parquet"
   ],
-  "note": "Untouched five-trading-day validation on June15,16,17,18,22. June19 is a US market holiday. Freeze Request295 architecture and thresholds; no fresh tuning."
+  "note": "Untouched five-trading-day validation on June15,16,17,18,22. June19 holiday is skipped inside replay. Freeze Request295 architecture and thresholds; no fresh tuning."
 }
