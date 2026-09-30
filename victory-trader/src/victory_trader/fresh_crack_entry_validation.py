@@ -1,4 +1,4 @@
-"""Request296: untouched June15-19 validation of frozen crack + entry.
+"""Request296: untouched five-trading-day validation of frozen crack + entry.
 
 Development is frozen at Request295.  This module opens 2026-06-15 through
 2026-06-19 exactly once, reconstructs the same validated upstream first-HOT
@@ -66,7 +66,7 @@ FRESH_DAYS = (
     "2026-06-16",
     "2026-06-17",
     "2026-06-18",
-    "2026-06-19",
+    "2026-06-22",
 )
 
 # Frozen from the four outer-fold Request294/295 action gates.
@@ -110,7 +110,7 @@ def _prepare_fresh_first_hot(
     scan_parts: list[pd.DataFrame] = []
     day_audit: dict[str, dict] = {}
 
-    for day in daterange(date(2026, 6, 15), date(2026, 6, 19)):
+    for day in daterange(date(2026, 6, 15), date(2026, 6, 22)):
         scan, audit = build_flatfile_scan_day(store, scan_client, day)
         rows = add_cross_within_horizon_targets(
             scan,
