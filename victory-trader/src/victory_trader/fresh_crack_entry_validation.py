@@ -52,6 +52,7 @@ from .local_turn_entry import (
     _score,
     attach_local_turn_features,
 )
+from .market_calendar import is_us_equity_trading_day
 from .massive_client import MassiveClient
 from .multi_day import daterange
 from .prehot_context_ablation import usable_context_columns
@@ -111,6 +112,8 @@ def _prepare_fresh_first_hot(
     day_audit: dict[str, dict] = {}
 
     for day in daterange(date(2026, 6, 15), date(2026, 6, 22)):
+        if not is_us_equity_trading_day(day):
+            continue
         scan, audit = build_flatfile_scan_day(store, scan_client, day)
         rows = add_cross_within_horizon_targets(
             scan,
