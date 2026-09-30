@@ -104,6 +104,26 @@ jobs:
       - name: Install frozen research stack
         run: python -m pip install -e '.[dev]' -c research/request214-requirements.txt
 
+      - name: Restore shared flat-file cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-flatfiles
+          key: moneymaker-generic-flatfiles-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-fresh-economic-flatfiles-${{ runner.os }}-
+            moneymaker-fresh-hierarchical-flatfiles-${{ runner.os }}-
+            moneymaker-request163-stage2-flatfiles-${{ runner.os }}-
+
+      - name: Restore shared second cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-generic-second-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-fresh-economic-second-${{ runner.os }}-
+            moneymaker-fresh-economic-stage2-second-${{ runner.os }}-
+            moneymaker-request163-stage2-second-${{ runner.os }}-
+
       - name: Validate and test requested module
         shell: bash
         run: |
