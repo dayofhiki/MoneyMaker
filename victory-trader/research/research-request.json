@@ -1,9 +1,9 @@
 {
-  "request_id": 294,
+  "request_id": 295,
   "operation": "module",
-  "module": "victory_trader.local_turn_entry",
+  "module": "victory_trader.local_turn_ablation",
   "pytest": [
-    "tests/test_local_turn_entry.py"
+    "tests/test_local_turn_ablation.py"
   ],
   "dependencies": [
     {
@@ -14,9 +14,9 @@
     },
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36596216504,
-      "name": "moneymaker-research-request-293",
-      "path": "prepared/request293"
+      "run_id": 36721315072,
+      "name": "moneymaker-research-request-294",
+      "path": "prepared/request294"
     },
     {
       "repo": "dayofhiki/MoneyMaker",
@@ -38,14 +38,12 @@
     "prepared/request233/request233-full-hot-states.parquet",
     "--opportunity-scan",
     "prepared/opportunity/opportunity-scan.parquet",
-    "--request293-json",
-    "prepared/request293/request293.json",
+    "--request294-json",
+    "prepared/request294/request294.json",
     "--output",
-    "artifacts/request294.json",
-    "--scored-output",
-    "artifacts/request294-scored-oof.parquet",
+    "artifacts/request295.json",
     "--decisions-output",
-    "artifacts/request294-decisions.parquet"
+    "artifacts/request295-decisions.parquet"
   ],
-  "note": "Freeze Request291 setup and Request292 fixed-horizon labels. Add causal local-turn event-sequence features and 15-second turn prediction. Enter on value+turn confirmation, with a strong-value override for runaway setups."
+  "note": "Matched May5-8 ablation: R293 base direct, turn-enriched direct without turn gate, and full R294 turn gate. Determine which component produced the first positive timing edge before opening untouched dates."
 }
