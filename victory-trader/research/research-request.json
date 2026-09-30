@@ -1,9 +1,9 @@
 {
   "request_id": 296,
   "operation": "module",
-  "module": "victory_trader.fresh_crack_entry_validation",
+  "module": "victory_trader.untouched_setup_entry_validation",
   "pytest": [
-    "tests/test_fresh_crack_entry_validation.py"
+    "tests/test_untouched_setup_entry_validation.py"
   ],
   "dependencies": [
     {
@@ -14,32 +14,50 @@
     },
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36591422686,
-      "name": "moneymaker-research-request-291",
-      "path": "prepared/request291"
+      "run_id": 36251239308,
+      "name": "moneymaker-economic-full-hot-admission-233",
+      "path": "prepared/request233"
+    },
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36001945920,
+      "name": "request163-opportunity-prepared",
+      "path": "prepared/opportunity"
     },
     {
       "repo": "dayofhiki/MoneyMaker",
       "run_id": 36594860901,
       "name": "moneymaker-research-request-292",
       "path": "prepared/request292"
+    },
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36721315072,
+      "name": "moneymaker-research-request-294",
+      "path": "prepared/request294"
     }
   ],
   "args": [
     "--stage2-candidates",
     "prepared/request163-stage2/stage2-candidates.parquet",
-    "--development-setup",
-    "prepared/request291/request291-setup-oof.parquet",
-    "--development-states",
+    "--dev-first-hot",
+    "prepared/request233/request233-full-hot-states.parquet",
+    "--dev-scan",
+    "prepared/opportunity/opportunity-scan.parquet",
+    "--dev-states",
     "prepared/request292/request292-state-oof.parquet",
+    "--request294-json",
+    "prepared/request294/request294.json",
     "--output",
     "artifacts/request296.json",
-    "--first-hot-output",
-    "artifacts/request296-first-hot.parquet",
-    "--states-output",
-    "artifacts/request296-states.parquet",
-    "--decisions-output",
-    "artifacts/request296-decisions.parquet"
+    "--fresh-first-hot-output",
+    "artifacts/request296-fresh-first-hot.parquet",
+    "--fresh-setup-output",
+    "artifacts/request296-fresh-setup.parquet",
+    "--fresh-states-output",
+    "artifacts/request296-fresh-states.parquet",
+    "--fresh-decisions-output",
+    "artifacts/request296-fresh-decisions.parquet"
   ],
-  "note": "Untouched June15-19 validation. Reconstruct Request163 upstream first-HOT population, train crack and turn-entry models only on frozen May5-8 development artifacts, and apply median Request294/295 thresholds once. No fresh tuning."
+  "note": "Untouched June15-19 validation. No fresh tuning. Reconstruct Request163 upstream, train crack+entry only on May5-8, use Request294 fold-median action thresholds with strong-value override disabled."
 }
