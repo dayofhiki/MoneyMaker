@@ -100,7 +100,7 @@ def _build_fresh_first_hot(
     access_key, secret_key = require_flatfile_credentials(settings)
     store = MassiveFlatFileStore(
         MassiveFlatFilesClient(access_key, secret_key),
-        FLATFILE_CACHE_DIR / "request296",
+        FLATFILE_CACHE_DIR,
     )
     scan_client = MassiveClient(
         settings.massive_api_key,
@@ -109,7 +109,7 @@ def _build_fresh_first_hot(
     )
     second_client = MassiveClient(
         settings.massive_api_key,
-        cache_dir=SECOND_CACHE_DIR / "request296-upstream",
+        cache_dir=SECOND_CACHE_DIR,
         request_interval_seconds=0.02,
     )
 
