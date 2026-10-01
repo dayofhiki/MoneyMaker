@@ -1,8 +1,9 @@
 {
-  "request_id": 303,
+  "request_id": 304,
   "operation": "module",
-  "module": "victory_trader.weighted_hold_offset",
+  "module": "victory_trader.common_cap_hold_reference",
   "pytest": [
+    "tests/test_common_cap_hold_reference.py",
     "tests/test_weighted_hold_offset.py",
     "tests/test_hold_policy_stage_audit.py",
     "tests/test_preentry_context_hold_value.py",
@@ -15,9 +16,9 @@
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36833594641,
-      "name": "moneymaker-research-request-302",
-      "path": "prepared/request302"
+      "run_id": 36835089902,
+      "name": "moneymaker-research-request-303",
+      "path": "prepared/request303"
     },
     {
       "repo": "dayofhiki/MoneyMaker",
@@ -28,19 +29,19 @@
   ],
   "args": [
     "--states",
-    "prepared/request302/request302-states.parquet",
+    "prepared/request303/request303-states.parquet",
     "--decisions",
-    "prepared/request302/request302-decisions.parquet",
+    "prepared/request303/request303-decisions.parquet",
     "--reference-decisions",
     "prepared/request298/request298-decisions.parquet",
     "--raw-seconds",
     "prepared/request298/request298-raw-seconds.parquet",
     "--output",
-    "artifacts/request303.json",
+    "artifacts/request304.json",
     "--states-output",
-    "artifacts/request303-states.parquet",
+    "artifacts/request304-states.parquet",
     "--decisions-output",
-    "artifacts/request303-decisions.parquet"
+    "artifacts/request304-decisions.parquet"
   ],
-  "note": "Exact R302 B baseline; primary identical fixed-pi0 pi1 trees with day/episode-weighted training residual offset only. Same 28 features/seeds/clipping/86 entries/costs/risk/sign threshold0. Outer-training-only correction, saved prediction integrity and weighted residual checks; diagnostic self targets never fitted. May5-8 only, June sealed; zero market API requests."
+  "note": "Exact R303 corrected-offset baseline; primary fixed 2pct trailing reference with runtime common cap instead of separate10min expiry. Label horizon only; same28 features/seeds/model/clipping/weighted offset/86 entries/risk/costs/sign0. Post-fit self diagnostics never trained. May5-8 only, June sealed; zero market API acquisition."
 }
