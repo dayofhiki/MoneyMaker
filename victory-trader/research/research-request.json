@@ -1,8 +1,9 @@
 {
-  "request_id": 301,
+  "request_id": 302,
   "operation": "module",
-  "module": "victory_trader.preentry_context_hold_value",
+  "module": "victory_trader.hold_policy_stage_audit",
   "pytest": [
+    "tests/test_hold_policy_stage_audit.py",
     "tests/test_preentry_context_hold_value.py",
     "tests/test_clock_context_hold_value.py",
     "tests/test_risk_reachable_hold_value.py",
@@ -13,9 +14,9 @@
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36830074540,
-      "name": "moneymaker-research-request-300",
-      "path": "prepared/request300"
+      "run_id": 36831962753,
+      "name": "moneymaker-research-request-301",
+      "path": "prepared/request301"
     },
     {
       "repo": "dayofhiki/MoneyMaker",
@@ -26,19 +27,19 @@
   ],
   "args": [
     "--states",
-    "prepared/request300/request300-states.parquet",
+    "prepared/request301/request301-states.parquet",
     "--decisions",
-    "prepared/request300/request300-decisions.parquet",
+    "prepared/request301/request301-decisions.parquet",
     "--reference-decisions",
     "prepared/request298/request298-decisions.parquet",
     "--raw-seconds",
     "prepared/request298/request298-raw-seconds.parquet",
     "--output",
-    "artifacts/request301.json",
+    "artifacts/request302.json",
     "--states-output",
-    "artifacts/request301-states.parquet",
+    "artifacts/request302-states.parquet",
     "--decisions-output",
-    "artifacts/request301-decisions.parquet"
+    "artifacts/request302-decisions.parquet"
   ],
-  "note": "Exact R300 C baseline; primary B retains pre-entry regular-session history in the same eight clock/context features. Same 28 columns/nested target algorithm/model/seeds/86 entries/costs/stop. Common-label ranking and action calibration diagnostics. May5-8 only, June sealed; zero market API requests."
+  "note": "Exact R301 pi2 baseline; primary B one-stage fixed-pi0-target pi1 with exact saved outer-pi1 reproduction. Same 28 full-history features/model/seeds/86 entries/costs/stop. Audit learned-reference versus deployed-self continuation without training on diagnostics. May5-8 only, June sealed; zero market API requests."
 }
