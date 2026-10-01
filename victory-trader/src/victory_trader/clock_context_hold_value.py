@@ -24,16 +24,19 @@ CLOCK_FEATURES = (
 CONTEXT_FEATURES = ("clock_close_location_60s", "clock_drawdown_60s_pct")
 
 
-def causal_features(states: pd.DataFrame, contexts: dict) -> pd.DataFrame:
-    """Use completed regular bars since entry; never pad or backfill gaps."""
+def causal_features(states: pd.DataFrame, contexts: dict, *, include_preentry: bool = False) -> pd.DataFrame:
+    """Use completed regular bars; R300 defaults to its since-entry contract."""
     frame = states.copy()
     for name in CLOCK_FEATURES + CONTEXT_FEATURES:
         frame[name] = np.nan
     for key, group in frame.groupby(KEYS, sort=False):
-        bars, _, _ = contexts[key]
+        bars, opening, closing = contexts[key]
         entry_t = int(group.entry_t.iloc[0])
         entry_price = float(group.entry_price.iloc[0])
-        bars = bars.loc[bars.t.ge(entry_t)].sort_values("t")
+        if include_preentry:
+            bars = regular_bars(bars, opening, closing).sort_values("t")
+        else:
+            bars = bars.loc[bars.t.ge(entry_t)].sort_values("t")
         ends = bars.t.to_numpy(np.int64) + 1000
         close = bars.c.to_numpy(float)
         volume = bars.v.to_numpy(float)
@@ -50,20 +53,22 @@ def causal_features(states: pd.DataFrame, contexts: dict) -> pd.DataFrame:
             out = {}
             for window in (5, 20, 60):
                 left = int(np.searchsorted(ends, t-window*1000, side="right"))
-                if t-entry_t >= window*1000:
+                available = left > 0 if include_preentry else t-entry_t >= window*1000
+                if available:
                     reference = close[left-1] if left else entry_price
                     out[f"clock_return_{window}s_pct"] = 100*(current/reference-1)
                 else:
                     out[f"clock_return_{window}s_pct"] = np.nan
                 if window in (20, 60):
-                    out[f"clock_observed_count_{window}s"] = right-left
+                    out[f"clock_observed_count_{window}s"] = right-left if available or not include_preentry else np.nan
                 if window == 20:
                     previous = int(np.searchsorted(ends, t-40000, side="right"))
                     denominator = cumulative_volume[left]-cumulative_volume[previous]
-                    out["clock_volume_ratio_20s"] = (cumulative_volume[right]-cumulative_volume[left])/denominator if t-entry_t >= 40000 and denominator > 0 else np.nan
+                    volume_available = previous > 0 if include_preentry else t-entry_t >= 40000
+                    out["clock_volume_ratio_20s"] = (cumulative_volume[right]-cumulative_volume[left])/denominator if volume_available and denominator > 0 else np.nan
                 if window == 60:
                     recent = close[left:right]
-                    if t-entry_t >= 60000 and len(recent):
+                    if available and len(recent):
                         low, high = float(recent.min()), float(recent.max())
                         out["clock_close_location_60s"] = (current-low)/(high-low) if high > low else .5
                         out["clock_drawdown_60s_pct"] = 100*(current/high-1)

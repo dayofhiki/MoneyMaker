@@ -1,8 +1,9 @@
 {
-  "request_id": 300,
+  "request_id": 301,
   "operation": "module",
-  "module": "victory_trader.clock_context_hold_value",
+  "module": "victory_trader.preentry_context_hold_value",
   "pytest": [
+    "tests/test_preentry_context_hold_value.py",
     "tests/test_clock_context_hold_value.py",
     "tests/test_risk_reachable_hold_value.py",
     "tests/test_pending_exit_integrity.py",
@@ -12,9 +13,9 @@
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36810713498,
-      "name": "moneymaker-research-request-299",
-      "path": "prepared/request299"
+      "run_id": 36830074540,
+      "name": "moneymaker-research-request-300",
+      "path": "prepared/request300"
     },
     {
       "repo": "dayofhiki/MoneyMaker",
@@ -25,19 +26,19 @@
   ],
   "args": [
     "--states",
-    "prepared/request299/request299-states.parquet",
+    "prepared/request300/request300-states.parquet",
     "--decisions",
-    "prepared/request299/request299-decisions.parquet",
+    "prepared/request300/request300-decisions.parquet",
     "--reference-decisions",
     "prepared/request298/request298-decisions.parquet",
     "--raw-seconds",
     "prepared/request298/request298-raw-seconds.parquet",
     "--output",
-    "artifacts/request300.json",
+    "artifacts/request301.json",
     "--states-output",
-    "artifacts/request300-states.parquet",
+    "artifacts/request301-states.parquet",
     "--decisions-output",
-    "artifacts/request300-decisions.parquet"
+    "artifacts/request301-decisions.parquet"
   ],
-  "note": "Exact R299 D baseline; B adds six elapsed-time momentum/activity features; primary C adds two 60s completed-close context features. Same nested target algorithm/model/seeds/86 entries/costs/stop. May5-8 only, June sealed; raw artifact reuse and zero market API requests."
+  "note": "Exact R300 C baseline; primary B retains pre-entry regular-session history in the same eight clock/context features. Same 28 columns/nested target algorithm/model/seeds/86 entries/costs/stop. Common-label ranking and action calibration diagnostics. May5-8 only, June sealed; zero market API requests."
 }
