@@ -1,28 +1,33 @@
 {
-  "request_id": 297,
+  "request_id": 298,
   "operation": "module",
-  "module": "victory_trader.frozen_entry_second_hold_exit",
+  "module": "victory_trader.pending_exit_integrity",
   "pytest": [
+    "tests/test_pending_exit_integrity.py",
     "tests/test_frozen_entry_second_hold_exit.py",
     "tests/test_fresh_crack_entry_validation.py"
   ],
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36721315072,
-      "name": "moneymaker-research-request-294",
-      "path": "prepared/request294"
+      "run_id": 36798494177,
+      "name": "moneymaker-research-request-297",
+      "path": "prepared/request297"
     }
   ],
   "args": [
-    "--entry-scored",
-    "prepared/request294/request294-scored-oof.parquet",
+    "--legacy-states",
+    "prepared/request297/request297-states.parquet",
+    "--legacy-decisions",
+    "prepared/request297/request297-decisions.parquet",
     "--output",
-    "artifacts/request297.json",
+    "artifacts/request298.json",
     "--states-output",
-    "artifacts/request297-states.parquet",
+    "artifacts/request298-states.parquet",
     "--decisions-output",
-    "artifacts/request297-decisions.parquet"
+    "artifacts/request298-decisions.parquet",
+    "--raw-output",
+    "artifacts/request298-raw-seconds.parquet"
   ],
-  "note": "R296 setup/entry frozen. May5-8 only. Causal active-second HOLD/EXIT; primary 300s continuation vs EXIT, 60s sensitivity, identical-entry old trailing/short holds. No June or new-date policy tuning."
+  "note": "Reproduce R297 exactly, correct independent clock timers and pending liquidation on same 86 entries, isolate execution correction from same-model rebuilt-label refit. Entry/stop/features/horizons frozen. May5-8 only; June HOLD sealed."
 }

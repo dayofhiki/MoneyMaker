@@ -1,6 +1,8 @@
 # R298 design — clock-based orders, pending liquidation, honest path coverage
 
-Status: designed, NOT dispatched. No research-request.json change.
+Status: implemented for dispatch through the existing consolidated runner.
+Nine execution-specific tests plus eight inherited tests passed locally.
+Raw regular-session second paths are checkpointed in the result artifact for reuse.
 Source dependencies: R297 run 36798494177 and R294 run 36721315072.
 Data: existing May5-8 only. June HOLD validation and final July-August sealed.
 
