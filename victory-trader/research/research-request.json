@@ -1,45 +1,28 @@
 {
-  "request_id": 296,
+  "request_id": 297,
   "operation": "module",
-  "module": "victory_trader.fresh_crack_entry_validation",
+  "module": "victory_trader.frozen_entry_second_hold_exit",
   "pytest": [
+    "tests/test_frozen_entry_second_hold_exit.py",
     "tests/test_fresh_crack_entry_validation.py"
   ],
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36001945920,
-      "name": "request163-stage2-prepared",
-      "path": "prepared/request163-stage2"
-    },
-    {
-      "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36591422686,
-      "name": "moneymaker-research-request-291",
-      "path": "prepared/request291"
-    },
-    {
-      "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36594860901,
-      "name": "moneymaker-research-request-292",
-      "path": "prepared/request292"
+      "run_id": 36721315072,
+      "name": "moneymaker-research-request-294",
+      "path": "prepared/request294"
     }
   ],
   "args": [
-    "--stage2-candidates",
-    "prepared/request163-stage2/stage2-candidates.parquet",
-    "--development-setup",
-    "prepared/request291/request291-setup-oof.parquet",
-    "--development-states",
-    "prepared/request292/request292-state-oof.parquet",
+    "--entry-scored",
+    "prepared/request294/request294-scored-oof.parquet",
     "--output",
-    "artifacts/request296.json",
-    "--first-hot-output",
-    "artifacts/request296-first-hot.parquet",
+    "artifacts/request297.json",
     "--states-output",
-    "artifacts/request296-states.parquet",
+    "artifacts/request297-states.parquet",
     "--decisions-output",
-    "artifacts/request296-decisions.parquet"
+    "artifacts/request297-decisions.parquet"
   ],
-  "note": "Untouched five-trading-day validation on June15,16,17,18,22. June19 holiday is skipped inside replay. Freeze Request295 architecture and thresholds; no fresh tuning."
+  "note": "R296 setup/entry frozen. May5-8 only. Causal active-second HOLD/EXIT; primary 300s continuation vs EXIT, 60s sensitivity, identical-entry old trailing/short holds. No June or new-date policy tuning."
 }
