@@ -1,8 +1,9 @@
 {
-  "request_id": 302,
+  "request_id": 303,
   "operation": "module",
-  "module": "victory_trader.hold_policy_stage_audit",
+  "module": "victory_trader.weighted_hold_offset",
   "pytest": [
+    "tests/test_weighted_hold_offset.py",
     "tests/test_hold_policy_stage_audit.py",
     "tests/test_preentry_context_hold_value.py",
     "tests/test_clock_context_hold_value.py",
@@ -14,9 +15,9 @@
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36831962753,
-      "name": "moneymaker-research-request-301",
-      "path": "prepared/request301"
+      "run_id": 36833594641,
+      "name": "moneymaker-research-request-302",
+      "path": "prepared/request302"
     },
     {
       "repo": "dayofhiki/MoneyMaker",
@@ -27,19 +28,19 @@
   ],
   "args": [
     "--states",
-    "prepared/request301/request301-states.parquet",
+    "prepared/request302/request302-states.parquet",
     "--decisions",
-    "prepared/request301/request301-decisions.parquet",
+    "prepared/request302/request302-decisions.parquet",
     "--reference-decisions",
     "prepared/request298/request298-decisions.parquet",
     "--raw-seconds",
     "prepared/request298/request298-raw-seconds.parquet",
     "--output",
-    "artifacts/request302.json",
+    "artifacts/request303.json",
     "--states-output",
-    "artifacts/request302-states.parquet",
+    "artifacts/request303-states.parquet",
     "--decisions-output",
-    "artifacts/request302-decisions.parquet"
+    "artifacts/request303-decisions.parquet"
   ],
-  "note": "Exact R301 pi2 baseline; primary B one-stage fixed-pi0-target pi1 with exact saved outer-pi1 reproduction. Same 28 full-history features/model/seeds/86 entries/costs/stop. Audit learned-reference versus deployed-self continuation without training on diagnostics. May5-8 only, June sealed; zero market API requests."
+  "note": "Exact R302 B baseline; primary identical fixed-pi0 pi1 trees with day/episode-weighted training residual offset only. Same 28 features/seeds/clipping/86 entries/costs/risk/sign threshold0. Outer-training-only correction, saved prediction integrity and weighted residual checks; diagnostic self targets never fitted. May5-8 only, June sealed; zero market API requests."
 }
