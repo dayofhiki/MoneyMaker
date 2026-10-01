@@ -118,8 +118,8 @@ def validate_fit_days(train_days: list[str], *, excluded: list[str]) -> None:
         raise ValueError("target policy training crossed an excluded day")
 
 
-def model_fit(frame: pd.DataFrame, target: str, seed: int):
-    return _fit(frame.loc[frame.risk_reachable_hold], FEATURES, target, seed, log_target=False, episode_weighting=True)
+def model_fit(frame: pd.DataFrame, target: str, seed: int, features: tuple[str, ...] = FEATURES):
+    return _fit(frame.loc[frame.risk_reachable_hold], features, target, seed, log_target=False, episode_weighting=True)
 
 
 def crossfit_horizon(states: pd.DataFrame) -> pd.DataFrame:
@@ -135,7 +135,7 @@ def crossfit_horizon(states: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(pieces, ignore_index=True)
 
 
-def crossfit_improvement(base_targets: pd.DataFrame, contexts: dict) -> tuple[pd.DataFrame, dict]:
+def crossfit_improvement(base_targets: pd.DataFrame, contexts: dict, *, features: tuple[str, ...] = FEATURES) -> tuple[pd.DataFrame, dict]:
     pieces, provenance = [], {}
     for fold, outer_day in enumerate(CROSSFIT_DAYS):
         outer_train = base_targets.loc[base_targets.trading_day.ne(outer_day)]
@@ -148,17 +148,17 @@ def crossfit_improvement(base_targets: pd.DataFrame, contexts: dict) -> tuple[pd
             labeled = outer_train.loc[outer_train.trading_day.eq(inner_day)].copy()
             fit_days = sorted(fit.trading_day.unique())
             validate_fit_days(fit_days, excluded=[outer_day, inner_day])
-            pi1 = model_fit(fit, TARGET_PI0, 20263900+fold*100+inner_index)
+            pi1 = model_fit(fit, TARGET_PI0, 20263900+fold*100+inner_index, features)
             labeled["pi1_prediction_pct"] = _predict(labeled, pi1)
             labeled = continuation_targets(labeled, contexts, prediction_column="pi1_prediction_pct", output_column=TARGET_PI1)
             inner_pieces.append(labeled)
             inner_log.append({"target_day":inner_day,"pi1_fit_days":fit_days,"outer_excluded":outer_day})
         inner_targets = pd.concat(inner_pieces, ignore_index=True)
-        pi2 = model_fit(inner_targets, TARGET_PI1, 20263950+fold*100)
+        pi2 = model_fit(inner_targets, TARGET_PI1, 20263950+fold*100, features)
         outer_test["predicted_next_event_advantage_pct"] = _predict(outer_test, pi2)
         # Outer diagnostic label follows a pi1 fitted only on outer training days.
         # Neither its policy fit nor pi2 has seen the outer day's target labels.
-        outer_pi1 = model_fit(outer_train, TARGET_PI0, 20263975+fold*100)
+        outer_pi1 = model_fit(outer_train, TARGET_PI0, 20263975+fold*100, features)
         outer_test["pi1_prediction_pct"] = _predict(outer_test, outer_pi1)
         outer_test = continuation_targets(outer_test, contexts, prediction_column="pi1_prediction_pct", output_column=TARGET_PI1)
         pieces.append(outer_test)

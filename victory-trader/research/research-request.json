@@ -1,14 +1,21 @@
 {
-  "request_id": 299,
+  "request_id": 300,
   "operation": "module",
-  "module": "victory_trader.risk_reachable_hold_value",
+  "module": "victory_trader.clock_context_hold_value",
   "pytest": [
+    "tests/test_clock_context_hold_value.py",
     "tests/test_risk_reachable_hold_value.py",
     "tests/test_pending_exit_integrity.py",
     "tests/test_frozen_entry_second_hold_exit.py",
     "tests/test_fresh_crack_entry_validation.py"
   ],
   "dependencies": [
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36810713498,
+      "name": "moneymaker-research-request-299",
+      "path": "prepared/request299"
+    },
     {
       "repo": "dayofhiki/MoneyMaker",
       "run_id": 36801235949,
@@ -18,17 +25,19 @@
   ],
   "args": [
     "--states",
-    "prepared/request298/request298-states.parquet",
+    "prepared/request299/request299-states.parquet",
     "--decisions",
+    "prepared/request299/request299-decisions.parquet",
+    "--reference-decisions",
     "prepared/request298/request298-decisions.parquet",
     "--raw-seconds",
     "prepared/request298/request298-raw-seconds.parquet",
     "--output",
-    "artifacts/request299.json",
+    "artifacts/request300.json",
     "--states-output",
-    "artifacts/request299-states.parquet",
+    "artifacts/request300-states.parquet",
     "--decisions-output",
-    "artifacts/request299-decisions.parquet"
+    "artifacts/request300-decisions.parquet"
   ],
-  "note": "Exact R298 A baseline; B reachable-only; C risk-consistent horizons; primary D nested two-stage next-observed-event policy improvement. Same 86 entries/20 features/costs/stop, May5-8 only, June sealed. Reuse raw artifact; zero market API requests."
+  "note": "Exact R299 D baseline; B adds six elapsed-time momentum/activity features; primary C adds two 60s completed-close context features. Same nested target algorithm/model/seeds/86 entries/costs/stop. May5-8 only, June sealed; raw artifact reuse and zero market API requests."
 }
