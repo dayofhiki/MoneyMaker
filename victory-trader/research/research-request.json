@@ -1,8 +1,9 @@
 {
-  "request_id": 298,
+  "request_id": 299,
   "operation": "module",
-  "module": "victory_trader.pending_exit_integrity",
+  "module": "victory_trader.risk_reachable_hold_value",
   "pytest": [
+    "tests/test_risk_reachable_hold_value.py",
     "tests/test_pending_exit_integrity.py",
     "tests/test_frozen_entry_second_hold_exit.py",
     "tests/test_fresh_crack_entry_validation.py"
@@ -10,24 +11,24 @@
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36798494177,
-      "name": "moneymaker-research-request-297",
-      "path": "prepared/request297"
+      "run_id": 36801235949,
+      "name": "moneymaker-research-request-298",
+      "path": "prepared/request298"
     }
   ],
   "args": [
-    "--legacy-states",
-    "prepared/request297/request297-states.parquet",
-    "--legacy-decisions",
-    "prepared/request297/request297-decisions.parquet",
+    "--states",
+    "prepared/request298/request298-states.parquet",
+    "--decisions",
+    "prepared/request298/request298-decisions.parquet",
+    "--raw-seconds",
+    "prepared/request298/request298-raw-seconds.parquet",
     "--output",
-    "artifacts/request298.json",
+    "artifacts/request299.json",
     "--states-output",
-    "artifacts/request298-states.parquet",
+    "artifacts/request299-states.parquet",
     "--decisions-output",
-    "artifacts/request298-decisions.parquet",
-    "--raw-output",
-    "artifacts/request298-raw-seconds.parquet"
+    "artifacts/request299-decisions.parquet"
   ],
-  "note": "Reproduce R297 exactly, correct independent clock timers and pending liquidation on same 86 entries, isolate execution correction from same-model rebuilt-label refit. Entry/stop/features/horizons frozen. May5-8 only; June HOLD sealed."
+  "note": "Exact R298 A baseline; B reachable-only; C risk-consistent horizons; primary D nested two-stage next-observed-event policy improvement. Same 86 entries/20 features/costs/stop, May5-8 only, June sealed. Reuse raw artifact; zero market API requests."
 }

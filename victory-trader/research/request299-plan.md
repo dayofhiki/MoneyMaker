@@ -1,6 +1,10 @@
 # R299 design — reachable-state and risk-consistent HOLD action values
 
-Status: designed, not dispatched. One consolidated research run when authorized.
+Status: implemented for a single consolidated research dispatch.
+Validated with 27 tests, exact R298 primary replay, and a complete local
+execution on the reused R298 artifact through all nested folds and strict JSON.
+The experiment records a failed economic gate as a completed research result.
+No policy/parameter changes were made in response to that verification result.
 Reuse R298 raw seconds and R298/R297 states; no repeated API acquisition required.
 May5-8 only for the first ablation. June HOLD and July-August remain sealed.
 
@@ -39,12 +43,17 @@ D. Primary new policy: risk-respecting policy-improvement HOLD value. Decide
 ## D. Two-stage fitted policy improvement, with nested day exclusion
 
 Use bounded two-stage improvement, not a claim of converged optimal control.
+B/C preserve R298 fold/horizon seeds. D fixes its seed schedule before results:
+inner pi1 = 20263900 + outer_index*100 + inner_index; pi2 =
+20263950 + outer_index*100; diagnostic outer pi1 = 20263975 + outer_index*100.
 
 1. Reference policy pi0 is the frozen old 10m/2% trailing policy, with the same
    common hard stop and corrected pending fills. For every reachable state s,
    its WAIT label is downstream pi0 liquidation after the next completed active
    second minus liquidation from submitting EXIT now. pi0 uses only observed
-   prefix information; future realized fills are training labels only.
+   prefix information; future realized fills are training labels only. If pi0
+   has already exceeded its 10m timer at a counterfactual current state, its
+   WAIT advantage is zero (immediate forced expiry); it cannot sell retrospectively.
 2. For each outer held-out development day, leave that day out of ALL training
    and target-policy fits. Within the other three days, leave one inner day out,
    fit pi1 on the other TWO days using pi0-based labels, then replay pi1 on that
