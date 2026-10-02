@@ -1,0 +1,112 @@
+name: MoneyMaker Entry Conditioned Rich Second
+
+on:
+  push:
+    branches:
+      - research/entry-conditioned-rich-second-220
+    paths:
+      - 'victory-trader/research/entry-conditioned-rich-second-request.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen numerical stack
+        run: python -m pip install -e '.[dev]' -c research/request214-requirements.txt
+      - name: Check code and entry-conditioned contract
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_entry_conditioned_rich_second.py tests/test_multi_event_option_value.py tests/test_event_time_position_replay.py
+      - name: Restore second-bar cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-request220-second-${{ github.run_id }}
+          restore-keys: |
+            moneymaker-request220-second-
+            moneymaker-request171-second-
+            moneymaker-request166-second-
+      - name: Download Request 171 rich-second fit/calibration
+        uses: actions/download-artifact@v4
+        with:
+          pattern: request171-rich-second-*
+          path: victory-trader/prepared/rich
+          merge-multiple: true
+          repository: dayofhiki/MoneyMaker
+          run-id: 36033120106
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Request 163 opportunity scan
+        uses: actions/download-artifact@v4
+        with:
+          name: request163-opportunity-prepared
+          path: victory-trader/prepared/opportunity
+          repository: dayofhiki/MoneyMaker
+          run-id: 36001945920
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Request 178 development shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: request178-fresh-*
+          path: victory-trader/prepared/fresh-raw
+          merge-multiple: true
+          repository: dayofhiki/MoneyMaker
+          run-id: 36038233507
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enrich Request 178 POSITION states with full one-second features
+        run: |
+          mkdir -p prepared/fresh-rich
+          for f in prepared/fresh-raw/*-positions.parquet; do
+            base="$(basename "$f")"
+            stem="${base%.parquet}"
+            python -m victory_trader.entry_conditioned_rich_second enrich \
+              --input "$f" \
+              --output "prepared/fresh-rich/$base" \
+              --audit "prepared/fresh-rich/$stem-audit.json"
+          done
+          cp prepared/fresh-raw/*-scan.parquet prepared/fresh-rich/
+      - name: Evaluate request 220
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          git rev-parse HEAD > artifacts/source-sha.txt
+          python -m victory_trader.entry_conditioned_rich_second evaluate \
+            --fit-positions prepared/rich/fit-rich-second.parquet \
+            --calibration-positions prepared/rich/calibration-rich-second.parquet \
+            --history-scan prepared/opportunity/opportunity-scan.parquet \
+            --fresh-dir prepared/fresh-rich \
+            --output artifacts/request220.json \
+            --states-output artifacts/request220-states.parquet \
+            | tee artifacts/request220.log
+      - name: Save second-bar cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: moneymaker-request220-second-${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-entry-conditioned-rich-second-220
+          path: |
+            victory-trader/artifacts/request220.json
+            victory-trader/artifacts/request220-states.parquet
+            victory-trader/artifacts/request220.log
+            victory-trader/artifacts/source-sha.txt
+            victory-trader/prepared/fresh-rich/*-audit.json
+          if-no-files-found: error
+          retention-days: 90
