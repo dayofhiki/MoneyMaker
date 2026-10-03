@@ -1,0 +1,83 @@
+name: MoneyMaker Event Time Position Replay
+
+on:
+  push:
+    branches:
+      - research/event-time-position-replay-216
+    paths:
+      - 'victory-trader/research/event-time-position-replay-request.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen numerical stack
+        run: python -m pip install -e '.[dev]' -c research/request214-requirements.txt
+      - name: Check code and event-time POSITION contract
+        run: |
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q tests/test_event_time_position_replay.py tests/test_integrated_entry_hold_exit.py
+      - name: Download Request 171 rich-second phases
+        uses: actions/download-artifact@v4
+        with:
+          pattern: request171-rich-second-*
+          path: victory-trader/prepared/rich
+          merge-multiple: true
+          repository: dayofhiki/MoneyMaker
+          run-id: 36033120106
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Request 163 opportunity scan
+        uses: actions/download-artifact@v4
+        with:
+          name: request163-opportunity-prepared
+          path: victory-trader/prepared/opportunity
+          repository: dayofhiki/MoneyMaker
+          run-id: 36001945920
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Request 178 opened development shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: request178-fresh-*
+          path: victory-trader/prepared/fresh
+          merge-multiple: true
+          repository: dayofhiki/MoneyMaker
+          run-id: 36038233507
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Evaluate request 216
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          git rev-parse HEAD > artifacts/source-sha.txt
+          python -m victory_trader.event_time_position_replay \
+            --fit-positions prepared/rich/fit-rich-second.parquet \
+            --calibration-positions prepared/rich/calibration-rich-second.parquet \
+            --history-scan prepared/opportunity/opportunity-scan.parquet \
+            --fresh-dir prepared/fresh \
+            --output artifacts/request216.json \
+            --trajectories-output artifacts/request216-trajectories.parquet \
+            | tee artifacts/request216.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-event-time-position-replay-216
+          path: |
+            victory-trader/artifacts/request216.json
+            victory-trader/artifacts/request216-trajectories.parquet
+            victory-trader/artifacts/request216.log
+            victory-trader/artifacts/source-sha.txt
+          if-no-files-found: error
+          retention-days: 90
