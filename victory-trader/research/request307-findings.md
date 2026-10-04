@@ -1,6 +1,6 @@
-# R307 local findings — calibration cannot rescue unstable early signal
+# R307 official findings — calibration cannot rescue unstable early signal
 
-Preregistered local run completed; identical official replay pending. Exact R306
+Official run37212562599 completed successfully; source7f6e9d6bfb10a41bc27404e9c0e299824fc615ad, artifact11307291571. Primary metrics and all checks reproduce the preregistered local result within1e-9. Exact R306
 C scores reproduce with zero error on all four folds.48 selected tests and
 critical lint pass. No feature/model/seed/threshold changes followed results.
 Zero market requests, same97 episodes, same4526 states, June sealed.
@@ -43,3 +43,16 @@ families as controls. Never duplicate seconds as extra independent winners,
 select examples by future spikes, relax stops/costs or open June for tuning.
 No R308 has been dispatched here; its population/data-acquisition scope must
 be specified before collection/fitting. Preserve original entry/exit references.
+
+
+First-snapshot raw C probability>=0.5 group contains4 episodes and zero net+5
+winners; all9 winners lie in lower-scored groups. These sparse descriptive bins
+explain why a modest overall rank gain does not justify using probabilities
+as betting conviction. No inverse or mid-range threshold is selected from them.
+
+A further hypothesis to isolate before attributing the failure solely to data
+quantity is early-versus-later training distribution: current episode weighting
+balances trajectories but lets numerous later cash states dominate each one.
+Future research should compare preregistered time-balanced/early-snapshot
+supervision and constrained low-dimensional pressure features, alongside added
+independent causal candidate coverage. Reweighting is not extra independent data.

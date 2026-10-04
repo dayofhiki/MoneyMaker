@@ -890,10 +890,10 @@ days remain a serious support limitation. June stays sealed and trading/risk
 rules stay fixed; later recheck results do not select a forced20s wait.
 
 
-R307 local nested calibration failed to preserve early ranking: two outer folds
+R307 official run37212562599 nested calibration failed to preserve early ranking: two outer folds
 fit constant maps and calibrated AUROC fell0.597127→0.462485 despite lower
 Brier. A simple first-snapshot training prior still beat calibrated probability
 loss. Do not promote; next priority is independent early-momentum example
 coverage before the restrictive shortlist, retaining causal population sampling,
 frozen risk/cost references and separate date/ticker trajectory evaluation.
-R307 official replay is pending; R308 is not dispatched. June remains sealed.
+Official R307 replay confirmed the local failure; R308 is not dispatched. June remains sealed.
