@@ -1,8 +1,9 @@
 {
-  "request_id": 308,
+  "request_id": 309,
   "operation": "module",
-  "module": "victory_trader.early_momentum_weighting",
+  "module": "victory_trader.compact_momentum_representation",
   "pytest": [
+    "tests/test_compact_momentum_representation.py",
     "tests/test_early_momentum_weighting.py",
     "tests/test_monotone_momentum_calibration.py",
     "tests/test_preentry_momentum_observability.py",
@@ -25,9 +26,9 @@
     "--summary",
     "prepared/request306/request306.json",
     "--output",
-    "artifacts/request308.json",
+    "artifacts/request309.json",
     "--states-output",
-    "artifacts/request308-states.parquet"
+    "artifacts/request309-states.parquet"
   ],
-  "note": "R308 fixed weighting-only comparison U/T/E on unchanged R306 99 causal features and reachable net5 label. Exact U replay; primary E=0.5 first point mass+0.5 fixed clock phase distribution. Same97 May5-8 candidates; zero network, no policy tuning; June sealed."
+  "note": "Fixed R309 2x2 input/pipeline comparison: original99 vs causal10, original tree vs L2 logistic with episode-mass weights. Primary X compact linear, F first-only secondary. Training-only preprocessing, exact U replay, same97 May5-8 candidates; zero acquisition/tuning/policy changes; June sealed."
 }
