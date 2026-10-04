@@ -1,8 +1,9 @@
 {
-  "request_id": 310,
+  "request_id": 311,
   "operation": "module",
-  "module": "victory_trader.clock_momentum_increment",
+  "module": "victory_trader.frozen_momentum_may_transport",
   "pytest": [
+    "tests/test_frozen_momentum_may_transport.py",
     "tests/test_clock_momentum_increment.py",
     "tests/test_compact_momentum_representation.py",
     "tests/test_early_momentum_weighting.py",
@@ -16,20 +17,40 @@
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 37217714691,
-      "name": "moneymaker-research-request-309",
-      "path": "prepared/request309"
+      "run_id": 37218791436,
+      "name": "moneymaker-research-request-310",
+      "path": "prepared/request310"
+    },
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36251239308,
+      "name": "moneymaker-economic-full-hot-admission-233",
+      "path": "prepared/request233"
+    },
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36001945920,
+      "name": "moneymaker-extended-history-economic-opportunity-v10-163",
+      "path": "prepared/request163"
     }
   ],
   "args": [
-    "--states",
-    "prepared/request309/request309-states.parquet",
-    "--summary",
-    "prepared/request309/request309.json",
+    "--training-states",
+    "prepared/request310/request310-states.parquet",
+    "--training-summary",
+    "prepared/request310/request310.json",
+    "--population",
+    "prepared/request233/request233-full-hot-states.parquet",
+    "--population-reference",
+    "prepared/request163/extended-history-economic-opportunity-v10.parquet",
     "--output",
-    "artifacts/request310.json",
+    "artifacts/request311.json",
     "--states-output",
-    "artifacts/request310-states.parquet"
+    "artifacts/request311-states.parquet",
+    "--raw-output",
+    "artifacts/request311-raw-seconds.parquet",
+    "--cohort-output",
+    "artifacts/request311-cohort.parquet"
   ],
-  "note": "R310 fixed causal clock-signal package increment over background+print-coverage controls. Same unchanged R309 L2 pipeline; exact W99 replay. Primary within-day first-snapshot rank and paired M-Q contrast; same97 May episodes, zero acquisition/tuning/policy changes; June sealed."
+  "note": "R311 frozen May5-8 Q/M linear pipeline, outcome-independent 25% identity hash sample of full May11-20 HOT population, canonical first completed print. Additional previously explored development with explicit population shift. Preserve missing/unresolved cases, source-match cohorts before fetching, save raw checkpoint. No eval fitting, threshold/policy tuning, June/July-August access."
 }
