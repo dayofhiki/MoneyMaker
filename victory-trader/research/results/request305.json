@@ -1,0 +1,2751 @@
+{
+  "request_id": 305,
+  "diagnostic_only": true,
+  "promotion_eligible": false,
+  "June_HOLD_opened": false,
+  "network_requests": 0,
+  "R304_reproduction": {
+    "entries": 86,
+    "maximum_return_error": 0.0,
+    "submissions_and_reasons_identical": true
+  },
+  "economics_decomposition": {
+    "entries": 86,
+    "complete_reachable": 86,
+    "no_eligible_hold": 11,
+    "categories": {
+      "no_feasible_net_profit": 53,
+      "feasible_profit_missed": 29,
+      "positive_profit_captured": 4
+    },
+    "actual_mean_net_pct": -1.631032988780612,
+    "oracle_mean_net_pct": 1.8984130476040066,
+    "mean_oracle_model_gap_pp": 3.5294460363846185,
+    "cost_only_stop_breaches": 9,
+    "levels": {
+      "reachable": {
+        "plus5": {
+          "gross": 14,
+          "net": 12
+        },
+        "plus10": {
+          "gross": 5,
+          "net": 4
+        },
+        "plus20": {
+          "gross": 2,
+          "net": 1
+        }
+      },
+      "whole_path": {
+        "plus5": {
+          "gross": 28,
+          "net": 26
+        },
+        "plus10": {
+          "gross": 12,
+          "net": 10
+        },
+        "plus20": {
+          "gross": 4,
+          "net": 3
+        }
+      }
+    },
+    "cost_scenario_ceiling_means": {
+      "light": 2.753923480889573,
+      "base": 1.8984130476040066,
+      "stress": -0.4016207998339939
+    },
+    "by_day": {
+      "2026-05-05": {
+        "entries": 19,
+        "complete_reachable": 19,
+        "no_eligible_hold": 4,
+        "categories": {
+          "no_feasible_net_profit": 14,
+          "feasible_profit_missed": 5
+        },
+        "actual_mean_net_pct": -2.099714314197569,
+        "oracle_mean_net_pct": -0.4739262264217321,
+        "mean_oracle_model_gap_pp": 1.6257880877758368,
+        "cost_only_stop_breaches": 3,
+        "levels": {
+          "reachable": {
+            "plus5": {
+              "gross": 1,
+              "net": 1
+            },
+            "plus10": {
+              "gross": 1,
+              "net": 1
+            },
+            "plus20": {
+              "gross": 0,
+              "net": 0
+            }
+          },
+          "whole_path": {
+            "plus5": {
+              "gross": 4,
+              "net": 4
+            },
+            "plus10": {
+              "gross": 2,
+              "net": 2
+            },
+            "plus20": {
+              "gross": 1,
+              "net": 1
+            }
+          }
+        },
+        "cost_scenario_ceiling_means": {
+          "light": 0.4527930965668691,
+          "base": -0.4739262264217321,
+          "stress": -2.852390262789279
+        }
+      },
+      "2026-05-06": {
+        "entries": 24,
+        "complete_reachable": 24,
+        "no_eligible_hold": 3,
+        "categories": {
+          "no_feasible_net_profit": 13,
+          "feasible_profit_missed": 10,
+          "positive_profit_captured": 1
+        },
+        "actual_mean_net_pct": -1.4353630312911214,
+        "oracle_mean_net_pct": 1.3938775746142327,
+        "mean_oracle_model_gap_pp": 2.8292406059053548,
+        "cost_only_stop_breaches": 3,
+        "levels": {
+          "reachable": {
+            "plus5": {
+              "gross": 7,
+              "net": 5
+            },
+            "plus10": {
+              "gross": 1,
+              "net": 1
+            },
+            "plus20": {
+              "gross": 0,
+              "net": 0
+            }
+          },
+          "whole_path": {
+            "plus5": {
+              "gross": 9,
+              "net": 8
+            },
+            "plus10": {
+              "gross": 3,
+              "net": 2
+            },
+            "plus20": {
+              "gross": 0,
+              "net": 0
+            }
+          }
+        },
+        "cost_scenario_ceiling_means": {
+          "light": 2.233408180100584,
+          "base": 1.3938775746142327,
+          "stress": -0.8962626516639848
+        }
+      },
+      "2026-05-07": {
+        "entries": 16,
+        "complete_reachable": 16,
+        "no_eligible_hold": 1,
+        "categories": {
+          "no_feasible_net_profit": 10,
+          "feasible_profit_missed": 6
+        },
+        "actual_mean_net_pct": -1.9511837394420537,
+        "oracle_mean_net_pct": 0.9726800501515183,
+        "mean_oracle_model_gap_pp": 2.9238637895935717,
+        "cost_only_stop_breaches": 0,
+        "levels": {
+          "reachable": {
+            "plus5": {
+              "gross": 4,
+              "net": 4
+            },
+            "plus10": {
+              "gross": 1,
+              "net": 0
+            },
+            "plus20": {
+              "gross": 0,
+              "net": 0
+            }
+          },
+          "whole_path": {
+            "plus5": {
+              "gross": 6,
+              "net": 5
+            },
+            "plus10": {
+              "gross": 1,
+              "net": 0
+            },
+            "plus20": {
+              "gross": 0,
+              "net": 0
+            }
+          }
+        },
+        "cost_scenario_ceiling_means": {
+          "light": 1.8867175733503627,
+          "base": 0.9726800501515183,
+          "stress": -1.282787036661822
+        }
+      },
+      "2026-05-08": {
+        "entries": 27,
+        "complete_reachable": 27,
+        "no_eligible_hold": 3,
+        "categories": {
+          "no_feasible_net_profit": 16,
+          "feasible_profit_missed": 8,
+          "positive_profit_captured": 3
+        },
+        "actual_mean_net_pct": -1.2854300919747805,
+        "oracle_mean_net_pct": 4.564895474177466,
+        "mean_oracle_model_gap_pp": 5.8503255661522475,
+        "cost_only_stop_breaches": 3,
+        "levels": {
+          "reachable": {
+            "plus5": {
+              "gross": 2,
+              "net": 2
+            },
+            "plus10": {
+              "gross": 2,
+              "net": 2
+            },
+            "plus20": {
+              "gross": 2,
+              "net": 1
+            }
+          },
+          "whole_path": {
+            "plus5": {
+              "gross": 9,
+              "net": 9
+            },
+            "plus10": {
+              "gross": 6,
+              "net": 6
+            },
+            "plus20": {
+              "gross": 3,
+              "net": 2
+            }
+          }
+        },
+        "cost_scenario_ceiling_means": {
+          "light": 5.34981751947085,
+          "base": 4.564895474177466,
+          "stress": 2.284848979029542
+        }
+      }
+    },
+    "by_category": {
+      "feasible_profit_missed": {
+        "entries": 29,
+        "complete_reachable": 29,
+        "no_eligible_hold": 0,
+        "categories": {
+          "feasible_profit_missed": 29
+        },
+        "actual_mean_net_pct": -1.1671999500236245,
+        "oracle_mean_net_pct": 7.386666732570882,
+        "mean_oracle_model_gap_pp": 8.553866682594508,
+        "cost_only_stop_breaches": 0,
+        "levels": {
+          "reachable": {
+            "plus5": {
+              "gross": 12,
+              "net": 10
+            },
+            "plus10": {
+              "gross": 3,
+              "net": 2
+            },
+            "plus20": {
+              "gross": 1,
+              "net": 1
+            }
+          },
+          "whole_path": {
+            "plus5": {
+              "gross": 14,
+              "net": 12
+            },
+            "plus10": {
+              "gross": 4,
+              "net": 3
+            },
+            "plus20": {
+              "gross": 1,
+              "net": 1
+            }
+          }
+        },
+        "cost_scenario_ceiling_means": {
+          "light": 8.093627269384177,
+          "base": 7.386666732570882,
+          "stress": 5.256367442594241
+        }
+      },
+      "no_feasible_net_profit": {
+        "entries": 53,
+        "complete_reachable": 53,
+        "no_eligible_hold": 11,
+        "categories": {
+          "no_feasible_net_profit": 53
+        },
+        "actual_mean_net_pct": -2.2254132475156077,
+        "oracle_mean_net_pct": -1.715031920539418,
+        "mean_oracle_model_gap_pp": 0.5103813269761898,
+        "cost_only_stop_breaches": 9,
+        "levels": {
+          "reachable": {
+            "plus5": {
+              "gross": 0,
+              "net": 0
+            },
+            "plus10": {
+              "gross": 0,
+              "net": 0
+            },
+            "plus20": {
+              "gross": 0,
+              "net": 0
+            }
+          },
+          "whole_path": {
+            "plus5": {
+              "gross": 12,
+              "net": 12
+            },
+            "plus10": {
+              "gross": 6,
+              "net": 5
+            },
+            "plus20": {
+              "gross": 2,
+              "net": 2
+            }
+          }
+        },
+        "cost_scenario_ceiling_means": {
+          "light": -0.7620729936668883,
+          "base": -1.715031920539418,
+          "stress": -4.117620610628616
+        }
+      },
+      "positive_profit_captured": {
+        "entries": 4,
+        "complete_reachable": 4,
+        "no_eligible_hold": 0,
+        "categories": {
+          "positive_profit_captured": 4
+        },
+        "actual_mean_net_pct": 2.8817159084699173,
+        "oracle_mean_net_pct": 9.98671965949453,
+        "mean_oracle_model_gap_pp": 7.105003751024614,
+        "cost_only_stop_breaches": 0,
+        "levels": {
+          "reachable": {
+            "plus5": {
+              "gross": 2,
+              "net": 2
+            },
+            "plus10": {
+              "gross": 2,
+              "net": 2
+            },
+            "plus20": {
+              "gross": 1,
+              "net": 0
+            }
+          },
+          "whole_path": {
+            "plus5": {
+              "gross": 2,
+              "net": 2
+            },
+            "plus10": {
+              "gross": 2,
+              "net": 2
+            },
+            "plus20": {
+              "gross": 1,
+              "net": 0
+            }
+          }
+        },
+        "cost_scenario_ceiling_means": {
+          "light": 10.628024302176803,
+          "base": 9.98671965949453,
+          "stress": 7.814961935590037
+        }
+      }
+    }
+  },
+  "observability": {
+    "primary_first_snapshot_logistic": {
+      "net_0": {
+        "states": 75,
+        "episodes": 75,
+        "positive_episodes": 33,
+        "weighted_prevalence": 0.4288690476190476,
+        "auc": 0.5567094676522695,
+        "ap": 0.5087510783333179,
+        "prior_ap": 0.3873464745602149,
+        "brier": 0.26053678376910505,
+        "prior_brier": 0.2487986189846309,
+        "per_day": {
+          "2026-05-05": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.3333333333333333,
+            "auc": 0.6,
+            "ap": 0.4046031746031746,
+            "prior_ap": 0.3333333333333333,
+            "brier": 0.24641081436529438,
+            "prior_brier": 0.23844812925170059
+          },
+          "2026-05-06": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.5238095238095238,
+            "auc": 0.49999999999999994,
+            "ap": 0.61879656291421,
+            "prior_ap": 0.5238095238095238,
+            "brier": 0.290824616572376,
+            "prior_brier": 0.26545745149911815
+          },
+          "2026-05-07": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 6,
+            "weighted_prevalence": 0.4,
+            "auc": 0.5740740740740742,
+            "ap": 0.5464997964997965,
+            "prior_ap": 0.4,
+            "brier": 0.27405303874620457,
+            "prior_brier": 0.241481638951877
+          },
+          "2026-05-08": {
+            "states": 24,
+            "episodes": 24,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.4583333333333333,
+            "auc": 0.6223776223776223,
+            "ap": 0.6446773541739217,
+            "prior_ap": 0.4583333333333333,
+            "brier": 0.23085866539254551,
+            "prior_brier": 0.24980725623582764
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 6,
+            "weighted_prevalence": 0.2589285714285714,
+            "auc": 0.29243410423302396,
+            "ap": 0.20919002099082507,
+            "prior_ap": 0.20751231527093597,
+            "brier": 0.2144062447211696,
+            "prior_brier": 0.2290801760519022
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 9,
+            "weighted_prevalence": 0.46249999999999997,
+            "auc": 0.3614079195474544,
+            "ap": 0.43447733114662557,
+            "prior_ap": 0.4117117117117117,
+            "brier": 0.266055051000168,
+            "prior_brier": 0.25486674067775256
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 9,
+            "weighted_prevalence": 0.37103174603174605,
+            "auc": 0.552539685217362,
+            "ap": 0.49917956031909694,
+            "prior_ap": 0.4073013043601279,
+            "brier": 0.24502010931957313,
+            "prior_brier": 0.23881184649785836
+          },
+          {
+            "states": 18,
+            "episodes": 18,
+            "positive_episodes": 9,
+            "weighted_prevalence": 0.5238095238095238,
+            "auc": 0.5899147727272728,
+            "ap": 0.7017205794504369,
+            "prior_ap": 0.47876082251082247,
+            "brier": 0.2872948707704932,
+            "prior_brier": 0.2627725418871252
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 75,
+          "episodes": 75,
+          "positive_episodes": 33,
+          "weighted_prevalence": 0.4288690476190476,
+          "auc": 0.5567094676522695,
+          "ap": 0.5087510783333179,
+          "prior_ap": 0.3873464745602149,
+          "brier": 0.26053678376910505,
+          "prior_brier": 0.2487986189846309
+        },
+        "cluster_intervals": {
+          "day": {
+            "clusters": 4,
+            "draws": 1000,
+            "two_class_draws": 1000,
+            "auc_ci95": [
+              0.5055681818181819,
+              0.6174228675136116
+            ],
+            "ap_ci95": [
+              0.43415588246315207,
+              0.6065333634622755
+            ]
+          },
+          "ticker_day": {
+            "clusters": 75,
+            "draws": 1000,
+            "two_class_draws": 1000,
+            "auc_ci95": [
+              0.42814048461384496,
+              0.6988348896092919
+            ],
+            "ap_ci95": [
+              0.35017338027293804,
+              0.6786685263801895
+            ]
+          }
+        }
+      },
+      "net_5": {
+        "states": 75,
+        "episodes": 75,
+        "positive_episodes": 12,
+        "weighted_prevalence": 0.1636904761904762,
+        "auc": 0.30649692656098376,
+        "ap": 0.1801208839795839,
+        "prior_ap": 0.13004184704184696,
+        "brier": 0.1636782023097766,
+        "prior_brier": 0.14312027588813303,
+        "per_day": {
+          "2026-05-05": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.0714285714285714,
+            "ap": 0.07142857142857142,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.12515859304569227,
+            "prior_brier": 0.0789575459813555
+          },
+          "2026-05-06": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.23809523809523808,
+            "auc": 0.37500000000000006,
+            "ap": 0.22809523809523807,
+            "prior_ap": 0.23809523809523805,
+            "brier": 0.22536228823932297,
+            "prior_brier": 0.19124779541446207
+          },
+          "2026-05-07": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.26666666666666666,
+            "auc": 0.4772727272727273,
+            "ap": 0.3076048951048951,
+            "prior_ap": 0.26666666666666666,
+            "brier": 0.23577933986448993,
+            "prior_brier": 0.214407281431091
+          },
+          "2026-05-08": {
+            "states": 24,
+            "episodes": 24,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.08333333333333333,
+            "auc": 0.6136363636363636,
+            "ap": 0.5526315789473684,
+            "prior_ap": 0.08333333333333333,
+            "brier": 0.0684125880896012,
+            "prior_brier": 0.08786848072562357
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 6,
+            "weighted_prevalence": 0.36190476190476195,
+            "auc": 0.7543205027494109,
+            "ap": 0.7390979646321045,
+            "prior_ap": 0.43602756892230576,
+            "brier": 0.30836008694786415,
+            "prior_brier": 0.26896006550768464
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.17559523809523808,
+            "auc": 0.8384629504986845,
+            "ap": 0.7251309707241911,
+            "prior_ap": 0.14361380145278446,
+            "brier": 0.14077162098601953,
+            "prior_brier": 0.15139408541194257
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.12499999999999997,
+            "auc": 0.04081632653061218,
+            "ap": 0.1296296296296296,
+            "prior_ap": 0.125,
+            "brier": 0.11907134215795752,
+            "prior_brier": 0.12034249811035518
+          },
+          {
+            "states": 18,
+            "episodes": 18,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.027777777777777776,
+            "auc": 1.0,
+            "ap": 1.0,
+            "prior_ap": 0.05555555555555555,
+            "brier": 0.13935977398559352,
+            "prior_brier": 0.04487953514739229
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 75,
+          "episodes": 75,
+          "positive_episodes": 12,
+          "weighted_prevalence": 0.1636904761904762,
+          "auc": 0.30649692656098376,
+          "ap": 0.1801208839795839,
+          "prior_ap": 0.13004184704184696,
+          "brier": 0.1636782023097766,
+          "prior_brier": 0.14312027588813303
+        },
+        "cluster_intervals": {
+          "day": {
+            "clusters": 4,
+            "draws": 1000,
+            "two_class_draws": 1000,
+            "auc_ci95": [
+              0.1940700808625337,
+              0.4532877076019943
+            ],
+            "ap_ci95": [
+              0.08893194544225562,
+              0.33560006952651394
+            ]
+          },
+          "ticker_day": {
+            "clusters": 75,
+            "draws": 1000,
+            "two_class_draws": 1000,
+            "auc_ci95": [
+              0.16472845259440907,
+              0.4761345676313925
+            ],
+            "ap_ci95": [
+              0.0723779313902412,
+              0.34711846763579424
+            ]
+          }
+        }
+      },
+      "net_10": {
+        "states": 75,
+        "episodes": 75,
+        "positive_episodes": 4,
+        "weighted_prevalence": 0.0494047619047619,
+        "auc": 0.22325369103213105,
+        "ap": 0.0799734152418394,
+        "prior_ap": 0.03942197360872059,
+        "brier": 0.05282357447707609,
+        "prior_brier": 0.04772093096497859,
+        "per_day": {
+          "2026-05-05": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.0,
+            "ap": 0.06666666666666667,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.06630781206571458,
+            "prior_brier": 0.06275195263290503
+          },
+          "2026-05-06": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.047619047619047616,
+            "auc": 0.0,
+            "ap": 0.04761904761904761,
+            "prior_ap": 0.04761904761904761,
+            "brier": 0.05035897517055048,
+            "prior_brier": 0.04535714285714284
+          },
+          "2026-05-07": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.03464782870231824,
+            "prior_brier": 0.0043392542202065985
+          },
+          "2026-05-08": {
+            "states": 24,
+            "episodes": 24,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.08333333333333333,
+            "auc": 0.5909090909090908,
+            "ap": 0.55,
+            "prior_ap": 0.08333333333333333,
+            "brier": 0.05997968196972107,
+            "prior_brier": 0.07843537414965986
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.2611111111111111,
+            "auc": 0.1119820828667414,
+            "ap": 0.22573344807387355,
+            "prior_ap": 0.4362884160756501,
+            "brier": 0.2550000818465657,
+            "prior_brier": 0.23846014949189553
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0007401997904423089,
+            "prior_brier": 0.0025489732930209117
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0014944096124093384,
+            "prior_brier": 0.0025489732930209117
+          },
+          {
+            "states": 18,
+            "episodes": 18,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.25,
+            "auc": 0.9166666666666666,
+            "ap": 0.8,
+            "prior_ap": 0.25,
+            "brier": 0.13227270692534576,
+            "prior_brier": 0.23350135424540186
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 75,
+          "episodes": 75,
+          "positive_episodes": 4,
+          "weighted_prevalence": 0.0494047619047619,
+          "auc": 0.22325369103213105,
+          "ap": 0.0799734152418394,
+          "prior_ap": 0.03942197360872059,
+          "brier": 0.05282357447707609,
+          "prior_brier": 0.04772093096497859
+        },
+        "cluster_intervals": {
+          "day": {
+            "clusters": 4,
+            "draws": 1000,
+            "two_class_draws": 996,
+            "auc_ci95": [
+              0.0,
+              0.508695652173913
+            ],
+            "ap_ci95": [
+              0.016666666666666666,
+              0.4401464827116335
+            ]
+          },
+          "ticker_day": {
+            "clusters": 75,
+            "draws": 1000,
+            "two_class_draws": 982,
+            "auc_ci95": [
+              0.004230045603565811,
+              0.957059857274187
+            ],
+            "ap_ci95": [
+              0.01199418389703354,
+              0.4838709677419354
+            ]
+          }
+        }
+      },
+      "net_20": {
+        "states": 75,
+        "episodes": 75,
+        "positive_episodes": 1,
+        "weighted_prevalence": 0.010416666666666664,
+        "auc": 0.1210526315789473,
+        "ap": 0.010416666666666663,
+        "prior_ap": 0.010416666666666668,
+        "brier": 0.010590197019094172,
+        "prior_brier": 0.010561342592592593,
+        "per_day": {
+          "2026-05-05": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0001843481308873241,
+            "prior_brier": 0.00019290123456790117
+          },
+          "2026-05-06": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0002693729139083695,
+            "prior_brier": 0.00019290123456790125
+          },
+          "2026-05-07": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.00024040036491432753,
+            "prior_brier": 0.0001929012345679012
+          },
+          "2026-05-08": {
+            "states": 24,
+            "episodes": 24,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.041666666666666664,
+            "auc": 0.5,
+            "ap": 0.041666666666666664,
+            "prior_ap": 0.041666666666666664,
+            "brier": 0.041666666666666664,
+            "prior_brier": 0.041666666666666664
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0,
+            "prior_brier": 0.0
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.05,
+            "auc": 0.10526315789473678,
+            "ap": 0.050000000000000024,
+            "prior_ap": 0.050000000000000024,
+            "brier": 0.05004820794717936,
+            "prior_brier": 0.050144675925925926
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0001719317833382271,
+            "prior_brier": 0.00019290123456790122
+          },
+          {
+            "states": 18,
+            "episodes": 18,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.00042709348143888303,
+            "prior_brier": 0.00019290123456790117
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 75,
+          "episodes": 75,
+          "positive_episodes": 1,
+          "weighted_prevalence": 0.010416666666666664,
+          "auc": 0.1210526315789473,
+          "ap": 0.010416666666666663,
+          "prior_ap": 0.010416666666666668,
+          "brier": 0.010590197019094172,
+          "prior_brier": 0.010561342592592593
+        },
+        "cluster_intervals": {
+          "day": {
+            "clusters": 4,
+            "draws": 1000,
+            "two_class_draws": 674,
+            "auc_ci95": [
+              0.12105263157894725,
+              0.3709677419354839
+            ],
+            "ap_ci95": [
+              0.010416666666666656,
+              0.031249999999999993
+            ]
+          },
+          "ticker_day": {
+            "clusters": 75,
+            "draws": 1000,
+            "two_class_draws": 657,
+            "auc_ci95": [
+              0.07633960486434113,
+              0.16952090908159312
+            ],
+            "ap_ci95": [
+              0.009983457742050143,
+              0.033087635525759565
+            ]
+          }
+        }
+      }
+    },
+    "secondary_first_state_tree": {
+      "net_0": {
+        "states": 75,
+        "episodes": 75,
+        "positive_episodes": 33,
+        "weighted_prevalence": 0.4288690476190476,
+        "auc": 0.566606118225322,
+        "ap": 0.49250570560210094,
+        "prior_ap": 0.3873464745602149,
+        "brier": 0.3237983355021114,
+        "prior_brier": 0.25103234137112407,
+        "per_day": {
+          "2026-05-05": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.3333333333333333,
+            "auc": 0.4,
+            "ap": 0.3827505827505827,
+            "prior_ap": 0.3333333333333333,
+            "brier": 0.2789785104365331,
+            "prior_brier": 0.2273254341701641
+          },
+          "2026-05-06": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.5238095238095238,
+            "auc": 0.6363636363636364,
+            "ap": 0.7102760809100522,
+            "prior_ap": 0.5238095238095238,
+            "brier": 0.29893342985053295,
+            "prior_brier": 0.2819670688324607
+          },
+          "2026-05-07": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 6,
+            "weighted_prevalence": 0.4,
+            "auc": 0.6111111111111112,
+            "ap": 0.536050061050061,
+            "prior_ap": 0.4,
+            "brier": 0.34951743522834267,
+            "prior_brier": 0.24032402080383145
+          },
+          "2026-05-08": {
+            "states": 24,
+            "episodes": 24,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.4583333333333333,
+            "auc": 0.5034965034965035,
+            "ap": 0.4963647065321707,
+            "prior_ap": 0.4583333333333333,
+            "brier": 0.36776396649303705,
+            "prior_brier": 0.2545128416780403
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 7,
+            "weighted_prevalence": 0.375,
+            "auc": 0.6668724279835391,
+            "ap": 0.6442809086377926,
+            "prior_ap": 0.4290123456790123,
+            "brier": 0.3638677714850296,
+            "prior_brier": 0.23257931540397286
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 8,
+            "weighted_prevalence": 0.417857142857143,
+            "auc": 0.47165853914320166,
+            "ap": 0.43130202066364237,
+            "prior_ap": 0.37352462352462357,
+            "brier": 0.3528936671378669,
+            "prior_brier": 0.24771802216263053
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 9,
+            "weighted_prevalence": 0.4553571428571429,
+            "auc": 0.6722382942247936,
+            "ap": 0.7182612526139384,
+            "prior_ap": 0.3944911297852475,
+            "brier": 0.27283353512086583,
+            "prior_brier": 0.2592070666993765
+          },
+          {
+            "states": 18,
+            "episodes": 18,
+            "positive_episodes": 9,
+            "weighted_prevalence": 0.5104166666666666,
+            "auc": 0.3738601823708207,
+            "ap": 0.4930421570148347,
+            "prior_ap": 0.49574829931972786,
+            "brier": 0.3322297936815655,
+            "prior_brier": 0.2710213356958755
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 75,
+          "episodes": 75,
+          "positive_episodes": 33,
+          "weighted_prevalence": 0.4288690476190476,
+          "auc": 0.566606118225322,
+          "ap": 0.49250570560210094,
+          "prior_ap": 0.3873464745602149,
+          "brier": 0.3237983355021114,
+          "prior_brier": 0.25103234137112407
+        }
+      },
+      "net_5": {
+        "states": 75,
+        "episodes": 75,
+        "positive_episodes": 12,
+        "weighted_prevalence": 0.1636904761904762,
+        "auc": 0.5271620834681334,
+        "ap": 0.20226753335585984,
+        "prior_ap": 0.13004184704184696,
+        "brier": 0.1659371533340814,
+        "prior_brier": 0.14219705493379467,
+        "per_day": {
+          "2026-05-05": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.6428571428571428,
+            "ap": 0.16666666666666666,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.07903913316665281,
+            "prior_brier": 0.06872044992038139
+          },
+          "2026-05-06": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.23809523809523808,
+            "auc": 0.4125,
+            "ap": 0.38206349206349205,
+            "prior_ap": 0.23809523809523805,
+            "brier": 0.20155812808205759,
+            "prior_brier": 0.1973037403292916
+          },
+          "2026-05-07": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.26666666666666666,
+            "auc": 0.6590909090909091,
+            "ap": 0.41875,
+            "prior_ap": 0.26666666666666666,
+            "brier": 0.24584606405786966,
+            "prior_brier": 0.2234001789141437
+          },
+          "2026-05-08": {
+            "states": 24,
+            "episodes": 24,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.08333333333333333,
+            "auc": 0.38636363636363635,
+            "ap": 0.09808612440191387,
+            "prior_ap": 0.08333333333333333,
+            "brier": 0.1373052880297455,
+            "prior_brier": 0.07936385057136207
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.0625,
+            "auc": 0.30888888888888894,
+            "ap": 0.0657222348398819,
+            "prior_ap": 0.08333333333333333,
+            "brier": 0.06245473729576155,
+            "prior_brier": 0.064300603168175
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.33333333333333326,
+            "auc": 0.5878906249999999,
+            "ap": 0.42141544117647056,
+            "prior_ap": 0.26041666666666663,
+            "brier": 0.33201484737711223,
+            "prior_brier": 0.27637662384197864
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.2023809523809524,
+            "auc": 0.5816505706760317,
+            "ap": 0.3798337665671834,
+            "prior_ap": 0.2626050420168067,
+            "brier": 0.19346241145096443,
+            "prior_brier": 0.16715466462567657
+          },
+          {
+            "states": 18,
+            "episodes": 18,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.14583333333333334,
+            "auc": 0.8222996515679443,
+            "ap": 0.4765306122448979,
+            "prior_ap": 0.1259920634920635,
+            "brier": 0.12668482265685588,
+            "prior_brier": 0.13049196424750953
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 75,
+          "episodes": 75,
+          "positive_episodes": 12,
+          "weighted_prevalence": 0.1636904761904762,
+          "auc": 0.5271620834681334,
+          "ap": 0.20226753335585984,
+          "prior_ap": 0.13004184704184696,
+          "brier": 0.1659371533340814,
+          "prior_brier": 0.14219705493379467
+        }
+      },
+      "net_10": {
+        "states": 75,
+        "episodes": 75,
+        "positive_episodes": 4,
+        "weighted_prevalence": 0.0494047619047619,
+        "auc": 0.5555918099448516,
+        "ap": 0.07393634409249351,
+        "prior_ap": 0.04125788869764771,
+        "brier": 0.051580637780489505,
+        "prior_brier": 0.04778453782345723,
+        "per_day": {
+          "2026-05-05": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.2857142857142857,
+            "ap": 0.09090909090909091,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.06664856139631517,
+            "prior_brier": 0.06275195263290503
+          },
+          "2026-05-06": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.047619047619047616,
+            "auc": 0.65,
+            "ap": 0.12499999999999999,
+            "prior_ap": 0.04761904761904761,
+            "brier": 0.05643109204333039,
+            "prior_brier": 0.04564997443202573
+          },
+          "2026-05-07": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 2.4451055998311857e-05,
+            "prior_brier": 0.002135816632153627
+          },
+          "2026-05-08": {
+            "states": 24,
+            "episodes": 24,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.08333333333333333,
+            "auc": 0.75,
+            "ap": 0.2111111111111111,
+            "prior_ap": 0.08333333333333333,
+            "brier": 0.08321844662631415,
+            "prior_brier": 0.08060040759674458
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.02777777777777778,
+            "auc": 0.692857142857143,
+            "ap": 0.08510638297872342,
+            "prior_ap": 0.055555555555555546,
+            "brier": 0.02777019032965042,
+            "prior_brier": 0.0266781750504278
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 4.896488640047319e-08,
+            "prior_brier": 0.001325441364360778
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.0625,
+            "auc": 0.7055555555555556,
+            "ap": 0.22327044025157233,
+            "prior_ap": 0.0625,
+            "brier": 0.062409887715820137,
+            "prior_brier": 0.06152080155972097
+          },
+          {
+            "states": 18,
+            "episodes": 18,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.027777777777777776,
+            "auc": 0.47857142857142854,
+            "ap": 0.05194805194805195,
+            "prior_ap": 0.037037037037037035,
+            "brier": 0.032949532606291194,
+            "prior_brier": 0.02741755912314521
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 75,
+          "episodes": 75,
+          "positive_episodes": 4,
+          "weighted_prevalence": 0.0494047619047619,
+          "auc": 0.5555918099448516,
+          "ap": 0.07393634409249351,
+          "prior_ap": 0.04125788869764771,
+          "brier": 0.051580637780489505,
+          "prior_brier": 0.04778453782345723
+        }
+      },
+      "net_20": {
+        "states": 75,
+        "episodes": 75,
+        "positive_episodes": 1,
+        "weighted_prevalence": 0.010416666666666664,
+        "auc": 0.12105263157894736,
+        "ap": 0.010416666666666668,
+        "prior_ap": 0.010416666666666663,
+        "brier": 0.02518126418061874,
+        "prior_brier": 0.010561342592592593,
+        "per_day": {
+          "2026-05-05": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 3.225774996823754e-08,
+            "prior_brier": 0.00019290123456790122
+          },
+          "2026-05-06": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.044579214308486555,
+            "prior_brier": 0.00019290123456790117
+          },
+          "2026-05-07": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.014479143489571772,
+            "prior_brier": 0.00019290123456790117
+          },
+          "2026-05-08": {
+            "states": 24,
+            "episodes": 24,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.041666666666666664,
+            "auc": 0.5,
+            "ap": 0.041666666666666664,
+            "prior_ap": 0.041666666666666664,
+            "brier": 0.041666666666666664,
+            "prior_brier": 0.041666666666666664
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0,
+            "prior_brier": 0.0
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666668,
+            "auc": 0.14285714285714285,
+            "ap": 0.06666666666666668,
+            "prior_ap": 0.06666666666666668,
+            "brier": 0.06666667142910365,
+            "prior_brier": 0.06679526748971193
+          },
+          {
+            "states": 19,
+            "episodes": 19,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 1.2762423168304336e-08,
+            "prior_brier": 0.00019290123456790112
+          },
+          {
+            "states": 18,
+            "episodes": 18,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.058487508192844845,
+            "prior_brier": 0.0001929012345679012
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 75,
+          "episodes": 75,
+          "positive_episodes": 1,
+          "weighted_prevalence": 0.010416666666666664,
+          "auc": 0.12105263157894736,
+          "ap": 0.010416666666666668,
+          "prior_ap": 0.010416666666666663,
+          "brier": 0.02518126418061874,
+          "prior_brier": 0.010561342592592593
+        }
+      }
+    },
+    "secondary_all_reachable_tree": {
+      "net_0": {
+        "states": 10618,
+        "episodes": 75,
+        "positive_episodes": 33,
+        "weighted_prevalence": 0.37737258246681943,
+        "auc": 0.8965255409919743,
+        "ap": 0.8576329526343381,
+        "prior_ap": 0.3413776039383039,
+        "brier": 0.15430449009023198,
+        "prior_brier": 0.2383352067825225,
+        "per_day": {
+          "2026-05-05": {
+            "states": 482,
+            "episodes": 15,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.29518002322880377,
+            "auc": 0.9202584329825794,
+            "ap": 0.9023254942090195,
+            "prior_ap": 0.2951800232288041,
+            "brier": 0.1036789560478241,
+            "prior_brier": 0.22005876252717055
+          },
+          "2026-05-06": {
+            "states": 4658,
+            "episodes": 21,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.4791769590277053,
+            "auc": 0.9259824812880845,
+            "ap": 0.942044910275137,
+            "prior_ap": 0.4791769590277216,
+            "brier": 0.10649029394948466,
+            "prior_brier": 0.2679915228970228
+          },
+          "2026-05-07": {
+            "states": 2365,
+            "episodes": 15,
+            "positive_episodes": 6,
+            "weighted_prevalence": 0.3634920634920635,
+            "auc": 0.9118212126806795,
+            "ap": 0.9113538962144382,
+            "prior_ap": 0.36349206349207647,
+            "brier": 0.09816873206311427,
+            "prior_brier": 0.23170810559391597
+          },
+          "2026-05-08": {
+            "states": 3113,
+            "episodes": 24,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.37164128411870534,
+            "auc": 0.8016448213931807,
+            "ap": 0.6985828034824205,
+            "prior_ap": 0.371641284118694,
+            "brier": 0.308879978300505,
+            "prior_brier": 0.23358243611198082
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 2655,
+            "episodes": 72,
+            "positive_episodes": 31,
+            "weighted_prevalence": 0.3602089962477159,
+            "auc": 0.6970189044312987,
+            "ap": 0.5477411473267397,
+            "prior_ap": 0.32982486930497906,
+            "brier": 0.22788720262251985,
+            "prior_brier": 0.23383809528530125
+          },
+          {
+            "states": 2655,
+            "episodes": 43,
+            "positive_episodes": 31,
+            "weighted_prevalence": 0.7450935870418613,
+            "auc": 0.7315335847267027,
+            "ap": 0.8818208784522261,
+            "prior_ap": 0.790881592149526,
+            "brier": 0.2302498202464322,
+            "prior_brier": 0.32593906054971794
+          },
+          {
+            "states": 2654,
+            "episodes": 30,
+            "positive_episodes": 27,
+            "weighted_prevalence": 0.9208333333333334,
+            "auc": 0.46560720280083,
+            "ap": 0.9155463070102253,
+            "prior_ap": 0.9589240824534941,
+            "brier": 0.07853330717820566,
+            "prior_brier": 0.3690331913804569
+          },
+          {
+            "states": 2654,
+            "episodes": 26,
+            "positive_episodes": 24,
+            "weighted_prevalence": 0.9291666666666666,
+            "auc": 0.408917915402637,
+            "ap": 0.9107907706827385,
+            "prior_ap": 0.9575485799701082,
+            "brier": 0.0705556890120196,
+            "prior_brier": 0.371090414574224
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 3094,
+          "episodes": 75,
+          "positive_episodes": 33,
+          "weighted_prevalence": 0.36660103318291254,
+          "auc": 0.6709316255687772,
+          "ap": 0.5126485130611741,
+          "prior_ap": 0.3327610822657616,
+          "brier": 0.2584385493155165,
+          "prior_brier": 0.2354905230236941
+        }
+      },
+      "net_5": {
+        "states": 10618,
+        "episodes": 75,
+        "positive_episodes": 12,
+        "weighted_prevalence": 0.1242407403202245,
+        "auc": 0.7760291779539241,
+        "ap": 0.35399045762002085,
+        "prior_ap": 0.09943465445469299,
+        "brier": 0.11684248832306728,
+        "prior_brier": 0.11136638002523828,
+        "per_day": {
+          "2026-05-05": {
+            "states": 482,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.055128205128205134,
+            "auc": 0.8607437370045767,
+            "ap": 0.45166050745725567,
+            "prior_ap": 0.05512820512820519,
+            "brier": 0.0624396974502319,
+            "prior_brier": 0.06058071727540211
+          },
+          "2026-05-06": {
+            "states": 4658,
+            "episodes": 21,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.16093721281120052,
+            "auc": 0.7698177418287325,
+            "ap": 0.4819535013637454,
+            "prior_ap": 0.1609372128112012,
+            "brier": 0.11797718511699398,
+            "prior_brier": 0.13743043717626235
+          },
+          "2026-05-07": {
+            "states": 2365,
+            "episodes": 15,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.19756421000815907,
+            "auc": 0.8150837902314664,
+            "ap": 0.5521266718503539,
+            "prior_ap": 0.19756421000814955,
+            "brier": 0.13554114955735752,
+            "prior_brier": 0.1680905150779266
+          },
+          "2026-05-08": {
+            "states": 3113,
+            "episodes": 24,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.08333333333333336,
+            "auc": 0.8399337328157914,
+            "ap": 0.2552620158937487,
+            "prior_ap": 0.08333333333333684,
+            "brier": 0.15141192116768576,
+            "prior_brier": 0.07936385057136205
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 2655,
+            "episodes": 52,
+            "positive_episodes": 12,
+            "weighted_prevalence": 0.16270613228562586,
+            "auc": 0.7323186225428907,
+            "ap": 0.31534946857740465,
+            "prior_ap": 0.13739285312989952,
+            "brier": 0.1616252006822567,
+            "prior_brier": 0.13983677503324532
+          },
+          {
+            "states": 2655,
+            "episodes": 46,
+            "positive_episodes": 12,
+            "weighted_prevalence": 0.193649349829011,
+            "auc": 0.537103448404776,
+            "ap": 0.2198971981960863,
+            "prior_ap": 0.16749785957497088,
+            "brier": 0.1849700130684741,
+            "prior_brier": 0.16352944844512665
+          },
+          {
+            "states": 2654,
+            "episodes": 35,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.3134351396557544,
+            "auc": 0.6641534680352114,
+            "ap": 0.4841503825236001,
+            "prior_ap": 0.25766058184054685,
+            "brier": 0.21394735539645532,
+            "prior_brier": 0.2577723006669958
+          },
+          {
+            "states": 2654,
+            "episodes": 20,
+            "positive_episodes": 9,
+            "weighted_prevalence": 0.48392434988179667,
+            "auc": 0.632119618340637,
+            "ap": 0.5901833510641032,
+            "prior_ap": 0.40372025717160925,
+            "brier": 0.3485203158725701,
+            "prior_brier": 0.3873285442140602
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 9532,
+          "episodes": 75,
+          "positive_episodes": 12,
+          "weighted_prevalence": 0.11940694624602942,
+          "auc": 0.6869662782767152,
+          "ap": 0.19945011744354474,
+          "prior_ap": 0.09527437525310711,
+          "brier": 0.1399335490520693,
+          "prior_brier": 0.10766641827928262
+        }
+      },
+      "net_10": {
+        "states": 10618,
+        "episodes": 75,
+        "positive_episodes": 4,
+        "weighted_prevalence": 0.03466117216117216,
+        "auc": 0.7615363950241226,
+        "ap": 0.1323284027968267,
+        "prior_ap": 0.027379157976912937,
+        "brier": 0.03369292211218206,
+        "prior_brier": 0.03432808686700627,
+        "per_day": {
+          "2026-05-05": {
+            "states": 482,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.007692307692307693,
+            "auc": 0.5595432615951843,
+            "ap": 0.014251231048850297,
+            "prior_ap": 0.007692307692307689,
+            "brier": 0.008037119911863903,
+            "prior_brier": 0.008926148807101192
+          },
+          "2026-05-06": {
+            "states": 4658,
+            "episodes": 21,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.047619047619047616,
+            "auc": 0.7627611220984049,
+            "ap": 0.33712461461284887,
+            "prior_ap": 0.04761904761904835,
+            "brier": 0.043653195958980706,
+            "prior_brier": 0.04564997443202572
+          },
+          "2026-05-07": {
+            "states": 2365,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 4.357541227022306e-05,
+            "prior_brier": 0.0021358166321536276
+          },
+          "2026-05-08": {
+            "states": 3113,
+            "episodes": 24,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.08333333333333336,
+            "auc": 0.845945095446663,
+            "ap": 0.2975136912402741,
+            "prior_ap": 0.08333333333333684,
+            "brier": 0.08303779716561346,
+            "prior_brier": 0.08060040759674458
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 2655,
+            "episodes": 35,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.016666666666666666,
+            "auc": 0.7827427191331311,
+            "ap": 0.07236843282078961,
+            "prior_ap": 0.016666666666667634,
+            "brier": 0.01666279851485486,
+            "prior_brier": 0.017377537416456826
+          },
+          {
+            "states": 2655,
+            "episodes": 60,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.06141774891774893,
+            "auc": 0.6113166828324071,
+            "ap": 0.11559371841016179,
+            "prior_ap": 0.051859850868661385,
+            "brier": 0.06137266519653393,
+            "prior_brier": 0.05900271779163721
+          },
+          {
+            "states": 2654,
+            "episodes": 32,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.06666666666666665,
+            "auc": 0.5075949487891244,
+            "ap": 0.06838148871111965,
+            "prior_ap": 0.0541666666666709,
+            "brier": 0.06652895454140384,
+            "prior_brier": 0.06493858747750687
+          },
+          {
+            "states": 2654,
+            "episodes": 29,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.09597848959551089,
+            "auc": 0.37114707644889466,
+            "ap": 0.1214003641513616,
+            "prior_ap": 0.07857675405683742,
+            "brier": 0.09452021540582002,
+            "prior_brier": 0.09303869135444032
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 10453,
+          "episodes": 75,
+          "positive_episodes": 4,
+          "weighted_prevalence": 0.0344047619047619,
+          "auc": 0.7129522768966866,
+          "ap": 0.055868792638195094,
+          "prior_ap": 0.027256137749217434,
+          "brier": 0.03454642400137406,
+          "prior_brier": 0.034094061632981044
+        }
+      },
+      "net_20": {
+        "states": 10618,
+        "episodes": 75,
+        "positive_episodes": 1,
+        "weighted_prevalence": 0.010416666666666664,
+        "auc": 0.12105263157899004,
+        "ap": 0.010416666666665285,
+        "prior_ap": 0.010416666666664938,
+        "brier": 0.025175025732754833,
+        "prior_brier": 0.010561342592592591,
+        "per_day": {
+          "2026-05-05": {
+            "states": 482,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 4.675638263369856e-06,
+            "prior_brier": 0.00019290123456790122
+          },
+          "2026-05-06": {
+            "states": 4658,
+            "episodes": 21,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.04471854702539795,
+            "prior_brier": 0.00019290123456790112
+          },
+          "2026-05-07": {
+            "states": 2365,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.014310213600691365,
+            "prior_brier": 0.0001929012345679011
+          },
+          "2026-05-08": {
+            "states": 3113,
+            "episodes": 24,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.04166666666666668,
+            "auc": 0.5,
+            "ap": 0.041666666666668864,
+            "prior_ap": 0.041666666666668864,
+            "brier": 0.04166666666666668,
+            "prior_brier": 0.04166666666666668
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 2655,
+            "episodes": 19,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0,
+            "prior_brier": 0.0
+          },
+          {
+            "states": 2655,
+            "episodes": 40,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.041666666666666664,
+            "auc": 0.10869565217390692,
+            "ap": 0.04166666666666667,
+            "prior_ap": 0.04166666666666712,
+            "brier": 0.041666674367730125,
+            "prior_brier": 0.04181134259259259
+          },
+          {
+            "states": 2654,
+            "episodes": 25,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.010101396904379367,
+            "prior_brier": 0.00019290123456790117
+          },
+          {
+            "states": 2654,
+            "episodes": 4,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.27028796161939045,
+            "prior_brier": 0.00019290123456790106
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 10603,
+          "episodes": 75,
+          "positive_episodes": 1,
+          "weighted_prevalence": 0.01041666666666667,
+          "auc": 0.12105263157892149,
+          "ap": 0.010416666666667755,
+          "prior_ap": 0.010416666666667625,
+          "brier": 0.025175025732754836,
+          "prior_brier": 0.010561342592592596
+        }
+      }
+    },
+    "secondary_R304_visited_tree": {
+      "net_0": {
+        "states": 665,
+        "episodes": 75,
+        "positive_episodes": 33,
+        "weighted_prevalence": 0.4153386544011545,
+        "auc": 0.5754770482366746,
+        "ap": 0.5113624422886804,
+        "prior_ap": 0.3793239979437122,
+        "brier": 0.31795477652931403,
+        "prior_brier": 0.24749150385743288,
+        "per_day": {
+          "2026-05-05": {
+            "states": 37,
+            "episodes": 15,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.33333333333333337,
+            "auc": 0.4406274509803923,
+            "ap": 0.4613960175446965,
+            "prior_ap": 0.3333333333333333,
+            "brier": 0.2577604613098468,
+            "prior_brier": 0.2273254341701641
+          },
+          "2026-05-06": {
+            "states": 208,
+            "episodes": 21,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.5085137085137086,
+            "auc": 0.6792093541276893,
+            "ap": 0.7635478997435583,
+            "prior_ap": 0.5085137085137083,
+            "brier": 0.2481146650385232,
+            "prior_brier": 0.27717757554809275
+          },
+          "2026-05-07": {
+            "states": 20,
+            "episodes": 15,
+            "positive_episodes": 6,
+            "weighted_prevalence": 0.4000000000000001,
+            "auc": 0.6064814814814814,
+            "ap": 0.5170024420024419,
+            "prior_ap": 0.3999999999999999,
+            "brier": 0.3503609951730094,
+            "prior_brier": 0.2403240208038314
+          },
+          "2026-05-08": {
+            "states": 400,
+            "episodes": 24,
+            "positive_episodes": 11,
+            "weighted_prevalence": 0.4195075757575758,
+            "auc": 0.5110747536122261,
+            "ap": 0.46448291605593456,
+            "prior_ap": 0.419507575757576,
+            "brier": 0.4155829845958769,
+            "prior_brier": 0.24513898490764346
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 167,
+            "episodes": 68,
+            "positive_episodes": 29,
+            "weighted_prevalence": 0.41060119811724427,
+            "auc": 0.5513461654607835,
+            "ap": 0.445395540607755,
+            "prior_ap": 0.3818364534911739,
+            "brier": 0.3151157139296345,
+            "prior_brier": 0.24503710377821733
+          },
+          {
+            "states": 166,
+            "episodes": 17,
+            "positive_episodes": 10,
+            "weighted_prevalence": 0.47722222222222227,
+            "auc": 0.7439598535881151,
+            "ap": 0.7052146730592306,
+            "prior_ap": 0.44537532876298846,
+            "brier": 0.3324573710585661,
+            "prior_brier": 0.26902312664486727
+          },
+          {
+            "states": 166,
+            "episodes": 11,
+            "positive_episodes": 6,
+            "weighted_prevalence": 0.7916666666666665,
+            "auc": 0.4678748498631542,
+            "ap": 0.7873064971542073,
+            "prior_ap": 0.8629385964912281,
+            "brier": 0.1942800136770153,
+            "prior_brier": 0.33992197022398507
+          },
+          {
+            "states": 166,
+            "episodes": 16,
+            "positive_episodes": 10,
+            "weighted_prevalence": 0.7935305435305435,
+            "auc": 0.6678349539215478,
+            "ap": 0.8557118147273963,
+            "prior_ap": 0.8649343688364752,
+            "brier": 0.20201901707330272,
+            "prior_brier": 0.33970817295149075
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 547,
+          "episodes": 75,
+          "positive_episodes": 33,
+          "weighted_prevalence": 0.41808035714285713,
+          "auc": 0.568203448717608,
+          "ap": 0.4845311864468027,
+          "prior_ap": 0.38186467289584614,
+          "brier": 0.3222446477274445,
+          "prior_brier": 0.2479652953959966
+        }
+      },
+      "net_5": {
+        "states": 665,
+        "episodes": 75,
+        "positive_episodes": 12,
+        "weighted_prevalence": 0.1636904761904762,
+        "auc": 0.5298016982237713,
+        "ap": 0.1878700781882913,
+        "prior_ap": 0.13004184704184749,
+        "brier": 0.18135667534118288,
+        "prior_brier": 0.14219705493379464,
+        "per_day": {
+          "2026-05-05": {
+            "states": 37,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.6092436974789917,
+            "ap": 0.15454545454545454,
+            "prior_ap": 0.06666666666666664,
+            "brier": 0.07941804660961536,
+            "prior_brier": 0.06872044992038141
+          },
+          "2026-05-06": {
+            "states": 208,
+            "episodes": 21,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.23809523809523814,
+            "auc": 0.440984848484849,
+            "ap": 0.3294403340622008,
+            "prior_ap": 0.2380952380952379,
+            "brier": 0.21473273478112842,
+            "prior_brier": 0.19730374032929165
+          },
+          "2026-05-07": {
+            "states": 20,
+            "episodes": 15,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.2666666666666667,
+            "auc": 0.6761363636363635,
+            "ap": 0.46567982456140344,
+            "prior_ap": 0.26666666666666666,
+            "brier": 0.24401051019478168,
+            "prior_brier": 0.2234001789141437
+          },
+          "2026-05-08": {
+            "states": 400,
+            "episodes": 24,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.08333333333333331,
+            "auc": 0.410822843084484,
+            "ap": 0.0906902215602608,
+            "prior_ap": 0.08333333333333318,
+            "brier": 0.18726540977920628,
+            "prior_brier": 0.07936385057136204
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 167,
+            "episodes": 26,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.06818181818181819,
+            "auc": 0.530406560582811,
+            "ap": 0.1828929097619781,
+            "prior_ap": 0.09090909090909138,
+            "brier": 0.06809180670580786,
+            "prior_brier": 0.06870959654518373
+          },
+          {
+            "states": 166,
+            "episodes": 38,
+            "positive_episodes": 7,
+            "weighted_prevalence": 0.20714285714285716,
+            "auc": 0.453344834666674,
+            "ap": 0.2987491852584092,
+            "prior_ap": 0.18089764641488795,
+            "brier": 0.20213637365244216,
+            "prior_brier": 0.17449352175101063
+          },
+          {
+            "states": 166,
+            "episodes": 13,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.007388336276868672,
+            "prior_brier": 0.015801676021079063
+          },
+          {
+            "states": 166,
+            "episodes": 14,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.25,
+            "auc": 0.4454909109081755,
+            "ap": 0.31993448670009306,
+            "prior_ap": 0.20833333333333368,
+            "brier": 0.3045006361844908,
+            "prior_brier": 0.21284963437587598
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 665,
+          "episodes": 75,
+          "positive_episodes": 12,
+          "weighted_prevalence": 0.1636904761904762,
+          "auc": 0.5298016982237713,
+          "ap": 0.1878700781882913,
+          "prior_ap": 0.13004184704184749,
+          "brier": 0.18135667534118288,
+          "prior_brier": 0.14219705493379464
+        }
+      },
+      "net_10": {
+        "states": 665,
+        "episodes": 75,
+        "positive_episodes": 4,
+        "weighted_prevalence": 0.0494047619047619,
+        "auc": 0.5878942062757967,
+        "ap": 0.07217108273090789,
+        "prior_ap": 0.04125788869764792,
+        "brier": 0.04987424625753496,
+        "prior_brier": 0.04778453782345723,
+        "per_day": {
+          "2026-05-05": {
+            "states": 37,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.2857142857142857,
+            "ap": 0.0909090909090909,
+            "prior_ap": 0.06666666666666664,
+            "brier": 0.06664857005390012,
+            "prior_brier": 0.06275195263290502
+          },
+          "2026-05-06": {
+            "states": 208,
+            "episodes": 21,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.04761904761904763,
+            "auc": 0.707777777777779,
+            "ap": 0.0986850866990438,
+            "prior_ap": 0.04761904761904746,
+            "brier": 0.04962122707983491,
+            "prior_brier": 0.045649974432025744
+          },
+          "2026-05-07": {
+            "states": 20,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 2.4445598052353283e-05,
+            "prior_brier": 0.002135816632153628
+          },
+          "2026-05-08": {
+            "states": 400,
+            "episodes": 24,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.08333333333333331,
+            "auc": 0.7978574686584669,
+            "ap": 0.21248666218556705,
+            "prior_ap": 0.08333333333333318,
+            "brier": 0.0832027422983525,
+            "prior_brier": 0.08060040759674457
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 167,
+            "episodes": 9,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 8.44134605349623e-09,
+            "prior_brier": 0.001325441364360778
+          },
+          {
+            "states": 166,
+            "episodes": 17,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.12499999999999997,
+            "auc": 0.9747354497354497,
+            "ap": 0.849724626278521,
+            "prior_ap": 0.25,
+            "brier": 0.12496579797568694,
+            "prior_brier": 0.11541274295166239
+          },
+          {
+            "states": 166,
+            "episodes": 23,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 2.8102968863841568e-08,
+            "prior_brier": 0.001325441364360778
+          },
+          {
+            "states": 166,
+            "episodes": 49,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.04444444444444445,
+            "auc": 0.6651150512251527,
+            "ap": 0.07200522234166518,
+            "prior_ap": 0.036111111111111156,
+            "brier": 0.04511012602930271,
+            "prior_brier": 0.04373420543979153
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 665,
+          "episodes": 75,
+          "positive_episodes": 4,
+          "weighted_prevalence": 0.0494047619047619,
+          "auc": 0.5878942062757967,
+          "ap": 0.07217108273090789,
+          "prior_ap": 0.04125788869764792,
+          "brier": 0.04987424625753496,
+          "prior_brier": 0.04778453782345723
+        }
+      },
+      "net_20": {
+        "states": 665,
+        "episodes": 75,
+        "positive_episodes": 1,
+        "weighted_prevalence": 0.010416666666666664,
+        "auc": 0.1210526315789453,
+        "ap": 0.010416666666666761,
+        "prior_ap": 0.01041666666666675,
+        "brier": 0.025365833984901505,
+        "prior_brier": 0.010561342592592591,
+        "per_day": {
+          "2026-05-05": {
+            "states": 37,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 3.225774996823754e-08,
+            "prior_brier": 0.0001929012345679012
+          },
+          "2026-05-06": {
+            "states": 208,
+            "episodes": 21,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.045317493410331255,
+            "prior_brier": 0.00019290123456790114
+          },
+          "2026-05-07": {
+            "states": 20,
+            "episodes": 15,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.014479143604858137,
+            "prior_brier": 0.0001929012345679012
+          },
+          "2026-05-08": {
+            "states": 400,
+            "episodes": 24,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.04166666666666666,
+            "auc": 0.5,
+            "ap": 0.04166666666666658,
+            "prior_ap": 0.04166666666666658,
+            "brier": 0.04166666666666666,
+            "prior_brier": 0.04166666666666666
+          }
+        },
+        "score_quartiles": [
+          {
+            "states": 167,
+            "episodes": 8,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0,
+            "prior_brier": 0.0
+          },
+          {
+            "states": 166,
+            "episodes": 13,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0,
+            "prior_brier": 0.0
+          },
+          {
+            "states": 166,
+            "episodes": 35,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.049999999999999996,
+            "auc": 0.10526315789473772,
+            "ap": 0.049999999999999906,
+            "prior_ap": 0.04999999999999989,
+            "brier": 0.05000000772718452,
+            "prior_brier": 0.05014467592592592
+          },
+          {
+            "states": 166,
+            "episodes": 23,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.041755429290604315,
+            "prior_brier": 0.00019290123456790125
+          }
+        ],
+        "not_yet_reached_observed_target": {
+          "states": 665,
+          "episodes": 75,
+          "positive_episodes": 1,
+          "weighted_prevalence": 0.010416666666666664,
+          "auc": 0.1210526315789453,
+          "ap": 0.010416666666666761,
+          "prior_ap": 0.01041666666666675,
+          "brier": 0.025365833984901505,
+          "prior_brier": 0.010561342592592591
+        }
+      }
+    }
+  },
+  "outer_folds": {
+    "2026-05-05": {
+      "fit_days": [
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ],
+      "held_day": "2026-05-05",
+      "seed": 20264050,
+      "training_states": 10136,
+      "training_episodes": 60,
+      "training_snapshots": 60,
+      "features": [
+        "position_age_s",
+        "observed_return_pct",
+        "observed_net_return_pct",
+        "running_peak_pct",
+        "running_trough_pct",
+        "drawdown_pct",
+        "bounce_pct",
+        "seconds_since_peak",
+        "seconds_since_low",
+        "last_return_pct",
+        "return_sum_5",
+        "return_sum_20",
+        "positive_fraction_20",
+        "volume_ratio_5_20",
+        "log_volume",
+        "log_transactions",
+        "active_gap_s",
+        "entry_setup_score_pct",
+        "entry_value_score_pct",
+        "entry_turn_score_pct",
+        "clock_return_5s_pct",
+        "clock_return_20s_pct",
+        "clock_return_60s_pct",
+        "clock_observed_count_20s",
+        "clock_observed_count_60s",
+        "clock_volume_ratio_20s",
+        "clock_close_location_60s",
+        "clock_drawdown_60s_pct"
+      ],
+      "models": {
+        "snapshot_net_0": {
+          "prior": 0.4607142857142856,
+          "single_class_fallback": false,
+          "positive_episodes": 28
+        },
+        "snapshot_net_5": {
+          "prior": 0.196031746031746,
+          "single_class_fallback": false,
+          "positive_episodes": 11
+        },
+        "snapshot_net_10": {
+          "prior": 0.04365079365079364,
+          "single_class_fallback": false,
+          "positive_episodes": 3
+        },
+        "snapshot_net_20": {
+          "prior": 0.013888888888888885,
+          "single_class_fallback": false,
+          "positive_episodes": 1
+        },
+        "states_net_0": {
+          "prior": 0.4047701022128246,
+          "single_class_fallback": false,
+          "positive_episodes": 28
+        },
+        "states_net_5": {
+          "prior": 0.14727825205089765,
+          "single_class_fallback": false,
+          "positive_episodes": 11
+        },
+        "states_net_10": {
+          "prior": 0.04365079365079365,
+          "single_class_fallback": false,
+          "positive_episodes": 3
+        },
+        "states_net_20": {
+          "prior": 0.013888888888888888,
+          "single_class_fallback": false,
+          "positive_episodes": 1
+        }
+      },
+      "regression_offset": {
+        "training_rows": 10136,
+        "old_offset_pp": 0.15535274081234576,
+        "weighted_offset_pp": 0.059656809544750264,
+        "score_shift_pp": -0.0956959312675955,
+        "weighted_residual_before_pp": -0.09569593126759549,
+        "weighted_residual_after_pp": 5.32766850017439e-17
+      }
+    },
+    "2026-05-06": {
+      "fit_days": [
+        "2026-05-05",
+        "2026-05-07",
+        "2026-05-08"
+      ],
+      "held_day": "2026-05-06",
+      "seed": 20264150,
+      "training_states": 5960,
+      "training_episodes": 54,
+      "training_snapshots": 54,
+      "features": [
+        "position_age_s",
+        "observed_return_pct",
+        "observed_net_return_pct",
+        "running_peak_pct",
+        "running_trough_pct",
+        "drawdown_pct",
+        "bounce_pct",
+        "seconds_since_peak",
+        "seconds_since_low",
+        "last_return_pct",
+        "return_sum_5",
+        "return_sum_20",
+        "positive_fraction_20",
+        "volume_ratio_5_20",
+        "log_volume",
+        "log_transactions",
+        "active_gap_s",
+        "entry_setup_score_pct",
+        "entry_value_score_pct",
+        "entry_turn_score_pct",
+        "clock_return_5s_pct",
+        "clock_return_20s_pct",
+        "clock_return_60s_pct",
+        "clock_observed_count_20s",
+        "clock_observed_count_60s",
+        "clock_volume_ratio_20s",
+        "clock_close_location_60s",
+        "clock_drawdown_60s_pct"
+      ],
+      "models": {
+        "snapshot_net_0": {
+          "prior": 0.39722222222222225,
+          "single_class_fallback": false,
+          "positive_episodes": 22
+        },
+        "snapshot_net_5": {
+          "prior": 0.1388888888888889,
+          "single_class_fallback": false,
+          "positive_episodes": 7
+        },
+        "snapshot_net_10": {
+          "prior": 0.05000000000000001,
+          "single_class_fallback": false,
+          "positive_episodes": 3
+        },
+        "snapshot_net_20": {
+          "prior": 0.01388888888888889,
+          "single_class_fallback": false,
+          "positive_episodes": 1
+        },
+        "states_net_0": {
+          "prior": 0.34343779027985744,
+          "single_class_fallback": false,
+          "positive_episodes": 22
+        },
+        "states_net_5": {
+          "prior": 0.1120085828232325,
+          "single_class_fallback": false,
+          "positive_episodes": 7
+        },
+        "states_net_10": {
+          "prior": 0.030341880341880338,
+          "single_class_fallback": false,
+          "positive_episodes": 3
+        },
+        "states_net_20": {
+          "prior": 0.013888888888888885,
+          "single_class_fallback": false,
+          "positive_episodes": 1
+        }
+      },
+      "regression_offset": {
+        "training_rows": 5960,
+        "old_offset_pp": 0.1435069538549209,
+        "weighted_offset_pp": 0.025547184640745225,
+        "score_shift_pp": -0.11795976921417568,
+        "weighted_residual_before_pp": -0.11795976921417567,
+        "weighted_residual_after_pp": 2.6228087561614436e-17
+      }
+    },
+    "2026-05-07": {
+      "fit_days": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-08"
+      ],
+      "held_day": "2026-05-07",
+      "seed": 20264250,
+      "training_states": 8253,
+      "training_episodes": 60,
+      "training_snapshots": 60,
+      "features": [
+        "position_age_s",
+        "observed_return_pct",
+        "observed_net_return_pct",
+        "running_peak_pct",
+        "running_trough_pct",
+        "drawdown_pct",
+        "bounce_pct",
+        "seconds_since_peak",
+        "seconds_since_low",
+        "last_return_pct",
+        "return_sum_5",
+        "return_sum_20",
+        "positive_fraction_20",
+        "volume_ratio_5_20",
+        "log_volume",
+        "log_transactions",
+        "active_gap_s",
+        "entry_setup_score_pct",
+        "entry_value_score_pct",
+        "entry_turn_score_pct",
+        "clock_return_5s_pct",
+        "clock_return_20s_pct",
+        "clock_return_60s_pct",
+        "clock_observed_count_20s",
+        "clock_observed_count_60s",
+        "clock_volume_ratio_20s",
+        "clock_close_location_60s",
+        "clock_drawdown_60s_pct"
+      ],
+      "models": {
+        "snapshot_net_0": {
+          "prior": 0.4384920634920634,
+          "single_class_fallback": false,
+          "positive_episodes": 27
+        },
+        "snapshot_net_5": {
+          "prior": 0.12936507936507935,
+          "single_class_fallback": false,
+          "positive_episodes": 8
+        },
+        "snapshot_net_10": {
+          "prior": 0.06587301587301586,
+          "single_class_fallback": false,
+          "positive_episodes": 4
+        },
+        "snapshot_net_20": {
+          "prior": 0.013888888888888886,
+          "single_class_fallback": false,
+          "positive_episodes": 1
+        },
+        "states_net_0": {
+          "prior": 0.38199942212507143,
+          "single_class_fallback": false,
+          "positive_episodes": 27
+        },
+        "states_net_5": {
+          "prior": 0.09979958375757966,
+          "single_class_fallback": false,
+          "positive_episodes": 8
+        },
+        "states_net_10": {
+          "prior": 0.0462148962148962,
+          "single_class_fallback": false,
+          "positive_episodes": 4
+        },
+        "states_net_20": {
+          "prior": 0.013888888888888885,
+          "single_class_fallback": false,
+          "positive_episodes": 1
+        }
+      },
+      "regression_offset": {
+        "training_rows": 8253,
+        "old_offset_pp": 0.14593374257050554,
+        "weighted_offset_pp": 0.041554870809955256,
+        "score_shift_pp": -0.10437887176055027,
+        "weighted_residual_before_pp": -0.1043788717605503,
+        "weighted_residual_after_pp": -6.887606792779355e-17
+      }
+    },
+    "2026-05-08": {
+      "fit_days": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "held_day": "2026-05-08",
+      "seed": 20264350,
+      "training_states": 7505,
+      "training_episodes": 51,
+      "training_snapshots": 51,
+      "features": [
+        "position_age_s",
+        "observed_return_pct",
+        "observed_net_return_pct",
+        "running_peak_pct",
+        "running_trough_pct",
+        "drawdown_pct",
+        "bounce_pct",
+        "seconds_since_peak",
+        "seconds_since_low",
+        "last_return_pct",
+        "return_sum_5",
+        "return_sum_20",
+        "positive_fraction_20",
+        "volume_ratio_5_20",
+        "log_volume",
+        "log_transactions",
+        "active_gap_s",
+        "entry_setup_score_pct",
+        "entry_value_score_pct",
+        "entry_turn_score_pct",
+        "clock_return_5s_pct",
+        "clock_return_20s_pct",
+        "clock_return_60s_pct",
+        "clock_observed_count_20s",
+        "clock_observed_count_60s",
+        "clock_volume_ratio_20s",
+        "clock_close_location_60s",
+        "clock_drawdown_60s_pct"
+      ],
+      "models": {
+        "snapshot_net_0": {
+          "prior": 0.419047619047619,
+          "single_class_fallback": false,
+          "positive_episodes": 22
+        },
+        "snapshot_net_5": {
+          "prior": 0.19047619047619047,
+          "single_class_fallback": false,
+          "positive_episodes": 10
+        },
+        "snapshot_net_10": {
+          "prior": 0.0380952380952381,
+          "single_class_fallback": false,
+          "positive_episodes": 2
+        },
+        "snapshot_net_20": {
+          "prior": 0.0,
+          "single_class_fallback": true,
+          "positive_episodes": 0
+        },
+        "states_net_0": {
+          "prior": 0.37928301524952424,
+          "single_class_fallback": false,
+          "positive_episodes": 22
+        },
+        "states_net_5": {
+          "prior": 0.13787654264918828,
+          "single_class_fallback": false,
+          "positive_episodes": 10
+        },
+        "states_net_10": {
+          "prior": 0.01843711843711844,
+          "single_class_fallback": false,
+          "positive_episodes": 2
+        },
+        "states_net_20": {
+          "prior": 0.0,
+          "single_class_fallback": true,
+          "positive_episodes": 0
+        }
+      },
+      "regression_offset": {
+        "training_rows": 7505,
+        "old_offset_pp": 0.08436355086132494,
+        "weighted_offset_pp": 0.0072319617698516445,
+        "score_shift_pp": -0.07713158909147329,
+        "weighted_residual_before_pp": -0.0771315890914733,
+        "weighted_residual_after_pp": -1.2307868840614663e-17
+      }
+    }
+  },
+  "regression_diagnostics": {
+    "all": {
+      "eligible_states": 10618,
+      "valid_states": 10618,
+      "spearman": 0.16507940257534362,
+      "day_episode_weighted_rank_correlation": 0.02595464769321049
+    },
+    "first": {
+      "eligible_states": 75,
+      "valid_states": 75,
+      "spearman": -0.12341547719002266,
+      "day_episode_weighted_rank_correlation": -0.08401342568020646
+    },
+    "R304_visited": {
+      "eligible_states": 665,
+      "valid_states": 665,
+      "spearman": -0.13148632039873623,
+      "day_episode_weighted_rank_correlation": -0.09598503833379121
+    }
+  },
+  "first_snapshot_support": {
+    "entries": 86,
+    "eligible_snapshots": 75,
+    "excluded_from_learning_only": 11
+  },
+  "checks": {
+    "exact_R304_replay": true,
+    "all86_entries_retained": true,
+    "all_training_days_exclude_scored_day": true,
+    "causal_feature_columns_unchanged": true,
+    "weighted_regression_residual_zero": true,
+    "no_missing_terminal_labeled_negative": true
+  },
+  "integrity_pass": true,
+  "limits": "Future maxima are diagnostic bounds, not executable optimal policies or learned HOLD value. First HOLD snapshots are post-entry, not an entry veto. Four reused days; upstream entry OOF not nested; sparse +10/+20 paths and correlated seconds. Next-print fills are assumptions; event mean is not account return. No threshold, feature, seed or policy tuning after results."
+}
