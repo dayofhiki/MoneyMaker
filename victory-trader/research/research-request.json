@@ -1,46 +1,48 @@
 {
-  "request_id": 305,
+  "request_id": 306,
   "operation": "module",
-  "module": "victory_trader.feasible_upside_observability",
+  "module": "victory_trader.preentry_momentum_observability",
   "pytest": [
+    "tests/test_preentry_momentum_observability.py",
     "tests/test_feasible_upside_observability.py",
-    "tests/test_common_cap_hold_reference.py",
-    "tests/test_weighted_hold_offset.py",
-    "tests/test_hold_policy_stage_audit.py",
-    "tests/test_preentry_context_hold_value.py",
-    "tests/test_clock_context_hold_value.py",
-    "tests/test_risk_reachable_hold_value.py",
     "tests/test_pending_exit_integrity.py",
-    "tests/test_frozen_entry_second_hold_exit.py",
+    "tests/test_local_turn_entry.py",
     "tests/test_fresh_crack_entry_validation.py"
   ],
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36883479409,
-      "name": "moneymaker-research-request-304",
-      "path": "prepared/request304"
+      "run_id": 36721315072,
+      "name": "moneymaker-research-request-294",
+      "path": "prepared/request294"
     },
     {
       "repo": "dayofhiki/MoneyMaker",
       "run_id": 36801235949,
       "name": "moneymaker-research-request-298",
       "path": "prepared/request298"
+    },
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 37210193519,
+      "name": "moneymaker-research-request-305",
+      "path": "prepared/request305"
     }
   ],
   "args": [
     "--states",
-    "prepared/request304/request304-states.parquet",
-    "--decisions",
-    "prepared/request304/request304-decisions.parquet",
+    "prepared/request294/request294-scored-oof.parquet",
     "--raw-seconds",
     "prepared/request298/request298-raw-seconds.parquet",
+    "--reference-episodes",
+    "prepared/request305/request305-episodes.parquet",
     "--output",
-    "artifacts/request305.json",
+    "artifacts/request306.json",
     "--states-output",
-    "artifacts/request305-states.parquet",
-    "--episodes-output",
-    "artifacts/request305-episodes.parquet"
+    "artifacts/request306-states.parquet",
+    "--raw-output",
+    "artifacts/request306-raw-seconds.parquet",
+    "--fetch-missing"
   ],
-  "note": "Diagnostic only: exact R304 replay; separate absorbing-stop net/gross feasible upside ceilings from causal first-HOLD snapshot and state observability. Fixed28 features, day-OOF, no policy/entry/threshold changes. May5-8 only, June sealed, zero market acquisition."
+  "note": "All97 May5-8 cash episodes, exact86 frozen entry reference. Only11 original missing May raw pairs fetched once. Risk/cost-aware upside outcome classifiers, objective ablation and completed-clock momentum+known-cost representation, with cost-only control. Same fixed HGB/day-OOF; no policy/threshold changes; June sealed."
 }
