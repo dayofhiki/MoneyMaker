@@ -1,6 +1,6 @@
 # R305 findings — entry economics and early observability both fail
 
-Local preregistered run completed; official consolidated replay pending.
+Official run37210193519 completed successfully on source7fc7e54f41b6a7196f00f616e04f99a93842d92c; artifact11306800230. Official economics, labels, rankings and integrity checks match the local result;13 Brier fields differ only by floating-point roundoff, maximum1.12e-16.
 Dependencies R304 run36883479409/artifact11172631677 and R298
 run36801235949/artifact11136176759. Exact86 R304 B returns/submissions/reasons
 reproduced with zero error. All integrity checks pass; no policy promotion.
