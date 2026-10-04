@@ -874,3 +874,26 @@ May5–8 only; June remains sealed. Next priority is pre-entry cash WAIT/recheck
 observability and cost-compatible opportunity supply, preserving frozen reference
 entries and all risk/execution rules until an actionable signal is demonstrated.
 See request304-findings.md and request305-findings.md; R306 is not yet dispatched.
+
+
+## 2026-10-05 update — Requests306–307
+
+R306 official run37211254516 recovered all97 May5–8 candidate raw paths and
+preserved86 frozen entries. Risk/cost-aligned supervision improved first-cash
+net+5 ranking0.397903→0.551921;99-feature completed-clock momentum/cost
+representation improved it to0.597127 versus cost-only0.527301. Three evaluable
+days improved, but ticker-day intervals are broad and probability Brier worsened.
+The preregistered signal gate FAILED; no policy or threshold promotion.
+R307 isolates nested training-only monotone probability calibration with the
+same representation and target. Nine first-snapshot winners and four reused
+days remain a serious support limitation. June stays sealed and trading/risk
+rules stay fixed; later recheck results do not select a forced20s wait.
+
+
+R307 local nested calibration failed to preserve early ranking: two outer folds
+fit constant maps and calibrated AUROC fell0.597127→0.462485 despite lower
+Brier. A simple first-snapshot training prior still beat calibrated probability
+loss. Do not promote; next priority is independent early-momentum example
+coverage before the restrictive shortlist, retaining causal population sampling,
+frozen risk/cost references and separate date/ticker trajectory evaluation.
+R307 official replay is pending; R308 is not dispatched. June remains sealed.

@@ -1,8 +1,9 @@
 {
-  "request_id": 306,
+  "request_id": 307,
   "operation": "module",
-  "module": "victory_trader.preentry_momentum_observability",
+  "module": "victory_trader.monotone_momentum_calibration",
   "pytest": [
+    "tests/test_monotone_momentum_calibration.py",
     "tests/test_preentry_momentum_observability.py",
     "tests/test_feasible_upside_observability.py",
     "tests/test_pending_exit_integrity.py",
@@ -12,37 +13,20 @@
   "dependencies": [
     {
       "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36721315072,
-      "name": "moneymaker-research-request-294",
-      "path": "prepared/request294"
-    },
-    {
-      "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36801235949,
-      "name": "moneymaker-research-request-298",
-      "path": "prepared/request298"
-    },
-    {
-      "repo": "dayofhiki/MoneyMaker",
-      "run_id": 37210193519,
-      "name": "moneymaker-research-request-305",
-      "path": "prepared/request305"
+      "run_id": 37211254516,
+      "name": "moneymaker-research-request-306",
+      "path": "prepared/request306"
     }
   ],
   "args": [
     "--states",
-    "prepared/request294/request294-scored-oof.parquet",
-    "--raw-seconds",
-    "prepared/request298/request298-raw-seconds.parquet",
-    "--reference-episodes",
-    "prepared/request305/request305-episodes.parquet",
+    "prepared/request306/request306-states.parquet",
+    "--summary",
+    "prepared/request306/request306.json",
     "--output",
-    "artifacts/request306.json",
+    "artifacts/request307.json",
     "--states-output",
-    "artifacts/request306-states.parquet",
-    "--raw-output",
-    "artifacts/request306-raw-seconds.parquet",
-    "--fetch-missing"
+    "artifacts/request307-states.parquet"
   ],
-  "note": "All97 May5-8 cash episodes, exact86 frozen entry reference. Only11 original missing May raw pairs fetched once. Risk/cost-aware upside outcome classifiers, objective ablation and completed-clock momentum+known-cost representation, with cost-only control. Same fixed HGB/day-OOF; no policy/threshold changes; June sealed."
+  "note": "Exact R306 C99-feature probability replay. Nested TWO-day fit OOF first-snapshot training-only monotone sigmoid calibration, slope>=0 with fixedL2, no inversion/threshold/policy changes. Same97 May5-8 candidates, zero market requests; June sealed."
 }
