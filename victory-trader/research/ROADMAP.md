@@ -861,3 +861,16 @@ zero-fill those observations. See `request214-findings.md` and
 `results/request214.json`. The next boundary is complete event-time observation
 and executable policy-consistent entry/holding labels, not tuning a threshold
 to revive trading on this retired development sample.
+
+
+## 2026-10-04 update — Requests304–305
+
+R304's common-cap teacher failed:86 resolved entries averaged -1.631033% BASE.
+R305 reproduced that policy exactly and separated53 cost-uncoverable entries,
+29 feasible-profit misses and4 positive captures. First-HOLD causal net+5%
+observability failed (primary AUROC0.306497; secondary tree0.527162); later
+unvisited-state discrimination does not justify forced holding. No promotion.
+May5–8 only; June remains sealed. Next priority is pre-entry cash WAIT/recheck
+observability and cost-compatible opportunity supply, preserving frozen reference
+entries and all risk/execution rules until an actionable signal is demonstrated.
+See request304-findings.md and request305-findings.md; R306 is not yet dispatched.
