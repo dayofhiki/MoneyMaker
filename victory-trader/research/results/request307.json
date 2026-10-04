@@ -1,0 +1,3565 @@
+{
+  "request_id": 307,
+  "development_only": true,
+  "promotion_eligible": false,
+  "network_requests": 0,
+  "June_HOLD_opened": false,
+  "entries_retuned": false,
+  "reference_R306_run": 37211254516,
+  "features": [
+    "log_current_price",
+    "minutes_since_open",
+    "minutes_to_close",
+    "return_from_previous_close_pct",
+    "minute_body_return_pct",
+    "minute_range_pct",
+    "minute_return_1m_pct",
+    "return_accel_1m_pct",
+    "volume_ratio_prev1",
+    "transactions_ratio_prev1",
+    "current_price",
+    "current_active_seconds_60",
+    "current_active_seconds_10",
+    "current_last_activity_age_s",
+    "current_sec_last10_return_pct",
+    "current_sec_prev10_return_pct",
+    "current_sec_accel_10_pct",
+    "current_sec_first30_return_pct",
+    "current_sec_last30_return_pct",
+    "current_sec_accel_30_pct",
+    "current_sec_realized_vol_pct",
+    "current_sec_positive_fraction",
+    "current_sec_max_drawdown_pct",
+    "current_sec_max_runup_pct",
+    "current_sec_volume_last10_share",
+    "current_sec_transactions_last10_share",
+    "current_sec_volume_burst_10",
+    "current_sec_transactions_burst_10",
+    "current_sec_last5_return_pct",
+    "current_sec_prev5_return_pct",
+    "current_sec_accel_5_pct",
+    "current_sec_last15_return_pct",
+    "current_sec_prev15_return_pct",
+    "current_sec_accel_15_pct",
+    "current_sec_volume_burst_5",
+    "current_sec_transactions_burst_5",
+    "current_sec_volume_last5_share",
+    "current_sec_transactions_last5_share",
+    "current_sec_signed_volume_imbalance_60",
+    "current_sec_signed_transactions_imbalance_60",
+    "current_sec_return_efficiency_60",
+    "current_sec_sign_flip_rate_60",
+    "current_sec_seconds_since_high",
+    "current_sec_seconds_since_low",
+    "current_sec_close_location_60",
+    "current_sec_close_vs_vwap_pct",
+    "current_sec_volatility_ratio_10_to_prev50",
+    "current_sec_mean_trade_size_ratio_10_to_prev50",
+    "elapsed_from_hot_s",
+    "active_event_index",
+    "last_close_vs_hot_pct",
+    "running_low_vs_hot_pct",
+    "running_high_vs_hot_pct",
+    "drawdown_from_active_high_pct",
+    "bounce_from_active_low_pct",
+    "seconds_since_active_high",
+    "seconds_since_active_low",
+    "last_active_return_pct",
+    "inter_event_gap_s",
+    "turn_return_sum_3",
+    "turn_return_sum_5",
+    "turn_positive_frac_3",
+    "turn_positive_frac_5",
+    "turn_negative_streak",
+    "turn_positive_streak",
+    "turn_close_slope_3",
+    "turn_close_slope_5",
+    "turn_return_accel_3",
+    "turn_bounce_recent_low_5",
+    "turn_drawdown_recent_high_5",
+    "turn_reclaim_prev3_high",
+    "turn_gap_ratio_3",
+    "turn_bounce_x_volume_burst5",
+    "turn_accel_x_signed_volume",
+    "turn_low_age_x_bounce",
+    "momentum_return_10s",
+    "momentum_efficiency_10s",
+    "momentum_volume_rate_ratio_10s",
+    "momentum_transactions_rate_ratio_10s",
+    "momentum_signed_volume_proxy_10s",
+    "momentum_reclaim_prior_high_10s",
+    "momentum_activity_fraction_10s",
+    "momentum_return_30s",
+    "momentum_efficiency_30s",
+    "momentum_volume_rate_ratio_30s",
+    "momentum_transactions_rate_ratio_30s",
+    "momentum_signed_volume_proxy_30s",
+    "momentum_reclaim_prior_high_30s",
+    "momentum_activity_fraction_30s",
+    "momentum_return_120s",
+    "momentum_efficiency_120s",
+    "momentum_volume_rate_ratio_120s",
+    "momentum_transactions_rate_ratio_120s",
+    "momentum_signed_volume_proxy_120s",
+    "momentum_reclaim_prior_high_120s",
+    "momentum_activity_fraction_120s",
+    "momentum_gap_s",
+    "known_cost_drag_pct",
+    "momentum_acceleration_10_30"
+  ],
+  "folds": {
+    "2026-05-05": {
+      "outer_fit_days": [
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ],
+      "maximum_saved_C_error": 0.0,
+      "inner_folds": {
+        "2026-05-06": {
+          "fit_days": [
+            "2026-05-07",
+            "2026-05-08"
+          ],
+          "seed": 20264205,
+          "single_class_fallback": false
+        },
+        "2026-05-07": {
+          "fit_days": [
+            "2026-05-06",
+            "2026-05-08"
+          ],
+          "seed": 20264215,
+          "single_class_fallback": false
+        },
+        "2026-05-08": {
+          "fit_days": [
+            "2026-05-06",
+            "2026-05-07"
+          ],
+          "seed": 20264225,
+          "single_class_fallback": false
+        }
+      },
+      "calibration": {
+        "episodes": 76,
+        "positive_episodes": 9,
+        "fit_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "weighted_first_snapshot_prevalence": 0.11890917286454808,
+        "smoothed_fallback_prevalence": 0.12868073253468787,
+        "optimizer_success": true,
+        "intercept": -0.8263943769890225,
+        "slope": 0.33369024382909457,
+        "constant_map": false
+      },
+      "intercept": -0.8263943769890225,
+      "slope": 0.33369024382909457,
+      "fallback": false
+    },
+    "2026-05-06": {
+      "outer_fit_days": [
+        "2026-05-05",
+        "2026-05-07",
+        "2026-05-08"
+      ],
+      "maximum_saved_C_error": 0.0,
+      "inner_folds": {
+        "2026-05-05": {
+          "fit_days": [
+            "2026-05-07",
+            "2026-05-08"
+          ],
+          "seed": 20264305,
+          "single_class_fallback": false
+        },
+        "2026-05-07": {
+          "fit_days": [
+            "2026-05-05",
+            "2026-05-08"
+          ],
+          "seed": 20264315,
+          "single_class_fallback": false
+        },
+        "2026-05-08": {
+          "fit_days": [
+            "2026-05-05",
+            "2026-05-07"
+          ],
+          "seed": 20264325,
+          "single_class_fallback": false
+        }
+      },
+      "calibration": {
+        "episodes": 68,
+        "positive_episodes": 4,
+        "fit_days": [
+          "2026-05-05",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "weighted_first_snapshot_prevalence": 0.061437908496732,
+        "smoothed_fallback_prevalence": 0.07396825396825395,
+        "optimizer_success": true,
+        "intercept": -2.7263219673384893,
+        "slope": 0.0,
+        "constant_map": true
+      },
+      "intercept": -2.7263219673384893,
+      "slope": 0.0,
+      "fallback": false
+    },
+    "2026-05-07": {
+      "outer_fit_days": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-08"
+      ],
+      "maximum_saved_C_error": 0.0,
+      "inner_folds": {
+        "2026-05-05": {
+          "fit_days": [
+            "2026-05-06",
+            "2026-05-08"
+          ],
+          "seed": 20264405,
+          "single_class_fallback": false
+        },
+        "2026-05-06": {
+          "fit_days": [
+            "2026-05-05",
+            "2026-05-08"
+          ],
+          "seed": 20264415,
+          "single_class_fallback": false
+        },
+        "2026-05-08": {
+          "fit_days": [
+            "2026-05-05",
+            "2026-05-06"
+          ],
+          "seed": 20264425,
+          "single_class_fallback": false
+        }
+      },
+      "calibration": {
+        "episodes": 80,
+        "positive_episodes": 7,
+        "fit_days": [
+          "2026-05-05",
+          "2026-05-06",
+          "2026-05-08"
+        ],
+        "weighted_first_snapshot_prevalence": 0.07969348659003832,
+        "smoothed_fallback_prevalence": 0.08994486496589105,
+        "optimizer_success": true,
+        "intercept": -2.44651892293908,
+        "slope": 0.0,
+        "constant_map": true
+      },
+      "intercept": -2.44651892293908,
+      "slope": 0.0,
+      "fallback": false
+    },
+    "2026-05-08": {
+      "outer_fit_days": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "maximum_saved_C_error": 0.0,
+      "inner_folds": {
+        "2026-05-05": {
+          "fit_days": [
+            "2026-05-06",
+            "2026-05-07"
+          ],
+          "seed": 20264505,
+          "single_class_fallback": false
+        },
+        "2026-05-06": {
+          "fit_days": [
+            "2026-05-05",
+            "2026-05-07"
+          ],
+          "seed": 20264515,
+          "single_class_fallback": false
+        },
+        "2026-05-07": {
+          "fit_days": [
+            "2026-05-05",
+            "2026-05-06"
+          ],
+          "seed": 20264525,
+          "single_class_fallback": false
+        }
+      },
+      "calibration": {
+        "episodes": 67,
+        "positive_episodes": 7,
+        "fit_days": [
+          "2026-05-05",
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "weighted_first_snapshot_prevalence": 0.09668695064232591,
+        "smoothed_fallback_prevalence": 0.1083771839570411,
+        "optimizer_success": true,
+        "intercept": -0.7500845934626907,
+        "slope": 0.3479909852413734,
+        "constant_map": false
+      },
+      "intercept": -0.7500845934626907,
+      "slope": 0.3479909852413734,
+      "fallback": false
+    }
+  },
+  "observability": {
+    "all_states": {
+      "C": {
+        "states": 4526,
+        "episodes": 97,
+        "positive_episodes": 30,
+        "weighted_prevalence": 0.09661357478215996,
+        "auc": 0.6386541794577393,
+        "ap": 0.14115462854303415,
+        "prior_ap": 0.08502684711159997,
+        "brier": 0.10508751182616224,
+        "prior_brier": 0.08769244535753196,
+        "predicted_mean": 0.05816159625127812,
+        "observed_mean": 0.09661357478215996,
+        "probability_bins": [
+          {
+            "lower": 0,
+            "upper": 0.05,
+            "states": 2617,
+            "predicted": 0.010576294845948603,
+            "observed": 0.08103653412588548
+          },
+          {
+            "lower": 0.05,
+            "upper": 0.1,
+            "states": 479,
+            "predicted": 0.06901583581969348,
+            "observed": 0.17591599572070146
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "states": 405,
+            "predicted": 0.13929648367662173,
+            "observed": 0.1969248797604586
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.5,
+            "states": 538,
+            "predicted": 0.3274881203628287,
+            "observed": 0.10856737863187285
+          },
+          {
+            "lower": 0.5,
+            "upper": 1.0,
+            "states": 487,
+            "predicted": 0.711545506647343,
+            "observed": 0.1122359210491529
+          }
+        ]
+      },
+      "D": {
+        "states": 4526,
+        "episodes": 97,
+        "positive_episodes": 30,
+        "weighted_prevalence": 0.09661357478215996,
+        "auc": 0.6292123414703487,
+        "ap": 0.13051052959217618,
+        "prior_ap": 0.08502684711159997,
+        "brier": 0.10169892970678923,
+        "prior_brier": 0.08769244535753196,
+        "predicted_mean": 0.0514998027242202,
+        "observed_mean": 0.09661357478215996,
+        "probability_bins": [
+          {
+            "lower": 0,
+            "upper": 0.05,
+            "states": 2598,
+            "predicted": 0.011134952059732743,
+            "observed": 0.08603012737509137
+          },
+          {
+            "lower": 0.05,
+            "upper": 0.1,
+            "states": 628,
+            "predicted": 0.06983740422938163,
+            "observed": 0.1315527227136996
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "states": 439,
+            "predicted": 0.1402005445610255,
+            "observed": 0.20150161474425388
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.5,
+            "states": 495,
+            "predicted": 0.3315612145222469,
+            "observed": 0.09893624010429627
+          },
+          {
+            "lower": 0.5,
+            "upper": 1.0,
+            "states": 366,
+            "predicted": 0.6632307074175585,
+            "observed": 0.085414023305021
+          }
+        ]
+      },
+      "E": {
+        "states": 4526,
+        "episodes": 97,
+        "positive_episodes": 30,
+        "weighted_prevalence": 0.09661357478215996,
+        "auc": 0.591749155039358,
+        "ap": 0.1264456310114081,
+        "prior_ap": 0.09501654540528859,
+        "brier": 0.08926478629934577,
+        "prior_brier": 0.0878593483162981,
+        "predicted_mean": 0.09925204481532367,
+        "observed_mean": 0.09661357478215996,
+        "probability_bins": [
+          {
+            "lower": 0,
+            "upper": 0.05,
+            "states": 32,
+            "predicted": 0.04255127473256955,
+            "observed": 0.04323311533752551
+          },
+          {
+            "lower": 0.05,
+            "upper": 0.1,
+            "states": 2277,
+            "predicted": 0.07112711717575033,
+            "observed": 0.08288907949114666
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "states": 1156,
+            "predicted": 0.137574964798304,
+            "observed": 0.15263538671653187
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.5,
+            "states": 953,
+            "predicted": 0.28426274104931126,
+            "observed": 0.12219464201218624
+          },
+          {
+            "lower": 0.5,
+            "upper": 1.0,
+            "states": 108,
+            "predicted": 0.530682434176417,
+            "observed": 0.22558774324205338
+          }
+        ]
+      }
+    },
+    "snapshot_0s": {
+      "episodes": 97,
+      "missing_of97": 0,
+      "arms": {
+        "C": {
+          "states": 97,
+          "episodes": 97,
+          "positive_episodes": 9,
+          "weighted_prevalence": 0.08918187964841108,
+          "auc": 0.597126937333153,
+          "ap": 0.12736565401466582,
+          "prior_ap": 0.09021914587905173,
+          "brier": 0.10302584490304074,
+          "prior_brier": 0.08141748708909571,
+          "predicted_mean": 0.047866005607649205,
+          "observed_mean": 0.08918187964841108,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 78,
+              "predicted": 0.008826917431252782,
+              "observed": 0.0811765721412434
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 10,
+              "predicted": 0.07935792430955632,
+              "observed": 0.21228902953586495
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 4,
+              "predicted": 0.14413372775293487,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 1,
+              "predicted": 0.36433108035756373,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 4,
+              "predicted": 0.6531181346171118,
+              "observed": 0.0
+            }
+          ]
+        },
+        "D": {
+          "states": 97,
+          "episodes": 97,
+          "positive_episodes": 9,
+          "weighted_prevalence": 0.08918187964841108,
+          "auc": 0.5273010375940012,
+          "ap": 0.10036688733054874,
+          "prior_ap": 0.09021914587905173,
+          "brier": 0.10002103943860896,
+          "prior_brier": 0.08141748708909571,
+          "predicted_mean": 0.04320866593513737,
+          "observed_mean": 0.08918187964841108,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 79,
+              "predicted": 0.010299410708602349,
+              "observed": 0.10891471610865515
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 8,
+              "predicted": 0.06536130525000475,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 6,
+              "predicted": 0.1411117580673476,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 1,
+              "predicted": 0.26382694244368554,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 3,
+              "predicted": 0.6228074660868994,
+              "observed": 0.0
+            }
+          ]
+        },
+        "E": {
+          "states": 97,
+          "episodes": 97,
+          "positive_episodes": 9,
+          "weighted_prevalence": 0.08918187964841108,
+          "auc": 0.46248476606461664,
+          "ap": 0.09166878595722452,
+          "prior_ap": 0.06959484847506227,
+          "brier": 0.08842416064817918,
+          "prior_brier": 0.08437811427447262,
+          "predicted_mean": 0.09549288505703545,
+          "observed_mean": 0.08918187964841108,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 4,
+              "predicted": 0.04177786993781357,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 70,
+              "predicted": 0.07079763233929635,
+              "observed": 0.09714956763104513
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 17,
+              "predicted": 0.1473552619700787,
+              "observed": 0.1068702290076336
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 6,
+              "predicted": 0.3327686103420342,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ]
+        }
+      },
+      "per_day": {
+        "2026-05-05": {
+          "C": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.020116245677785628,
+            "prior_brier": 0.011002366947977842,
+            "predicted_mean": 0.04644558046818223,
+            "observed_mean": 0.0,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 18,
+                "predicted": 0.008687609783355036,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 2,
+                "predicted": 0.0929083822002836,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 1,
+                "predicted": 0.6331634493308691,
+                "observed": 0.0
+              }
+            ]
+          },
+          "D": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.025316861968097393,
+            "prior_brier": 0.011002366947977842,
+            "predicted_mean": 0.06303026945602072,
+            "observed_mean": 0.0,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 16,
+                "predicted": 0.00558817038750391,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 4,
+                "predicted": 0.14142321959275014,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 1,
+                "predicted": 0.6685320540053724,
+                "observed": 0.0
+              }
+            ]
+          },
+          "E": {
+            "states": 21,
+            "episodes": 21,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.013350861701047595,
+            "prior_brier": 0.014139391391330976,
+            "predicted_mean": 0.09392359252657785,
+            "observed_mean": 0.0,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 3,
+                "predicted": 0.04157435325969476,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 13,
+                "predicted": 0.06889650785058322,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 4,
+                "predicted": 0.15193351834050778,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.3442837078594375,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-06": {
+          "C": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.17241379310344826,
+            "auc": 0.6583333333333333,
+            "ap": 0.30608391608391605,
+            "prior_ap": 0.1724137931034483,
+            "brier": 0.16905998727273489,
+            "prior_brier": 0.14791982929846612,
+            "predicted_mean": 0.012261077082087055,
+            "observed_mean": 0.17241379310344826,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 27,
+                "predicted": 0.0052804182173408504,
+                "observed": 0.14814814814814814
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.05451672502412586,
+                "observed": 1.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 1,
+                "predicted": 0.15848321848819572,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "D": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.17241379310344826,
+            "auc": 0.5916666666666666,
+            "ap": 0.2319191919191919,
+            "prior_ap": 0.1724137931034483,
+            "brier": 0.17110449158782787,
+            "prior_brier": 0.14791982929846612,
+            "predicted_mean": 0.008125591997398549,
+            "observed_mean": 0.17241379310344826,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 27,
+                "predicted": 0.004132917608956519,
+                "observed": 0.18518518518518517
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 2,
+                "predicted": 0.062026696241365975,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.17241379310344826,
+            "auc": 0.5,
+            "ap": 0.1724137931034483,
+            "prior_ap": 0.1724137931034483,
+            "brier": 0.155002924015377,
+            "prior_brier": 0.1550029240153728,
+            "predicted_mean": 0.06143790849671336,
+            "observed_mean": 0.17241379310344826,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 29,
+                "predicted": 0.06143790849671336,
+                "observed": 0.17241379310344826
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-07": {
+          "C": {
+            "states": 17,
+            "episodes": 17,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.11764705882352941,
+            "auc": 0.8666666666666667,
+            "ap": 0.45,
+            "prior_ap": 0.11764705882352941,
+            "brier": 0.10782722751066116,
+            "prior_brier": 0.10421938024189031,
+            "predicted_mean": 0.020593240991447964,
+            "observed_mean": 0.11764705882352941,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 14,
+                "predicted": 0.008820953510236157,
+                "observed": 0.07142857142857142
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 3,
+                "predicted": 0.07553058257043642,
+                "observed": 0.3333333333333333
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "D": {
+            "states": 17,
+            "episodes": 17,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.11764705882352941,
+            "auc": 0.6333333333333333,
+            "ap": 0.2111111111111111,
+            "prior_ap": 0.11764705882352941,
+            "brier": 0.11297403776575039,
+            "prior_brier": 0.10421938024189031,
+            "predicted_mean": 0.026700006489347183,
+            "observed_mean": 0.11764705882352941,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 15,
+                "predicted": 0.015781740433648384,
+                "observed": 0.13333333333333333
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.05967335319480047,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 1,
+                "predicted": 0.15750065061937588,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 17,
+            "episodes": 17,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.11764705882352941,
+            "auc": 0.5,
+            "ap": 0.11764705882352941,
+            "prior_ap": 0.11764705882352941,
+            "brier": 0.10524670201898788,
+            "prior_brier": 0.10524670201898524,
+            "predicted_mean": 0.0796934865900039,
+            "observed_mean": 0.11764705882352941,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 17,
+                "predicted": 0.0796934865900039,
+                "observed": 0.11764705882352941
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-08": {
+          "C": {
+            "states": 30,
+            "episodes": 30,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.6071428571428572,
+            "ap": 0.11858974358974358,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.11509991915098135,
+            "prior_brier": 0.06252837186804851,
+            "predicted_mean": 0.11216412388887953,
+            "observed_mean": 0.06666666666666667,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 19,
+                "predicted": 0.014236755980098971,
+                "observed": 0.10526315789473684
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 4,
+                "predicted": 0.08116907326783916,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 3,
+                "predicted": 0.13918562749939664,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.36433108035756373,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 3,
+                "predicted": 0.6626203657057986,
+                "observed": 0.0
+              }
+            ]
+          },
+          "D": {
+            "states": 30,
+            "episodes": 30,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.5178571428571429,
+            "ap": 0.09722222222222221,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.09068876643276012,
+            "prior_brier": 0.06252837186804851,
+            "predicted_mean": 0.07497879579778298,
+            "observed_mean": 0.06666666666666667,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 21,
+                "predicted": 0.016718531267448683,
+                "observed": 0.09523809523809523
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 5,
+                "predicted": 0.06874865595054806,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 1,
+                "predicted": 0.11041040283037568,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.26382694244368554,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 2,
+                "predicted": 0.5901470461451328,
+                "observed": 0.0
+              }
+            ]
+          },
+          "E": {
+            "states": 30,
+            "episodes": 30,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.6071428571428572,
+            "ap": 0.11858974358974358,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.0800961548573043,
+            "prior_brier": 0.06312343967220144,
+            "predicted_mean": 0.14691655261484665,
+            "observed_mean": 0.06666666666666667,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 1,
+                "predicted": 0.0426500842726085,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 11,
+                "predicted": 0.0752724219214595,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 13,
+                "predicted": 0.14534284158747252,
+                "observed": 0.15384615384615385
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 5,
+                "predicted": 0.32947858247991896,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        }
+      },
+      "paired_brier_intervals": {
+        "day": {
+          "clusters": 4,
+          "E_minus_C_brier_ci95": [
+            -0.027944169214442288,
+            -0.004672954734205657
+          ]
+        },
+        "ticker_day": {
+          "clusters": 97,
+          "E_minus_C_brier_ci95": [
+            -0.029191518609354157,
+            -0.0024858054964679373
+          ]
+        }
+      }
+    },
+    "snapshot_20s": {
+      "episodes": 92,
+      "missing_of97": 5,
+      "arms": {
+        "C": {
+          "states": 92,
+          "episodes": 92,
+          "positive_episodes": 9,
+          "weighted_prevalence": 0.1062192118226601,
+          "auc": 0.650515605212665,
+          "ap": 0.15769502974591096,
+          "prior_ap": 0.09788079769638991,
+          "brier": 0.11756988983639961,
+          "prior_brier": 0.09507573819842956,
+          "predicted_mean": 0.04717827171159374,
+          "observed_mean": 0.1062192118226601,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 76,
+              "predicted": 0.010199346643724043,
+              "observed": 0.11534530588407069
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 5,
+              "predicted": 0.06491224151470137,
+              "observed": 0.18637532133676094
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 3,
+              "predicted": 0.13641640288824505,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 4,
+              "predicted": 0.23154152010656182,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 4,
+              "predicted": 0.5702780125121982,
+              "observed": 0.0
+            }
+          ]
+        },
+        "D": {
+          "states": 92,
+          "episodes": 92,
+          "positive_episodes": 9,
+          "weighted_prevalence": 0.1062192118226601,
+          "auc": 0.5311102657420856,
+          "ap": 0.116652750579183,
+          "prior_ap": 0.09788079769638991,
+          "brier": 0.1131495905378851,
+          "prior_brier": 0.09507573819842956,
+          "predicted_mean": 0.038437706775511685,
+          "observed_mean": 0.1062192118226601,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 76,
+              "predicted": 0.008769966901052462,
+              "observed": 0.1258848427351675
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 5,
+              "predicted": 0.07545359759753244,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 3,
+              "predicted": 0.13603700810634367,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 7,
+              "predicted": 0.27560611250834993,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 1,
+              "predicted": 0.5104693770499227,
+              "observed": 0.0
+            }
+          ]
+        },
+        "E": {
+          "states": 92,
+          "episodes": 92,
+          "positive_episodes": 9,
+          "weighted_prevalence": 0.1062192118226601,
+          "auc": 0.5311996086007978,
+          "ap": 0.11919375901868473,
+          "prior_ap": 0.09238794888270158,
+          "brier": 0.1006723944928778,
+          "prior_brier": 0.09704956216397326,
+          "predicted_mean": 0.09323262160617127,
+          "observed_mean": 0.1062192118226601,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 6,
+              "predicted": 0.044600608949414956,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 65,
+              "predicted": 0.07065483513045875,
+              "observed": 0.12278600154017283
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 12,
+              "predicted": 0.13466082571169963,
+              "observed": 0.14285714285714288
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 9,
+              "predicted": 0.25745486942825097,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ]
+        }
+      },
+      "per_day": {
+        "2026-05-05": {
+          "C": {
+            "states": 20,
+            "episodes": 20,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.05,
+            "auc": 0.3157894736842105,
+            "ap": 0.07142857142857142,
+            "prior_ap": 0.05,
+            "brier": 0.06672436212586516,
+            "prior_brier": 0.050513150128797375,
+            "predicted_mean": 0.05401492903341124,
+            "observed_mean": 0.05,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 16,
+                "predicted": 0.008924806787567083,
+                "observed": 0.0625
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.07952063967662631,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 1,
+                "predicted": 0.10725554958657321,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.23562662613995433,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 1,
+                "predicted": 0.5150988566639974,
+                "observed": 0.0
+              }
+            ]
+          },
+          "D": {
+            "states": 20,
+            "episodes": 20,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.05,
+            "auc": 0.4736842105263158,
+            "ap": 0.09090909090909091,
+            "prior_ap": 0.05,
+            "brier": 0.05908524425349354,
+            "prior_brier": 0.050513150128797375,
+            "predicted_mean": 0.044489198649840425,
+            "observed_mean": 0.05,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 16,
+                "predicted": 0.009668900291725025,
+                "observed": 0.0625
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 2,
+                "predicted": 0.0829750738451422,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 2,
+                "predicted": 0.2845657103194618,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 20,
+            "episodes": 20,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.05,
+            "auc": 0.3157894736842105,
+            "ap": 0.07142857142857142,
+            "prior_ap": 0.05,
+            "brier": 0.05878317703839916,
+            "prior_brier": 0.05224847410487619,
+            "predicted_mean": 0.10214496041450323,
+            "observed_mean": 0.05,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 4,
+                "predicted": 0.04356677602161079,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 9,
+                "predicted": 0.07126769404864827,
+                "observed": 0.11111111111111112
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 5,
+                "predicted": 0.13808634317156382,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 2,
+                "predicted": 0.2683955709539838,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-06": {
+          "C": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.10344827586206896,
+            "auc": 0.5769230769230769,
+            "ap": 0.14949494949494951,
+            "prior_ap": 0.10344827586206898,
+            "brier": 0.12351574170968921,
+            "prior_brier": 0.0927580928164854,
+            "predicted_mean": 0.03640751651189718,
+            "observed_mean": 0.10344827586206896,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 27,
+                "predicted": 0.008261954596750417,
+                "observed": 0.11111111111111112
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.05115913629782416,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 1,
+                "predicted": 0.7815860684349328,
+                "observed": 0.0
+              }
+            ]
+          },
+          "D": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.10344827586206896,
+            "auc": 0.5128205128205128,
+            "ap": 0.13055555555555556,
+            "prior_ap": 0.10344827586206898,
+            "brier": 0.11323056372265713,
+            "prior_brier": 0.0927580928164854,
+            "predicted_mean": 0.032985096841210516,
+            "observed_mean": 0.10344827586206896,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 26,
+                "predicted": 0.006323899385161282,
+                "observed": 0.11538461538461539
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.07424339411104024,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.20743365321994864,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 1,
+                "predicted": 0.5104693770499227,
+                "observed": 0.0
+              }
+            ]
+          },
+          "E": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.10344827586206896,
+            "auc": 0.5,
+            "ap": 0.10344827586206898,
+            "prior_ap": 0.10344827586206898,
+            "brier": 0.0945116010494064,
+            "prior_brier": 0.09451160104940483,
+            "predicted_mean": 0.06143790849671336,
+            "observed_mean": 0.10344827586206896,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 29,
+                "predicted": 0.06143790849671336,
+                "observed": 0.10344827586206896
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-07": {
+          "C": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.2,
+            "auc": 0.9166666666666666,
+            "ap": 0.6388888888888888,
+            "prior_ap": 0.2,
+            "brier": 0.18892557627516118,
+            "prior_brier": 0.17054299321057373,
+            "predicted_mean": 0.013750189937527257,
+            "observed_mean": 0.2,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 15,
+                "predicted": 0.013750189937527257,
+                "observed": 0.2
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "D": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.2,
+            "auc": 0.8333333333333334,
+            "ap": 0.5,
+            "prior_ap": 0.2,
+            "brier": 0.1943995304619405,
+            "prior_brier": 0.17054299321057373,
+            "predicted_mean": 0.00968879584117177,
+            "observed_mean": 0.2,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 15,
+                "predicted": 0.00968879584117177,
+                "observed": 0.2
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.2,
+            "auc": 0.5,
+            "ap": 0.2,
+            "prior_ap": 0.2,
+            "brier": 0.17447365716886956,
+            "prior_brier": 0.17447365716886132,
+            "predicted_mean": 0.07969348659000389,
+            "observed_mean": 0.2,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 15,
+                "predicted": 0.07969348659000389,
+                "observed": 0.2
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-08": {
+          "C": {
+            "states": 28,
+            "episodes": 28,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.07142857142857142,
+            "auc": 0.6923076923076923,
+            "ap": 0.1534090909090909,
+            "prior_ap": 0.07142857142857142,
+            "brier": 0.0911138792348828,
+            "prior_brier": 0.06648871663786154,
+            "predicted_mean": 0.08454045136353928,
+            "observed_mean": 0.07142857142857142,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 18,
+                "predicted": 0.009067784811355086,
+                "observed": 0.05555555555555555
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 3,
+                "predicted": 0.06252127577560262,
+                "observed": 0.3333333333333333
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 2,
+                "predicted": 0.15682900019941537,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 3,
+                "predicted": 0.2296351372909787,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 2,
+                "predicted": 0.5068926359880668,
+                "observed": 0.0
+              }
+            ]
+          },
+          "D": {
+            "states": 28,
+            "episodes": 28,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.07142857142857142,
+            "auc": 0.40384615384615385,
+            "ap": 0.08608058608058608,
+            "prior_ap": 0.07142857142857142,
+            "brier": 0.08588302371344916,
+            "prior_brier": 0.06648871663786154,
+            "predicted_mean": 0.066587735769824,
+            "observed_mean": 0.07142857142857142,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 19,
+                "predicted": 0.009587935905791118,
+                "observed": 0.10526315789473684
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 2,
+                "predicted": 0.06550776701677152,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 3,
+                "predicted": 0.13603700810634367,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 4,
+                "predicted": 0.28578981524811675,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 28,
+            "episodes": 28,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.07142857142857142,
+            "auc": 0.6923076923076923,
+            "ap": 0.1534090909090909,
+            "prior_ap": 0.07142857142857142,
+            "brier": 0.07492114271483599,
+            "prior_brier": 0.06696451633275072,
+            "predicted_mean": 0.1296541309234646,
+            "observed_mean": 0.07142857142857142,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 2,
+                "predicted": 0.047495341147266626,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 12,
+                "predicted": 0.07042730867282691,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 7,
+                "predicted": 0.1312353082518353,
+                "observed": 0.2857142857142857
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 7,
+                "predicted": 0.25307858881795775,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        }
+      }
+    },
+    "snapshot_60s": {
+      "episodes": 88,
+      "missing_of97": 9,
+      "arms": {
+        "C": {
+          "states": 88,
+          "episodes": 88,
+          "positive_episodes": 8,
+          "weighted_prevalence": 0.08501239576290286,
+          "auc": 0.5860226144850291,
+          "ap": 0.10944283529879016,
+          "prior_ap": 0.07759727262146073,
+          "brier": 0.09811600131743324,
+          "prior_brier": 0.07822430734036678,
+          "predicted_mean": 0.04942028249358766,
+          "observed_mean": 0.08501239576290286,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 74,
+              "predicted": 0.010541299345017543,
+              "observed": 0.08843623925627084
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 4,
+              "predicted": 0.06433583931603651,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 2,
+              "predicted": 0.1492127890897019,
+              "observed": 0.5
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 7,
+              "predicted": 0.3282486895361677,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 1,
+              "predicted": 0.7294049794655493,
+              "observed": 0.0
+            }
+          ]
+        },
+        "D": {
+          "states": 88,
+          "episodes": 88,
+          "positive_episodes": 8,
+          "weighted_prevalence": 0.08501239576290286,
+          "auc": 0.5508613592324386,
+          "ap": 0.09899913601193089,
+          "prior_ap": 0.07759727262146073,
+          "brier": 0.08871969526209068,
+          "prior_brier": 0.07822430734036678,
+          "predicted_mean": 0.0345196670912956,
+          "observed_mean": 0.08501239576290286,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 72,
+              "predicted": 0.010903935796746598,
+              "observed": 0.10301882669968318
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 9,
+              "predicted": 0.07071918956604878,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 3,
+              "predicted": 0.1230375623664073,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 4,
+              "predicted": 0.3189841898328538,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ]
+        },
+        "E": {
+          "states": 88,
+          "episodes": 88,
+          "positive_episodes": 8,
+          "weighted_prevalence": 0.08501239576290286,
+          "auc": 0.520848483843632,
+          "ap": 0.09854032346095903,
+          "prior_ap": 0.07926259849510922,
+          "brier": 0.08305976320806091,
+          "prior_brier": 0.07871265404034516,
+          "predicted_mean": 0.09460269691008798,
+          "observed_mean": 0.08501239576290286,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 3,
+              "predicted": 0.039886500062805225,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 68,
+              "predicted": 0.07165759603354657,
+              "observed": 0.09618448037392095
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 9,
+              "predicted": 0.12991177346931165,
+              "observed": 0.10429447852760736
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 8,
+              "predicted": 0.2799094703800258,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ]
+        }
+      },
+      "per_day": {
+        "2026-05-05": {
+          "C": {
+            "states": 17,
+            "episodes": 17,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.058823529411764705,
+            "auc": 0.625,
+            "ap": 0.14285714285714285,
+            "prior_ap": 0.058823529411764705,
+            "brier": 0.10620315890619501,
+            "prior_brier": 0.05748564127835376,
+            "predicted_mean": 0.09405293286611807,
+            "observed_mean": 0.058823529411764705,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 14,
+                "predicted": 0.007633819784312173,
+                "observed": 0.07142857142857142
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 2,
+                "predicted": 0.38131070113904375,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 1,
+                "predicted": 0.7294049794655493,
+                "observed": 0.0
+              }
+            ]
+          },
+          "D": {
+            "states": 17,
+            "episodes": 17,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.058823529411764705,
+            "auc": 0.6875,
+            "ap": 0.16666666666666666,
+            "prior_ap": 0.058823529411764705,
+            "brier": 0.07088643359267062,
+            "prior_brier": 0.05748564127835376,
+            "predicted_mean": 0.05391462865517338,
+            "observed_mean": 0.058823529411764705,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 13,
+                "predicted": 0.009184261827307862,
+                "observed": 0.07692307692307693
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 2,
+                "predicted": 0.060398220467469454,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 2,
+                "predicted": 0.3381784212240032,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 17,
+            "episodes": 17,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.058823529411764705,
+            "auc": 0.625,
+            "ap": 0.14285714285714285,
+            "prior_ap": 0.058823529411764705,
+            "brier": 0.06983822581651582,
+            "prior_brier": 0.05897360634844298,
+            "predicted_mean": 0.1148622310117276,
+            "observed_mean": 0.058823529411764705,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 1,
+                "predicted": 0.04304418141233459,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 12,
+                "predicted": 0.07271787033929973,
+                "observed": 0.08333333333333333
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 1,
+                "predicted": 0.11606570395401962,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 3,
+                "predicted": 0.3069778659204727,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-06": {
+          "C": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.10344827586206896,
+            "auc": 0.6025641025641025,
+            "ap": 0.15925925925925927,
+            "prior_ap": 0.10344827586206898,
+            "brier": 0.10403691086374453,
+            "prior_brier": 0.0927580928164854,
+            "predicted_mean": 0.020902968403138066,
+            "observed_mean": 0.10344827586206896,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 25,
+                "predicted": 0.008404886146627788,
+                "observed": 0.12
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 3,
+                "predicted": 0.0591080568507652,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.21873975947301344,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "D": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.10344827586206896,
+            "auc": 0.5384615384615383,
+            "ap": 0.14267676767676768,
+            "prior_ap": 0.10344827586206898,
+            "brier": 0.10499407492420287,
+            "prior_brier": 0.0927580928164854,
+            "predicted_mean": 0.022610928596389926,
+            "observed_mean": 0.10344827586206896,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 25,
+                "predicted": 0.006607013315683999,
+                "observed": 0.12
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 2,
+                "predicted": 0.06533326985756872,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 1,
+                "predicted": 0.11157233818438783,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.24830271850368246,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 29,
+            "episodes": 29,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.10344827586206896,
+            "auc": 0.5,
+            "ap": 0.10344827586206898,
+            "prior_ap": 0.10344827586206898,
+            "brier": 0.0945116010494064,
+            "prior_brier": 0.09451160104940481,
+            "predicted_mean": 0.06143790849671336,
+            "observed_mean": 0.10344827586206896,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 29,
+                "predicted": 0.06143790849671336,
+                "observed": 0.10344827586206896
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-07": {
+          "C": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.7142857142857143,
+            "ap": 0.2,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.06410768043387143,
+            "prior_brier": 0.06316190554699105,
+            "predicted_mean": 0.013359938430985046,
+            "observed_mean": 0.06666666666666667,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 15,
+                "predicted": 0.013359938430985046,
+                "observed": 0.06666666666666667
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "D": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.5714285714285714,
+            "ap": 0.14285714285714285,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.06523317296234213,
+            "prior_brier": 0.06316190554699105,
+            "predicted_mean": 0.018428938216258236,
+            "observed_mean": 0.06666666666666667,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 14,
+                "predicted": 0.014372676334382472,
+                "observed": 0.07142857142857142
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.07521660456251889,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.06666666666666667,
+            "auc": 0.5,
+            "ap": 0.06666666666666667,
+            "prior_ap": 0.06666666666666667,
+            "brier": 0.06239192025953729,
+            "prior_brier": 0.06239192025953818,
+            "predicted_mean": 0.07969348659000389,
+            "observed_mean": 0.06666666666666667,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 15,
+                "predicted": 0.07969348659000389,
+                "observed": 0.06666666666666667
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-08": {
+          "C": {
+            "states": 27,
+            "episodes": 27,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.11111111111111112,
+            "auc": 0.49999999999999994,
+            "ap": 0.14862914862914864,
+            "prior_ap": 0.11111111111111113,
+            "brier": 0.11811625506592202,
+            "prior_brier": 0.09949158971963692,
+            "predicted_mean": 0.0693652902741095,
+            "observed_mean": 0.11111111111111112,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 20,
+                "predicted": 0.012454912684029831,
+                "observed": 0.1
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.0789375765466219,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 2,
+                "predicted": 0.1492127890897019,
+                "observed": 0.5
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 4,
+                "predicted": 0.31160035724858354,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "D": {
+            "states": 27,
+            "episodes": 27,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.11111111111111112,
+            "auc": 0.43055555555555547,
+            "ap": 0.12681159420289856,
+            "prior_ap": 0.11111111111111113,
+            "brier": 0.11376509956914709,
+            "prior_brier": 0.09949158971963692,
+            "predicted_mean": 0.04312417289736087,
+            "observed_mean": 0.11111111111111112,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 20,
+                "predicted": 0.013309361949052606,
+                "observed": 0.15000000000000002
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 4,
+                "predicted": 0.07939865499854994,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 2,
+                "predicted": 0.12837482189941637,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.3238211654546589,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 27,
+            "episodes": 27,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.11111111111111112,
+            "auc": 0.49999999999999994,
+            "ap": 0.14862914862914864,
+            "prior_ap": 0.11111111111111113,
+            "brier": 0.10549730570678416,
+            "prior_brier": 0.0989734885039947,
+            "predicted_mean": 0.12241716154190703,
+            "observed_mean": 0.11111111111111112,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 2,
+                "predicted": 0.03737892957935544,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 12,
+                "predicted": 0.07488717416554894,
+                "observed": 0.16666666666666669
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 8,
+                "predicted": 0.13266062550543578,
+                "observed": 0.125
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 5,
+                "predicted": 0.2541148816885411,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        }
+      }
+    },
+    "snapshot_120s": {
+      "episodes": 82,
+      "missing_of97": 15,
+      "arms": {
+        "C": {
+          "states": 82,
+          "episodes": 82,
+          "positive_episodes": 11,
+          "weighted_prevalence": 0.12514245014245018,
+          "auc": 0.5783265428318576,
+          "ap": 0.16295850917581345,
+          "prior_ap": 0.1800044834905393,
+          "brier": 0.14652143154979907,
+          "prior_brier": 0.10992439308819088,
+          "predicted_mean": 0.0749236821515613,
+          "observed_mean": 0.12514245014245018,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 64,
+              "predicted": 0.011527827335482478,
+              "observed": 0.12500804137771315
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 4,
+              "predicted": 0.06843997528308594,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 4,
+              "predicted": 0.1415627903436493,
+              "observed": 0.2112676056338028
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 6,
+              "predicted": 0.2940234336576256,
+              "observed": 0.2588495575221239
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 4,
+              "predicted": 0.7083995396666231,
+              "observed": 0.0
+            }
+          ]
+        },
+        "D": {
+          "states": 82,
+          "episodes": 82,
+          "positive_episodes": 11,
+          "weighted_prevalence": 0.12514245014245018,
+          "auc": 0.626649584009894,
+          "ap": 0.18159015814909005,
+          "prior_ap": 0.1800044834905393,
+          "brier": 0.1260906056140358,
+          "prior_brier": 0.10992439308819088,
+          "predicted_mean": 0.054318351506854115,
+          "observed_mean": 0.12514245014245018,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 63,
+              "predicted": 0.012601077285473435,
+              "observed": 0.12921415557299212
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 5,
+              "predicted": 0.06734566631721407,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 6,
+              "predicted": 0.12596178096674832,
+              "observed": 0.25742574257425743
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 7,
+              "predicted": 0.2984901334630058,
+              "observed": 0.11862917398945522
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 1,
+              "predicted": 0.7253501326697354,
+              "observed": 0.0
+            }
+          ]
+        },
+        "E": {
+          "states": 82,
+          "episodes": 82,
+          "positive_episodes": 11,
+          "weighted_prevalence": 0.12514245014245018,
+          "auc": 0.5415037724215083,
+          "ap": 0.16444677154134102,
+          "prior_ap": 0.16255434104039673,
+          "brier": 0.11650459079478975,
+          "prior_brier": 0.11038810087382143,
+          "predicted_mean": 0.11048029933905158,
+          "observed_mean": 0.12514245014245018,
+          "probability_bins": [
+            {
+              "lower": 0,
+              "upper": 0.05,
+              "states": 3,
+              "predicted": 0.04637600274751804,
+              "observed": 0.0
+            },
+            {
+              "lower": 0.05,
+              "upper": 0.1,
+              "states": 56,
+              "predicted": 0.07319897876071282,
+              "observed": 0.1035884924265528
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "states": 13,
+              "predicted": 0.14766754325344036,
+              "observed": 0.24561403508771934
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.5,
+              "states": 10,
+              "predicted": 0.30643457468751883,
+              "observed": 0.14207650273224046
+            },
+            {
+              "lower": 0.5,
+              "upper": 1.0,
+              "states": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ]
+        }
+      },
+      "per_day": {
+        "2026-05-05": {
+          "C": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.2,
+            "auc": 0.638888888888889,
+            "ap": 0.33535353535353535,
+            "prior_ap": 0.2,
+            "brier": 0.23049528607747802,
+            "prior_brier": 0.16904549967125593,
+            "predicted_mean": 0.12251620620710636,
+            "observed_mean": 0.2,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 11,
+                "predicted": 0.012200359632525571,
+                "observed": 0.18181818181818182
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 1,
+                "predicted": 0.1466049336771267,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.21189758603488734,
+                "observed": 1.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 2,
+                "predicted": 0.6725183087184001,
+                "observed": 0.0
+              }
+            ]
+          },
+          "D": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.2,
+            "auc": 0.7777777777777778,
+            "ap": 0.41111111111111115,
+            "prior_ap": 0.2,
+            "brier": 0.18586220814261767,
+            "prior_brier": 0.16904549967125593,
+            "predicted_mean": 0.054123468927906496,
+            "observed_mean": 0.2,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 11,
+                "predicted": 0.014642494730939903,
+                "observed": 0.18181818181818182
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.06914877106077616,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 1,
+                "predicted": 0.10740095536273724,
+                "observed": 1.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 2,
+                "predicted": 0.2371174327273725,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 15,
+            "episodes": 15,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.2,
+            "auc": 0.638888888888889,
+            "ap": 0.33535353535353535,
+            "prior_ap": 0.2,
+            "brier": 0.17095168070425718,
+            "prior_brier": 0.1665757222455118,
+            "predicted_mean": 0.1385437968731552,
+            "observed_mean": 0.2,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 1,
+                "predicted": 0.04938165686949138,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 8,
+                "predicted": 0.08340109534257452,
+                "observed": 0.125
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 3,
+                "predicted": 0.14196561510623495,
+                "observed": 0.3333333333333333
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 3,
+                "predicted": 0.3118898960561784,
+                "observed": 0.3333333333333333
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-06": {
+          "C": {
+            "states": 27,
+            "episodes": 27,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.1851851851851852,
+            "auc": 0.6636363636363637,
+            "ap": 0.33532467532467536,
+            "prior_ap": 0.1851851851851852,
+            "brier": 0.18751958073148792,
+            "prior_brier": 0.1581349656840181,
+            "predicted_mean": 0.022253102990847696,
+            "observed_mean": 0.1851851851851852,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 26,
+                "predicted": 0.007161204803532674,
+                "observed": 0.19230769230769232
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.41464245586103815,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "D": {
+            "states": 27,
+            "episodes": 27,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.1851851851851852,
+            "auc": 0.6363636363636365,
+            "ap": 0.337037037037037,
+            "prior_ap": 0.1851851851851852,
+            "brier": 0.18523472571495508,
+            "prior_brier": 0.1581349656840181,
+            "predicted_mean": 0.023660834015204996,
+            "observed_mean": 0.1851851851851852,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 25,
+                "predicted": 0.0071773627021204855,
+                "observed": 0.2
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.06058901461743547,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 1,
+                "predicted": 0.39881943624008714,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 27,
+            "episodes": 27,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.1851851851851852,
+            "auc": 0.5,
+            "ap": 0.1851851851851852,
+            "prior_ap": 0.1851851851851852,
+            "brier": 0.1662050208609271,
+            "prior_brier": 0.1662050208609224,
+            "predicted_mean": 0.06143790849671335,
+            "observed_mean": 0.1851851851851852,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 27,
+                "predicted": 0.06143790849671335,
+                "observed": 0.1851851851851852
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-07": {
+          "C": {
+            "states": 14,
+            "episodes": 14,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0004960338808603545,
+            "prior_brier": 0.009471361715199729,
+            "predicted_mean": 0.016723907034421323,
+            "observed_mean": 0.0,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 13,
+                "predicted": 0.013718186030957683,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 1,
+                "predicted": 0.05579828007944862,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "D": {
+            "states": 14,
+            "episodes": 14,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.0013322623819219022,
+            "prior_brier": 0.009471361715199729,
+            "predicted_mean": 0.025228251865784614,
+            "observed_mean": 0.0,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 11,
+                "predicted": 0.013576179627316859,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 3,
+                "predicted": 0.06795251674016635,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          },
+          "E": {
+            "states": 14,
+            "episodes": 14,
+            "positive_episodes": 0,
+            "weighted_prevalence": 0.0,
+            "auc": null,
+            "ap": null,
+            "prior_ap": null,
+            "brier": 0.006351051804871133,
+            "prior_brier": 0.006351051804876618,
+            "predicted_mean": 0.07969348659000389,
+            "observed_mean": 0.0,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 14,
+                "predicted": 0.07969348659000389,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        },
+        "2026-05-08": {
+          "C": {
+            "states": 26,
+            "episodes": 26,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.11538461538461539,
+            "auc": 0.463768115942029,
+            "ap": 0.13465608465608464,
+            "prior_ap": 0.11538461538461539,
+            "brier": 0.16757482550936986,
+            "prior_brier": 0.10304574528228964,
+            "predicted_mean": 0.1382015123738697,
+            "observed_mean": 0.11538461538461539,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 14,
+                "predicted": 0.01464374332494151,
+                "observed": 0.14285714285714285
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 3,
+                "predicted": 0.07626578659962331,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 3,
+                "predicted": 0.1386495519731957,
+                "observed": 0.3333333333333333
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 4,
+                "predicted": 0.3005733882081389,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 2,
+                "predicted": 0.7705936733102094,
+                "observed": 0.0
+              }
+            ]
+          },
+          "D": {
+            "states": 26,
+            "episodes": 26,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.11538461538461539,
+            "auc": 0.5507246376811594,
+            "ap": 0.18333333333333335,
+            "prior_ap": 0.11538461538461539,
+            "brier": 0.13193322621664835,
+            "prior_brier": 0.10304574528228964,
+            "predicted_mean": 0.11426085121852031,
+            "observed_mean": 0.11538461538461539,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 16,
+                "predicted": 0.01708407308769419,
+                "observed": 0.125
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 5,
+                "predicted": 0.13239620050947215,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 4,
+                "predicted": 0.3275264567653312,
+                "observed": 0.25
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 1,
+                "predicted": 0.7253501326697354,
+                "observed": 0.0
+              }
+            ]
+          },
+          "E": {
+            "states": 26,
+            "episodes": 26,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.11538461538461539,
+            "auc": 0.463768115942029,
+            "ap": 0.13465608465608464,
+            "prior_ap": 0.11538461538461539,
+            "brier": 0.12251060980910349,
+            "prior_brier": 0.10242060858397482,
+            "predicted_mean": 0.16224600539633388,
+            "observed_mean": 0.11538461538461539,
+            "probability_bins": [
+              {
+                "lower": 0,
+                "upper": 0.05,
+                "states": 2,
+                "predicted": 0.04377110250847447,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.05,
+                "upper": 0.1,
+                "states": 7,
+                "predicted": 0.07255058924175131,
+                "observed": 0.14285714285714285
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "states": 10,
+                "predicted": 0.15063254588998712,
+                "observed": 0.2
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.5,
+                "states": 7,
+                "predicted": 0.3023820502422288,
+                "observed": 0.0
+              },
+              {
+                "lower": 0.5,
+                "upper": 1.0,
+                "states": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "checks": {
+    "exact_R306_C_scores": true,
+    "first_brier_beats_C": true,
+    "first_brier_beats_cost_control": true,
+    "first_brier_beats_first_snapshot_training_prior": false,
+    "first_auc_not_below_raw_C": false,
+    "all_calibration_slopes_positive": false,
+    "within_day_first_rank_equal": false
+  },
+  "research_gate_pass": false,
+  "limitations": "Nested calibration prevents own/outer-day target reuse, but base two-day calibration versus three-day deployment can shift score distributions. First-snapshot map transport to later states is secondary. Constant maps are failures of discrimination. Nine first winners,97 conditional upstream-OOF episodes and four reused days do not validate profitability or justify promotion. No tuning, inversion, policy or threshold selection."
+}
