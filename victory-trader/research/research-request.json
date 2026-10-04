@@ -1,8 +1,9 @@
 {
-  "request_id": 307,
+  "request_id": 308,
   "operation": "module",
-  "module": "victory_trader.monotone_momentum_calibration",
+  "module": "victory_trader.early_momentum_weighting",
   "pytest": [
+    "tests/test_early_momentum_weighting.py",
     "tests/test_monotone_momentum_calibration.py",
     "tests/test_preentry_momentum_observability.py",
     "tests/test_feasible_upside_observability.py",
@@ -24,9 +25,9 @@
     "--summary",
     "prepared/request306/request306.json",
     "--output",
-    "artifacts/request307.json",
+    "artifacts/request308.json",
     "--states-output",
-    "artifacts/request307-states.parquet"
+    "artifacts/request308-states.parquet"
   ],
-  "note": "Exact R306 C99-feature probability replay. Nested TWO-day fit OOF first-snapshot training-only monotone sigmoid calibration, slope>=0 with fixedL2, no inversion/threshold/policy changes. Same97 May5-8 candidates, zero market requests; June sealed."
+  "note": "R308 fixed weighting-only comparison U/T/E on unchanged R306 99 causal features and reachable net5 label. Exact U replay; primary E=0.5 first point mass+0.5 fixed clock phase distribution. Same97 May5-8 candidates; zero network, no policy tuning; June sealed."
 }
