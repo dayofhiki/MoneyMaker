@@ -1,0 +1,58 @@
+{
+  "request_id": 309,
+  "kind": "posthoc_descriptive_diagnostic_no_fitting",
+  "used_for_gate": false,
+  "note": "Every positive-negative pair uses original equal-day episode weights; ties count .5. Same-day and between-day partitions exactly reconstruct pooled AUROC. This diagnostic was added after results; it cannot select a model or prove a causal mechanism. No thresholds or model fitting.",
+  "within_day_pair_mass_fraction": 0.2375365743692583,
+  "arms": {
+    "U": {
+      "within_day_auc": 0.7180682633714709,
+      "between_day_auc": 0.5594490798502807,
+      "reconstructed_pooled_auc": 0.5971269373331529
+    },
+    "V": {
+      "within_day_auc": 0.5048858322341635,
+      "between_day_auc": 0.568520612393429,
+      "reconstructed_pooled_auc": 0.5534050247036562,
+      "gain_vs_U": {
+        "total": -0.04372191262949676,
+        "within_day_contribution": -0.0506386244080663,
+        "between_day_contribution": 0.0069167117785696045,
+        "between_day_share_of_gain": -0.15819783176418684
+      }
+    },
+    "W": {
+      "within_day_auc": 0.7673175837894485,
+      "between_day_auc": 0.7237568881264295,
+      "reconstructed_pooled_auc": 0.7341041465513649,
+      "gain_vs_U": {
+        "total": 0.136977209218212,
+        "within_day_contribution": 0.011698514862100363,
+        "between_day_contribution": 0.12527869435611153,
+        "between_day_share_of_gain": 0.9145951729571004
+      }
+    },
+    "X": {
+      "within_day_auc": 0.7468912069324594,
+      "between_day_auc": 0.7121153046371386,
+      "reconstructed_pooled_auc": 0.720375853338969,
+      "gain_vs_U": {
+        "total": 0.12324891600581611,
+        "within_day_contribution": 0.0068465032767156715,
+        "between_day_contribution": 0.1164024127291005,
+        "between_day_share_of_gain": 0.9444497891048995
+      }
+    },
+    "F": {
+      "within_day_auc": 0.6626897623068141,
+      "between_day_auc": 0.4248706851736328,
+      "reconstructed_pooled_auc": 0.48136141407550703,
+      "gain_vs_U": {
+        "total": -0.11576552325764589,
+        "within_day_contribution": -0.0131544194366029,
+        "between_day_contribution": -0.10261110382104292,
+        "between_day_share_of_gain": 0.8863701465994612
+      }
+    }
+  }
+}
