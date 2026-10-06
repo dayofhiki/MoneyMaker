@@ -37,9 +37,13 @@ Local cache-only verification reproduces all436 outcomes and five reports
 exactly from432 cached histories with **zero new market requests**. It also
 verifies all original276 structural rows and the original census hash.
 Evidence: request316b-first-reproduction.json and request316b-reproduction.json.
-Official cached closeout validation is pending; its workflow downloads the two
-frozen artifacts and forbids market cache misses. The one-shot workflow will
-be removed after that validation, preserving the draft/unmerged independent PR.
+Official cached closeout run37461571946 **passed** from
+`dacf1bec94bfdfbc106e66ddc5ba60ad8dc080fa`. Verified artifact11412923143 digest:
+`sha256:7038a7ff99a1232667ec9a90ab892f96fb00c1d8f9e29d75849fcfe9d81fafff`.
+It reproduces all436 labels and five reports exactly with432 cache hits,
+zero market requests and no cache misses. All source artifact hashes pass.
+The one-shot workflow is removed in the final cleaned branch; PR89 remains
+independent, draft and unmerged.
 
 ## Population and attrition
 
@@ -93,7 +97,9 @@ Exact 8-K difference is only1.01 percentage points. Intervals also include0:
 - trading-day clusters: [-4.94,7.62] percentage points.
 
 There is only one event positive on one date, so support is far below the fixed
-gate. Across all individually complete exact-8K members, event and control
+gate. The33 complete sets span32 distinct issuers/tickers and33 filings, but
+only **two** were intraday-accepted; the other31 are premarket/rolled clocks.
+This is especially underpowered for the strongest intraday-arrival hypothesis. Across all individually complete exact-8K members, event and control
 rates are both2.78% (1/36 and3/108). Both all-member censoring bounds are
 [2.5%,12.5%]. This pilot does not establish material heterogeneity for a broad
 8-K family. It also does not falsify specific news causes or catalyst trading:
@@ -162,7 +168,8 @@ execution. Only after a repeatable event-specific distribution and simple
 context/interaction test should specialist routing be considered. June HOLD
 and July-August stay closed, and reused May remains development.
 
-Validation: recovery source passed the full local1,051-test suite and GitHub
-push/PR CI; closeout integrity adds two tests that reject even tiny changed
-outcomes while allowing only auxiliary CPU log rounding. Final validation and
-source SHA will be recorded below after the cached closeout completes.
+Validation: final source passes the full local **1,053-test** suite, Ruff critical
+checks, and GitHub push/PR CI. Official cache-only closeout passes with all436
+outcomes and five reports exact. Two new tests reject even tiny changed
+outcomes, identities/reports and material matching-distance changes, while
+allowing only the documented auxiliary CPU log rounding.
