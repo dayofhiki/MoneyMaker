@@ -1,6 +1,6 @@
 # R312 — local elapsed-evidence intervention fails to improve discrimination
 
-Local execution completed against official R306/R310/R311 artifacts with frozen numerical versions. Preregistration commit `cd31983` precedes fits. **No official GitHub run, remote branch, merge or policy promotion has occurred:** automatic approval review rejected publishing pending explicit user authorization. Python3.12 local execution needs official Python3.11 reproduction after approval.
+Official Python3.11 execution **37436463737**, artifact **11399073633**, source `d76250e69b3a03c4e35e66b1fc61f80a2f85b9e2` ([PR81](https://github.com/dayofhiki/MoneyMaker/pull/81)) succeeded after publication approval. It reproduces the prior local Python3.12 diagnostic against the same frozen R306/R310/R311 inputs. Local preregistration commit `cd31983` precedes fits. No policy promotion. Persisted `results/request312.json` is the exact official JSON; local output remains separately marked.
 
 Completed-print counts/gaps refer to observed one-second aggregate bars/distinct traded seconds, not individual tick-level transactions; each bar can contain many trades. `n` is the separate transaction-count input.
 
@@ -30,3 +30,7 @@ Between frozen and expanding tracks, both trajectory position/weighting and trai
 Freeze R312 and stop adding features based on these outcomes. R313 should use the unchanged R311 M model to test an outcome-independent information-arrival observation: first completed print within the original five-minute window with at least two completed prints in the last10s. It may coincide with the original first observation. Select using timestamps alone before labeling; retain absent/unresolved identities; keep cap/cost/absorbing stop fixed.
 
 Compare original and evidence-arrival observations on the SAME paired labeled identities; separately report opportunity retention/loss/gain and time-to-observation. The entry-time labels differ, so any rank gain is not a pure same-target model effect or evidence for a trading rule. This is a bounded diagnostic of information arrival versus waiting cost, not a forced wait policy. No delay/threshold search, new fit, market acquisition or sealed dates.
+
+## Official reproduction integrity
+
+Official targeted checks:85 tests and critical Ruff pass; PR81 full CI:1,012 tests pass. Same metadata, cohort, feature/missing support, labels, gates and every pairwise probability rank. Maximum evaluation-metric numeric difference7.04e-11. Frozen M/K/T probability errors <=1.67e-16; expanding M/K/T maximum errors1.733e-9/9.121e-14/2.282e-10. Fit-audit parameter maximum difference2.121e-9. These outputs are numerically reproduced, not byte-identical: three expanding-M rows exceed an absolute1e-9 all-score comparison, while the preregistered frozen-original M1e-9 replay requirement passes. All ranks and gate checks agree. Features/labels agree within1e-9. The separate reproduction audit preserves these differences without changing inputs, training, endpoints or gates.

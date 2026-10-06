@@ -1,7 +1,7 @@
 {
-  "request_id": 312,
+  "request_id": 313,
   "operation": "module",
-  "module": "victory_trader.elapsed_momentum_evidence",
+  "module": "victory_trader.information_arrival_momentum",
   "pytest": [
     "tests/test_information_arrival_momentum.py",
     "tests/test_elapsed_momentum_evidence.py",
@@ -44,11 +44,9 @@
     "--evaluation",
     "prepared/request311",
     "--output",
-    "artifacts/request312.json",
+    "artifacts/request313.json",
     "--states-output",
-    "artifacts/request312-states.parquet",
-    "--training-output",
-    "artifacts/request312-training-features.parquet"
+    "artifacts/request313-states.parquet"
   ],
-  "note": "R312 preregistered elapsed-time/observation-evidence package and expanding-first support diagnostic. Original828 May identities, unchanged reachable-net5 labels and missing cases. Fixed M/K/T inputs and C=.1; current/later evaluation days excluded from expanding fits. Frozen M must replay R311. No market requests, threshold/policy tuning, promotion or sealed June/July-August access. One consolidated official run."
+  "note": "R313 timestamp-only first two-print10s observation, original828 May identities and frozen R311 M. Pair same identities, explicitly changed entry-time labels, missing opportunity and timing costs. No model/window/count/delay/threshold tuning, market requests, policy promotion or sealed dates."
 }
