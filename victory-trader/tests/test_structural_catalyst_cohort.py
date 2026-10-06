@@ -136,3 +136,28 @@ def test_sec_feasibility_freezes_membership_before_headers_and_never_loads_price
     assert result['selected_accessions'] == result['exact_headers'] == 1
     assert result['coverage'] == 1 and not result['market_prices_loaded']
     assert result['stage'] == 'SEC_only_source_feasibility'
+
+
+def test_preprice_seed_recovers_exact_header_without_network(tmp_path, monkeypatch):
+    import hashlib
+    import json
+    text = header()
+    seed = tmp_path/'seed.json'
+    seed.write_text(json.dumps({'version': 1, 'headers': {ACC: {'header': text, 'sha256': hashlib.sha256(text.encode()).hexdigest()}}}))
+    monkeypatch.setattr(exp.requests, 'get', lambda *a, **k: pytest.fail('network forbidden for seeded exact header'))
+    sec = exp.SecHeaders(tmp_path/'cache', seed)
+    sec.blocked = True
+    assert exp.acceptance_header(sec.get('1234567', ACC), ACC) == pd.Timestamp('2026-05-11T14:00:00Z')
+    assert sec.seeded_headers == 1 and sec.requests == 0
+    sec.get('1234567', ACC)
+    assert sec.seeded_headers == 1
+
+
+def test_corrupt_seed_cannot_invent_a_timestamp(tmp_path):
+    import json
+    seed = tmp_path/'seed.json'
+    seed.write_text(json.dumps({'version': 1, 'headers': {ACC: {'header': header(), 'sha256': 'incorrect'}}}))
+    sec = exp.SecHeaders(tmp_path/'cache', seed)
+    with pytest.raises(ValueError, match='hash mismatch'):
+        sec.get('1234567', ACC)
+    assert sec.requests == 0

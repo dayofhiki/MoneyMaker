@@ -1,11 +1,30 @@
-# R316B: exact SEC acceptance timing is recoverable; structural price experiment is prepared, not run
+# R316B: first structural pilot is underpowered; exact-header transport recovery is prepared
 
-Independent continuation of R316 / draft PR88. Main and the Work research
-request are unchanged. The prepared branch is
-`research/structural-catalyst-cohort-316b`, based on PR88 head
-`fa5612e49ce683ef661f5d6cdaee2a49889ab756`. No remote branch or PR was created:
-automatic approval review denied public publication of the new source,
-tests and methodology without explicit user authorization. No bypass was used.
+Independent continuation of R316 / draft PR88. Explicit publication approval
+was received2026-10-06, and draft PR89 is stacked on PR88. Main and the Work
+research request remain unchanged. First official run37458825600 completed
+from c07bd899d3872f389222f7a3917be0a7ac2d3f7b; artifact digest:
+`sha256:a6778e07ee100eea153b035f881c3ccb119a5b5fbdae3cde368064c822106236`.
+
+The initial structural census includes55 execution events and220 pre/post
+anchors. Historical common-stock/price/reference eligibility yields69 matched
+anchors and276 event/control rows. Primary execution-day support is20 pairs:
+BASE-stopped net5 opportunity4/20 vs2/60 controls (20% vs3.33%, point ratio6).
+Both clustered95% difference intervals cross0, and the fixed support floor
+fails. This is **underpowered**, not promoted. Whole-path net5 opportunity10/20
+is a different, future-knowledge quantity; the simple60min/stop terminal mean
+is -1.73%, so opportunity prevalence is not a profitable policy.
+
+The runner's SEC access denial left all115 ticker/accession pairs timing-unknown;
+no negative catalyst conclusion is made. All90 unique accessions are already
+covered by the200 verified **pre-price** SEC headers described below. Recovery
+uses that complete fixed source seed and the exact original provider census,
+without new dates, altered sampling, labels or parameters.
+
+Fourteen artifact hashes were verified;276 original outcome rows and all5
+reports reproduce exactly from275 cached histories with **zero new network
+requests**. Evidence: request316b-first-reproduction.json. The recovery workflow
+also requires all original structural rows and four reports to remain exact.
 
 ## Completed empirical source-feasibility experiment
 
@@ -63,7 +82,8 @@ next regular session09:35. No specialist or router is promoted.
 
 ## Prepared independent next experiment
 
-The implementation and branch-only one-shot workflow are complete and tested:
+The implementation and branch-only one-shot workflow are complete; the first
+structural run above has finished, and exact-timing source recovery is next:
 
 - Every reverse split executing May4-20, without the HOT/same-day-split
   exclusion; execution day primary, trading offsets-1,+1,+5 descriptive.
@@ -89,14 +109,14 @@ The pre-day offset cannot be promoted until announcement linkage is verified.
 
 Validation: Ruff critical checks pass; full local suite **1,049 tests pass**.
 The focused source/clock/membership tests also pass. No main workflow trigger,
-research-request.json or upstream score/model was modified. No official
-GitHub cohort-price run or CI for the new branch has occurred.
+research-request.json or upstream score/model was modified. The first official
+GitHub cohort-price run and both push/PR CI runs passed. Recovery validation
+adds seed integrity checks and preserves the original structural results.
 
-## Next authorized action after publication approval
+## Approved next action
 
-Push the exact tested local branch to the user's public
-`dayofhiki/MoneyMaker` repository, open a draft PR stacked on the R316 branch,
-and run the branch-only R316B workflow. Inspect/fix acquisition and integrity
+Run the exact-header source recovery on the approved independent branch and
+draft PR89 in `dayofhiki/MoneyMaker`. Inspect/fix acquisition and integrity
 failures, record results and artifact hashes, remove the one-shot workflow
 before any future merge. Keep main/Work independent. Do not merge or introduce
 an event-conditioned trading model from this pilot.

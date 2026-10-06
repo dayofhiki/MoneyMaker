@@ -75,7 +75,7 @@ def catalyst_clock(accepted: pd.Timestamp) -> tuple[str, int, str]:
 
 class SecHeaders:
     """Cache only SEC header bytes; stop retries on nontransient access denial."""
-    def __init__(self, directory: Path):
+    def __init__(self, directory: Path, seed_path: Path | None = Path("research/r316b-sec-header-seed.json")):
         self.directory = directory
         self.directory.mkdir(parents=True, exist_ok=True)
         self.requests = 0
@@ -83,11 +83,29 @@ class SecHeaders:
         self.last_request = 0.0
         self.blocked = False
         self.lock = Lock()
+        self.seeded_headers = 0
+        self.seed_sha256 = None
+        self.seed = {}
+        if seed_path is not None and seed_path.exists():
+            self.seed_sha256 = hashlib.sha256(seed_path.read_bytes()).hexdigest()
+            payload = json.loads(seed_path.read_text())
+            if payload.get("version") != 1:
+                raise ValueError("unsupported SEC header seed version")
+            self.seed = payload["headers"]
 
     def get(self, cik: str, accession: str) -> str:
         path = self.directory / f"{accession}.txt"
         if path.exists():
             return path.read_text()
+        if accession in self.seed:
+            row = self.seed[accession]
+            text = row["header"]
+            if hashlib.sha256(text.encode()).hexdigest() != row["sha256"]:
+                raise ValueError("SEC seed content hash mismatch")
+            acceptance_header(text, accession)
+            path.write_text(text)
+            self.seeded_headers += 1
+            return text
         if self.blocked:
             raise PermissionError("SEC source circuit open")
         if not re.fullmatch(r"\d{1,10}", str(cik)) or not re.fullmatch(r"\d{10}-\d{2}-\d{6}", accession):
@@ -434,6 +452,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--phase", choices=("build", "label", "sec-feasibility"), required=True)
+    parser.add_argument("--frozen-census", type=Path)
+    parser.add_argument("--expected-census-sha256")
     args = parser.parse_args()
     out = args.output_dir
     out.mkdir(parents=True, exist_ok=True)
@@ -442,7 +462,15 @@ def main() -> int:
         return 0
     client = MassiveClient(load_settings().massive_api_key, cache_dir=CACHE/"massive", request_interval_seconds=.02)
     if args.phase == "build":
-        splits, filings = event_census(client, out)
+        if args.frozen_census is not None:
+            census_bytes = args.frozen_census.read_bytes()
+            if not args.expected_census_sha256 or hashlib.sha256(census_bytes).hexdigest() != args.expected_census_sha256:
+                raise ValueError("frozen original census hash mismatch")
+            payload = json.loads(census_bytes)
+            splits, filings = payload["splits"], payload["filings"]
+            (out/"event-census.json").write_bytes(census_bytes)
+        else:
+            splits, filings = event_census(client, out)
         sec = SecHeaders(CACHE/"sec")
         anchors, timings, news = census_anchors(splits, filings, client, sec)
         anchors.to_parquet(out/"event-anchors.parquet", index=False)
@@ -460,7 +488,10 @@ def main() -> int:
                   "selected_catalyst_ticker_accessions": len(selected), "exact_header_coverage": coverage,
                   "timing_status": pd.Series([r["status"] for r in selected], dtype=str).value_counts().to_dict(),
                   "matching_status": pd.Series([r["status"] for r in matching], dtype=str).value_counts().to_dict(),
-                  "SEC": {"network_requests": sec.requests, "failures": sec.failures, "circuit_open": sec.blocked},
+                  "SEC": {"network_requests": sec.requests, "failures": sec.failures, "circuit_open": sec.blocked,
+                          "seeded_headers": sec.seeded_headers, "seed_sha256": sec.seed_sha256},
+                  "census_sha256": hashlib.sha256((out/"event-census.json").read_bytes()).hexdigest(),
+                  "original_census_reused": args.frozen_census is not None,
                   "acquisition": client.stats.to_dict(), "manifest_sha256": hashlib.sha256((out/"frozen-manifest.parquet").read_bytes()).hexdigest(),
                   "promotion_eligible": False, "June_HOLD_opened": False, "final_July_August_opened": False}
         write_json(out/"cohort-build.json", result)

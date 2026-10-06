@@ -112,3 +112,25 @@ This SEC-only sample is a source feasibility check, NOT the Massive classified
 catalyst cohort, NOT a price test, and never substitutes for its frozen membership.
 Report coverage, time buckets, acceptance-to-filing-date discrepancies and
 same-day clocks; do not increase sampling/date range to repair support.
+
+## Exact-timing transport recovery (no cohort/label change)
+
+First official run37458825600 at c07bd899d3872f389222f7a3917be0a7ac2d3f7b
+finished, but its GitHub runner received an SEC access denial and the source
+circuit stopped after one request. All115 fixed ticker/accession pairs remained
+timing-unknown; no negative catalyst result was inferred. All90 unique selected
+accessions are already present in the200 verified SEC headers acquired in the
+local **pre-price** source-feasibility stage. Recover from those exact raw
+headers, hash/accession/form validated, with no new dates or replacements.
+The seed includes the entire original200-header source sample, not a selection
+based on structural price results. Seed SHA256:
+b180044fd10e12b305d84aa28ae15b4f21915325f9b9b42b1cf3f1666b27c2d6.
+
+Reuse the original Massive census byte-for-byte from the first artifact,
+SHA25636cc5f21ff36898faf71d2ca76f1682d2e62d8cd6d6dcb96a2789696b355c779,
+and restore its raw provider cache. Only new exact-8K historical matching/paths
+may require additional market requests. Original structural matching, clocks,
+labels and reports must reproduce exactly; fail recovery if they change.
+Event definitions, source selection, sampling, prices/costs/stop, interpretation
+gates and development date scope are unchanged. This is source recovery, not
+a new experiment chosen after favorable structural outcomes.
