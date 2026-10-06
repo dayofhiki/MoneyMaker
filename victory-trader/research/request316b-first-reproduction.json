@@ -1,0 +1,10 @@
+{
+  "official_run": 37458825600,
+  "source_sha": "c07bd899d3872f389222f7a3917be0a7ac2d3f7b",
+  "artifact_hashes_verified": 14,
+  "rows_exactly_reproduced": 276,
+  "paired_reports_exactly_reproduced": 5,
+  "network_requests": 0,
+  "cache_hits": 275,
+  "cache_misses": []
+}
