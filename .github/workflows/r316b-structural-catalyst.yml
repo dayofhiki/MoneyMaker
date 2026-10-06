@@ -1,0 +1,60 @@
+name: R316B Independent Structural Catalyst Cohort
+on:
+  push:
+    branches:
+      - research/structural-catalyst-cohort-316b
+permissions:
+  contents: read
+jobs:
+  cohort:
+    if: contains(github.event.head_commit.message, '[run-r316b]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen research stack
+        run: python -m pip install -e '.[dev]' -c research/request214-requirements.txt
+      - name: Verify implementation
+        run: |
+          python -m ruff check src tests --select E4,E7,E9,F
+          python -m pytest -q tests/test_structural_catalyst_cohort.py tests/test_event_heterogeneity_audit.py tests/test_preentry_momentum_observability.py tests/test_massive_client.py
+      - name: Freeze independent event and matched control membership
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/r316b
+          git rev-parse HEAD > artifacts/r316b/source-sha.txt
+          cp research/request316b-plan.md artifacts/r316b/
+          python -m victory_trader.structural_catalyst_cohort --phase build --output-dir artifacts/r316b 2>&1 | tee artifacts/r316b/build.log
+      - name: Label only the frozen membership
+        run: |
+          set -euo pipefail
+          python -m victory_trader.structural_catalyst_cohort --phase label --output-dir artifacts/r316b 2>&1 | tee artifacts/r316b/label.log
+      - name: Archive evidence and headers
+        if: always()
+        run: |
+          mkdir -p artifacts/r316b
+          if [ -d data/cache/r316b ]; then tar -czf artifacts/r316b/raw-evidence.tar.gz -C data/cache r316b; fi
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root = Path('artifacts/r316b')
+          hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.iterdir()) if p.is_file()}
+          (root/'artifact-hashes.json').write_text(json.dumps(hashes, indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: moneymaker-r316b-independent
+          path: victory-trader/artifacts/r316b/**
+          if-no-files-found: warn
+          retention-days: 90
