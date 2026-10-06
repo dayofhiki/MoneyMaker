@@ -1,0 +1,135 @@
+{
+  "312": {
+    "summary_numeric_fields": 6758,
+    "max_summary_numeric_error": 2.120615238965229e-09,
+    "max_metric_numeric_error": 7.039328148161772e-11,
+    "max_fit_audit_numeric_error": 2.120615238965229e-09,
+    "checks_and_metadata_identical": true,
+    "parquets": {
+      "request312-states.parquet": {
+        "prediction_errors": {
+          "N_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "Q_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "M_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "frozen_M_p_net_5": {
+            "max_error": 1.1102230246251565e-16,
+            "all_pair_ranks_identical": true
+          },
+          "frozen_K_p_net_5": {
+            "max_error": 1.6653345369377348e-16,
+            "all_pair_ranks_identical": true
+          },
+          "frozen_T_p_net_5": {
+            "max_error": 1.6653345369377348e-16,
+            "all_pair_ranks_identical": true
+          },
+          "expanding_first_M_p_net_5": {
+            "max_error": 1.7325147982916178e-09,
+            "all_pair_ranks_identical": true
+          },
+          "expanding_first_K_p_net_5": {
+            "max_error": 9.120482147295661e-14,
+            "all_pair_ranks_identical": true
+          },
+          "expanding_first_T_p_net_5": {
+            "max_error": 2.2819984790700687e-10,
+            "all_pair_ranks_identical": true
+          }
+        },
+        "rows": 828,
+        "columns": 87,
+        "max_numeric_error": 1.7325147982916178e-09
+      },
+      "request312-training-features.parquet": {
+        "prediction_errors": {
+          "B_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "C_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "D_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "U_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "V_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "W_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "X_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "F_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "N_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "Q_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "M_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          }
+        },
+        "rows": 4526,
+        "columns": 329,
+        "max_numeric_error": 1.1102230246251565e-16
+      }
+    },
+    "source_sha": "d76250e69b3a03c4e35e66b1fc61f80a2f85b9e2",
+    "official_json_sha256": "f01dfb6a14821eb5c2cf7cccffb27af55292b9083ca4a62d4fde39af1d42a23b",
+    "research_gate_pass": false
+  },
+  "313": {
+    "summary_numeric_fields": 440,
+    "max_summary_numeric_error": 0.0,
+    "max_metric_numeric_error": 0.0,
+    "max_fit_audit_numeric_error": 0.0,
+    "checks_and_metadata_identical": true,
+    "parquets": {
+      "request313-states.parquet": {
+        "prediction_errors": {
+          "M_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          },
+          "original_M_p_net_5": {
+            "max_error": 0.0,
+            "all_pair_ranks_identical": true
+          }
+        },
+        "rows": 828,
+        "columns": 56,
+        "max_numeric_error": 0.0
+      }
+    },
+    "source_sha": "30dfef3aa1e581dd3e450de1396e3c6923f68912",
+    "official_json_sha256": "32df766358de8f8f411cf8f4c435e6d7de0710b693d4736308367c02195b211c",
+    "promotion_eligible": false
+  }
+}

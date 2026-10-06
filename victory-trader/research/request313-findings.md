@@ -1,6 +1,6 @@
 # R313 — waiting for two-print evidence does not improve frozen discrimination
 
-Local diagnostic completed after preregistration commit `6ba5ee0`. No official GitHub run or remote publication; upload awaits explicit authorization after automatic approval rejection. Same original828 May identities, original costs/stop/cap and frozen R311 M model. No outcome fits, model changes, acquisition, window/count search, promotion or sealed dates. **85 targeted tests**, critical Ruff and compile pass.
+Official Python3.11 diagnostic **37437331205**, artifact **11399609275**, source `30dfef3aa1e581dd3e450de1396e3c6923f68912` ([PR82](https://github.com/dayofhiki/MoneyMaker/pull/82)) succeeded and exactly reproduces the local diagnostic registered at commit `6ba5ee0`. Same original828 May identities, original costs/stop/cap and frozen R311 M model. No outcome fits, model changes, acquisition, window/count search, promotion or sealed dates. **85 official targeted tests** and critical Ruff pass; earlier full PR81 CI has1,012 passing tests.
 
 Two-print evidence means two recorded one-second aggregate bars in10s, not two individual trades. The count is distinct traded seconds. A single observed bar may contain many transactions; no full tick tape or quotes are available.
 
@@ -31,3 +31,7 @@ A separately marked post-result description: the ten paired lost opportunities w
 ## Research consequence
 
 Do not promote R312 elapsed inputs or R313 blanket evidence waiting. The known timestamp ambiguity and sparse observations remain limitations, but these specific changes did not repair discrimination. Preserve early scoring and continuous observation; no new fixed waiting delay is justified. The next separately registered development audit should decompose observable price movement, decision-to-fill repricing, execution costs and stop-limited continuation, before designing a conditional WAIT/ENTER intervention. It must keep missing paths and distinguish hindsight decomposition from deployable signals. Current results do not support picking a new feature, threshold or sell policy from these outcomes.
+
+## Official reproduction integrity
+
+All440 JSON numeric fields and all828 scored rows agree exactly with local values; all probability pair ranks, metadata, missingness, feature support and labels agree. Maximum numeric difference0. Persisted `results/request313.json` contains the exact official JSON, with the separately marked local JSON retained. Source hashes for both official runs and reproduction differences are recorded in `results/request312-313-reproduction.json`. The unchanged opportunity-retention and rank results remain diagnostics, with no trading policy promotion or newly dispatched experiment.
