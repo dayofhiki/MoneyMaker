@@ -204,3 +204,19 @@ def test_empty_evaluation_reports_missingness_and_fails_gates(monkeypatch):
     assert result["sampled_episodes"] == 2 and result["labeled_episodes"] == 0
     assert not any(experiment.gate(result).values())
     json.dumps(result, allow_nan=False)
+
+
+def test_parquet_nullable_flag_roundtrip_preserves_values_and_missingness(tmp_path):
+    original = pd.DataFrame({"label_stop_cost_only": [True, False, np.nan], CEILING: [6., 0., np.nan]})
+    path = tmp_path/"checkpoint.parquet"
+    original.to_parquet(path, index=False)
+    saved = pd.read_parquet(path)
+    experiment.verify_checkpoint(original, saved)
+    altered = saved.copy()
+    altered.loc[2, "label_stop_cost_only"] = False
+    with pytest.raises(AssertionError):
+        experiment.verify_checkpoint(original, altered)
+    altered = saved.copy()
+    altered.loc[0, "label_stop_cost_only"] = False
+    with pytest.raises(AssertionError):
+        experiment.verify_checkpoint(original, altered)

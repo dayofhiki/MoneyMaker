@@ -1,0 +1,56 @@
+{
+  "request_id": 315,
+  "official_source_sha": "c271fbab9c3567c470fc852ef80c39fe36116713",
+  "offline_replay_market_requests": 0,
+  "absolute_tolerance": 1e-09,
+  "json_numeric_fields_compared": 2084,
+  "json_maximum_numeric_error": 0,
+  "json_nonnumeric_values_equal": true,
+  "json_differences": [],
+  "json_bytes_equal": true,
+  "official_acquisition_checkpoint_hashes_verified": true,
+  "frames": {
+    "request315-states.parquet": {
+      "rows": 828,
+      "columns": 62,
+      "maximum_numeric_error": 0.0,
+      "changed_numeric_columns": {},
+      "probability_ranks_equal": true,
+      "nonnumeric_values_equal": true,
+      "missingness_equal": true
+    },
+    "request315-training-states.parquet": {
+      "rows": 478,
+      "columns": 55,
+      "maximum_numeric_error": 0.0,
+      "changed_numeric_columns": {},
+      "probability_ranks_equal": true,
+      "nonnumeric_values_equal": true,
+      "missingness_equal": true
+    },
+    "request315-training-cohort.parquet": {
+      "rows": 478,
+      "columns": 12,
+      "maximum_numeric_error": 0.0,
+      "changed_numeric_columns": {},
+      "probability_ranks_equal": true,
+      "nonnumeric_values_equal": true,
+      "missingness_equal": true
+    },
+    "request315-training-raw-seconds.parquet": {
+      "rows": 580944,
+      "columns": 10,
+      "maximum_numeric_error": 0.0,
+      "changed_numeric_columns": {},
+      "probability_ranks_equal": true,
+      "nonnumeric_values_equal": true,
+      "missingness_equal": true
+    }
+  },
+  "gate_flags_equal": true,
+  "official_run_id": 37450538746,
+  "artifact_id": 11405473272,
+  "official_targeted_tests_passed": 102,
+  "full_PR86_tests_passed": 1029,
+  "local_replay_guard_targeted_tests_passed": 103
+}
