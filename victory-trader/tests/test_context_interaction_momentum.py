@@ -126,3 +126,14 @@ def test_difference_in_increments_does_not_confuse_capacity_and_signal_gain():
     values['Q']['auc'] = .55
     assert exp.contrasts(values, 'auc')['X_minus_C'] == pytest.approx(.2)
     assert exp.contrasts(values, 'auc')['joint_minus_linear_increment'] == pytest.approx(0)
+
+
+def test_every_preregistered_probability_arm_uses_generic_classification_metrics():
+    frame = training()
+    for arm in exp.ARMS:
+        frame[f'{arm}_p_net_5'] = np.where(frame[exp.CEILING] >= 5, .7, .3)
+        frame[f'{arm}_prior_net_5'] = .5
+    result = exp.ranks(frame, exp.ARMS)
+    assert result['A']['brier'] == pytest.approx(.09)
+    assert result['A']['auc'] == 1 and result['A']['positive_episodes'] > 0
+    assert all(value == result['A'] for value in result.values())

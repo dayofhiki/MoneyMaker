@@ -11,12 +11,12 @@ import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-from .canonical_population_momentum import ranks, verify_checkpoint
+from .canonical_population_momentum import verify_checkpoint
 from .clock_momentum_increment import CONTROL, MOMENTUM, within_day_auc
 from .compact_momentum_representation import fit_linear, fit_transform, independent_weights, predict_linear
 from .continuous_population_momentum import fitting_rows, state_support
 from .elapsed_momentum_evidence import complete_mask
-from .feasible_upside_observability import CEILING, truth
+from .feasible_upside_observability import CEILING, classification_metrics, truth
 from .frozen_entry_second_hold_exit import KEYS
 from .frozen_momentum_may_transport import EVAL_DAYS
 from .hierarchical_crack_entry_controller import _episode_day_weights
@@ -29,6 +29,16 @@ NEW_HEADS = {"X": (MOMENTUM, 2), "K": (CONTROL, 2), "A": (MOMENTUM, 1), "D": (CO
 CONTRASTS = (("X", "C"), ("X", "K"), ("X", "R"), ("X", "A"), ("A", "D"), ("K", "Q"))
 DIFFERENCES = {"joint_minus_linear_increment": (("X", "K"), ("C", "Q")),
                "joint_minus_additive_increment": (("X", "K"), ("A", "D"))}
+
+
+def ranks(frame: pd.DataFrame, arms: tuple[str, ...]) -> dict:
+    # Legacy preentry.metrics reserves A for an unrelated nonprobability model.
+    # R318 A is the preregistered additive probability head; all arms use the
+    # same generic classification evaluator here.
+    labeled = frame.loc[complete_mask(frame)]
+    return {a: classification_metrics(labeled.rename(columns={f"{a}_p_net_5": "p_net_5",
+                         f"{a}_prior_net_5": "prior_net_5"}), 5) |
+                    {"within_day_auc": within_day_auc(labeled, a)} for a in arms}
 
 
 def tree_audit(model, transform, training: pd.DataFrame, weights: np.ndarray) -> dict:

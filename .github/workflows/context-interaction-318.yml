@@ -1,4 +1,5 @@
 name: MoneyMaker R318 Independent Cached Replay
+# Generic probability reporting preserves the preregistered additive arm A.
 
 on:
   push:
