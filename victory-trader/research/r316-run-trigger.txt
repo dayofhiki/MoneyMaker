@@ -1,5 +1,0 @@
-R316 isolated execution trigger.
-
-The research plan was preregistered before event acquisition.
-This marker exists only to trigger the branch-local audit workflow and does not alter
-the model, event taxonomy, labels, policy, risk, costs, or evaluation cohort.
