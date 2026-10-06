@@ -1,0 +1,639 @@
+{
+  "request_id": 313,
+  "development_only": true,
+  "promotion_eligible": false,
+  "June_HOLD_opened": false,
+  "final_July_August_opened": false,
+  "network_market_requests": 0,
+  "entries_retuned": false,
+  "original_M_fit": {
+    "train_rows": 4526,
+    "train_episodes": 97,
+    "train_positive_episodes": 30,
+    "weight_sum": 96.99999999999999,
+    "prior": 0.09661357478215996,
+    "preprocessing": {
+      "raw_features": [
+        "log_current_price",
+        "minutes_since_open",
+        "minutes_to_close",
+        "return_from_previous_close_pct",
+        "known_cost_drag_pct",
+        "momentum_gap_s",
+        "momentum_activity_fraction_10s",
+        "momentum_activity_fraction_30s",
+        "momentum_activity_fraction_120s",
+        "momentum_return_10s",
+        "momentum_efficiency_10s",
+        "momentum_volume_rate_ratio_10s",
+        "momentum_transactions_rate_ratio_10s",
+        "momentum_signed_volume_proxy_10s",
+        "momentum_reclaim_prior_high_10s",
+        "momentum_return_30s",
+        "momentum_efficiency_30s",
+        "momentum_volume_rate_ratio_30s",
+        "momentum_transactions_rate_ratio_30s",
+        "momentum_signed_volume_proxy_30s",
+        "momentum_reclaim_prior_high_30s",
+        "momentum_return_120s",
+        "momentum_efficiency_120s",
+        "momentum_volume_rate_ratio_120s",
+        "momentum_transactions_rate_ratio_120s",
+        "momentum_signed_volume_proxy_120s",
+        "momentum_reclaim_prior_high_120s",
+        "momentum_acceleration_10_30"
+      ],
+      "processed_dimensions": 56,
+      "all_training_missing": [],
+      "lower": [
+        -0.5837548037887486,
+        1.0,
+        62.0,
+        1.0732323232323315,
+        0.9950248756218527,
+        0.0,
+        0.1,
+        0.03333333333333333,
+        0.016666666666666666,
+        -3.7083333333333246,
+        -1.0000000000001221,
+        0.019739363740896895,
+        0.05,
+        -1.0000000000000002,
+        -5.071601941747572,
+        -4.9230769230769305,
+        -1.0000000000000957,
+        0.02646002646002646,
+        0.05384615384615385,
+        -1.0,
+        -5.1679917927673795,
+        -5.017301038062283,
+        -1.000000000000004,
+        0.017748805989415258,
+        0.05,
+        -1.0,
+        -6.995133819951349,
+        -3.127726693066653
+      ],
+      "upper": [
+        2.804571768092832,
+        328.0,
+        389.0,
+        9.8153153153153,
+        4.052549543531514,
+        0.0,
+        1.0,
+        0.9666666666666667,
+        0.9166666666666666,
+        3.664921465968596,
+        1.0000000000002653,
+        77.64,
+        50.5,
+        1.0,
+        2.631609057311879,
+        5.1646341463414736,
+        1.0000000000000835,
+        72.96,
+        30.0,
+        1.0,
+        5.167682926829276,
+        8.481262327416172,
+        1.0000000000000087,
+        69.35333333333334,
+        38.333333333333336,
+        1.0,
+        6.945736434108518,
+        2.758620689655178
+      ],
+      "median": [
+        1.0296194171811581,
+        16.0,
+        374.0,
+        7.707482993197279,
+        1.217184630343171,
+        0.0,
+        0.2,
+        0.1,
+        0.075,
+        0.0,
+        0.0,
+        1.031981550534181,
+        1.0,
+        0.0,
+        -0.07285250678853439,
+        0.0,
+        0.0,
+        1.226341822343948,
+        1.1875,
+        0.0,
+        -0.1549320020657663,
+        0.8660844250363953,
+        0.11151371499425661,
+        1.254423213021939,
+        1.110512129380054,
+        0.17326084767945235,
+        0.0,
+        0.0
+      ],
+      "mean": [
+        0.9901277484084452,
+        43.984528639041834,
+        346.0154713609582,
+        7.189044409979993,
+        1.602120288935941,
+        0.0,
+        0.2588035693488009,
+        0.197089532882983,
+        0.17031361771145076,
+        -0.04688688750758484,
+        -0.04539547345050067,
+        2.9372516400877027,
+        2.3361551387589197,
+        -0.050049851800593785,
+        -0.20320517500929944,
+        0.00033455153038230995,
+        -0.011972794574612176,
+        4.385409577589754,
+        2.708039906903756,
+        -0.027743592573612894,
+        -0.31231505358501516,
+        1.0883538631279672,
+        0.11683282550765778,
+        3.4907458787532373,
+        2.6648789827210697,
+        0.10785105142976169,
+        0.019915741282522905,
+        -0.05081631387213665
+      ],
+      "scale": [
+        0.870406495650837,
+        64.9168000959137,
+        64.9168000959137,
+        2.180659031790355,
+        0.7628484000397537,
+        1.0,
+        0.2272988530921523,
+        0.22556355924360358,
+        0.21447986395971225,
+        1.1541154746119187,
+        0.7714617754315063,
+        8.326123292327258,
+        5.675273551190272,
+        0.7678980420946133,
+        0.8719616377751438,
+        1.5110758864176104,
+        0.6769156337380182,
+        10.30704170278939,
+        4.9990453169405455,
+        0.67210878008782,
+        1.4035313769274198,
+        2.6121245803620567,
+        0.44959903860685363,
+        8.794524124545863,
+        5.224434963172311,
+        0.4976965983766164,
+        2.2990375857653205,
+        0.8955341762338066
+      ]
+    },
+    "single_class_fallback": false,
+    "iterations": 17,
+    "intercept": -2.299129381163814,
+    "coefficients": [
+      0.15536330437861445,
+      -0.12537935664980876,
+      0.1253793566498087,
+      -0.2155377087505904,
+      -0.14991247651168144,
+      0.0,
+      0.0821024920612604,
+      0.0992258070353821,
+      0.09515415595784994,
+      0.026221520572934667,
+      0.018331480007939827,
+      -0.050765220618683424,
+      -0.047559383042641845,
+      0.03970675591876943,
+      -0.0658852453281735,
+      0.008163109496509582,
+      0.08770790869404624,
+      -0.022495294596542995,
+      -0.0353327996328251,
+      0.05390765418593095,
+      -0.1397246118344045,
+      0.0366055623944284,
+      -0.01546548595953165,
+      -0.06110984284123814,
+      -0.05202405276419758,
+      0.08636381437530934,
+      -0.12679513446317386,
+      0.018396146039136335,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -0.09160225654402752,
+      -0.09160225654402752,
+      0.0,
+      -0.09160225654402752,
+      0.0,
+      0.0,
+      -0.0006878091261643646,
+      -0.0006878091261643646,
+      0.0,
+      -0.0006878091261643646,
+      0.00026894415786281794,
+      0.00026894415786281794,
+      0.011263344584828012,
+      0.011263344584828012,
+      0.0,
+      0.011263344584828012,
+      0.0
+    ]
+  },
+  "packages": {
+    "M": [
+      "log_current_price",
+      "minutes_since_open",
+      "minutes_to_close",
+      "return_from_previous_close_pct",
+      "known_cost_drag_pct",
+      "momentum_gap_s",
+      "momentum_activity_fraction_10s",
+      "momentum_activity_fraction_30s",
+      "momentum_activity_fraction_120s",
+      "momentum_return_10s",
+      "momentum_efficiency_10s",
+      "momentum_volume_rate_ratio_10s",
+      "momentum_transactions_rate_ratio_10s",
+      "momentum_signed_volume_proxy_10s",
+      "momentum_reclaim_prior_high_10s",
+      "momentum_return_30s",
+      "momentum_efficiency_30s",
+      "momentum_volume_rate_ratio_30s",
+      "momentum_transactions_rate_ratio_30s",
+      "momentum_signed_volume_proxy_30s",
+      "momentum_reclaim_prior_high_30s",
+      "momentum_return_120s",
+      "momentum_efficiency_120s",
+      "momentum_volume_rate_ratio_120s",
+      "momentum_transactions_rate_ratio_120s",
+      "momentum_signed_volume_proxy_120s",
+      "momentum_reclaim_prior_high_120s",
+      "momentum_acceleration_10_30"
+    ]
+  },
+  "integrity": {
+    "sampled_episodes": 828,
+    "observed_episodes": 679,
+    "labeled_episodes": 650,
+    "cohort_clock_and_label_replay": true,
+    "all_clock_inputs_replay": true,
+    "maximum_frozen_M_replay_error": 1.1102230246251565e-16
+  },
+  "input_sha256": {
+    "request310-states.parquet": "f0358b0d0cc73d38ea1f1ddd692b41c492cfd8b9bf63c0edb4952982f70916e5",
+    "request306-raw-seconds.parquet": "f96072fcbda32ec6a638935b6b66498fcf3b48c49db66cfca2d6aff9e7544314",
+    "request311-states.parquet": "21c7b99748cf4f8c313467e83d25b6858d7621e28a01378cde6da869170e6fe0",
+    "request311-cohort.parquet": "a34bc0d96d01860a3934932e8493f7e55e5075f8c466f233434b8221dde13da1",
+    "request311-raw-seconds.parquet": "3382ad9f1c5c35d0d161848e90710a61566438eda8da93efde0744c0838cfcc6",
+    "request310.json": "a890c016639fd9b018208a13936291d35382ba12630f92f3d065196b06f2eb30",
+    "request311.json": "8f6d56b10a6df7153e63012bbac6aa2d520060e909f02d12791678a1a1fdea7e"
+  },
+  "comparison": {
+    "sampled_episodes": 828,
+    "original_complete": 650,
+    "evidence_observed": 489,
+    "evidence_complete": 469,
+    "paired_complete": 469,
+    "same_clock_observed": 174,
+    "later_clock_observed": 315,
+    "additional_wait_s_quantiles": {
+      "0.1": 0.0,
+      "0.5": 4.0,
+      "0.9": 118.59999999999997
+    },
+    "missing_reasons": {
+      "complete": 469,
+      "no_two_print_evidence_before5min": 339,
+      "incomplete_entry_or_terminal_fill_label": 20
+    },
+    "paired_positive_table": {
+      "original_0_evidence_0": 434,
+      "original_0_evidence_1": 4,
+      "original_1_evidence_0": 10,
+      "original_1_evidence_1": 21
+    },
+    "original_positive_total": 38,
+    "original_positive_no_later_observation": 7,
+    "original_positive_later_incomplete": 0,
+    "paired_arms": {
+      "original": {
+        "states": 469,
+        "episodes": 469,
+        "positive_episodes": 31,
+        "weighted_prevalence": 0.06589295946438803,
+        "auc": 0.6321728253705343,
+        "ap": 0.09786064219285458,
+        "prior_ap": 0.06589295946438826,
+        "brier": 0.06259746789681868,
+        "prior_brier": 0.06249483356291507,
+        "within_day_auc": 0.6328885175415553
+      },
+      "evidence": {
+        "states": 469,
+        "episodes": 469,
+        "positive_episodes": 25,
+        "weighted_prevalence": 0.05472750829893687,
+        "auc": 0.603931862493714,
+        "ap": 0.08030672954248091,
+        "prior_ap": 0.054727508298937064,
+        "brier": 0.05362477639945789,
+        "prior_brier": 0.05348685069976365,
+        "within_day_auc": 0.5940624899211115
+      }
+    },
+    "per_day": {
+      "2026-05-11": {
+        "paired_labeled": 74,
+        "original_positives": 8,
+        "evidence_positives": 5,
+        "arms": {
+          "original": {
+            "states": 74,
+            "episodes": 74,
+            "positive_episodes": 8,
+            "weighted_prevalence": 0.10810810810810811,
+            "auc": 0.6117424242424243,
+            "ap": 0.19904512534456753,
+            "prior_ap": 0.10810810810810811,
+            "brier": 0.09575964728051982,
+            "prior_brier": 0.09655286936577506
+          },
+          "evidence": {
+            "states": 74,
+            "episodes": 74,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.06756756756756757,
+            "auc": 0.5130434782608696,
+            "ap": 0.12187109187109187,
+            "prior_ap": 0.06756756756756757,
+            "brier": 0.06584712924225485,
+            "prior_brier": 0.06384586191567991
+          }
+        }
+      },
+      "2026-05-12": {
+        "paired_labeled": 44,
+        "original_positives": 2,
+        "evidence_positives": 2,
+        "arms": {
+          "original": {
+            "states": 44,
+            "episodes": 44,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.045454545454545456,
+            "auc": 0.5595238095238095,
+            "ap": 0.11274509803921567,
+            "prior_ap": 0.045454545454545456,
+            "brier": 0.046451725432160626,
+            "prior_brier": 0.04600567603380983
+          },
+          "evidence": {
+            "states": 44,
+            "episodes": 44,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.045454545454545456,
+            "auc": 0.3928571428571429,
+            "ap": 0.054887218045112776,
+            "prior_ap": 0.045454545454545456,
+            "brier": 0.04832374327365177,
+            "prior_brier": 0.04600567603380983
+          }
+        }
+      },
+      "2026-05-13": {
+        "paired_labeled": 63,
+        "original_positives": 3,
+        "evidence_positives": 1,
+        "arms": {
+          "original": {
+            "states": 63,
+            "episodes": 63,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.04761904761904763,
+            "auc": 0.4666666666666666,
+            "ap": 0.06389746838784617,
+            "prior_ap": 0.04761904761904764,
+            "brier": 0.04965012168590079,
+            "prior_brier": 0.04775193761483946
+          },
+          "evidence": {
+            "states": 63,
+            "episodes": 63,
+            "positive_episodes": 1,
+            "weighted_prevalence": 0.015873015873015876,
+            "auc": 0.032258064516129004,
+            "ap": 0.016393442622950824,
+            "prior_ap": 0.01587301587301588,
+            "brier": 0.02247213231576094,
+            "prior_brier": 0.022140101093071827
+          }
+        }
+      },
+      "2026-05-14": {
+        "paired_labeled": 65,
+        "original_positives": 2,
+        "evidence_positives": 2,
+        "arms": {
+          "original": {
+            "states": 65,
+            "episodes": 65,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.03076923076923077,
+            "auc": 0.7222222222222223,
+            "ap": 0.07681159420289854,
+            "prior_ap": 0.03076923076923077,
+            "brier": 0.03108296614384611,
+            "prior_brier": 0.034157962845593554
+          },
+          "evidence": {
+            "states": 65,
+            "episodes": 65,
+            "positive_episodes": 2,
+            "weighted_prevalence": 0.03076923076923077,
+            "auc": 0.6984126984126984,
+            "ap": 0.07125000000000001,
+            "prior_ap": 0.03076923076923077,
+            "brier": 0.03161589861503517,
+            "prior_brier": 0.034157962845593554
+          }
+        }
+      },
+      "2026-05-15": {
+        "paired_labeled": 50,
+        "original_positives": 4,
+        "evidence_positives": 5,
+        "arms": {
+          "original": {
+            "states": 50,
+            "episodes": 50,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.08,
+            "auc": 0.7065217391304348,
+            "ap": 0.15873871100164205,
+            "prior_ap": 0.08,
+            "brier": 0.07580630121746972,
+            "prior_brier": 0.07387601086704242
+          },
+          "evidence": {
+            "states": 50,
+            "episodes": 50,
+            "positive_episodes": 5,
+            "weighted_prevalence": 0.1,
+            "auc": 0.6666666666666667,
+            "ap": 0.16513571318325138,
+            "prior_ap": 0.1,
+            "brier": 0.09267683294262358,
+            "prior_brier": 0.09001146787575603
+          }
+        }
+      },
+      "2026-05-18": {
+        "paired_labeled": 49,
+        "original_positives": 3,
+        "evidence_positives": 3,
+        "arms": {
+          "original": {
+            "states": 49,
+            "episodes": 49,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.061224489795918366,
+            "auc": 0.48550724637681153,
+            "ap": 0.07460223146497656,
+            "prior_ap": 0.061224489795918366,
+            "brier": 0.06094638153277488,
+            "prior_brier": 0.05872843898131128
+          },
+          "evidence": {
+            "states": 49,
+            "episodes": 49,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.061224489795918366,
+            "auc": 0.6086956521739131,
+            "ap": 0.2238095238095238,
+            "prior_ap": 0.061224489795918366,
+            "brier": 0.05710641877776043,
+            "prior_brier": 0.05872843898131128
+          }
+        }
+      },
+      "2026-05-19": {
+        "paired_labeled": 54,
+        "original_positives": 6,
+        "evidence_positives": 4,
+        "arms": {
+          "original": {
+            "states": 54,
+            "episodes": 54,
+            "positive_episodes": 6,
+            "weighted_prevalence": 0.11111111111111112,
+            "auc": 0.7395833333333334,
+            "ap": 0.3848290598290599,
+            "prior_ap": 0.11111111111111112,
+            "brier": 0.09538628605614334,
+            "prior_brier": 0.09897561065837475
+          },
+          "evidence": {
+            "states": 54,
+            "episodes": 54,
+            "positive_episodes": 4,
+            "weighted_prevalence": 0.07407407407407408,
+            "auc": 0.7749999999999999,
+            "ap": 0.25787037037037036,
+            "prior_ap": 0.07407407407407408,
+            "brier": 0.0648367557029606,
+            "prior_brier": 0.06909513471631247
+          }
+        }
+      },
+      "2026-05-20": {
+        "paired_labeled": 70,
+        "original_positives": 3,
+        "evidence_positives": 3,
+        "arms": {
+          "original": {
+            "states": 70,
+            "episodes": 70,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.042857142857142864,
+            "auc": 0.6965174129353234,
+            "ap": 0.11000000000000001,
+            "prior_ap": 0.042857142857142864,
+            "brier": 0.04569631382573418,
+            "prior_brier": 0.0439101621365743
+          },
+          "evidence": {
+            "states": 70,
+            "episodes": 70,
+            "positive_episodes": 3,
+            "weighted_prevalence": 0.042857142857142864,
+            "auc": 0.5870646766169154,
+            "ap": 0.12592351151673187,
+            "prior_ap": 0.042857142857142864,
+            "brier": 0.04611930032561577,
+            "prior_brier": 0.0439101621365743
+          }
+        }
+      }
+    },
+    "paired_intervals": {
+      "day": {
+        "clusters": 8,
+        "draws": 1000,
+        "auc_ci95": [
+          -0.0964002159973506,
+          0.02312500949120999
+        ],
+        "within_day_auc_ci95": [
+          -0.14071289817398472,
+          0.0462157943019
+        ],
+        "brier_ci95": [
+          -0.020632943351507563,
+          0.002806380297837853
+        ],
+        "auc_valid_draws": 1000,
+        "within_day_auc_valid_draws": 1000,
+        "brier_valid_draws": 1000
+      },
+      "ticker_day": {
+        "clusters": 469,
+        "draws": 1000,
+        "auc_ci95": [
+          -0.10981893959251722,
+          0.052761470961840196
+        ],
+        "within_day_auc_ci95": [
+          -0.13024641020834377,
+          0.05555573463497431
+        ],
+        "brier_ci95": [
+          -0.022879148223672423,
+          0.004797206642606624
+        ],
+        "auc_valid_draws": 1000,
+        "within_day_auc_valid_draws": 1000,
+        "brier_valid_draws": 1000
+      }
+    }
+  },
+  "limitations": "Timestamp-only two-print10s evidence contract, not a learned or forced wait policy. Reused May development. Paired metrics condition on both resolved labels; entry-time labels differ, so gains are not pure same-target effects. Missing identities and lost first opportunities remain visible. No model/package/delay/threshold search, live controller or realized profit claim."
+}
