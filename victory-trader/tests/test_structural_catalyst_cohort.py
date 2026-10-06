@@ -161,3 +161,31 @@ def test_corrupt_seed_cannot_invent_a_timestamp(tmp_path):
     with pytest.raises(ValueError, match='hash mismatch'):
         sec.get('1234567', ACC)
     assert sec.requests == 0
+
+
+def test_structural_verification_allows_only_auxiliary_log_rounding():
+    before = pd.DataFrame([{'anchor_id': 's', 'ticker': 'XYZ', 'arm': 'event', 'family': 'split_execution',
+                            'match_distance': .0018, 'label_complete': True, CEILING: 6.}])
+    after = before.copy()
+    after['match_distance'] = np.nextafter(after.match_distance, np.inf)
+    report = exp.verify_preserved_structural(before, after, {'split_execution': {'positives': 1}}, {'split_execution': {'positives': 1}})
+    assert report['structural_rows_exact'] == 1 and report['matching_distance_rounding_rows'] == 1
+    changed = after.copy()
+    changed[CEILING] += 1e-12
+    with pytest.raises(AssertionError):
+        exp.verify_preserved_structural(before, changed, {}, {})
+    changed = after.copy()
+    changed['ticker'] = 'OTHER'
+    with pytest.raises(AssertionError):
+        exp.verify_preserved_structural(before, changed, {}, {})
+    with pytest.raises(ValueError, match='report changed'):
+        exp.verify_preserved_structural(before, after, {'split_execution': {'positives': 1}}, {'split_execution': {'positives': 2}})
+
+
+def test_structural_verification_rejects_material_matching_changes():
+    before = pd.DataFrame([{'anchor_id': 's', 'ticker': 'XYZ', 'arm': 'event', 'family': 'split_execution',
+                            'match_distance': .0018, 'label_complete': True, CEILING: 6.}])
+    after = before.copy()
+    after['match_distance'] += 1e-12
+    with pytest.raises(AssertionError):
+        exp.verify_preserved_structural(before, after, {}, {})

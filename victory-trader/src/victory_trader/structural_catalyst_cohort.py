@@ -377,6 +377,28 @@ def paired_report(frame: pd.DataFrame, family: str, timing_coverage: float | Non
     return report
 
 
+def verify_preserved_structural(before: pd.DataFrame, after: pd.DataFrame, old_reports: dict, new_reports: dict) -> dict:
+    """Exact identities/outcomes; narrowly tolerate CPU log rounding in distances."""
+    keys = ["anchor_id", "ticker", "arm"]
+    before = before.sort_values(keys).reset_index(drop=True)
+    after = after.loc[after.family.str.startswith("split_")].sort_values(keys).reset_index(drop=True)
+    columns = [c for c in before if c not in ("categories", "match_distance")]
+    pd.testing.assert_frame_equal(before[columns], after[columns], check_exact=True, check_dtype=False)
+    left, right = before.match_distance.to_numpy(float), after.match_distance.to_numpy(float)
+    if not np.isfinite(left).all() or not np.isfinite(right).all():
+        raise ValueError("structural matching distance must be finite")
+    np.testing.assert_allclose(left, right, rtol=1e-15, atol=1e-18, equal_nan=False)
+    families = [family for family in old_reports if family.startswith("split_")]
+    for family in families:
+        if old_reports[family] != new_reports[family]:
+            raise ValueError(f"original structural report changed: {family}")
+    delta = np.abs(left-right)
+    return {"structural_rows_exact": len(before), "structural_non_distance_columns_exact": len(columns),
+            "structural_reports_exact": len(families), "matching_distance_rounding_rows": int((delta > 0).sum()),
+            "max_abs_matching_distance_delta": float(delta.max(initial=0)),
+            "auxiliary_distance_rtol": 1e-15, "auxiliary_distance_atol": 1e-18}
+
+
 def sec_feasibility(output: Path) -> dict:
     """Independent SEC census timing check; no prices or Massive credentials."""
     sec = SecHeaders(CACHE/"sec")

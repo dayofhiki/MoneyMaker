@@ -134,3 +134,20 @@ labels and reports must reproduce exactly; fail recovery if they change.
 Event definitions, source selection, sampling, prices/costs/stop, interpretation
 gates and development date scope are unchanged. This is source recovery, not
 a new experiment chosen after favorable structural outcomes.
+
+## Verification-only closeout
+
+Recovery market run37459997869 produced the exact catalyst results and retained
+all original structural identities/outcomes. Its final bitwise check rejected
+three auxiliary log matching-distance values differing by at most
+2.168404344971009e-19 across runner CPUs. All other34 structural columns and
+all four structural reports are exact. Require exact identity, price, clocks,
+labels and reports; tolerate ONLY that auxiliary distance at rtol1e-15,
+atol1e-18, with finite-value checks. Tests must reject altered identities,
+outcomes, reports and material distance changes.
+
+Close out by downloading the two frozen artifacts and replaying all436 labels
+and five reports using cached provider responses only; the market transport
+must raise on any cache miss. No new market/SEC request or membership rebuild
+is permitted in this verification stage. Record both the market source SHA and
+verification source SHA and remove the one-shot workflow when it passes.

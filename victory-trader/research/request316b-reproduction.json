@@ -1,0 +1,16 @@
+{
+  "structural_rows_exact": 276,
+  "structural_non_distance_columns_exact": 34,
+  "structural_reports_exact": 4,
+  "matching_distance_rounding_rows": 3,
+  "max_abs_matching_distance_delta": 2.168404344971009e-19,
+  "auxiliary_distance_rtol": 1e-15,
+  "auxiliary_distance_atol": 1e-18,
+  "source_market_run": 37459997869,
+  "market_source_sha": "492874e8ce03de421a5831fa6c9e0d980e849bc4",
+  "outcome_rows_exactly_reproduced": 436,
+  "all_reports_exactly_reproduced": 5,
+  "network_requests": 0,
+  "cache_hits": 432,
+  "cache_misses": []
+}
