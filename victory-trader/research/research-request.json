@@ -1,76 +1,32 @@
 {
-  "request_id": 315,
+  "request_id": 316,
   "operation": "module",
-  "module": "victory_trader.canonical_population_momentum",
+  "module": "victory_trader.event_heterogeneity_audit",
   "pytest": [
-    "tests/test_canonical_population_momentum.py",
-    "tests/test_gross_net_factorization.py",
-    "tests/test_information_arrival_momentum.py",
-    "tests/test_elapsed_momentum_evidence.py",
+    "tests/test_event_heterogeneity_audit.py",
     "tests/test_frozen_momentum_may_transport.py",
     "tests/test_clock_momentum_increment.py",
-    "tests/test_compact_momentum_representation.py",
-    "tests/test_early_momentum_weighting.py",
-    "tests/test_monotone_momentum_calibration.py",
-    "tests/test_preentry_momentum_observability.py",
-    "tests/test_feasible_upside_observability.py",
-    "tests/test_pending_exit_integrity.py",
-    "tests/test_local_turn_entry.py",
-    "tests/test_fresh_crack_entry_validation.py"
+    "tests/test_massive_client.py"
   ],
   "dependencies": [
-    {
-      "repo": "dayofhiki/MoneyMaker",
-      "run_id": 37218791436,
-      "name": "moneymaker-research-request-310",
-      "path": "prepared/request310"
-    },
-    {
-      "repo": "dayofhiki/MoneyMaker",
-      "run_id": 37211254516,
-      "name": "moneymaker-research-request-306",
-      "path": "prepared/request306"
-    },
     {
       "repo": "dayofhiki/MoneyMaker",
       "run_id": 37223064559,
       "name": "moneymaker-research-request-311",
       "path": "prepared/request311"
-    },
-    {
-      "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36251239308,
-      "name": "moneymaker-economic-full-hot-admission-233",
-      "path": "prepared/request233"
-    },
-    {
-      "repo": "dayofhiki/MoneyMaker",
-      "run_id": 36001945920,
-      "name": "moneymaker-extended-history-economic-opportunity-v10-163",
-      "path": "prepared/request163"
     }
   ],
   "args": [
-    "--training",
-    "prepared/request310",
-    "--training-raw",
-    "prepared/request306/request306-raw-seconds.parquet",
-    "--evaluation",
+    "--r311",
     "prepared/request311",
-    "--population",
-    "prepared/request233/request233-full-hot-states.parquet",
-    "--reference",
-    "prepared/request163/extended-history-economic-opportunity-v10.parquet",
     "--output",
-    "artifacts/request315.json",
+    "artifacts/request316.json",
     "--states-output",
-    "artifacts/request315-states.parquet",
-    "--training-output",
-    "artifacts/request315-training-states.parquet",
-    "--raw-output",
-    "artifacts/request315-training-raw-seconds.parquet",
-    "--cohort-output",
-    "artifacts/request315-training-cohort.parquet"
+    "artifacts/request316-states.parquet",
+    "--events-output",
+    "artifacts/request316-events.parquet",
+    "--draws",
+    "1000"
   ],
-  "note": "R315 fixed first-clock selected97 versus outcome-independent full-HOT sample407; source populations cross-checked, only478 declared May5-8 union identities acquired, existing raw reused. Frozen original828 May11-20 evaluation, M28/Q9, unchanged risk/cost. Earlier-day training diagnostic. No search, eval acquisition, promotion or sealed dates. Official checkpoints permit offline reproduction."
+  "note": "R316 frozen-score Event Heterogeneity Audit. Exact R311 828 May11-20 identities/scores/labels; point-in-time ticker news plus prior-day classified 8-K and prior reverse-split history only. Multi-label event flags, explicit unknown acquisition, cluster bootstrap. Same-day split coverage is a scope audit because the existing momentum universe excludes same-day split events. No refit, specialist, threshold/policy/risk change, June HOLD or July-August access."
 }
