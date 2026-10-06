@@ -1,0 +1,148 @@
+{
+  "request_id": 314,
+  "post_result_descriptive_only": true,
+  "models_refitted": false,
+  "evaluation_labels_used_for_fitting": false,
+  "groups": {
+    "training_all_states": {
+      "rows": 4526,
+      "final_complete_rows": 4526,
+      "common_complete_rows": 4526,
+      "common_complete_episodes": 97,
+      "stage_positive_rows": {
+        "observed_reference_gross5": 2008,
+        "actual_fill_gross5": 2011,
+        "whole_base_net5": 1703,
+        "stopped_base_net5": 805
+      },
+      "stage_positive_episodes": {
+        "observed_reference_gross5": 40,
+        "actual_fill_gross5": 39,
+        "whole_base_net5": 34,
+        "stopped_base_net5": 30
+      },
+      "repricing_lost_rows": 44,
+      "repricing_gained_rows": 47,
+      "cost_lost_rows": 308,
+      "stop_lost_rows": 898,
+      "gross_to_final_conversion": 0.40029835902536054,
+      "common_complete_per_day": {
+        "2026-05-05": 686,
+        "2026-05-06": 1135,
+        "2026-05-07": 660,
+        "2026-05-08": 2045
+      },
+      "day_episode_weighted_positive_rates": {
+        "stage_reference_gross_pct": 0.2824340143679885,
+        "stage_fill_gross_pct": 0.28407822678255884,
+        "stage_whole_net_pct": 0.21927750227186774,
+        "reachable_max_base_net_pct": 0.09661357478215996
+      },
+      "known_cost_drag_pct_unweighted_quantiles": {
+        "0.1": 0.9950248756218749,
+        "0.5": 0.9950248756218971,
+        "0.9": 2.2445912718701555
+      },
+      "observed_price_unweighted_quantiles": {
+        "0.1": 1.13,
+        "0.5": 4.7499,
+        "0.9": 9.852600000000002
+      }
+    },
+    "training_first_saved_states": {
+      "rows": 97,
+      "final_complete_rows": 97,
+      "common_complete_rows": 97,
+      "common_complete_episodes": 97,
+      "stage_positive_rows": {
+        "observed_reference_gross5": 29,
+        "actual_fill_gross5": 30,
+        "whole_base_net5": 26,
+        "stopped_base_net5": 9
+      },
+      "stage_positive_episodes": {
+        "observed_reference_gross5": 29,
+        "actual_fill_gross5": 30,
+        "whole_base_net5": 26,
+        "stopped_base_net5": 9
+      },
+      "repricing_lost_rows": 0,
+      "repricing_gained_rows": 1,
+      "cost_lost_rows": 4,
+      "stop_lost_rows": 17,
+      "gross_to_final_conversion": 0.3,
+      "common_complete_per_day": {
+        "2026-05-05": 21,
+        "2026-05-06": 29,
+        "2026-05-07": 17,
+        "2026-05-08": 30
+      },
+      "day_episode_weighted_positive_rates": {
+        "stage_reference_gross_pct": 0.2967738819665797,
+        "stage_fill_gross_pct": 0.30867864387134164,
+        "stage_whole_net_pct": 0.27119916932290156,
+        "reachable_max_base_net_pct": 0.08918187964841108
+      },
+      "known_cost_drag_pct_unweighted_quantiles": {
+        "0.1": 0.9950248756218749,
+        "0.5": 1.1469790262050417,
+        "0.9": 2.655569709375587
+      },
+      "observed_price_unweighted_quantiles": {
+        "0.1": 0.9295596,
+        "0.5": 3.0599999999999996,
+        "0.9": 8.912
+      }
+    },
+    "evaluation_common_first": {
+      "rows": 619,
+      "final_complete_rows": 619,
+      "common_complete_rows": 619,
+      "common_complete_episodes": 619,
+      "stage_positive_rows": {
+        "observed_reference_gross5": 131,
+        "actual_fill_gross5": 124,
+        "whole_base_net5": 81,
+        "stopped_base_net5": 38
+      },
+      "stage_positive_episodes": {
+        "observed_reference_gross5": 131,
+        "actual_fill_gross5": 124,
+        "whole_base_net5": 81,
+        "stopped_base_net5": 38
+      },
+      "repricing_lost_rows": 14,
+      "repricing_gained_rows": 7,
+      "cost_lost_rows": 43,
+      "stop_lost_rows": 43,
+      "gross_to_final_conversion": 0.3064516129032258,
+      "common_complete_per_day": {
+        "2026-05-11": 87,
+        "2026-05-12": 62,
+        "2026-05-13": 77,
+        "2026-05-14": 85,
+        "2026-05-15": 71,
+        "2026-05-18": 78,
+        "2026-05-19": 68,
+        "2026-05-20": 91
+      },
+      "day_episode_weighted_positive_rates": {
+        "stage_reference_gross_pct": 0.21303160496075293,
+        "stage_fill_gross_pct": 0.20224894494465742,
+        "stage_whole_net_pct": 0.1300278108049481,
+        "reachable_max_base_net_pct": 0.062278702686696503
+      },
+      "known_cost_drag_pct_unweighted_quantiles": {
+        "0.1": 0.9950248756218749,
+        "0.5": 1.10919869956011,
+        "0.9": 2.699336531869462
+      },
+      "observed_price_unweighted_quantiles": {
+        "0.1": 0.90864,
+        "0.5": 3.2598999999999996,
+        "0.9": 11.976
+      }
+    }
+  },
+  "limitations": "Training is the original selected97 episodes; evaluation is the broad hash-sampled cohort. First saved training state does not establish identical canonical acquisition support. Raw all-state rates cannot be interpreted as a first-observation distribution shift. Diagnostic groups are not filters or tuned rules."
+}

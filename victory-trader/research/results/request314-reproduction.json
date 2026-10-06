@@ -1,0 +1,619 @@
+{
+  "request_id": 314,
+  "official_run_id": 37448072456,
+  "artifact_id": 11403568453,
+  "official_source_sha": "f3b07c5a7c9f06a531dac3934e6c8a3f82225fcb",
+  "official_targeted_tests_passed": 93,
+  "full_PR84_tests_passed": 1020,
+  "absolute_tolerance": 1e-09,
+  "json_numeric_fields_compared": 1230,
+  "json_maximum_numeric_error": 2.2660405669949757e-10,
+  "json_non_numeric_values_equal": true,
+  "json_numeric_differences": [
+    {
+      "path": "/fit/models/R/coefficients/1",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/3",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/6",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/7",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/8",
+      "absolute_error": 6.938893903907228e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/9",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/R/coefficients/10",
+      "absolute_error": 3.469446951953614e-18
+    },
+    {
+      "path": "/fit/models/R/coefficients/11",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/R/coefficients/13",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/R/coefficients/15",
+      "absolute_error": 3.122502256758253e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/17",
+      "absolute_error": 1.0408340855860843e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/18",
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/19",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/R/coefficients/21",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/R/coefficients/22",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/R/coefficients/23",
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/25",
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/39",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/40",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/42",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/45",
+      "absolute_error": 1.1926223897340549e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/46",
+      "absolute_error": 1.1926223897340549e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/48",
+      "absolute_error": 1.1926223897340549e-17
+    },
+    {
+      "path": "/fit/models/R/coefficients/49",
+      "absolute_error": 1.3552527156068805e-18
+    },
+    {
+      "path": "/fit/models/R/coefficients/50",
+      "absolute_error": 1.3552527156068805e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/1",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/3",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/6",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/7",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/8",
+      "absolute_error": 6.938893903907228e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/9",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/10",
+      "absolute_error": 3.469446951953614e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/11",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/13",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/15",
+      "absolute_error": 3.122502256758253e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/17",
+      "absolute_error": 1.0408340855860843e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/18",
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/19",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/21",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/22",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/23",
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/25",
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/39",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/40",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/42",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/45",
+      "absolute_error": 1.1926223897340549e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/46",
+      "absolute_error": 1.1926223897340549e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/48",
+      "absolute_error": 1.1926223897340549e-17
+    },
+    {
+      "path": "/fit/models/D/coefficients/49",
+      "absolute_error": 1.3552527156068805e-18
+    },
+    {
+      "path": "/fit/models/D/coefficients/50",
+      "absolute_error": 1.3552527156068805e-18
+    },
+    {
+      "path": "/fit/models/G/coefficients/0",
+      "absolute_error": 6.938893903907228e-18
+    },
+    {
+      "path": "/fit/models/G/coefficients/1",
+      "absolute_error": 1.6653345369377348e-16
+    },
+    {
+      "path": "/fit/models/G/coefficients/2",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/3",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/4",
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/7",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/8",
+      "absolute_error": 8.326672684688674e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/10",
+      "absolute_error": 1.8214596497756474e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/11",
+      "absolute_error": 3.469446951953614e-18
+    },
+    {
+      "path": "/fit/models/G/coefficients/13",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/14",
+      "absolute_error": 6.938893903907228e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/15",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/17",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/18",
+      "absolute_error": 1.0408340855860843e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/19",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/21",
+      "absolute_error": 4.163336342344337e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/23",
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/24",
+      "absolute_error": 3.642919299551295e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/27",
+      "absolute_error": 3.469446951953614e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/39",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/40",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/42",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/45",
+      "absolute_error": 2.0816681711721685e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/46",
+      "absolute_error": 2.0816681711721685e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/48",
+      "absolute_error": 2.0816681711721685e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/49",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/50",
+      "absolute_error": 1.3877787807814457e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/51",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/52",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/G/coefficients/54",
+      "absolute_error": 5.551115123125783e-17
+    },
+    {
+      "path": "/fit/models/H/intercept",
+      "absolute_error": 3.0914604209897334e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/0",
+      "absolute_error": 9.75972080929921e-12
+    },
+    {
+      "path": "/fit/models/H/coefficients/1",
+      "absolute_error": 1.1214893597122355e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/2",
+      "absolute_error": 1.1214886658228451e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/3",
+      "absolute_error": 6.707341626555063e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/4",
+      "absolute_error": 4.8115150752536806e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/6",
+      "absolute_error": 2.2660405669949757e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/7",
+      "absolute_error": 1.082210709935083e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/8",
+      "absolute_error": 1.7137594121585664e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/9",
+      "absolute_error": 1.8488223799129067e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/10",
+      "absolute_error": 1.9680841678582084e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/11",
+      "absolute_error": 6.309456429542948e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/12",
+      "absolute_error": 5.6314748003716275e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/13",
+      "absolute_error": 8.241654234075746e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/14",
+      "absolute_error": 9.83759029099529e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/15",
+      "absolute_error": 2.326176751221709e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/16",
+      "absolute_error": 4.567710099045996e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/17",
+      "absolute_error": 6.368892219166256e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/18",
+      "absolute_error": 3.991479889664529e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/19",
+      "absolute_error": 1.1977643876726063e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/20",
+      "absolute_error": 1.1409599653955382e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/21",
+      "absolute_error": 1.8511095087325735e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/22",
+      "absolute_error": 6.214932041226362e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/23",
+      "absolute_error": 8.83045650490466e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/24",
+      "absolute_error": 5.7699477140626954e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/25",
+      "absolute_error": 2.2725321624506023e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/26",
+      "absolute_error": 1.5473169967528122e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/27",
+      "absolute_error": 4.935110219789207e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/39",
+      "absolute_error": 8.215561564384188e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/40",
+      "absolute_error": 8.215561564384188e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/42",
+      "absolute_error": 8.215561564384188e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/45",
+      "absolute_error": 7.65262321827248e-12
+    },
+    {
+      "path": "/fit/models/H/coefficients/46",
+      "absolute_error": 7.65262321827248e-12
+    },
+    {
+      "path": "/fit/models/H/coefficients/48",
+      "absolute_error": 7.65262321827248e-12
+    },
+    {
+      "path": "/fit/models/H/coefficients/49",
+      "absolute_error": 1.0865285407501979e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/50",
+      "absolute_error": 1.0865285407501979e-10
+    },
+    {
+      "path": "/fit/models/H/coefficients/51",
+      "absolute_error": 2.0871231826147252e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/52",
+      "absolute_error": 2.0871231826147252e-11
+    },
+    {
+      "path": "/fit/models/H/coefficients/54",
+      "absolute_error": 2.0871231826147252e-11
+    },
+    {
+      "path": "/integrity/maximum_frozen_M_replay_error",
+      "absolute_error": 1.1102230246251565e-16
+    },
+    {
+      "path": "/comparison/arms/P/brier",
+      "absolute_error": 7.624179065857106e-13
+    },
+    {
+      "path": "/comparison/per_day/2026-05-11/arms/P/brier",
+      "absolute_error": 3.1441377279506355e-12
+    },
+    {
+      "path": "/comparison/per_day/2026-05-12/arms/P/brier",
+      "absolute_error": 5.925301915787884e-12
+    },
+    {
+      "path": "/comparison/per_day/2026-05-13/arms/P/brier",
+      "absolute_error": 2.5524235502949466e-12
+    },
+    {
+      "path": "/comparison/per_day/2026-05-14/arms/P/brier",
+      "absolute_error": 2.2931101462120296e-12
+    },
+    {
+      "path": "/comparison/per_day/2026-05-15/arms/P/brier",
+      "absolute_error": 5.581368700546818e-13
+    },
+    {
+      "path": "/comparison/per_day/2026-05-18/arms/P/brier",
+      "absolute_error": 4.254735452846603e-12
+    },
+    {
+      "path": "/comparison/per_day/2026-05-19/arms/P/brier",
+      "absolute_error": 8.069808710153836e-12
+    },
+    {
+      "path": "/comparison/per_day/2026-05-20/arms/P/brier",
+      "absolute_error": 1.7295956333818197e-12
+    },
+    {
+      "path": "/comparison/component_diagnostics/H/brier",
+      "absolute_error": 3.559902372884949e-12
+    },
+    {
+      "path": "/comparison/paired_intervals/day/comparisons/P_minus_D/brier_ci95/0",
+      "absolute_error": 1.3781801763181056e-12
+    },
+    {
+      "path": "/comparison/paired_intervals/day/comparisons/P_minus_D/brier_ci95/1",
+      "absolute_error": 9.804635402177464e-13
+    },
+    {
+      "path": "/comparison/paired_intervals/day/comparisons/P_minus_R/brier_ci95/0",
+      "absolute_error": 1.3781801763181056e-12
+    },
+    {
+      "path": "/comparison/paired_intervals/day/comparisons/P_minus_R/brier_ci95/1",
+      "absolute_error": 9.804635402177464e-13
+    },
+    {
+      "path": "/comparison/paired_intervals/ticker_day/comparisons/P_minus_D/brier_ci95/0",
+      "absolute_error": 5.977732414966241e-13
+    },
+    {
+      "path": "/comparison/paired_intervals/ticker_day/comparisons/P_minus_D/brier_ci95/1",
+      "absolute_error": 2.602387706371334e-12
+    },
+    {
+      "path": "/comparison/paired_intervals/ticker_day/comparisons/P_minus_R/brier_ci95/0",
+      "absolute_error": 5.977732414966241e-13
+    },
+    {
+      "path": "/comparison/paired_intervals/ticker_day/comparisons/P_minus_R/brier_ci95/1",
+      "absolute_error": 2.602387706371334e-12
+    }
+  ],
+  "json_bytes_equal": false,
+  "local_json_sha256": "4617660009c87a73ae69f25a92809ca0b7a844feb9a6d385f6a9dc47e816e5a9",
+  "official_json_sha256": "87a9967e47c4738f46fd17fa89be760381f3954874bfb7fc6d118492586384f9",
+  "frames": {
+    "request314-states.parquet": {
+      "rows": 828,
+      "columns": 70,
+      "maximum_numeric_error": 7.086946030021579e-10,
+      "changed_numeric_columns": {
+        "R_p_net_5": 1.1102230246251565e-16,
+        "D_p_net_5": 1.1102230246251565e-16,
+        "G_p_net_5": 1.6653345369377348e-16,
+        "H_p_net_5": 7.086946030021579e-10,
+        "P_p_net_5": 3.643009782727802e-10
+      },
+      "probability_ranks_equal": true,
+      "non_numeric_values_equal": true,
+      "all_numeric_missingness_equal": true,
+      "probability_maximum_errors": {
+        "N_p_net_5": 0.0,
+        "Q_p_net_5": 0.0,
+        "M_p_net_5": 0.0,
+        "R_p_net_5": 1.1102230246251565e-16,
+        "D_p_net_5": 1.1102230246251565e-16,
+        "G_p_net_5": 1.6653345369377348e-16,
+        "H_p_net_5": 7.086946030021579e-10,
+        "P_p_net_5": 3.643009782727802e-10
+      }
+    },
+    "request314-training-stages.parquet": {
+      "rows": 4526,
+      "columns": 316,
+      "maximum_numeric_error": 0.0,
+      "changed_numeric_columns": {},
+      "probability_ranks_equal": true,
+      "non_numeric_values_equal": true,
+      "all_numeric_missingness_equal": true,
+      "probability_maximum_errors": {
+        "B_p_net_5": 0.0,
+        "C_p_net_5": 0.0,
+        "D_p_net_5": 0.0,
+        "U_p_net_5": 0.0,
+        "V_p_net_5": 0.0,
+        "W_p_net_5": 0.0,
+        "X_p_net_5": 0.0,
+        "F_p_net_5": 0.0,
+        "N_p_net_5": 0.0,
+        "Q_p_net_5": 0.0,
+        "M_p_net_5": 0.0
+      }
+    }
+  },
+  "gate_flags_equal": true
+}
