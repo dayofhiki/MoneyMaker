@@ -1,0 +1,59 @@
+name: MoneyMaker R318 Independent Cached Replay
+
+on:
+  push:
+    branches: [research/context-interaction-318]
+    paths: ['.github/workflows/context-interaction-318.yml']
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e '.[dev]'
+      - name: Critical checks and causal regressions
+        run: |
+          ruff check src/victory_trader/context_interaction_momentum.py tests/test_context_interaction_momentum.py --select E4,E7,E9,F
+          pytest -q tests/test_context_interaction_momentum.py tests/test_continuous_population_momentum.py tests/test_canonical_population_momentum.py tests/test_compact_momentum_representation.py tests/test_clock_momentum_increment.py tests/test_preentry_momentum_observability.py tests/test_frozen_momentum_may_transport.py
+      - uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-independent-request-317
+          path: victory-trader/prepared/official317
+          run-id: 37472421963
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: moneymaker-research-request-315
+          path: victory-trader/prepared/official315
+          run-id: 37450538746
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: One fixed offline experiment
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          git rev-parse HEAD > artifacts/source-sha.txt
+          python -m victory_trader.context_interaction_momentum \
+            --previous prepared/official317 --canonical prepared/official315 \
+            --pinned-inputs research/request318-inputs.json --output-dir artifacts \
+            | tee artifacts/request318.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: moneymaker-independent-request-318
+          path: victory-trader/artifacts/
+          if-no-files-found: warn
+          retention-days: 90
