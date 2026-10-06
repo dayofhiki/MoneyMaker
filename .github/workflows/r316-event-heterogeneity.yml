@@ -1,0 +1,104 @@
+name: R316 Isolated Event Heterogeneity Audit
+
+on:
+  push:
+    branches:
+      - research/event-heterogeneity-audit-316
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit:
+    if: contains(github.event.head_commit.message, '[run-r316]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install frozen research stack
+        run: python -m pip install -e '.[dev]' -c research/request214-requirements.txt
+
+      - name: Validate R316 implementation
+        run: |
+          set -euo pipefail
+          ruff check src tests --select E4,E7,E9,F
+          pytest -q \
+            tests/test_event_heterogeneity_audit.py \
+            tests/test_frozen_momentum_may_transport.py \
+            tests/test_clock_momentum_increment.py \
+            tests/test_massive_client.py
+
+      - name: Download frozen R311 dependency
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p prepared/request311
+          gh run download 37223064559 \
+            -n moneymaker-research-request-311 \
+            -D prepared/request311 \
+            -R dayofhiki/MoneyMaker
+
+      - name: Execute isolated R316 audit
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          git rev-parse HEAD > artifacts/source-sha.txt
+          python -m victory_trader.event_heterogeneity_audit \
+            --r311 prepared/request311 \
+            --output artifacts/request316.json \
+            --states-output artifacts/request316-states.parquet \
+            --events-output artifacts/request316-events.parquet \
+            --draws 1000 2>&1 | tee artifacts/request316.log
+
+      - name: Print compact R316 result
+        if: success()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("artifacts/request316.json").read_text())
+          audit = data["audit"]
+          compact = {
+              "request_id": data["request_id"],
+              "acquisition": data["acquisition"],
+              "interpretation": audit["interpretation"],
+              "same_day_8k_count": audit["same_day_8k_count"],
+              "same_day_reverse_split_count": audit["same_day_reverse_split_count"],
+              "families": {},
+          }
+          for name, family in audit["families"].items():
+              compact["families"][name] = {
+                  "event": family["event"],
+                  "complement": family["complement"],
+                  "comparison": family["comparison"],
+                  "ticker_day_ci95": family["bootstrap"]["ticker_day"]["ci95"],
+                  "ticker_day_valid_draws": family["bootstrap"]["ticker_day"]["valid_draws"],
+                  "gate": family["gate"],
+              }
+          print(json.dumps(compact, indent=2, allow_nan=False))
+          PY
+
+      - name: Upload isolated R316 artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: moneymaker-research-request-316-isolated
+          path: |
+            victory-trader/artifacts/**
+          if-no-files-found: warn
+          retention-days: 90
