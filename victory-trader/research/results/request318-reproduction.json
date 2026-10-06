@@ -1,0 +1,37 @@
+{
+  "request_id": 318,
+  "offline_market_requests": 0,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 3982,
+    "maximum_numeric_error": 0.0
+  },
+  "json_bytes_equal": true,
+  "frames": {
+    "request318-states.parquet": {
+      "rows": 828,
+      "columns": 72,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request318-chronological-states.parquet": {
+      "rows": 305,
+      "columns": 67,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    }
+  },
+  "official_run_id": 37476099213,
+  "official_source_sha": "431b860a148bdf40b34cfe43481a9f70bf91823c",
+  "artifact_id": 11419038296,
+  "artifact_sha256": "3afbc7eb93681b2be6ee821bcd5f8f0d5621690e8f2eea29193af9c03b83f376",
+  "artifact_hash_verified": true,
+  "official_targeted_tests_passed": 64,
+  "full_code_CI_tests_passed": 1051,
+  "failed_initial_reporting_run_id": 37475904829,
+  "reporting_fix_changed_protocol": false
+}
