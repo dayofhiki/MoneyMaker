@@ -1,9 +1,6 @@
 from types import SimpleNamespace
 
-import numpy as np
 import pandas as pd
-import pytest
-
 from victory_trader import event_heterogeneity_audit as experiment
 from victory_trader.feasible_upside_observability import CEILING
 
