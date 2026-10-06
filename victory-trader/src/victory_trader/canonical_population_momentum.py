@@ -214,6 +214,14 @@ def coverage(frame: pd.DataFrame) -> dict:
             "missing_reasons": frame.missing_reason.fillna("complete").value_counts().to_dict()}
 
 
+def verify_checkpoint(current: pd.DataFrame, saved: pd.DataFrame) -> None:
+    # Arrow stores absent optional booleans as null; in-memory dict rows use NaN.
+    # Normalize only missing-value representation, preserving positions and values.
+    other = saved[list(current)]
+    pd.testing.assert_frame_equal(current.where(current.notna(), None), other.where(other.notna(), None),
+                                  check_dtype=False, atol=1e-9, rtol=0)
+
+
 def report(frame: pd.DataFrame, draws: int = 1000) -> dict:
     return coverage(frame) | {"arms": ranks(frame, ARMS),
         "per_day": {d: coverage(frame.loc[frame.trading_day.eq(d)]) | {"arms": ranks(frame.loc[frame.trading_day.eq(d)], ARMS)} for d in EVAL_DAYS},
@@ -286,7 +294,7 @@ def main() -> int:
     canonical.to_parquet(args.training_output, index=False, compression="zstd")
     if args.checkpoint is not None:
         saved = pd.read_parquet(args.checkpoint/"request315-training-states.parquet")
-        pd.testing.assert_frame_equal(canonical, saved[list(canonical)], check_dtype=False, atol=1e-9, rtol=0)
+        verify_checkpoint(canonical, saved)
     original_contexts = contexts_for(inherited, CROSSFIT_DAYS, set(map(tuple, original[["trading_day", "ticker"]].drop_duplicates().to_numpy())))
     eval_contexts = contexts_for(pd.read_parquet(args.evaluation/"request311-raw-seconds.parquet"), EVAL_DAYS,
                                 set(map(tuple, eval_cohort[["trading_day", "ticker"]].drop_duplicates().to_numpy())))
