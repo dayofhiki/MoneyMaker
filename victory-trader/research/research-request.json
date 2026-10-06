@@ -1,8 +1,9 @@
 {
-  "request_id": 313,
+  "request_id": 314,
   "operation": "module",
-  "module": "victory_trader.information_arrival_momentum",
+  "module": "victory_trader.gross_net_factorization",
   "pytest": [
+    "tests/test_gross_net_factorization.py",
     "tests/test_information_arrival_momentum.py",
     "tests/test_elapsed_momentum_evidence.py",
     "tests/test_frozen_momentum_may_transport.py",
@@ -44,9 +45,11 @@
     "--evaluation",
     "prepared/request311",
     "--output",
-    "artifacts/request313.json",
+    "artifacts/request314.json",
     "--states-output",
-    "artifacts/request313-states.parquet"
+    "artifacts/request314-states.parquet",
+    "--training-output",
+    "artifacts/request314-training-stages.parquet"
   ],
-  "note": "R313 timestamp-only first two-print10s observation, original828 May identities and frozen R311 M. Pair same identities, explicitly changed entry-time labels, missing opportunity and timing costs. No model/window/count/delay/threshold tuning, market requests, policy promotion or sealed dates."
+  "note": "R314 fixed M28 gross/net conditional factorization; common-support direct comparator and original frozen M replay. Original828 May identities and650 final labels. Preserve conditional training weights, report censored stages. No search, market requests, promotion or sealed dates."
 }
