@@ -1,8 +1,9 @@
 {
-  "request_id": 314,
+  "request_id": 315,
   "operation": "module",
-  "module": "victory_trader.gross_net_factorization",
+  "module": "victory_trader.canonical_population_momentum",
   "pytest": [
+    "tests/test_canonical_population_momentum.py",
     "tests/test_gross_net_factorization.py",
     "tests/test_information_arrival_momentum.py",
     "tests/test_elapsed_momentum_evidence.py",
@@ -35,6 +36,18 @@
       "run_id": 37223064559,
       "name": "moneymaker-research-request-311",
       "path": "prepared/request311"
+    },
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36251239308,
+      "name": "moneymaker-economic-full-hot-admission-233",
+      "path": "prepared/request233"
+    },
+    {
+      "repo": "dayofhiki/MoneyMaker",
+      "run_id": 36001945920,
+      "name": "moneymaker-extended-history-economic-opportunity-v10-163",
+      "path": "prepared/request163"
     }
   ],
   "args": [
@@ -44,12 +57,20 @@
     "prepared/request306/request306-raw-seconds.parquet",
     "--evaluation",
     "prepared/request311",
+    "--population",
+    "prepared/request233/request233-full-hot-states.parquet",
+    "--reference",
+    "prepared/request163/extended-history-economic-opportunity-v10.parquet",
     "--output",
-    "artifacts/request314.json",
+    "artifacts/request315.json",
     "--states-output",
-    "artifacts/request314-states.parquet",
+    "artifacts/request315-states.parquet",
     "--training-output",
-    "artifacts/request314-training-stages.parquet"
+    "artifacts/request315-training-states.parquet",
+    "--raw-output",
+    "artifacts/request315-training-raw-seconds.parquet",
+    "--cohort-output",
+    "artifacts/request315-training-cohort.parquet"
   ],
-  "note": "R314 fixed M28 gross/net conditional factorization; common-support direct comparator and original frozen M replay. Original828 May identities and650 final labels. Preserve conditional training weights, report censored stages. No search, market requests, promotion or sealed dates."
+  "note": "R315 fixed first-clock selected97 versus outcome-independent full-HOT sample407; source populations cross-checked, only478 declared May5-8 union identities acquired, existing raw reused. Frozen original828 May11-20 evaluation, M28/Q9, unchanged risk/cost. Earlier-day training diagnostic. No search, eval acquisition, promotion or sealed dates. Official checkpoints permit offline reproduction."
 }
