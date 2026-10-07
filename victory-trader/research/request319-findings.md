@@ -3,11 +3,11 @@
 R318 official run37476099213/PR91 confirms static joint interpretation did not
 repair the original first-clock ranking. R319 tests continued evaluation AND one
 fixed trajectory package, registered locally in commitd61073a before clocks,
-labels and new fits. Implementation commitbc5fa3e precedes closeout. Publishing
-the preregistration branch was rejected by automatic approval review; therefore
-this is a **local completed development experiment**, not an official GitHub run.
-The prepared branch-only cached workflow has not executed. No remote PR/merge,
-market request, policy promotion or sealed-date access occurred.
+labels and new fits. Implementation commitbc5fa3e precedes closeout. The initial branch publication was blocked by automatic approval review. The
+user explicitly authorized publication/cached execution on2026-10-07 and granted
+standing authorization for routine research of the same scope. Draft PR92 is
+now published; official cached run37588633963 succeeded. No merge, market request,
+policy promotion or sealed-date access occurred.
 
 ## What changed
 
@@ -127,9 +127,17 @@ request319-reproduction.json records this LOCAL-to-LOCAL verification; no claim
 of official reproduction is made. R311 raw/cohort hashes match the existing
 official diagnostic, and R317/R318 downloaded ZIP digests verify.
 
-The branch contains source, synthetic causal regressions, plan/input pins,
-local result JSON, verification, findings and a branch-only one-shot official
-workflow. Main/research-request.json and separate event tracks remain unchanged.
-After publication authorization: push branch, create stacked draft PR against
-research/context-interaction-318, execute the one cached run, verify official
-output and retire the one-shot workflow. No merge or policy adoption is included.
+## Official closeout
+
+[Official run37588633963](https://github.com/dayofhiki/MoneyMaker/actions/runs/37588633963)
+succeeded, source8084ff22b535ae76e8adf57b0485f6bbe34ec2c6, artifact11467966003.
+ZIP SHA256 verifies:23a01bac33e992b35e2dc6fbfaa8eb469cd4119fd2cf006047cb09b75df06cd2.
+All6,027 JSON numeric fields reproduce within1e-9; maximum error7.48e-11.
+JSON bytes differ and are not claimed identical. All six parquet checkpoints
+retain identical identities, clocks, labels, missingness and probability pair
+ordering; maximum frame numeric error9.33e-11. Both full source CI workflows
+succeeded. Exact official JSON and official-to-local audit are committed.
+
+The branch-only one-shot workflow is retired after verified closeout, so findings
+updates do not repeat the experiment. Draft PR92 remains unmerged. Main,
+research-request.json and the event tracks stay unchanged; no policy adoption.

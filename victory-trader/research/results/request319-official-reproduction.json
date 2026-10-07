@@ -1,0 +1,67 @@
+{
+  "request_id": 319,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 6027,
+    "maximum_numeric_error": 7.483659525409081e-11
+  },
+  "json_bytes_equal": false,
+  "frames": {
+    "request319-clock-manifest.parquet": {
+      "rows": 19530,
+      "columns": 12,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-episode-ledger.parquet": {
+      "rows": 828,
+      "columns": 13,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-training-states.parquet": {
+      "rows": 9325,
+      "columns": 61,
+      "maximum_numeric_error": 8.881784197001252e-16,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-states.parquet": {
+      "rows": 19530,
+      "columns": 87,
+      "maximum_numeric_error": 3.731859266054016e-11,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-first-states.parquet": {
+      "rows": 828,
+      "columns": 78,
+      "maximum_numeric_error": 2.6122326524102846e-11,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-chronological-states.parquet": {
+      "rows": 7806,
+      "columns": 89,
+      "maximum_numeric_error": 9.325756833433729e-11,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    }
+  },
+  "verification_scope": "official-to-local within1e-9",
+  "official_run_id": 37588633963,
+  "official_source_sha": "8084ff22b535ae76e8adf57b0485f6bbe34ec2c6",
+  "artifact_id": 11467966003,
+  "artifact_sha256": "23a01bac33e992b35e2dc6fbfaa8eb469cd4119fd2cf006047cb09b75df06cd2",
+  "artifact_hash_verified": true,
+  "official_ci_success": true,
+  "market_requests": 0
+}
