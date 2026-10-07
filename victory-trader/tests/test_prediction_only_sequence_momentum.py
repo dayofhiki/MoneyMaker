@@ -221,3 +221,26 @@ def test_sequence_predictions_match_forward_kernel_and_first_exactly():
             reference[step] = k['pi'][step]*k['u'][step]+reference[clock.previous[step]]*k['z'][step]
         np.testing.assert_allclose(result[f'R326_{arm}_p_net_5'], reference, atol=2e-15, rtol=0)
         assert result[f'R326_{arm}_retention'][clock.first].isna().all()
+
+
+def test_canonical_initial_preserves_saved_bits_after_strict_reconstruction():
+    reconstructed = np.array([.2, .3])
+    saved = np.nextafter(reconstructed, 1.)
+    canonical, error = exp.canonical_initial(reconstructed, saved)
+    np.testing.assert_array_equal(canonical, saved)
+    assert 0 < error < 1e-15
+    with pytest.raises(ValueError, match='replay'):
+        exp.canonical_initial(reconstructed, reconstructed+.001)
+
+
+def test_canonical_replay_keeps_predecessor_first_exact_with_rounding_difference():
+    frame = held(training_fixture())
+    audit = initial_audit(frame)
+    audit['fit_days'] = ['2026-05-05']
+    bundles = {a: (None, None) for a in exp.NEW_ARMS}
+    saved = np.nextafter(np.full(len(frame), .2), 1.)
+    result, record = exp.infer(frame, bundles, audit, saved)
+    first = exp.history(frame).first
+    for arm in exp.CORE_ARMS:
+        np.testing.assert_array_equal(result[f'R326_{arm}_p_net_5'][first], saved[first])
+    assert 0 < record['maximum_canonical_G_replay_error'] < 1e-15

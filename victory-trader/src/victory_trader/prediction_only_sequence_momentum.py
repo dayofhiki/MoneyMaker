@@ -163,15 +163,28 @@ def solve_sequence(x, manifest, clock, initial_p, labels, weights):
     return (predecessor.RateModel(parameters[:, :-1], parameters[:, -1]) if success else None), audit
 
 
-def prefix_initial(training, prior):
+def canonical_initial(reconstructed, saved):
+    saved = np.asarray(saved, float)
+    if saved.shape != reconstructed.shape or not np.isfinite(saved).all() or ((saved < 0) | (saved > 1)).any():
+        raise ValueError("aligned finite canonical G required")
+    error = float(np.max(np.abs(saved-reconstructed)))
+    if error > 1e-9:
+        raise ValueError("canonical frozen G replay changed")
+    return saved.copy(), error
+
+
+def prefix_initial(training, prior, canonical=None):
     initial, priors = np.zeros(len(training)), np.zeros(len(training))
     audits = {}
     for day, group in training.groupby("trading_day", sort=False):
         p, error = frozen_initial(group, prior["chronological_training"]["folds"][day]["G"])
         positions = training.index.get_indexer(group.index)
+        canonical_error = None
+        if canonical is not None:
+            p, canonical_error = canonical_initial(p, np.asarray(canonical)[positions])
         initial[positions] = p
         priors[positions] = prior["chronological_training"]["folds"][day]["G"]["prior"]
-        audits[day] = {"fit_days": prior["chronological_training"]["folds"][day]["G"]["fit_days"], "maximum_saved_G_score_replay_error": error}
+        audits[day] = {"fit_days": prior["chronological_training"]["folds"][day]["G"]["fit_days"], "maximum_saved_G_score_replay_error": error, "maximum_canonical_G_replay_error": canonical_error}
     return initial, priors, audits
 
 
@@ -262,10 +275,13 @@ def infer_with_initial(states, bundles, current_g, priors):
     return result, {"unscored_observations": {a: int(result[f"R326_{a}_p_net_5"].isna().sum()) for a in CORE_ARMS}}
 
 
-def infer(states, bundles, initial_audit):
+def infer(states, bundles, initial_audit, canonical=None):
     p, error = frozen_initial(states, initial_audit)
+    canonical_error = None
+    if canonical is not None:
+        p, canonical_error = canonical_initial(p, canonical)
     scored, audit = infer_with_initial(states, bundles, p, initial_audit["prior"])
-    return scored, audit | {"maximum_saved_G_score_replay_error": error}
+    return scored, audit | {"maximum_saved_G_score_replay_error": error, "maximum_canonical_G_replay_error": canonical_error}
 
 
 def attach_predecessor(frame, saved):
@@ -357,10 +373,10 @@ def chronological(training, predecessor_states, prior):
     for day in CROSSFIT_DAYS[1:]:
         preceding = training.loc[training.trading_day.lt(day)]
         manifest = transition_manifest(preceding)[0] if not preceding.empty else pd.DataFrame()
-        p = prefix_initial(preceding, prior)[0] if not preceding.empty else np.array([])
+        p = prefix_initial(preceding, prior, predecessor_states.loc[preceding.index, "R325_B_p_net_5"].to_numpy())[0] if not preceding.empty else np.array([])
         bundles, fits = fit_models(preceding, manifest, p)
         held = training.loc[training.trading_day.eq(day)]
-        scored, audit = infer(held, bundles, prior['chronological_training']['folds'][day]['G'])
+        scored, audit = infer(held, bundles, prior['chronological_training']['folds'][day]['G'], predecessor_states.loc[held.index, 'R325_B_p_net_5'].to_numpy())
         scored = attach_predecessor(scored, predecessor_states.loc[predecessor_states.trading_day.eq(day)])
         pieces.append(scored)
         folds[day] = {'fits': fits, 'inference': audit, 'fit_days': sorted(preceding.trading_day.unique()),
@@ -409,7 +425,7 @@ def run(previous: Path, pinned: Path, output: Path):
         raise ValueError('registered population changed')
     if {k: v['rows'] for k, v in support['cells'].items()} != {'0_to_0': 6265, '0_to_1': 77, '1_to_0': 85, '1_to_1': 639}:
         raise ValueError('registered transition support changed')
-    initial, priors, initial_audit = prefix_initial(training, prior)
+    initial, priors, initial_audit = prefix_initial(training, prior, saved_chrono.R325_B_p_net_5.to_numpy())
     output.mkdir(parents=True, exist_ok=True)
     transitions.to_parquet(output/'request326-transition-manifest.parquet', index=False, compression='zstd')
     transition_ledger.to_parquet(output/'request326-transition-ledger.parquet', index=False, compression='zstd')
@@ -419,7 +435,7 @@ def run(previous: Path, pinned: Path, output: Path):
     audit_path.write_text(json.dumps(fits, indent=2, allow_nan=False)+'\n')
     if any(b[0] is None for b in bundles.values()):
         raise ValueError('registered full fit unsupported/failed; audit saved, no replacement evaluation')
-    scored, inference = infer(evaluation, bundles, prior['fits']['G'])
+    scored, inference = infer(evaluation, bundles, prior['fits']['G'], saved.R325_B_p_net_5.to_numpy())
     if any(inference['unscored_observations'].values()):
         raise ValueError('full evaluation contains unsupported core inference')
     scored = attach_predecessor(scored, saved)
