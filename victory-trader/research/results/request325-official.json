@@ -1,0 +1,21 @@
+{
+  "request_id": 325,
+  "preregistration_sha": "d282aa234adcf50b7bc456485f14007c23efee22",
+  "implementation_sha": "fbfb66bcc76e8655a8fed79fdaba5dddcb1e86de",
+  "source_sha": "9dae06eda16def3b132d2483f62ed87fe8fdfaa4",
+  "official_run": 37618872764,
+  "official_run_conclusion": "success",
+  "official_artifact": 11481140668,
+  "artifact_sha256": "9e1608eaa71a13f149918c176a85a97ccf82289289394b4be5921bcc55dafdaa",
+  "implementation_full_ci_run": 37618460314,
+  "implementation_full_ci_conclusion": "success",
+  "local_tests": 1139,
+  "critical_ruff": "pass",
+  "gate_passed": 9,
+  "gate_total": 24,
+  "local_preflight": "First invocation stopped at missing cache link before any fit; repaired links and verified all12 pinned hashes. One real local fit/experiment; no model/optimizer retry.",
+  "reproduction": "request325-reproduction.json",
+  "one_shot_workflow_retired": true,
+  "development_only": true,
+  "promotion_eligible": false
+}

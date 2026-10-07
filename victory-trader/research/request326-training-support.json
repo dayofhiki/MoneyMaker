@@ -1,0 +1,231 @@
+{
+  "request_id": 326,
+  "training_only": true,
+  "new_rate_fit_or_R326_evaluation": false,
+  "market_requests": 0,
+  "input": "official321/request321-chronological-states.parquet",
+  "input_sha256": "637b08447d038361b0027c7503dfe08294c136bb5c80efdf0a4cd9d187383807",
+  "observed_states": 7806,
+  "observed_episodes": 266,
+  "complete_states": 7327,
+  "complete_episodes": 256,
+  "positive_complete_episodes": 51,
+  "transition_support": {
+    "rows": 7066,
+    "episodes": 218,
+    "cells": {
+      "0_to_0": {
+        "rows": 6265,
+        "episodes": 210,
+        "dates": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "0_to_1": {
+        "rows": 77,
+        "episodes": 33,
+        "dates": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "1_to_0": {
+        "rows": 85,
+        "episodes": 41,
+        "dates": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "1_to_1": {
+        "rows": 639,
+        "episodes": 38,
+        "dates": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      }
+    },
+    "conditional": {
+      "0": {
+        "rows": 6342,
+        "episodes": 214
+      },
+      "1": {
+        "rows": 724,
+        "episodes": 45
+      }
+    }
+  },
+  "per_day": {
+    "2026-05-06": {
+      "initial_G_fit_days": [
+        "2026-05-05"
+      ],
+      "observed_states": 4602,
+      "observed_episodes": 100,
+      "complete_states": 4190,
+      "complete_episodes": 95,
+      "transition_support": {
+        "rows": 4095,
+        "episodes": 81,
+        "cells": {
+          "0_to_0": {
+            "rows": 3740,
+            "episodes": 81,
+            "dates": [
+              "2026-05-06"
+            ]
+          },
+          "0_to_1": {
+            "rows": 39,
+            "episodes": 14,
+            "dates": [
+              "2026-05-06"
+            ]
+          },
+          "1_to_0": {
+            "rows": 44,
+            "episodes": 17,
+            "dates": [
+              "2026-05-06"
+            ]
+          },
+          "1_to_1": {
+            "rows": 272,
+            "episodes": 15,
+            "dates": [
+              "2026-05-06"
+            ]
+          }
+        },
+        "conditional": {
+          "0": {
+            "rows": 3779,
+            "episodes": 81
+          },
+          "1": {
+            "rows": 316,
+            "episodes": 17
+          }
+        }
+      }
+    },
+    "2026-05-07": {
+      "initial_G_fit_days": [
+        "2026-05-05",
+        "2026-05-06"
+      ],
+      "observed_states": 1619,
+      "observed_episodes": 84,
+      "complete_states": 1619,
+      "complete_episodes": 84,
+      "transition_support": {
+        "rows": 1535,
+        "episodes": 73,
+        "cells": {
+          "0_to_0": {
+            "rows": 1240,
+            "episodes": 67,
+            "dates": [
+              "2026-05-07"
+            ]
+          },
+          "0_to_1": {
+            "rows": 26,
+            "episodes": 14,
+            "dates": [
+              "2026-05-07"
+            ]
+          },
+          "1_to_0": {
+            "rows": 27,
+            "episodes": 18,
+            "dates": [
+              "2026-05-07"
+            ]
+          },
+          "1_to_1": {
+            "rows": 242,
+            "episodes": 17,
+            "dates": [
+              "2026-05-07"
+            ]
+          }
+        },
+        "conditional": {
+          "0": {
+            "rows": 1266,
+            "episodes": 71
+          },
+          "1": {
+            "rows": 269,
+            "episodes": 20
+          }
+        }
+      }
+    },
+    "2026-05-08": {
+      "initial_G_fit_days": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "observed_states": 1585,
+      "observed_episodes": 82,
+      "complete_states": 1518,
+      "complete_episodes": 77,
+      "transition_support": {
+        "rows": 1436,
+        "episodes": 64,
+        "cells": {
+          "0_to_0": {
+            "rows": 1285,
+            "episodes": 62,
+            "dates": [
+              "2026-05-08"
+            ]
+          },
+          "0_to_1": {
+            "rows": 12,
+            "episodes": 5,
+            "dates": [
+              "2026-05-08"
+            ]
+          },
+          "1_to_0": {
+            "rows": 14,
+            "episodes": 6,
+            "dates": [
+              "2026-05-08"
+            ]
+          },
+          "1_to_1": {
+            "rows": 125,
+            "episodes": 6,
+            "dates": [
+              "2026-05-08"
+            ]
+          }
+        },
+        "conditional": {
+          "0": {
+            "rows": 1297,
+            "episodes": 62
+          },
+          "1": {
+            "rows": 139,
+            "episodes": 8
+          }
+        }
+      }
+    }
+  },
+  "initial_G_scores_finite": true,
+  "limits": "Available out-of-time initialization training support only. No teacher-forced oracle evaluation, R326 model fit, architecture/window/feature search or fresh data. May6 has no preceding out-of-time meta-training day for a chronological R326 rate fit."
+}
