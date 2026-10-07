@@ -1,0 +1,18 @@
+{
+  "official319/request319.json": "767bb41d5e3f0e3f56df6b174e61c4cf2b979c3c6f96862e3603e899df764f90",
+  "official319/request319-clock-manifest.parquet": "9a7dac1ee2a02c873668cb463a5eb6623b274efd8c13b1a310023047ffe6c78f",
+  "official319/request319-episode-ledger.parquet": "d5952a888cc97353d1bdfce3ba94ffa9845e88aadc96a00a69cb77a1adf54707",
+  "official321/request321-states.parquet": "fe4c93365e75111b0cecdce02cbf849d7da60870d94d7c9d9c76086ccc2aeec0",
+  "official321/request321-chronological-states.parquet": "637b08447d038361b0027c7503dfe08294c136bb5c80efdf0a4cd9d187383807",
+  "official321/request321-local-pair-manifest.parquet": "e9b4156d9872c05960b2a29bef560d9b4c4ea424301fff3e3ba2651b71e31a8d",
+  "official321/request321-local-pair-ledger.parquet": "fa445e08a795982ca6e22700be21a57908dbb38c397aaa53c66a9aac5cc91a5c",
+  "official325/request325.json": "a55f83dbdcd7805575909192f3990bf63744cbd240a73be307280deab943c33c",
+  "official325/request325-states.parquet": "2bf2a4b55109a6a28435239eb8346d6fc7834478f1508b5d469540be818ce47c",
+  "official325/request325-chronological-states.parquet": "852015664af37c2a889bb038636e1a20f5c8b0c98736d5755d4a65aee1f42fbd",
+  "official326/request326.json": "bc6835db477883dbb928824f2dc1b2585e422c453d7ce6c23c2448f52d342222",
+  "official326/request326-fit-audit.json": "9d5b4b47b1e3063edfdccfccef6f0a2cdee714d2652d1330fe383f679810742e",
+  "official326/request326-states.parquet": "af5e85047552aa616cfecb02dd37f1aa2485f63261cf7d7e0f9f7a4ae728a2ca",
+  "official326/request326-chronological-states.parquet": "1f982c6a83383b316d64dec3209e8aa7ff1c8296ac66ae40fff769caac4a451d",
+  "official326/request326-training-states.parquet": "2750032a761eb341a377fb51365e38e258d28b22540615d626ffe9f734464713",
+  "official326/source-sha.txt": "25e67d68b6a208da38eaf8b8e24ebed7383d10a972ca63f855e91f72554121c7"
+}
