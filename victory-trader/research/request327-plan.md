@@ -1,10 +1,6 @@
-# R327 proposal: observed feature-path innovation before more rate complexity
+# R327 preregistration: observed feature-path innovation
 
-Historical proposal prepared after R326. R327 is now executed; see
-request327-plan.md and request327-findings.md for the registered contract/results.
-The original proposal follows. R326's repaired exact-tolerance
-reproduction now passes with error0 across6689 JSON numbers and all seven tables.
-Keep that reproducibility prerequisite for the exact selected source/cache. Never relax R326's1e-9 numeric/rank/missingness checks after results.
+Register remotely BEFORE any real R327 fit/evaluation. Parent R326 a7d6b33fb0f2bb75efe1d5bfaeb391848da68a77/Draft PR99. Standing research authorization applies. Sixteen official319/321/325/326 files are SHA256-pinned in request327-inputs.json. R326 official source41117f2efb3b1dc9eef8a81c1ee396f6a64991e9/run37624854775/artifact11483342814 has verified ZIP SHA25658c9105bd2b8d1440426563423f66c9d4508923a0d40a62a36fc418b28d7d829, exact6689 JSON numeric fields/seven tables.
 
 ## Decision and falsifiable hypothesis
 
@@ -137,3 +133,44 @@ initial replay audits. One successful cached official experiment, authenticated
 source/digest, numeric agreement<=1e-9 and exact identities/missingness/tie-aware
 ranks, with any failed attempt preserved. Retire the one-shot workflow after
 closeout. No raw acquisition, policy change, sealed-date opening or live trades.
+
+## Execution details fixed before fitting
+
+Inherited R326 solver: SciPy L-BFGS-B,maxiter2000,maxls50,ftol1e-13,gtol1e-8,
+one switch-count/exposure start,no bounds;success/finite parameters and objective/
+normalized gradient infinity<=1e-6. Joint slopesC=.1 and intercepts unpenalized.
+Static S keeps LogisticRegression C=.2,l1_ratio0,lbfgs,maxiter2000,tol1e-8,
+fit_interceptTrue,random_state20266005. No retry or fit selection. Numerical/full
+fit failure saves audit and stops replacement evaluation. Persist fold audits even
+on failure. No retrospective relaxation of numeric tolerances or rank checks.
+
+Training path-array fingerprints from inherited request327-training-support.json
+must match before fitting. Source raw feature history reads no labels/censor masks.
+Preserve current-block preprocessing exactly as corresponding R326 F fit; confirm
+its audit equals a direct fixed-transition transform replay within1e-9. Frozen C/D
+probability paths are direct official326 F/S copies, not new refits. Their full
+metrics must equal R326 six-metric scores within1e-9. Training C/D paths come from
+pinned official326 training-states; chronological paths from the chronological
+file. Pure inference joins controls only by original identity/decision clock.
+
+Persist seven inherited tables, feature-history table (training and evaluation/
+chronological scopes, source indices and all prior EMA/anchor/last-finite clocks/
+innovations/availability), plus fit-audit and main JSON. Keep all raw source columns.
+Before real fits: feature semantics/gradient/weight/transform/causality/unsupported
+fold tests, full suite and critical Ruff. One cached official replay and complete
+JSON/fit-audit/eight-table agreement<=1e-9, identities/missingness/tie-aware score
+and rate order exactly, source/digest authentication. Then retire one-shot workflow.
+If reproducibility fails, record the failure and do not call results reproduced.
+
+## Transfer packaging before official execution
+
+Local eight-table output is approximately44MB even with ZSTD19. The file transfer
+tool accepts archives<=32MiB, so the SAME single cached official run publishes
+two authenticated artifacts. Primary moneymaker-independent-request-327 holds
+JSON/fit audit/transitions/ledger/evaluation/chronology/first/source/environment/log;
+secondary moneymaker-independent-request-327-feature-history holds training-states
+and feature-history, plus the same source/environment. Merge by unchanged original
+filenames after authenticating BOTH source SHAs/digests and duplicate metadata.
+No model, score, weight, missingness, rank rule or verification tolerance changes;
+all eight tables remain required for reproduction. No additional fitting is needed
+for packaging. Record both artifact identifiers/digests.

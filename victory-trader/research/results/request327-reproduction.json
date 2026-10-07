@@ -1,0 +1,87 @@
+{
+  "request_id": 327,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 5278,
+    "maximum_numeric_error": 0.0
+  },
+  "json_bytes_equal": true,
+  "fit_audit": {
+    "numeric_fields": 3663,
+    "maximum_numeric_error": 0.0
+  },
+  "frames": {
+    "request327-transition-manifest.parquet": {
+      "rows": 7066,
+      "columns": 10,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "rate_ranks_equal": true
+    },
+    "request327-transition-ledger.parquet": {
+      "rows": 266,
+      "columns": 6,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "rate_ranks_equal": true
+    },
+    "request327-training-states.parquet": {
+      "rows": 7806,
+      "columns": 232,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "rate_ranks_equal": true
+    },
+    "request327-states.parquet": {
+      "rows": 19530,
+      "columns": 227,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "rate_ranks_equal": true
+    },
+    "request327-chronological-states.parquet": {
+      "rows": 7806,
+      "columns": 229,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "rate_ranks_equal": true
+    },
+    "request327-first-states.parquet": {
+      "rows": 679,
+      "columns": 227,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "rate_ranks_equal": true
+    },
+    "request327-episode-ledger.parquet": {
+      "rows": 828,
+      "columns": 13,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "rate_ranks_equal": true
+    },
+    "request327-feature-history.parquet": {
+      "rows": 35142,
+      "columns": 73,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "rate_ranks_equal": true
+    }
+  }
+}

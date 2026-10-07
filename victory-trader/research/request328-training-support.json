@@ -1,0 +1,202 @@
+{
+  "request_id": 328,
+  "training_support_only": true,
+  "evaluation_read": false,
+  "real_model_fits": 0,
+  "input_sha256": {
+    "official321/request321-chronological-states.parquet": "637b08447d038361b0027c7503dfe08294c136bb5c80efdf0a4cd9d187383807",
+    "official326/request326-training-states.parquet": "2750032a761eb341a377fb51365e38e258d28b22540615d626ffe9f734464713"
+  },
+  "tau_s": 30.0,
+  "observations": 7806,
+  "observed_episodes": 266,
+  "complete_targets": 7327,
+  "complete_weight_mass": 256.0,
+  "active_all_seven_history": {
+    "observations": 6990,
+    "complete_targets": 6546,
+    "complete_target_episodes": 183,
+    "positive_target_rows": 666,
+    "positive_target_episodes": 41,
+    "negative_target_rows": 5880,
+    "negative_target_episodes": 177,
+    "original_complete_weight_mass": 130.1316797413857,
+    "target_days": [
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ]
+  },
+  "inactive": {
+    "observations": 816,
+    "complete_targets": 781,
+    "complete_target_episodes": 255,
+    "positive_target_rows": 77,
+    "positive_target_episodes": 38,
+    "negative_target_rows": 704,
+    "negative_target_episodes": 236,
+    "original_complete_weight_mass": 125.8683202586143,
+    "target_days": [
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ]
+  },
+  "per_day_active": {
+    "2026-05-06": {
+      "observations": 4318,
+      "complete_targets": 3921,
+      "complete_target_episodes": 69,
+      "positive_target_rows": 291,
+      "positive_target_episodes": 15,
+      "negative_target_rows": 3630,
+      "negative_target_episodes": 68,
+      "original_complete_weight_mass": 47.353484627257075,
+      "target_days": [
+        "2026-05-06"
+      ]
+    },
+    "2026-05-07": {
+      "observations": 1367,
+      "complete_targets": 1367,
+      "complete_target_episodes": 60,
+      "positive_target_rows": 242,
+      "positive_target_episodes": 19,
+      "negative_target_rows": 1125,
+      "negative_target_episodes": 56,
+      "original_complete_weight_mass": 42.49255057978087,
+      "target_days": [
+        "2026-05-07"
+      ]
+    },
+    "2026-05-08": {
+      "observations": 1305,
+      "complete_targets": 1258,
+      "complete_target_episodes": 54,
+      "positive_target_rows": 133,
+      "positive_target_episodes": 7,
+      "negative_target_rows": 1125,
+      "negative_target_episodes": 53,
+      "original_complete_weight_mass": 40.28564453434774,
+      "target_days": [
+        "2026-05-08"
+      ]
+    }
+  },
+  "strict_prefix_fit_support": {
+    "2026-05-06": {
+      "fit_days": [],
+      "observations": 0,
+      "complete_weight_mass": 0.0,
+      "active": {
+        "observations": 0,
+        "complete_targets": 0,
+        "complete_target_episodes": 0,
+        "positive_target_rows": 0,
+        "positive_target_episodes": 0,
+        "negative_target_rows": 0,
+        "negative_target_episodes": 0,
+        "original_complete_weight_mass": 0.0,
+        "target_days": []
+      },
+      "inactive": {
+        "observations": 0,
+        "complete_targets": 0,
+        "complete_target_episodes": 0,
+        "positive_target_rows": 0,
+        "positive_target_episodes": 0,
+        "negative_target_rows": 0,
+        "negative_target_episodes": 0,
+        "original_complete_weight_mass": 0.0,
+        "target_days": []
+      },
+      "no_preceding_meta_fit": true
+    },
+    "2026-05-07": {
+      "fit_days": [
+        "2026-05-06"
+      ],
+      "observations": 4602,
+      "complete_weight_mass": 95.0,
+      "active": {
+        "observations": 4318,
+        "complete_targets": 3921,
+        "complete_target_episodes": 69,
+        "positive_target_rows": 291,
+        "positive_target_episodes": 15,
+        "negative_target_rows": 3630,
+        "negative_target_episodes": 68,
+        "original_complete_weight_mass": 52.71774655768854,
+        "target_days": [
+          "2026-05-06"
+        ]
+      },
+      "inactive": {
+        "observations": 284,
+        "complete_targets": 269,
+        "complete_target_episodes": 95,
+        "positive_target_rows": 28,
+        "positive_target_episodes": 13,
+        "negative_target_rows": 241,
+        "negative_target_episodes": 90,
+        "original_complete_weight_mass": 42.28225344231146,
+        "target_days": [
+          "2026-05-06"
+        ]
+      },
+      "no_preceding_meta_fit": false
+    },
+    "2026-05-08": {
+      "fit_days": [
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "observations": 6221,
+      "complete_weight_mass": 179.0,
+      "active": {
+        "observations": 5685,
+        "complete_targets": 5288,
+        "complete_target_episodes": 129,
+        "positive_target_rows": 533,
+        "positive_target_episodes": 34,
+        "negative_target_rows": 4755,
+        "negative_target_episodes": 124,
+        "original_complete_weight_mass": 94.23304864488158,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ]
+      },
+      "inactive": {
+        "observations": 536,
+        "complete_targets": 521,
+        "complete_target_episodes": 179,
+        "positive_target_rows": 67,
+        "positive_target_episodes": 31,
+        "negative_target_rows": 454,
+        "negative_target_episodes": 166,
+        "original_complete_weight_mass": 84.76695135511841,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ]
+      },
+      "no_preceding_meta_fit": false
+    }
+  },
+  "transform_original_transition_currents": 7066,
+  "transform_original_weight_mass": 218.0,
+  "active_transform_currents": 6540,
+  "active_transform_weight_mass": 141.1485585385626,
+  "active_prefix_G_min": 0.004091965686255752,
+  "active_prefix_G_max": 0.26402342409954355,
+  "all_prefix_G_strictly_interior": true,
+  "EMA_anchor_gate_identical": true,
+  "training_path_sha256": {
+    "EMA_innovation": "fb86a1e75300ce44ee505f774a401cc4ac25f2748d2bac45a7418822a5801ab6",
+    "first_anchor_innovation": "5301e2a70b9f402972ab6ac6fc0c6a9bbd536ede34a9a22cfa518f9e1521488d"
+  },
+  "gate_sha256_uint8": "401cb439209331c5a5ee526e11aa62ed31282787a0f962caae18f1af69dd4d6c",
+  "prefix_G_sha256_little_endian_float64": "0a123b040f243e17a057db5ed09c06cbc815de5aa5fcea62abf269f8d95fb668",
+  "method": "Only frozen out-of-time training records/prefix G; original weights never renormalized by gate. Causal R327 feature paths; all seven past innovations finite. No evaluation outcomes, real fitting, threshold or window selection."
+}
