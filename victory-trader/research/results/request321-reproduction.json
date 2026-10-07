@@ -1,0 +1,43 @@
+{
+  "request_id": 321,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 465,
+    "maximum_numeric_error": 0.0
+  },
+  "json_bytes_equal": true,
+  "frames": {
+    "request321-local-pair-manifest.parquet": {
+      "rows": 8623,
+      "columns": 7,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request321-local-pair-ledger.parquet": {
+      "rows": 828,
+      "columns": 8,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request321-states.parquet": {
+      "rows": 19530,
+      "columns": 98,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request321-chronological-states.parquet": {
+      "rows": 7806,
+      "columns": 100,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    }
+  }
+}
