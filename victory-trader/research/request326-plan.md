@@ -124,3 +124,27 @@ fits/objectives/gradients and input/source provenance. One cached official repla
 JSON/all seven parquet identity/missingness/value/tie-aware probability-rank
 agreement within1e-9, authenticated source/ZIP, then retire one-shot workflow.
 Passing development checks still cannot authorize promotion or sealed dates.
+
+## Numerical replay amendment before repaired execution
+
+The first official attempt37623558937 at c0acb233a2be0389ebd4882ba584316f972b7495
+completed every full/fold fit, then stopped at bit-exact first equality against the
+pinned R325 predecessor. Its partial artifact11482753886 is retained:SHA256
+34f6b7d52dc08d85aaf817e325e506e5206db3a654d18547393624d98e306907. It is NOT a
+successful reproduction and emitted no evaluation result JSON/seven-frame set.
+Reconstructing identical frozen G on another Python/CPU path can differ in final
+rounding; the local reconstruction differs from original saved G by up to1.11e-16.
+Near-flat rate directions can also amplify rounding differences in coefficients.
+
+Repair initial-score replay by FIRST reconstructing the registered G from its
+strictly preceding audit and verifying both saved G and pinned R325 B within1e-9;
+THEN use pinned R325 B probabilities as the canonical unchanged current/first G.
+Apply to full evaluation and the strictly preceding training/fold initials alike.
+All new arms and pinned P now receive the same canonical initial bits. No equality
+check, rank/value/missingness tolerance, objective, weight, optimizer, start formula,
+feature, population, seed or success threshold is relaxed. No fit selection or
+multistart occurs. Keep original local and failed official audits and compare them
+with the repaired run. This is an implementation/numerical replay repair, with one
+additional official execution permitted to complete the SAME fixed scientific
+experiment; count both attempts honestly. Register this amendment remotely before
+any repaired real fit. If the repaired reproduction fails, stop and report it.
