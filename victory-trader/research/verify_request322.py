@@ -1,5 +1,6 @@
 """Verify fixed R322 ranks, scope and censoring without refitting."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -11,9 +12,18 @@ from verify_request317 import compare_json
 
 def verify(reference: Path, replay: Path) -> dict:
     a, b = reference/"request322.json", replay/"request322.json"
+    reports = [json.loads(p.read_text()) for p in (a, b)]
+    artifact_hashes = []
+    for root, report in zip((reference, replay), reports):
+        claimed = report["integrity"].pop("meta_states_sha256")
+        actual = hashlib.sha256((root/"request322-meta-states.parquet").read_bytes()).hexdigest()
+        if claimed != actual:
+            raise ValueError("meta checkpoint bytes do not match their own audit")
+        artifact_hashes.append(actual)
     result = {"request_id": 322, "absolute_tolerance": 1e-9,
-        "json": compare_json(json.loads(a.read_text()), json.loads(b.read_text())),
-        "json_bytes_equal": a.read_bytes() == b.read_bytes(), "frames": {}}
+        "json": compare_json(*reports), "json_bytes_equal": a.read_bytes() == b.read_bytes(),
+        "output_meta_checkpoint_hashes": {"reference": artifact_hashes[0], "replay": artifact_hashes[1],
+            "each_matches_own_bytes": True, "bytes_equal": artifact_hashes[0] == artifact_hashes[1]}, "frames": {}}
     for suffix in ("meta-states", "states", "first-states", "episode-ledger"):
         filename = f"request322-{suffix}.parquet"
         x, y = pd.read_parquet(reference/filename), pd.read_parquet(replay/filename)
