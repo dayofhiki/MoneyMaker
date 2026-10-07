@@ -1,0 +1,72 @@
+{
+  "request_id": 319,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 6027,
+    "maximum_numeric_error": 0.0
+  },
+  "json_bytes_equal": true,
+  "frames": {
+    "request319-clock-manifest.parquet": {
+      "rows": 19530,
+      "columns": 12,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-episode-ledger.parquet": {
+      "rows": 828,
+      "columns": 13,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-training-states.parquet": {
+      "rows": 9325,
+      "columns": 61,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-states.parquet": {
+      "rows": 19530,
+      "columns": 87,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-first-states.parquet": {
+      "rows": 828,
+      "columns": 78,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    },
+    "request319-chronological-states.parquet": {
+      "rows": 7806,
+      "columns": 89,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "probability_pair_ranks_equal": true
+    }
+  },
+  "verification_scope": "local-to-local only; official execution pending authorization",
+  "preregistration_local_commit": "d61073a",
+  "implementation_local_commit": "bc5fa3e",
+  "parent_R318_sha": "92e7d10e7c63d8e2da9fc44e4a3e457703fb64c0",
+  "full_local_tests_passed": 1063,
+  "critical_ruff_passed": true,
+  "official_run_executed": false,
+  "market_requests": 0,
+  "python_version": "3.12.14",
+  "numpy_version": "2.4.6",
+  "pandas_version": "3.0.6",
+  "scikit_learn_version": "1.9.1",
+  "pyarrow_version": "25.0.1"
+}
