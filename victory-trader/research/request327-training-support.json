@@ -1,0 +1,238 @@
+{
+  "request_id": 327,
+  "training_support_only": true,
+  "real_model_fits": 0,
+  "evaluation_read": false,
+  "input_sha256": "637b08447d038361b0027c7503dfe08294c136bb5c80efdf0a4cd9d187383807",
+  "tau_s": 30.0,
+  "observations": 7806,
+  "observed_episodes": 266,
+  "complete_targets": 7327,
+  "complete_target_weight": 256.0,
+  "features": {
+    "momentum_return_30s": {
+      "EMA_innovation": {
+        "observations": 7540,
+        "complete_target_rows": 7072,
+        "complete_target_episodes": 218,
+        "complete_target_weight": 190.15091432444413,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "first_anchor_innovation": {
+        "observations": 7540,
+        "complete_target_rows": 7072,
+        "complete_target_episodes": 218,
+        "complete_target_weight": 190.15091432444413,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      }
+    },
+    "momentum_efficiency_30s": {
+      "EMA_innovation": {
+        "observations": 7540,
+        "complete_target_rows": 7072,
+        "complete_target_episodes": 218,
+        "complete_target_weight": 190.15091432444413,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "first_anchor_innovation": {
+        "observations": 7540,
+        "complete_target_rows": 7072,
+        "complete_target_episodes": 218,
+        "complete_target_weight": 190.15091432444413,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      }
+    },
+    "momentum_volume_rate_ratio_30s": {
+      "EMA_innovation": {
+        "observations": 6990,
+        "complete_target_rows": 6546,
+        "complete_target_episodes": 183,
+        "complete_target_weight": 130.1316797413857,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "first_anchor_innovation": {
+        "observations": 6990,
+        "complete_target_rows": 6546,
+        "complete_target_episodes": 183,
+        "complete_target_weight": 130.1316797413857,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      }
+    },
+    "momentum_transactions_rate_ratio_30s": {
+      "EMA_innovation": {
+        "observations": 6990,
+        "complete_target_rows": 6546,
+        "complete_target_episodes": 183,
+        "complete_target_weight": 130.1316797413857,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "first_anchor_innovation": {
+        "observations": 6990,
+        "complete_target_rows": 6546,
+        "complete_target_episodes": 183,
+        "complete_target_weight": 130.1316797413857,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      }
+    },
+    "momentum_signed_volume_proxy_30s": {
+      "EMA_innovation": {
+        "observations": 7540,
+        "complete_target_rows": 7072,
+        "complete_target_episodes": 218,
+        "complete_target_weight": 190.15091432444413,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "first_anchor_innovation": {
+        "observations": 7540,
+        "complete_target_rows": 7072,
+        "complete_target_episodes": 218,
+        "complete_target_weight": 190.15091432444413,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      }
+    },
+    "momentum_reclaim_prior_high_30s": {
+      "EMA_innovation": {
+        "observations": 6990,
+        "complete_target_rows": 6546,
+        "complete_target_episodes": 183,
+        "complete_target_weight": 130.1316797413857,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "first_anchor_innovation": {
+        "observations": 6990,
+        "complete_target_rows": 6546,
+        "complete_target_episodes": 183,
+        "complete_target_weight": 130.1316797413857,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      }
+    },
+    "momentum_acceleration_10_30": {
+      "EMA_innovation": {
+        "observations": 7540,
+        "complete_target_rows": 7072,
+        "complete_target_episodes": 218,
+        "complete_target_weight": 190.15091432444413,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "first_anchor_innovation": {
+        "observations": 7540,
+        "complete_target_rows": 7072,
+        "complete_target_episodes": 218,
+        "complete_target_weight": 190.15091432444413,
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      }
+    }
+  },
+  "all_seven_EMA_innovations": {
+    "observations": 6990,
+    "complete_target_rows": 6546,
+    "complete_target_episodes": 183,
+    "complete_target_weight": 130.1316797413857,
+    "target_days": [
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ]
+  },
+  "at_least_one_EMA_innovation": {
+    "observations": 7540,
+    "complete_target_rows": 7072,
+    "complete_target_episodes": 218,
+    "complete_target_weight": 190.15091432444413,
+    "target_days": [
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ]
+  },
+  "per_day": {
+    "2026-05-06": {
+      "observations": 4502,
+      "complete_target_rows": 4095,
+      "complete_target_episodes": 81,
+      "complete_target_weight": 64.48344266041643,
+      "target_days": [
+        "2026-05-06"
+      ]
+    },
+    "2026-05-07": {
+      "observations": 1535,
+      "complete_target_rows": 1535,
+      "complete_target_episodes": 73,
+      "complete_target_weight": 63.211579022808465,
+      "target_days": [
+        "2026-05-07"
+      ]
+    },
+    "2026-05-08": {
+      "observations": 1503,
+      "complete_target_rows": 1442,
+      "complete_target_episodes": 64,
+      "complete_target_weight": 62.45589264121922,
+      "target_days": [
+        "2026-05-08"
+      ]
+    }
+  },
+  "training_path_sha256_little_endian_float64": {
+    "EMA_innovation": "fb86a1e75300ce44ee505f774a401cc4ac25f2748d2bac45a7418822a5801ab6",
+    "first_anchor_innovation": "5301e2a70b9f402972ab6ac6fc0c6a9bbd536ede34a9a22cfa518f9e1521488d"
+  },
+  "method": "Emit current minus PAST EMA/first available anchor before updating at each original observation.EMA exp(-elapsed since last FINITE feature clock/30).Missing current emits missing and carries feature state/time; first available emits missing then initializes.Censored labels never alter paths.All original rows remain.No real fit/evaluation/window/feature selection."
+}

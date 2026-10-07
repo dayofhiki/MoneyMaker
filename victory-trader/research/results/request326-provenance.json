@@ -1,0 +1,130 @@
+{
+  "request_id": 326,
+  "preregistered_sha": "e1e26f3d2c59b0d92b669ae5651c32e1c7ad4e19",
+  "numerical_amendment_before_repaired_fits_sha": "24d400d884c86cae6ddb77744c92168a24e72cd2",
+  "implementation_sha": "a2b2ae71c2275287748a78281dff3c4161a1f9be",
+  "official_source_sha": "41117f2efb3b1dc9eef8a81c1ee396f6a64991e9",
+  "official_attempts": [
+    {
+      "run_id": 37623558937,
+      "source_sha": "c0acb233a2be0389ebd4882ba584316f972b7495",
+      "conclusion": "failure",
+      "reason": "bit_exact_first_equality_with_pinned_predecessor_after_all_fits",
+      "artifact_id": 11482753886,
+      "artifact_sha256": "34f6b7d52dc08d85aaf817e325e506e5206db3a654d18547393624d98e306907",
+      "source_and_digest_authenticated": true,
+      "full_evaluation_result_emitted": false,
+      "original_fit_audit_reproduced_within1e-9": false,
+      "A_onset_intercept_local_official_difference": 1.003696681323163e-08
+    },
+    {
+      "run_id": 37624854775,
+      "source_sha": "41117f2efb3b1dc9eef8a81c1ee396f6a64991e9",
+      "conclusion": "success",
+      "artifact_id": 11483342814,
+      "artifact_sha256": "58c9105bd2b8d1440426563423f66c9d4508923a0d40a62a36fc418b28d7d829",
+      "source_and_digest_authenticated": true,
+      "full_evaluation_result_emitted": true,
+      "reproduction_verified": true
+    }
+  ],
+  "scientific_contract_changed": false,
+  "bit_exact_initial_replay_repaired_after_frozen_audit_verification": true,
+  "verification_tolerance_relaxed": false,
+  "optimizer_retry_or_fit_selection": false,
+  "original_to_repaired_local_maximum_primary_metric_difference": 0.0,
+  "original_to_repaired_local_gates_equal": true,
+  "local_test_validation": {
+    "initial_tests_passed": 1158,
+    "repaired_tests_passed": 1160,
+    "warnings": 159,
+    "repaired_suite_seconds": 36.66,
+    "critical_ruff_passed": true
+  },
+  "implementation_full_CI_success_runs": [
+    37623360107,
+    37624531125,
+    37624536671
+  ],
+  "comparison_check_passed": 15,
+  "comparison_check_total": 32,
+  "reproduction": {
+    "request_id": 326,
+    "absolute_tolerance": 1e-09,
+    "json": {
+      "numeric_fields": 5462,
+      "maximum_numeric_error": 0.0
+    },
+    "json_bytes_equal": true,
+    "fit_audit": {
+      "numeric_fields": 1227,
+      "maximum_numeric_error": 0.0
+    },
+    "frames": {
+      "request326-transition-manifest.parquet": {
+        "rows": 7066,
+        "columns": 10,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true
+      },
+      "request326-transition-ledger.parquet": {
+        "rows": 266,
+        "columns": 6,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true
+      },
+      "request326-training-states.parquet": {
+        "rows": 7806,
+        "columns": 181,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true
+      },
+      "request326-states.parquet": {
+        "rows": 19530,
+        "columns": 178,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true
+      },
+      "request326-chronological-states.parquet": {
+        "rows": 7806,
+        "columns": 180,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true
+      },
+      "request326-first-states.parquet": {
+        "rows": 679,
+        "columns": 178,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true
+      },
+      "request326-episode-ledger.parquet": {
+        "rows": 828,
+        "columns": 13,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true
+      }
+    }
+  },
+  "workflow_retired_after_verified_replay": true,
+  "draft_PR": "https://github.com/dayofhiki/MoneyMaker/pull/99",
+  "merge_or_promotion": false,
+  "market_requests": 0,
+  "sealed_dates_opened": false,
+  "next_experiment_design": "request327-proposal.md",
+  "R327_real_fits": 0,
+  "final_head_CI": "Verify final clean head and record its CI run in Draft PR99 closeout body."
+}
