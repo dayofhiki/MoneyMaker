@@ -1,7 +1,8 @@
 # R327 proposal: observed feature-path innovation before more rate complexity
 
-Not executed or formally preregistered. Register the final input hashes/contract
-remotely before any real R327 fit. R326's repaired exact-tolerance
+Historical proposal prepared after R326. R327 is now executed; see
+request327-plan.md and request327-findings.md for the registered contract/results.
+The original proposal follows. R326's repaired exact-tolerance
 reproduction now passes with error0 across6689 JSON numbers and all seven tables.
 Keep that reproducibility prerequisite for the exact selected source/cache. Never relax R326's1e-9 numeric/rank/missingness checks after results.
 
