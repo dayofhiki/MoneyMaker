@@ -1,0 +1,14 @@
+{
+  "official319/request319.json": "767bb41d5e3f0e3f56df6b174e61c4cf2b979c3c6f96862e3603e899df764f90",
+  "official319/request319-training-states.parquet": "bbf45eb9d26c9c5ce83b96187121db3e5de4ca92ae27435545b9817225113358",
+  "official319/request319-clock-manifest.parquet": "9a7dac1ee2a02c873668cb463a5eb6623b274efd8c13b1a310023047ffe6c78f",
+  "official319/request319-episode-ledger.parquet": "d5952a888cc97353d1bdfce3ba94ffa9845e88aadc96a00a69cb77a1adf54707",
+  "official321/request321-states.parquet": "fe4c93365e75111b0cecdce02cbf849d7da60870d94d7c9d9c76086ccc2aeec0",
+  "official321/request321-chronological-states.parquet": "637b08447d038361b0027c7503dfe08294c136bb5c80efdf0a4cd9d187383807",
+  "official321/request321-local-pair-manifest.parquet": "e9b4156d9872c05960b2a29bef560d9b4c4ea424301fff3e3ba2651b71e31a8d",
+  "official321/request321-local-pair-ledger.parquet": "fa445e08a795982ca6e22700be21a57908dbb38c397aaa53c66a9aac5cc91a5c",
+  "official324/request324.json": "73002600ec9d1251c4387a20fd611108ccf228aaaa1aa7c5aa19deb0917e17fd",
+  "official324/request324-states.parquet": "60064c0a4c0e47f21a1612aad84132c5f30fc4dcf09fef28bf91d2abd2d9adc8",
+  "official324/request324-chronological-states.parquet": "4a953e3745e2db241d87f6499ce77d30ea2c096a4559bc3065007f493770e2e8",
+  "official324/request324-transition-manifest.parquet": "70743a4ebf5b8d7a70db397204dca7a7a32925ab11f11830e1d3f19ff3836a83"
+}
