@@ -1,0 +1,20 @@
+{
+  "request_id": 324,
+  "preregistration_sha": "3d3d01a049986e5dcf5aaa77eceb8eb9689a60c7",
+  "implementation_sha": "26f063b06f08e799320296cbac15fd4b5fb4779f",
+  "source_sha": "d96386aca6451b1103cf18e8c31e56b54c696265",
+  "official_run": 37602021567,
+  "official_run_conclusion": "success",
+  "official_artifact": 11473023015,
+  "artifact_sha256": "7ef762ae136c8040f5e737331eae38665a70ff065882313f5f864264b031df50",
+  "implementation_full_ci_run": 37601928348,
+  "implementation_full_ci_conclusion": "success",
+  "local_tests": 1116,
+  "critical_ruff": "pass",
+  "gate_passed": 9,
+  "gate_total": 24,
+  "reproduction": "request324-reproduction.json",
+  "one_shot_workflow_retired": true,
+  "development_only": true,
+  "promotion_eligible": false
+}

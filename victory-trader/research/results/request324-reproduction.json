@@ -1,0 +1,67 @@
+{
+  "request_id": 324,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 3291,
+    "maximum_numeric_error": 0.0
+  },
+  "json_bytes_equal": true,
+  "frames": {
+    "request324-transition-manifest.parquet": {
+      "rows": 8445,
+      "columns": 10,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request324-transition-ledger.parquet": {
+      "rows": 347,
+      "columns": 6,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request324-training-states.parquet": {
+      "rows": 9325,
+      "columns": 63,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request324-states.parquet": {
+      "rows": 19530,
+      "columns": 120,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request324-chronological-states.parquet": {
+      "rows": 7806,
+      "columns": 122,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request324-first-states.parquet": {
+      "rows": 679,
+      "columns": 120,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    },
+    "request324-episode-ledger.parquet": {
+      "rows": 828,
+      "columns": 13,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true
+    }
+  }
+}
