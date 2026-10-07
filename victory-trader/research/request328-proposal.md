@@ -1,6 +1,8 @@
 # R328 proposal: an observability-gated trajectory residual on frozen G
 
-Not executed or formally preregistered. R327's authenticated official replay
+Historical proposal prepared after R327. R328 is now executed; see
+request328-plan.md and request328-findings.md for the registered contract/results.
+The original proposal follows. R327's authenticated official replay
 matches 8,941 JSON numbers and all eight tables exactly. Before real R328 fitting,
 register this final contract and every official input hash remotely. This proposal
 is a hypothesis generated on reused May development data, not fresh evidence.

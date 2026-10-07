@@ -1,0 +1,199 @@
+{
+  "request_id": 328,
+  "preregistered_sha": "38e3c0f529230f035c5101a423b86c9ebb3b978f",
+  "implementation_sha": "5af41275ba05ac12b0f3434e6f5b32d70419aa16",
+  "local_fit_source_sha": "5af41275ba05ac12b0f3434e6f5b32d70419aa16",
+  "official_source_sha": "aa031411f1ab790c2c10d5f0a92dc9aa9225aead",
+  "official_attempts": [
+    {
+      "run_id": 37657314310,
+      "source_sha": "aa031411f1ab790c2c10d5f0a92dc9aa9225aead",
+      "conclusion": "success",
+      "artifacts": [
+        {
+          "id": 11499476294,
+          "name": "moneymaker-independent-request-328",
+          "size_in_bytes": 32015273,
+          "digest": "sha256:a5824927b52defc0521ba78edf01e1d69bf2b55df928798788d9dca12f9da222",
+          "created_at": "2026-10-07T17:14:42Z",
+          "expires_at": "2027-01-05T17:12:49Z",
+          "source_and_digest_authenticated": true
+        },
+        {
+          "id": 11499116858,
+          "name": "moneymaker-independent-request-328-feature-history",
+          "size_in_bytes": 16934437,
+          "digest": "sha256:ce72b09fb11e99b0bbb048b642d99ebb521fac5e0e7b8d4069027d56e30e0467",
+          "created_at": "2026-10-07T17:14:44Z",
+          "expires_at": "2027-01-05T17:12:49Z",
+          "source_and_digest_authenticated": true
+        }
+      ],
+      "reproduction_verified": true
+    }
+  ],
+  "scientific_contract_changed": false,
+  "verification_tolerance_relaxed": false,
+  "optimizer_retry_or_fit_selection": false,
+  "artifact_duplicate_metadata_identical": true,
+  "initial_verification_failure": {
+    "request_id": 328,
+    "verification_attempt": 1,
+    "passed": false,
+    "failure": "ArrowInvalid: Parquet magic bytes not found in footer",
+    "affected_file": "request328-design-matrix.parquet",
+    "local_bytes": 4393450,
+    "local_sha256": "95b4fe7c330877b255b9474ce9a172497251300f48068f004b09626a49a8d39a",
+    "local_file_is_exact_prefix_of_official": true,
+    "local_missing_footer": true,
+    "main_json_numeric_error": 0.0,
+    "fit_audit_numeric_error": 0.0,
+    "other_eight_tables_byte_identical": true,
+    "repair": "Serialize registered design table from independent saved LOCAL training/evaluation/chronological state tables. No copied official reference values, refitting, optimization retry, scientific change or tolerance/rank relaxation.",
+    "root_cause": "Not established; local output is truncated.",
+    "recovered_local_bytes": 5470678,
+    "recovered_local_sha256": "300c89ff00255fdb8bb5cebce3805f87c51c45e30112b671509a2b0ef4447568",
+    "recovered_bytes_equal_official": true
+  },
+  "verification_attempts": 2,
+  "reference_design_table_independently_reserialized_from_local_states": true,
+  "official_values_copied_into_reference": false,
+  "all_nine_parquet_bytes_equal": true,
+  "official_file_sha256": {
+    "environment.txt": "208a05e34c7d3b0abfb92cca678e2f5c9a0c6947ac9358790663534df2ede558",
+    "request328-chronological-states.parquet": "d4d9d59802e44906f26353bfdad954f7d3a396f818a8b9b8bb388a148ad509e0",
+    "request328-design-matrix.parquet": "300c89ff00255fdb8bb5cebce3805f87c51c45e30112b671509a2b0ef4447568",
+    "request328-episode-ledger.parquet": "b06db748b0b0aa0e9be6b82e50e2d57c733c39fbb9c970c90b9d9f92a56a0c7b",
+    "request328-feature-history.parquet": "ad33d0274b5144e020c904e214eb97e91ccb1de8d595379a0b5738ce6030c3fe",
+    "request328-first-states.parquet": "6ae68bc50268bad6d62f2247546f8b4696607a6682b32615fb9a13a219fe3db3",
+    "request328-fit-audit.json": "b2aff1376605824e6515710c7639110f84dc7696caa402d0b72b610fb0b3ea8b",
+    "request328-states.parquet": "53f6ed0e10259fe9b12fd21b2f5efc290e49ae8140850a1a186337f4e1c38978",
+    "request328-training-states.parquet": "90bfabaaf3f754a0dca19d96492846a89b58912d14a3013f7b1c119682eed821",
+    "request328-transition-ledger.parquet": "67da9e890c274c666236144ec36646e3b294579f0dea47f4c26cff5e76d808b0",
+    "request328-transition-manifest.parquet": "1b32798878cac7b8912a05915da8080ee098c0a126eef8fc903da290ea94284c",
+    "request328.json": "3dde1825f020ddfcb020b0e22ee0bc076169bc620590693c58ff8054bb50021d",
+    "request328.log": "271a5b84e46202cafde31c9757cbd1382cb67d30dc88a11d8782cde898cdf933",
+    "source-sha.txt": "4f785bd56b7bcfb84dedb06e91b12b5c9a09c68f27a0bb626e85965c464a98cb"
+  },
+  "local_test_validation": {
+    "new_tests_passed": 18,
+    "full_tests_passed": 1196,
+    "existing_warnings": 159,
+    "expected_unsupported_NaN_warning": 1,
+    "full_suite_seconds": 42.41,
+    "critical_ruff_passed": true
+  },
+  "implementation_full_CI_success_runs": [
+    37657051067,
+    37657058800,
+    37657328873
+  ],
+  "converged_full_and_supported_fold_heads": 12,
+  "maximum_normalized_gradient_inf": 9.492001615340842e-09,
+  "comparison_check_passed": 13,
+  "comparison_check_total": 40,
+  "reproduction": {
+    "request_id": 328,
+    "absolute_tolerance": 1e-09,
+    "json": {
+      "numeric_fields": 2050,
+      "maximum_numeric_error": 0.0
+    },
+    "json_bytes_equal": true,
+    "fit_audit": {
+      "numeric_fields": 705,
+      "maximum_numeric_error": 0.0
+    },
+    "frames": {
+      "request328-transition-manifest.parquet": {
+        "rows": 7066,
+        "columns": 10,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      },
+      "request328-transition-ledger.parquet": {
+        "rows": 266,
+        "columns": 6,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      },
+      "request328-training-states.parquet": {
+        "rows": 7806,
+        "columns": 224,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      },
+      "request328-states.parquet": {
+        "rows": 19530,
+        "columns": 221,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      },
+      "request328-chronological-states.parquet": {
+        "rows": 7806,
+        "columns": 223,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      },
+      "request328-first-states.parquet": {
+        "rows": 679,
+        "columns": 221,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      },
+      "request328-episode-ledger.parquet": {
+        "rows": 828,
+        "columns": 13,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      },
+      "request328-feature-history.parquet": {
+        "rows": 35142,
+        "columns": 73,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      },
+      "request328-design-matrix.parquet": {
+        "rows": 35142,
+        "columns": 34,
+        "maximum_numeric_error": 0.0,
+        "missingness_equal": true,
+        "identities_labels_and_values_equal_within_tolerance": true,
+        "score_pair_ranks_equal": true,
+        "correction_and_logit_ranks_equal": true
+      }
+    }
+  },
+  "workflow_retired_after_verified_replay": true,
+  "draft_PR": "https://github.com/dayofhiki/MoneyMaker/pull/101",
+  "merge_or_promotion": false,
+  "market_requests": 0,
+  "sealed_dates_opened": false,
+  "next_experiment_design": "request329-proposal.md",
+  "R329_real_fits": 0,
+  "final_head_CI": "Verify final clean head and record its CI run in Draft PR101 closeout body."
+}
