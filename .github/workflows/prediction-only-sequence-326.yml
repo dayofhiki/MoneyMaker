@@ -1,3 +1,4 @@
+# Repaired replay after recorded first-equality failure37623558937; unchanged scientific contract.
 name: MoneyMaker R326 Independent Cached Replay
 
 on:
@@ -48,7 +49,7 @@ jobs:
           path: victory-trader/prepared/official325
           run-id: 37618872764
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: One fixed offline experiment
+      - name: Fixed offline experiment after canonical initial replay repair
         run: |
           set -o pipefail
           mkdir -p artifacts
