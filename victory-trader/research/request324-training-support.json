@@ -1,0 +1,50 @@
+{
+  "scope": "Exploratory TRAINING-ONLY adjacent-state support audit; no fit or evaluation outcomes",
+  "input_sha256": "bbf45eb9d26c9c5ce83b96187121db3e5de4ca92ae27435545b9817225113358",
+  "observations": 9325,
+  "complete_adjacent_transitions": 8445,
+  "transition_episodes": 286,
+  "transitions": {
+    "0_to_0": {
+      "rows": 7553,
+      "episodes": 273,
+      "dates": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ]
+    },
+    "0_to_1": {
+      "rows": 88,
+      "episodes": 38,
+      "dates": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ]
+    },
+    "1_to_0": {
+      "rows": 99,
+      "episodes": 48,
+      "dates": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ]
+    },
+    "1_to_1": {
+      "rows": 705,
+      "episodes": 45,
+      "dates": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ]
+    }
+  },
+  "maximum_gap_ms": 240000
+}
