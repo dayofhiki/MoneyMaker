@@ -157,3 +157,21 @@ def test_first_replay_checks_all_labels_and_missingness():
         changed.loc[0, column] += 1
         with pytest.raises(AssertionError):
             exp.verify_first(changed, saved)
+
+
+def test_manifest_uses_all_real_clocks_without_forward_fill_or_outcomes(monkeypatch):
+    day = "2026-05-11"
+    monkeypatch.setattr(exp, "EVAL_DAYS", (day,))
+    hot = int(pd.Timestamp(day+"T14:00:00Z").timestamp()*1000)
+    ticker = next("T"+str(i) for i in range(1000) if exp.identity_hash(day, "T"+str(i), hot) < 64)
+    cohort = pd.DataFrame([{"trading_day": day, "ticker": ticker, "hot_t": hot,
+                            "sample_hash_byte": exp.identity_hash(day, ticker, hot)}])
+    bars = pd.DataFrame({"t": hot+np.array([-1000, 0, 4000, 299000, 300000]), "c": 10.})
+    contexts = {(day, ticker): (bars, hot-1800000, hot+21600000)}
+    manifest, ledger = exp.evaluation_manifest(cohort, contexts)
+    assert list(manifest.decision_t-hot) == [1000, 5000, 300000]
+    assert ledger.observed_states.iloc[0] == 3 and exp.CEILING not in manifest
+    bars["c"] = 1e9
+    pd.testing.assert_frame_equal(manifest, exp.evaluation_manifest(cohort, contexts)[0])
+    empty, ledger = exp.evaluation_manifest(cohort, {})
+    assert empty.empty and len(ledger) == 1 and ledger.observed_states.iloc[0] == 0
