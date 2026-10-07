@@ -1,0 +1,298 @@
+{
+  "request_id": 329,
+  "training_support_only": true,
+  "evaluation_read": false,
+  "real_model_fits": 0,
+  "input_sha256": {
+    "official321/request321-chronological-states.parquet": "637b08447d038361b0027c7503dfe08294c136bb5c80efdf0a4cd9d187383807",
+    "official328/request328-fit-audit.json": "b2aff1376605824e6515710c7639110f84dc7696caa402d0b72b610fb0b3ea8b",
+    "official328/source-sha.txt": "4f785bd56b7bcfb84dedb06e91b12b5c9a09c68f27a0bb626e85965c464a98cb"
+  },
+  "tau_s": 30.0,
+  "scopes": {
+    "full": {
+      "fit_days": [
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ],
+      "observations": 7806,
+      "complete_weight_mass": 256.0,
+      "active": {
+        "observations": 6990,
+        "complete_targets": 6546,
+        "complete_target_episodes": 183,
+        "positive_target_episodes": 41,
+        "original_complete_weight_mass": 130.1316797413857,
+        "positive_target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "negative_target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "first_eligible": {
+        "observations": 191,
+        "complete_targets": 182,
+        "complete_target_episodes": 182,
+        "positive_target_episodes": 22,
+        "original_complete_weight_mass": 16.38474426570815,
+        "positive_target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "negative_target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "carried_history": {
+        "observations": 6799,
+        "complete_targets": 6364,
+        "complete_target_episodes": 162,
+        "positive_target_episodes": 38,
+        "original_complete_weight_mass": 113.74693547567753,
+        "positive_target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "negative_target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "changed_from_current": {
+        "observations": 6799,
+        "complete_targets": 6364,
+        "complete_target_episodes": 162,
+        "positive_target_episodes": 38,
+        "original_complete_weight_mass": 113.74693547567753,
+        "positive_target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "negative_target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ],
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07",
+          "2026-05-08"
+        ]
+      },
+      "maximum_first_eligible_basis_difference": 0.0,
+      "path_sha256": {
+        "current": "4eef5f2fa5b3b0ce1bd343ca9f7be5fd37589f11717775af10663cfc67d253d5",
+        "EMA_evidence": "4c538c7376b38e68287ff8875a50c537dd1ca6df352089f4dc77fe65920eed49",
+        "first_eligible_anchor": "78d32ca30024ec66a346adf724849b2b900cc81fd2d9ac0ab2ed7c4e267629ff",
+        "EMA_before": "274acdf023e10f49a1729c4e5b35beb8ee4711dde4d4b11ee2c8b8856a4cfed0",
+        "EMA_after": "cbf715a5e334b791848db01f4f21ba5bc4cf8264befb42a23a3f921d794104e2",
+        "last_eligible_t": "8853dcbf3340fbd727098bd00ca7b0e0aeb7e3ee1dcc6df232e00db9be3aefd0"
+      }
+    },
+    "2026-05-06": {
+      "fit_days": [],
+      "no_preceding_meta_day": true
+    },
+    "2026-05-07": {
+      "fit_days": [
+        "2026-05-06"
+      ],
+      "observations": 4602,
+      "complete_weight_mass": 95.0,
+      "active": {
+        "observations": 4318,
+        "complete_targets": 3921,
+        "complete_target_episodes": 69,
+        "positive_target_episodes": 15,
+        "original_complete_weight_mass": 52.71774655768854,
+        "positive_target_days": [
+          "2026-05-06"
+        ],
+        "negative_target_days": [
+          "2026-05-06"
+        ],
+        "target_days": [
+          "2026-05-06"
+        ]
+      },
+      "first_eligible": {
+        "observations": 74,
+        "complete_targets": 69,
+        "complete_target_episodes": 69,
+        "positive_target_episodes": 6,
+        "original_complete_weight_mass": 5.1451256840415995,
+        "positive_target_days": [
+          "2026-05-06"
+        ],
+        "negative_target_days": [
+          "2026-05-06"
+        ],
+        "target_days": [
+          "2026-05-06"
+        ]
+      },
+      "carried_history": {
+        "observations": 4244,
+        "complete_targets": 3852,
+        "complete_target_episodes": 62,
+        "positive_target_episodes": 14,
+        "original_complete_weight_mass": 47.57262087364694,
+        "positive_target_days": [
+          "2026-05-06"
+        ],
+        "negative_target_days": [
+          "2026-05-06"
+        ],
+        "target_days": [
+          "2026-05-06"
+        ]
+      },
+      "changed_from_current": {
+        "observations": 4244,
+        "complete_targets": 3852,
+        "complete_target_episodes": 62,
+        "positive_target_episodes": 14,
+        "original_complete_weight_mass": 47.57262087364694,
+        "positive_target_days": [
+          "2026-05-06"
+        ],
+        "negative_target_days": [
+          "2026-05-06"
+        ],
+        "target_days": [
+          "2026-05-06"
+        ]
+      },
+      "maximum_first_eligible_basis_difference": 0.0,
+      "path_sha256": {
+        "current": "5d418f881af1b1350e1b67189f844177fa82fc5d536f7723a5f06518d9fe368a",
+        "EMA_evidence": "c450dac1643bd9d3bc10b7b74e9f896e70d57cc3f573eadab481c4bda0cd7542",
+        "first_eligible_anchor": "78594d01ba96caea905375ea01295c44940a8240523a1d49b9f9930eaaae4547",
+        "EMA_before": "c95dd5d2aceb513c3984201c0d06807bc443ce8ec3b4ec252fadb3fb40d237b1",
+        "EMA_after": "a23f8405dc9d46aa666b95d10be786a22c16efc4a9a0b126d5054e9c3cc1a3b5",
+        "last_eligible_t": "ec56d430faae53c6f01d0d4d7ea902bbe15105431d5717a2b2cb793c47e49f6a"
+      }
+    },
+    "2026-05-08": {
+      "fit_days": [
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "observations": 6221,
+      "complete_weight_mass": 179.0,
+      "active": {
+        "observations": 5685,
+        "complete_targets": 5288,
+        "complete_target_episodes": 129,
+        "positive_target_episodes": 34,
+        "original_complete_weight_mass": 94.23304864488158,
+        "positive_target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "negative_target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ]
+      },
+      "first_eligible": {
+        "observations": 134,
+        "complete_targets": 129,
+        "complete_target_episodes": 129,
+        "positive_target_episodes": 18,
+        "original_complete_weight_mass": 11.774019272239109,
+        "positive_target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "negative_target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ]
+      },
+      "carried_history": {
+        "observations": 5551,
+        "complete_targets": 5159,
+        "complete_target_episodes": 114,
+        "positive_target_episodes": 31,
+        "original_complete_weight_mass": 82.45902937264248,
+        "positive_target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "negative_target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ]
+      },
+      "changed_from_current": {
+        "observations": 5551,
+        "complete_targets": 5159,
+        "complete_target_episodes": 114,
+        "positive_target_episodes": 31,
+        "original_complete_weight_mass": 82.45902937264248,
+        "positive_target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "negative_target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ],
+        "target_days": [
+          "2026-05-06",
+          "2026-05-07"
+        ]
+      },
+      "maximum_first_eligible_basis_difference": 0.0,
+      "path_sha256": {
+        "current": "2a775dc2a750b9e164306d844274cf5282d4741985b51ef2da34113c8284fbde",
+        "EMA_evidence": "31058e8466170c0a265a9e00fc69f4a92128f41bded68c9d950b7ed7ede23976",
+        "first_eligible_anchor": "082f8fcdc27244df78c141eec39795ce2958ffcb1d696d89fdee2b9918663a09",
+        "EMA_before": "4781d26e3cebba0fc834c21e2979a3aacfa1f68c5aa15ace93532bee5ebd55d4",
+        "EMA_after": "f1df1c5915e95e6b68b6fd7cea0ad652b45f575fdfdd61e768905f9b6d9bacdb",
+        "last_eligible_t": "56469f08d82b586ea2758b4c1a454124bc4fdaa092e5bf304fb942dab1bc0f48"
+      }
+    }
+  },
+  "method": "Freeze corresponding verified R328 S numeric transform. Same all-seven-history gate. First eligible current vector initializes EMA/anchor; subsequent eligible clocks update EMA using elapsed since last ELIGIBLE clock. Inactive clocks carry state/time and emit zero design. Original rows/complete weights retained. No labels enter memory; no fit/evaluation/parameter search."
+}

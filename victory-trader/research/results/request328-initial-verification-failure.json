@@ -1,0 +1,19 @@
+{
+  "request_id": 328,
+  "verification_attempt": 1,
+  "passed": false,
+  "failure": "ArrowInvalid: Parquet magic bytes not found in footer",
+  "affected_file": "request328-design-matrix.parquet",
+  "local_bytes": 4393450,
+  "local_sha256": "95b4fe7c330877b255b9474ce9a172497251300f48068f004b09626a49a8d39a",
+  "local_file_is_exact_prefix_of_official": true,
+  "local_missing_footer": true,
+  "main_json_numeric_error": 0.0,
+  "fit_audit_numeric_error": 0.0,
+  "other_eight_tables_byte_identical": true,
+  "repair": "Serialize registered design table from independent saved LOCAL training/evaluation/chronological state tables. No copied official reference values, refitting, optimization retry, scientific change or tolerance/rank relaxation.",
+  "root_cause": "Not established; local output is truncated.",
+  "recovered_local_bytes": 5470678,
+  "recovered_local_sha256": "300c89ff00255fdb8bb5cebce3805f87c51c45e30112b671509a2b0ef4447568",
+  "recovered_bytes_equal_official": true
+}

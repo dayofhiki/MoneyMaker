@@ -1,11 +1,6 @@
 # R328 proposal: an observability-gated trajectory residual on frozen G
 
-Historical proposal prepared after R327. R328 is now executed; see
-request328-plan.md and request328-findings.md for the registered contract/results.
-The original proposal follows. R327's authenticated official replay
-matches 8,941 JSON numbers and all eight tables exactly. Before real R328 fitting,
-register this final contract and every official input hash remotely. This proposal
-is a hypothesis generated on reused May development data, not fresh evidence.
+Register remotely BEFORE any real R328 fit/evaluation. Parent R327 8011bd6671f982834ba4feb264770bbf76d7977f / Draft PR100. Standing operating-authorization.md applies. R327's single official source6c2bb5518187c41d7a59a3e1d9d3085fd9ec50dd/run37652470621 and both authenticated artifacts11497031370/11497126349 reproduce8,941 JSON numbers and all eight tables exactly. This hypothesis uses reused May development, not fresh evidence. All inputs are pinned in request328-inputs.json.
 
 ## Why this experiment
 
@@ -176,3 +171,25 @@ One cached official replay; authenticate all artifacts/source; JSON/coefficients
 tables <=1e-9 with exact identities/missingness/tie-aware ranks. Preserve failed
 attempts and do not relax tolerance after outcomes. Retire the one-shot workflow
 only after verified closeout. No main merge, policy change or promotion.
+
+## Registered persistence/official packaging
+
+Persist the inherited seven original-population tables, feature-history table
+(scope/source indices, all63 R327 path quantities, original target weights) and
+a ninth design-matrix table (training/evaluation/chronological scopes, gate,
+G offset, original weights and seven F/N/S numeric coordinates plus M scalar).
+Keep complete full/fold fit audits, corrections/logits and all probability logs.
+Numeric1e-9 agreement and EXACT score/correction/logit tie-aware ranks/missingness
+apply to all nine tables and all JSON/fit-audit numbers. No relaxed checks.
+
+Before any real fit, fix two-artifact transfer packaging for the same single
+official run: primary contains all output except training-states/feature-history;
+secondary contains those two large tables plus identical source/environment files.
+Authenticate BOTH ZIP digests/source and identical duplicated metadata, then
+merge original names and verify all nine tables. This anticipates the32MiB
+per-archive transfer limit; it does not change rows/models/weights/tolerances.
+
+Loss gradients ignore censored targets by indexing positive weights before
+label arithmetic. Unsupported full fits save audit and stop. Unsupported folds
+retain gate0 G and gate1 NaN; genuine numerical failures stop with audit.
+Parameter schemas/gradient tolerance are the same for all full and fitted folds.
