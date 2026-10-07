@@ -104,19 +104,30 @@ def fit_admission(meta: pd.DataFrame, held: pd.DataFrame) -> tuple[pd.DataFrame,
     scored, audits = held.copy(), {}
     for arm, features in PACKAGES.items():
         model, transform, prior, audit = fit_linear(train, features, SEED)
-        scored[f"{arm}_p_net_5"] = predict_linear(held, model, transform, prior)
-        scored[f"{arm}_prior_net_5"] = prior
+        scored[f"R322_{arm}_p_net_5"] = predict_linear(held, model, transform, prior)
+        scored[f"R322_{arm}_prior_net_5"] = prior
         audits[arm] = audit | {"fit_days": sorted(train.trading_day.unique()), "seed": SEED}
     first = scored.sort_values("decision_t").groupby(KEYS, sort=False).head(1)
     for arm in PACKAGES:
-        reference = first[[*KEYS, f"{arm}_p_net_5"]].rename(columns={f"{arm}_p_net_5": f"{arm}0_p_net_5"})
+        reference = first[[*KEYS, f"R322_{arm}_p_net_5"]].rename(columns={f"R322_{arm}_p_net_5": f"R322_{arm}0_p_net_5"})
         scored = scored.merge(reference, on=KEYS, how="left", validate="many_to_one", sort=False)
-        scored[f"{arm}0_prior_net_5"] = scored[f"{arm}_prior_net_5"]
+        scored[f"R322_{arm}0_prior_net_5"] = scored[f"R322_{arm}_prior_net_5"]
     return scored, audits
 
 
+def probability_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    columns = [f"R322_{a}_{suffix}" for a in ARMS for suffix in ("p_net_5", "prior_net_5")]
+    selected = frame[[*KEYS, "decision_t", "observation_available", "label_complete", CEILING, *columns]].copy()
+    return selected.rename(columns={c: c.removeprefix("R322_") for c in columns})
+
+
+def probability_metrics(frame: pd.DataFrame) -> dict:
+    return metrics(probability_frame(frame), ARMS)
+
+
 def intervals(frame: pd.DataFrame, draws=1000) -> dict:
-    complete = frame.loc[complete_mask(frame)].reset_index(drop=True)
+    projected = probability_frame(frame)
+    complete = projected.loc[complete_mask(projected)].reset_index(drop=True)
     cache, output = RankCache(complete, ARMS), {}
     for scheme, columns, seed in (("day", ["trading_day"], 20265650), ("ticker_day", ["trading_day", "ticker"], 20265651)):
         groups = list(complete.groupby(columns, sort=False).indices.values())
@@ -204,14 +215,14 @@ def run(previous: Path, pinned: Path, output: Path) -> dict:
     report = {"training_episodes": 256, "positive_training_episodes": 51,
         "observed_states": len(scored), "complete_states": int(complete_mask(scored).sum()),
         "complete_evaluation_episodes": len(scored.loc[complete_mask(scored), KEYS].drop_duplicates()),
-        "ledger_episodes": len(ledger), "arms": metrics(scored, ARMS),
-        "per_day": {d: {"arms": metrics(scored.loc[scored.trading_day.eq(d)], ARMS),
+        "ledger_episodes": len(ledger), "arms": probability_metrics(scored),
+        "per_day": {d: {"arms": probability_metrics(scored.loc[scored.trading_day.eq(d)]),
             "positive_episodes": len(scored.loc[scored.trading_day.eq(d) & complete_mask(scored) & truth(scored[CEILING], 5), KEYS].drop_duplicates())} for d in EVAL_DAYS},
         "paired_intervals": intervals(scored)}
     result = {"request_id": REQUEST_ID, "development_only": True, "promotion_eligible": False,
         "market_requests": 0, "June_HOLD_opened": False, "final_July_August_opened": False,
         "input_sha256": hashes, "packages": {a: list(f) for a, f in PACKAGES.items()},
-        "normalization": normalization, "fits": fits, "comparison": report, "first": metrics(first, ARMS),
+        "normalization": normalization, "fits": fits, "comparison": report, "first": probability_metrics(first),
         "external_saved_references": metrics(scored, ("Q", "G", "X", "X0")), "gate_checks": gate(report),
         "integrity": {"pinned_hashes_verified": True, "preceding_day_stage_one_scope_verified": True,
             "saved_inputs_labels_missingness_scores_preserved": True, "trajectory_before_censor_filter": True,

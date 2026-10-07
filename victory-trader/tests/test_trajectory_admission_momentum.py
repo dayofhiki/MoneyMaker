@@ -95,14 +95,17 @@ def test_meta_heads_share_support_mass_and_keep_first_controls():
     meta, _ = exp.enrich(train, held, heads)
     evaluation = meta.copy()
     evaluation.trading_day = "2026-05-11"
+    evaluation["C_p_net_5"] = .123
+    evaluation["C0_p_net_5"] = .456
     meta.loc[1, "label_complete"] = False
     scored, audits = exp.fit_admission(meta, evaluation)
     assert all(a["train_rows"] == 7 and a["train_episodes"] == 2 and a["weight_sum"] == pytest.approx(2) for a in audits.values())
     assert all(a["fit_days"] == ["2026-05-06"] and a["seed"] == exp.SEED for a in audits.values())
     assert audits["B"]["preprocessing"]["raw_features"] == list(exp.PACKAGES["B"])
     assert audits["C"]["preprocessing"]["raw_features"] == list(exp.PACKAGES["C"])
-    assert scored.groupby(exp.KEYS).B0_p_net_5.nunique().eq(1).all()
-    assert exp.metrics(scored, exp.ARMS)["B0"]["within_episode_auc"] == .5
+    assert scored.groupby(exp.KEYS).R322_B0_p_net_5.nunique().eq(1).all()
+    assert exp.probability_metrics(scored)["B0"]["within_episode_auc"] == .5
+    assert scored.C_p_net_5.eq(.123).all() and scored.C0_p_net_5.eq(.456).all()
     intervals = exp.intervals(scored, draws=10)
     assert intervals["day"]["draws"] == 10
 
