@@ -161,3 +161,16 @@ fold tests, full suite and critical Ruff. One cached official replay and complet
 JSON/fit-audit/eight-table agreement<=1e-9, identities/missingness/tie-aware score
 and rate order exactly, source/digest authentication. Then retire one-shot workflow.
 If reproducibility fails, record the failure and do not call results reproduced.
+
+## Transfer packaging before official execution
+
+Local eight-table output is approximately44MB even with ZSTD19. The file transfer
+tool accepts archives<=32MiB, so the SAME single cached official run publishes
+two authenticated artifacts. Primary moneymaker-independent-request-327 holds
+JSON/fit audit/transitions/ledger/evaluation/chronology/first/source/environment/log;
+secondary moneymaker-independent-request-327-feature-history holds training-states
+and feature-history, plus the same source/environment. Merge by unchanged original
+filenames after authenticating BOTH source SHAs/digests and duplicate metadata.
+No model, score, weight, missingness, rank rule or verification tolerance changes;
+all eight tables remain required for reproduction. No additional fitting is needed
+for packaging. Record both artifact identifiers/digests.
