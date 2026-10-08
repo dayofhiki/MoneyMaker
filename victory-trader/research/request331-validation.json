@@ -1,0 +1,33 @@
+{
+  "request_id": 331,
+  "status": "implemented_validated_not_published_not_executed",
+  "latest_completed_R330_head": "6c72824d36a5f86d4f282b0cb5f201d1d136eac7",
+  "local_preregistration_commit": "fa894b68e9eceb3e09ae6aebca1994042351c1db",
+  "validation": {
+    "full_tests_passed": 1239,
+    "warnings": 160,
+    "seconds": 56.89,
+    "new_synthetic_tests_passed": 19,
+    "critical_ruff": "pass",
+    "git_diff_check": "pass"
+  },
+  "existing_input_authentication": {
+    "verified_files": 12,
+    "training_identities": 407,
+    "evaluation_identities": 828
+  },
+  "source_sha256": {
+    "src/victory_trader/action_target_support_census.py": "258a03228da6da21dab444a00d042589b2662c0c526958b4b7c2bd5727af1633",
+    "tests/test_action_target_support_census.py": "c3245a3e26282302eed472047b661179b78fe758a6936429557f7a1980b09e29",
+    "research/verify_request331.py": "63a8c676fec879bfdedb003cfe39b0f5a4e627cc6a7a3a0d21d11dc61eeb1b3b",
+    "research/request331-preregistration.md": "31fcdb7679de1b854cbcf88b2d124bc171741a8ec0b7fad46e9cf4d4cdc324eb",
+    "research/request331-inputs.json": "35af831f3c5c01afbbcdbd14100a3eba067753a83b58937b7ade0396e2999153"
+  },
+  "R331_market_clock_generation": false,
+  "R331_target_generation": false,
+  "R331_model_fits": 0,
+  "official_R331_workflows_started": 0,
+  "public_branch_push_rejections": 2,
+  "remote_R331_branch_found": false,
+  "approval_review_reason": "Public research metadata/dataset-derived hash publication requires trusted explicit authorization for this exact disclosure; prior standing authorization was not accepted."
+}
