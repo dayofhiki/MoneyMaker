@@ -1,9 +1,6 @@
 name: MoneyMaker R330 Independent Cached Replay
 
-on:
-  push:
-    branches: [research/current-state-enter-wait-330]
-    paths: ['.github/workflows/current-state-enter-wait-330.yml']
+on: [push]
 
 permissions:
   contents: read
@@ -11,6 +8,7 @@ permissions:
 
 jobs:
   replay:
+    if: github.ref == 'refs/heads/research/current-state-enter-wait-330'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     defaults:
