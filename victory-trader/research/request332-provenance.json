@@ -1,0 +1,102 @@
+{
+  "request_id": 332,
+  "status": "completed_exactly_reproduced",
+  "base_closeout_sha": "3068933716011dc8bb7549b8b3d55d1bbd4bde74",
+  "preregistration_sha": "e1eb485febcae7b780b844fb9a9a12d9ea8ec270",
+  "evaluated_source_sha": "6dbcd3f45eb6763dad979aa8ca4456702ecbc8b7",
+  "evaluated_tree_sha": "50407e8225e4ba732820f8cf2e9645146b900571",
+  "official_run": 37755971071,
+  "artifact_id": 11539558823,
+  "artifact_name": "moneymaker-independent-request-332",
+  "artifact_zip_sha256": "3cd5747f0d8acb8d14566b705c3820ca47f9b2ea4ff23d8039d006090c1caa97",
+  "artifact_created_at": "2026-10-08T09:21:21Z",
+  "canonical_result_sha256": "480a481c0bd4b90f732e21410d4954080e0a80a56e4a4ff196bc0c7e4d667613",
+  "pr_number": 105,
+  "pr_url": "https://github.com/dayofhiki/MoneyMaker/pull/105",
+  "failed_official_attempts": [],
+  "duplicate_official_runs": [],
+  "local_relevant_tests": 52,
+  "new_synthetic_tests": 18,
+  "critical_lint": "passed",
+  "evaluated_source_ci_success_runs": [
+    37755971037,
+    37755976171
+  ],
+  "reproduction": {
+    "request_id": 332,
+    "absolute_tolerance": 1e-09,
+    "json": {
+      "numeric_fields": 3814,
+      "maximum_numeric_error": 0.0,
+      "bytes_equal": true
+    },
+    "frames": {
+      "request332-training-source-ledger.parquet": {
+        "rows": 407,
+        "columns": 17,
+        "maximum_numeric_error": 0.0,
+        "exact_missingness": true,
+        "exact_identities_clocks_categories_flags": true,
+        "bytes_equal": true
+      },
+      "request332-training-clock-audit.parquet": {
+        "rows": 26433,
+        "columns": 20,
+        "maximum_numeric_error": 0.0,
+        "exact_missingness": true,
+        "exact_identities_clocks_categories_flags": true,
+        "bytes_equal": true
+      },
+      "request332-evaluation-source-ledger.parquet": {
+        "rows": 828,
+        "columns": 17,
+        "maximum_numeric_error": 0.0,
+        "exact_missingness": true,
+        "exact_identities_clocks_categories_flags": true,
+        "bytes_equal": true
+      },
+      "request332-evaluation-clock-audit.parquet": {
+        "rows": 52908,
+        "columns": 20,
+        "maximum_numeric_error": 0.0,
+        "exact_missingness": true,
+        "exact_identities_clocks_categories_flags": true,
+        "bytes_equal": true
+      }
+    }
+  },
+  "original_input_sha256": {
+    "official311/source-sha.txt": "5ffba8292c3603ca5e3b5ac0ddd63a4f66fcca14fbd440364c5fd50da0485ba2",
+    "official311/request311-raw-seconds.parquet": "3382ad9f1c5c35d0d161848e90710a61566438eda8da93efde0744c0838cfcc6",
+    "official311/request311.json": "8f6d56b10a6df7153e63012bbac6aa2d520060e909f02d12791678a1a1fdea7e",
+    "official315/source-sha.txt": "6ea3fcfa4283d33f45ef7aebd0fc1cc093e48e4c599cad913f3a0cc0469a7776",
+    "official315/request315-training-cohort.parquet": "75c59cca49ff0eb6d81fb4708a3804e20550c073c2ad66503b832086d8925a97",
+    "official315/request315-training-raw-seconds.parquet": "414608871f35d73bbf3a2ad949472d46c99d3b6a52ea9834285fc50902ba2de7",
+    "official315/request315-acquisition.json": "a22737c540d495c4a6750f32bc15b3c66d389e9c343f8825fb4543320f4923de",
+    "official319/source-sha.txt": "63b0ba042ff56de3d6deb26ad981ed4464732ccf21f26d69f825c8b235c482a5",
+    "official319/request319-episode-ledger.parquet": "d5952a888cc97353d1bdfce3ba94ffa9845e88aadc96a00a69cb77a1adf54707",
+    "official331/source-sha.txt": "61145a79ff9b6a99b4d6cf33c30f0ade09f2b615df1e9d41b969b950e2aded7b",
+    "official331/request331-clock-registration.json": "bcab9885cd3c50861fbee36b66e1e25248b8a903b6c372fe594cbc877d5a129f",
+    "official331/request331-training-clocks.parquet": "7c0ac4cf5513baddb5e3c2de370e8582c80f311fd18b3fc687d2e664c59d9958",
+    "official331/request331-training-clock-ledger.parquet": "94a7049543b005c049d42ff86f774859e208c8ac76b2f9d843f74a43afb01a62",
+    "official331/request331-training-targets.parquet": "e5f0824d8fe5c758d1a55b00a26625f0bd8ea4db67bc80e841f5c31d46e5c459",
+    "official331/request331-evaluation-clocks.parquet": "6b8c391f43eb8f5f403c32651bf1dd485a068ffdd5f8d36246ab92473e0ebc1b",
+    "official331/request331-evaluation-clock-ledger.parquet": "fe6fbe951bad29c64bf431d119cd3f263314f5e0877801289f32b6d8f876632b",
+    "official331/request331-evaluation-targets.parquet": "c48774249623e0d15752fb10215bc4aaf249e94c93bda2dc2aa85acb8f2fc6b6"
+  },
+  "output_sha256": {
+    "request332-evaluation-clock-audit.parquet": "31492478a911554ae66f6a074b54babdcc69e6adbaf5f0a909866f1bb4801874",
+    "request332-evaluation-source-ledger.parquet": "53683e0a351272f3d74ef8e370f8424ef108627f18d85c3420405afe9aa9e03f",
+    "request332-training-clock-audit.parquet": "601c054ba1a5d755dc814970317bf90a186c8fefc30f43b746f944fccb06559e",
+    "request332-training-source-ledger.parquet": "f70dcfc2312a5e5ebc701313bdf4d3193d4aaca0dcd37919e1bfb75a50dfc317"
+  },
+  "source_evidence_sha256": "7716fedfc4507d45b466845e6ea5760a9cbb116b60f016758ec563a9be013571",
+  "new_market_requests": 0,
+  "new_economic_labels": 0,
+  "model_fits": 0,
+  "promotion_eligible": false,
+  "June_HOLD_opened": false,
+  "final_July_August_opened": false,
+  "official_full_ci_tests_passed": 1257,
+  "official_full_ci_warnings": 160
+}
