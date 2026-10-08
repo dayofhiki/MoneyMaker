@@ -1,0 +1,80 @@
+{
+  "request_id": 332,
+  "scope": "fixed authenticated original artifact packages only",
+  "original_sources": {
+    "311": {
+      "source_sha": "a6034adba43fbd02334834f68341a64951957ba6",
+      "git_blobs": {
+        "victory-trader/src/victory_trader/massive_client.py": "032604d836e381e2bfd18fbd1b673065cd076a0c",
+        ".github/workflows/research-request.yml": "7992fe92d30009c88eab75e02f3c499188ba1c96",
+        "victory-trader/research/research-request.json": "4a4c5903064a1b7490c7483528a8c116d128aef3",
+        "victory-trader/src/victory_trader/frozen_momentum_may_transport.py": "416d74cc0cf6ff46bd9cc55d39719ced6c4f1e2f"
+      },
+      "code_contract": {
+        "resolution": "one-second aggregates",
+        "date_bounds": "same declared ticker-day start/end",
+        "adjusted": false,
+        "sort": "asc",
+        "limit": 50000,
+        "pagination": "while next_url",
+        "cache_directory": "data/cache/massive-second-attention",
+        "uploaded_path": "artifacts/**"
+      },
+      "retained_response_evidence": {
+        "request_bounds": null,
+        "adjusted": null,
+        "statuses": null,
+        "page_counts": null,
+        "terminal_next_url": null,
+        "payload_sha256": null
+      },
+      "independent_full_window_streams": [],
+      "artifact_file_inventory": [
+        "request311-cohort.parquet",
+        "request311-raw-seconds.parquet",
+        "request311-states.parquet",
+        "request311.json",
+        "research-request.log",
+        "source-sha.txt"
+      ]
+    },
+    "315": {
+      "source_sha": "c271fbab9c3567c470fc852ef80c39fe36116713",
+      "git_blobs": {
+        "victory-trader/src/victory_trader/massive_client.py": "032604d836e381e2bfd18fbd1b673065cd076a0c",
+        ".github/workflows/research-request.yml": "7992fe92d30009c88eab75e02f3c499188ba1c96",
+        "victory-trader/research/research-request.json": "48d56c5981fc470a38271565b878a555e73642bf",
+        "victory-trader/src/victory_trader/canonical_population_momentum.py": "9881ad121debb275fa7cb1aa5fd5cc3013d06dd1"
+      },
+      "code_contract": {
+        "resolution": "one-second aggregates",
+        "date_bounds": "same declared ticker-day start/end",
+        "adjusted": false,
+        "sort": "asc",
+        "limit": 50000,
+        "pagination": "while next_url",
+        "cache_directory": "data/cache/massive-second-attention",
+        "uploaded_path": "artifacts/**"
+      },
+      "retained_response_evidence": {
+        "request_bounds": null,
+        "adjusted": null,
+        "statuses": null,
+        "page_counts": null,
+        "terminal_next_url": null,
+        "payload_sha256": null
+      },
+      "independent_full_window_streams": [],
+      "artifact_file_inventory": [
+        "request315-acquisition.json",
+        "request315-states.parquet",
+        "request315-training-cohort.parquet",
+        "request315-training-raw-seconds.parquet",
+        "request315-training-states.parquet",
+        "request315.json",
+        "research-request.log",
+        "source-sha.txt"
+      ]
+    }
+  }
+}

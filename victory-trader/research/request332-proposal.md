@@ -1,8 +1,11 @@
 # R332 proposal: distinguish source gaps from execution-proxy limits
 
-Designed after verified R331; not registered or executed. No new collection,
-clock/target generation or fit is claimed. Explicit memory remains low priority;
-the continuous current-state action/ledger structure remains the intended route.
+Historical proposal, now superseded by `request332-preregistration.md` and the
+completed, exactly reproduced `request332-findings.md`. R332 performed the fixed
+cached source audit; no new collection, target generation or fit. R333's separate
+source intervention proposal is in `request333-proposal.md`. Explicit memory
+remains low priority; the continuous current-state action/ledger structure remains
+the intended route. The original proposal text below is retained for provenance.
 
 R331 recovers adequate nominal immediate support (105→156 compatible complete
 episodes,38→59 positive), but fails pooled compatible execution resolution

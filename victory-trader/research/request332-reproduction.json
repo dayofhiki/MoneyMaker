@@ -1,0 +1,43 @@
+{
+  "request_id": 332,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 3814,
+    "maximum_numeric_error": 0.0,
+    "bytes_equal": true
+  },
+  "frames": {
+    "request332-training-source-ledger.parquet": {
+      "rows": 407,
+      "columns": 17,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_identities_clocks_categories_flags": true,
+      "bytes_equal": true
+    },
+    "request332-training-clock-audit.parquet": {
+      "rows": 26433,
+      "columns": 20,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_identities_clocks_categories_flags": true,
+      "bytes_equal": true
+    },
+    "request332-evaluation-source-ledger.parquet": {
+      "rows": 828,
+      "columns": 17,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_identities_clocks_categories_flags": true,
+      "bytes_equal": true
+    },
+    "request332-evaluation-clock-audit.parquet": {
+      "rows": 52908,
+      "columns": 20,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_identities_clocks_categories_flags": true,
+      "bytes_equal": true
+    }
+  }
+}
