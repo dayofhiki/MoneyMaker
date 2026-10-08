@@ -1,0 +1,90 @@
+{
+  "request_id": 331,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "request331-clock-registration.json": {
+      "numeric_fields": 9,
+      "maximum_numeric_error": 0.0,
+      "bytes_equal": true
+    },
+    "request331.json": {
+      "numeric_fields": 5084,
+      "maximum_numeric_error": 0.0,
+      "bytes_equal": true
+    }
+  },
+  "frames": {
+    "request331-training-clocks.parquet": {
+      "rows": 26433,
+      "columns": 5,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_clocks_identity_phase_flags_reasons": true,
+      "exact_payoff_pair_ranks": true,
+      "bytes_equal": true
+    },
+    "request331-training-clock-ledger.parquet": {
+      "rows": 407,
+      "columns": 9,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_clocks_identity_phase_flags_reasons": true,
+      "exact_payoff_pair_ranks": true,
+      "bytes_equal": true
+    },
+    "request331-training-targets.parquet": {
+      "rows": 26433,
+      "columns": 23,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_clocks_identity_phase_flags_reasons": true,
+      "exact_payoff_pair_ranks": true,
+      "bytes_equal": true
+    },
+    "request331-training-support-ledger.parquet": {
+      "rows": 407,
+      "columns": 51,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_clocks_identity_phase_flags_reasons": true,
+      "exact_payoff_pair_ranks": true,
+      "bytes_equal": true
+    },
+    "request331-evaluation-clocks.parquet": {
+      "rows": 52908,
+      "columns": 5,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_clocks_identity_phase_flags_reasons": true,
+      "exact_payoff_pair_ranks": true,
+      "bytes_equal": true
+    },
+    "request331-evaluation-clock-ledger.parquet": {
+      "rows": 828,
+      "columns": 9,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_clocks_identity_phase_flags_reasons": true,
+      "exact_payoff_pair_ranks": true,
+      "bytes_equal": true
+    },
+    "request331-evaluation-targets.parquet": {
+      "rows": 52908,
+      "columns": 23,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_clocks_identity_phase_flags_reasons": true,
+      "exact_payoff_pair_ranks": true,
+      "bytes_equal": true
+    },
+    "request331-evaluation-support-ledger.parquet": {
+      "rows": 828,
+      "columns": 51,
+      "maximum_numeric_error": 0.0,
+      "exact_missingness": true,
+      "exact_clocks_identity_phase_flags_reasons": true,
+      "exact_payoff_pair_ranks": true,
+      "bytes_equal": true
+    }
+  }
+}
