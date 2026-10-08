@@ -1,0 +1,46 @@
+{
+  "initial_official_attempt": {
+    "run_id": 37744636385,
+    "source": "4485a344c0caecef452b1837f1d4b305706ca15a",
+    "status": "failed_before_any_new_fit",
+    "reason": "registered full/fold memory path fingerprint mismatch; actual failing values were not persisted on this first source",
+    "artifact_primary": 11535009197,
+    "artifact_primary_sha256": "eba4b34afd7e3474d88547d81a7447635a36a1edfdb345809dc08e3a4a61c7bd",
+    "cause": "unknown"
+  },
+  "successful_official_attempt": {
+    "run_id": 37745032388,
+    "source": "79c529055b7203292a318139836cce52f574b051",
+    "primary_id": 11534843775,
+    "primary_sha256": "1fa5bd2824c8bd7d3a6aff2517e4c2b6c8f285ea3ef34761e167fd0afded6585",
+    "secondary_id": 11535900070,
+    "secondary_sha256": "31b9ebd08409eb385de4bd9d237247acfcfdfd83326504cf5d6c9d2ee7bf0acb",
+    "changes": "Only preserve pre-fit failing paths and stderr, no scientific change, hash relaxation or optimizer retry"
+  },
+  "all_parquet_bytes_equal": {
+    "request329-states.parquet": true,
+    "request329-episode-ledger.parquet": true,
+    "request329-transition-manifest.parquet": true,
+    "request329-first-states.parquet": true,
+    "request329-chronological-states.parquet": true,
+    "request329-training-states.parquet": true,
+    "request329-evidence-history.parquet": true,
+    "request329-transition-ledger.parquet": true
+  },
+  "local_tests": {
+    "passed": 1205,
+    "warnings": 160,
+    "seconds": 46.77,
+    "critical_ruff": "pass"
+  },
+  "orphan_partial_temporary": {
+    "path": "local-artifacts/request329/request329-training-states.parquet.tmp",
+    "bytes": 8109286,
+    "sha256": "00f51e7cf75feae3520102efb911f101bf17a9a362c2d0ca5d296d5ab2e7ae18",
+    "exact_prefix_of_completed_file": true,
+    "completed_bytes": 8484372,
+    "completed_readable": true,
+    "used_for_fit_or_verification": false,
+    "cause": "unknown; retained without modifying complete canonical table"
+  }
+}

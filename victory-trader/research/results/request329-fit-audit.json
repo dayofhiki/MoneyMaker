@@ -1,0 +1,798 @@
+{
+  "full": {
+    "F": {
+      "no_support": false,
+      "optimization_attempted": true,
+      "objective": "frozen_G_offset_original_complete_NLL",
+      "C": 0.1,
+      "parameters": {
+        "method": "L-BFGS-B",
+        "options": {
+          "maxiter": 2000,
+          "maxls": 50,
+          "ftol": 1e-13,
+          "gtol": 1e-08
+        },
+        "bounds": null,
+        "starts": 1,
+        "initialization": "zeros"
+      },
+      "supervision_weight_sum": 256.0,
+      "active_weight_sum": 130.13167974138568,
+      "inactive_constant_weight_sum": 125.8683202586143,
+      "processed_dimensions": 7,
+      "initial_coefficients": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "optimization_success": true,
+      "solver_success": true,
+      "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+      "iterations": 8,
+      "coefficients": [
+        -0.08690630378859711,
+        -0.009339828634702346,
+        0.04950665056251789,
+        -0.03163304050942111,
+        0.007879398403479908,
+        -0.1507188073029218,
+        -0.060731836703974966
+      ],
+      "normalized_objective": 0.2790836675421943,
+      "normalized_gradient_inf": 3.315019460325974e-09,
+      "fit_days": [
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ],
+      "preprocessing": {
+        "raw_features": [
+          "momentum_return_30s",
+          "momentum_efficiency_30s",
+          "momentum_volume_rate_ratio_30s",
+          "momentum_transactions_rate_ratio_30s",
+          "momentum_signed_volume_proxy_30s",
+          "momentum_reclaim_prior_high_30s",
+          "momentum_acceleration_10_30"
+        ],
+        "processed_dimensions": 14,
+        "all_training_missing": [],
+        "lower": [
+          -4.497592033303411,
+          -1.0000000000000964,
+          0.025673940949935817,
+          0.038461538461538464,
+          -1.0,
+          -5.318233295583241,
+          -3.54548886372216
+        ],
+        "upper": [
+          4.480874316939887,
+          1.0000000000000817,
+          72.63,
+          41.0,
+          1.0,
+          3.630363036303641,
+          2.553410553410555
+        ],
+        "median": [
+          0.0,
+          0.0,
+          1.1851851851851851,
+          1.1073384446878423,
+          0.0,
+          -0.05783689994215413,
+          0.0
+        ],
+        "mean": [
+          0.0442252717776175,
+          0.005233510912008858,
+          3.6128827767042697,
+          2.8241742025943295,
+          0.01668249290655113,
+          -0.15743305625281753,
+          -0.020285985780463218
+        ],
+        "scale": [
+          1.270327371841139,
+          0.7132602618656545,
+          8.803523878870147,
+          5.680936516679923,
+          0.6928245434313168,
+          1.1029085115726536,
+          0.8228674258146608
+        ]
+      },
+      "frozen_R328_S_transform": true,
+      "numeric_columns_only": true,
+      "intercept": false,
+      "tau_s": 30.0,
+      "training_path_sha256": {
+        "current": "4eef5f2fa5b3b0ce1bd343ca9f7be5fd37589f11717775af10663cfc67d253d5",
+        "EMA_evidence": "4c538c7376b38e68287ff8875a50c537dd1ca6df352089f4dc77fe65920eed49",
+        "first_eligible_anchor": "78d32ca30024ec66a346adf724849b2b900cc81fd2d9ac0ab2ed7c4e267629ff",
+        "EMA_before": "274acdf023e10f49a1729c4e5b35beb8ee4711dde4d4b11ee2c8b8856a4cfed0",
+        "EMA_after": "cbf715a5e334b791848db01f4f21ba5bc4cf8264befb42a23a3f921d794104e2",
+        "last_eligible_t": "8853dcbf3340fbd727098bd00ca7b0e0aeb7e3ee1dcc6df232e00db9be3aefd0"
+      }
+    },
+    "N": {
+      "no_support": false,
+      "optimization_attempted": true,
+      "objective": "frozen_G_offset_original_complete_NLL",
+      "C": 0.1,
+      "parameters": {
+        "method": "L-BFGS-B",
+        "options": {
+          "maxiter": 2000,
+          "maxls": 50,
+          "ftol": 1e-13,
+          "gtol": 1e-08
+        },
+        "bounds": null,
+        "starts": 1,
+        "initialization": "zeros"
+      },
+      "supervision_weight_sum": 256.0,
+      "active_weight_sum": 130.13167974138568,
+      "inactive_constant_weight_sum": 125.8683202586143,
+      "processed_dimensions": 7,
+      "initial_coefficients": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "optimization_success": true,
+      "solver_success": true,
+      "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+      "iterations": 9,
+      "coefficients": [
+        -0.07390035195725966,
+        -0.1712715573874629,
+        0.1085659167188736,
+        0.030633300569296865,
+        -0.19015367734148517,
+        -0.16166791846016867,
+        -0.08139984117140717
+      ],
+      "normalized_objective": 0.2730789197408141,
+      "normalized_gradient_inf": 3.2717558280659365e-09,
+      "fit_days": [
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08"
+      ],
+      "preprocessing": {
+        "raw_features": [
+          "momentum_return_30s",
+          "momentum_efficiency_30s",
+          "momentum_volume_rate_ratio_30s",
+          "momentum_transactions_rate_ratio_30s",
+          "momentum_signed_volume_proxy_30s",
+          "momentum_reclaim_prior_high_30s",
+          "momentum_acceleration_10_30"
+        ],
+        "processed_dimensions": 14,
+        "all_training_missing": [],
+        "lower": [
+          -4.497592033303411,
+          -1.0000000000000964,
+          0.025673940949935817,
+          0.038461538461538464,
+          -1.0,
+          -5.318233295583241,
+          -3.54548886372216
+        ],
+        "upper": [
+          4.480874316939887,
+          1.0000000000000817,
+          72.63,
+          41.0,
+          1.0,
+          3.630363036303641,
+          2.553410553410555
+        ],
+        "median": [
+          0.0,
+          0.0,
+          1.1851851851851851,
+          1.1073384446878423,
+          0.0,
+          -0.05783689994215413,
+          0.0
+        ],
+        "mean": [
+          0.0442252717776175,
+          0.005233510912008858,
+          3.6128827767042697,
+          2.8241742025943295,
+          0.01668249290655113,
+          -0.15743305625281753,
+          -0.020285985780463218
+        ],
+        "scale": [
+          1.270327371841139,
+          0.7132602618656545,
+          8.803523878870147,
+          5.680936516679923,
+          0.6928245434313168,
+          1.1029085115726536,
+          0.8228674258146608
+        ]
+      },
+      "frozen_R328_S_transform": true,
+      "numeric_columns_only": true,
+      "intercept": false,
+      "tau_s": 30.0,
+      "training_path_sha256": {
+        "current": "4eef5f2fa5b3b0ce1bd343ca9f7be5fd37589f11717775af10663cfc67d253d5",
+        "EMA_evidence": "4c538c7376b38e68287ff8875a50c537dd1ca6df352089f4dc77fe65920eed49",
+        "first_eligible_anchor": "78d32ca30024ec66a346adf724849b2b900cc81fd2d9ac0ab2ed7c4e267629ff",
+        "EMA_before": "274acdf023e10f49a1729c4e5b35beb8ee4711dde4d4b11ee2c8b8856a4cfed0",
+        "EMA_after": "cbf715a5e334b791848db01f4f21ba5bc4cf8264befb42a23a3f921d794104e2",
+        "last_eligible_t": "8853dcbf3340fbd727098bd00ca7b0e0aeb7e3ee1dcc6df232e00db9be3aefd0"
+      }
+    }
+  },
+  "folds": {
+    "2026-05-06": {
+      "fit_days": [],
+      "fits": {
+        "F": {
+          "no_support": true,
+          "optimization_attempted": false,
+          "reason": "no_preceding_out_of_time_meta_day"
+        },
+        "N": {
+          "no_support": true,
+          "optimization_attempted": false,
+          "reason": "no_preceding_out_of_time_meta_day"
+        }
+      },
+      "inference": {
+        "unscored_observations": {
+          "F": 4318,
+          "N": 4318,
+          "C": 4318,
+          "M": 4318,
+          "B": 0,
+          "B0": 0
+        },
+        "active_observations": 4318,
+        "first_eligible_observations": 74,
+        "first_eligible_basis_exact": true,
+        "frozen_control_paths_exact": true
+      }
+    },
+    "2026-05-07": {
+      "fit_days": [
+        "2026-05-06"
+      ],
+      "fits": {
+        "F": {
+          "no_support": false,
+          "optimization_attempted": true,
+          "objective": "frozen_G_offset_original_complete_NLL",
+          "C": 0.1,
+          "parameters": {
+            "method": "L-BFGS-B",
+            "options": {
+              "maxiter": 2000,
+              "maxls": 50,
+              "ftol": 1e-13,
+              "gtol": 1e-08
+            },
+            "bounds": null,
+            "starts": 1,
+            "initialization": "zeros"
+          },
+          "supervision_weight_sum": 95.0,
+          "active_weight_sum": 52.71774655768854,
+          "inactive_constant_weight_sum": 42.28225344231146,
+          "processed_dimensions": 7,
+          "initial_coefficients": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "optimization_success": true,
+          "solver_success": true,
+          "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+          "iterations": 6,
+          "coefficients": [
+            -0.021335346062766276,
+            -0.0408632786471423,
+            0.004031330784249858,
+            0.012646864809078328,
+            0.007558559023768651,
+            -0.07916169753760889,
+            -0.05953318443691115
+          ],
+          "normalized_objective": 0.2469053787027624,
+          "normalized_gradient_inf": 9.322563561471087e-09,
+          "fit_days": [
+            "2026-05-06"
+          ],
+          "preprocessing": {
+            "raw_features": [
+              "momentum_return_30s",
+              "momentum_efficiency_30s",
+              "momentum_volume_rate_ratio_30s",
+              "momentum_transactions_rate_ratio_30s",
+              "momentum_signed_volume_proxy_30s",
+              "momentum_reclaim_prior_high_30s",
+              "momentum_acceleration_10_30"
+            ],
+            "processed_dimensions": 14,
+            "all_training_missing": [],
+            "lower": [
+              -4.6762589928057485,
+              -1.0000000000000853,
+              0.019820211551416368,
+              0.03180212014134275,
+              -1.0,
+              -5.755395683453224,
+              -4.294611498351978
+            ],
+            "upper": [
+              6.989247311827951,
+              1.0000000000001172,
+              74.86656671664169,
+              52.0,
+              1.0,
+              4.139433551198257,
+              3.9435483870967696
+            ],
+            "median": [
+              0.0,
+              0.0,
+              1.241450244278735,
+              1.1189591078066914,
+              0.0,
+              -0.09850746268657007,
+              0.0
+            ],
+            "mean": [
+              0.03470772246374402,
+              -0.05045065787736609,
+              3.9462672195792505,
+              2.9535820951886054,
+              -0.0435982810365412,
+              -0.19208032927589028,
+              -0.04178096750392131
+            ],
+            "scale": [
+              1.551682384439802,
+              0.674820421631035,
+              9.55700496216697,
+              6.501287691182951,
+              0.6777864014515473,
+              1.1729582798185227,
+              0.9810407457164334
+            ]
+          },
+          "frozen_R328_S_transform": true,
+          "numeric_columns_only": true,
+          "intercept": false,
+          "tau_s": 30.0,
+          "training_path_sha256": {
+            "current": "5d418f881af1b1350e1b67189f844177fa82fc5d536f7723a5f06518d9fe368a",
+            "EMA_evidence": "c450dac1643bd9d3bc10b7b74e9f896e70d57cc3f573eadab481c4bda0cd7542",
+            "first_eligible_anchor": "78594d01ba96caea905375ea01295c44940a8240523a1d49b9f9930eaaae4547",
+            "EMA_before": "c95dd5d2aceb513c3984201c0d06807bc443ce8ec3b4ec252fadb3fb40d237b1",
+            "EMA_after": "a23f8405dc9d46aa666b95d10be786a22c16efc4a9a0b126d5054e9c3cc1a3b5",
+            "last_eligible_t": "ec56d430faae53c6f01d0d4d7ea902bbe15105431d5717a2b2cb793c47e49f6a"
+          }
+        },
+        "N": {
+          "no_support": false,
+          "optimization_attempted": true,
+          "objective": "frozen_G_offset_original_complete_NLL",
+          "C": 0.1,
+          "parameters": {
+            "method": "L-BFGS-B",
+            "options": {
+              "maxiter": 2000,
+              "maxls": 50,
+              "ftol": 1e-13,
+              "gtol": 1e-08
+            },
+            "bounds": null,
+            "starts": 1,
+            "initialization": "zeros"
+          },
+          "supervision_weight_sum": 95.0,
+          "active_weight_sum": 52.71774655768854,
+          "inactive_constant_weight_sum": 42.28225344231146,
+          "processed_dimensions": 7,
+          "initial_coefficients": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "optimization_success": true,
+          "solver_success": true,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 7,
+          "coefficients": [
+            0.02090734896580069,
+            -0.07182364843308008,
+            0.03150997227422176,
+            0.06336562099263912,
+            -0.045324858466645204,
+            -0.12412282887157111,
+            0.050217707159200396
+          ],
+          "normalized_objective": 0.2454463100952686,
+          "normalized_gradient_inf": 2.243177156889761e-08,
+          "fit_days": [
+            "2026-05-06"
+          ],
+          "preprocessing": {
+            "raw_features": [
+              "momentum_return_30s",
+              "momentum_efficiency_30s",
+              "momentum_volume_rate_ratio_30s",
+              "momentum_transactions_rate_ratio_30s",
+              "momentum_signed_volume_proxy_30s",
+              "momentum_reclaim_prior_high_30s",
+              "momentum_acceleration_10_30"
+            ],
+            "processed_dimensions": 14,
+            "all_training_missing": [],
+            "lower": [
+              -4.6762589928057485,
+              -1.0000000000000853,
+              0.019820211551416368,
+              0.03180212014134275,
+              -1.0,
+              -5.755395683453224,
+              -4.294611498351978
+            ],
+            "upper": [
+              6.989247311827951,
+              1.0000000000001172,
+              74.86656671664169,
+              52.0,
+              1.0,
+              4.139433551198257,
+              3.9435483870967696
+            ],
+            "median": [
+              0.0,
+              0.0,
+              1.241450244278735,
+              1.1189591078066914,
+              0.0,
+              -0.09850746268657007,
+              0.0
+            ],
+            "mean": [
+              0.03470772246374402,
+              -0.05045065787736609,
+              3.9462672195792505,
+              2.9535820951886054,
+              -0.0435982810365412,
+              -0.19208032927589028,
+              -0.04178096750392131
+            ],
+            "scale": [
+              1.551682384439802,
+              0.674820421631035,
+              9.55700496216697,
+              6.501287691182951,
+              0.6777864014515473,
+              1.1729582798185227,
+              0.9810407457164334
+            ]
+          },
+          "frozen_R328_S_transform": true,
+          "numeric_columns_only": true,
+          "intercept": false,
+          "tau_s": 30.0,
+          "training_path_sha256": {
+            "current": "5d418f881af1b1350e1b67189f844177fa82fc5d536f7723a5f06518d9fe368a",
+            "EMA_evidence": "c450dac1643bd9d3bc10b7b74e9f896e70d57cc3f573eadab481c4bda0cd7542",
+            "first_eligible_anchor": "78594d01ba96caea905375ea01295c44940a8240523a1d49b9f9930eaaae4547",
+            "EMA_before": "c95dd5d2aceb513c3984201c0d06807bc443ce8ec3b4ec252fadb3fb40d237b1",
+            "EMA_after": "a23f8405dc9d46aa666b95d10be786a22c16efc4a9a0b126d5054e9c3cc1a3b5",
+            "last_eligible_t": "ec56d430faae53c6f01d0d4d7ea902bbe15105431d5717a2b2cb793c47e49f6a"
+          }
+        }
+      },
+      "inference": {
+        "unscored_observations": {
+          "F": 0,
+          "N": 0,
+          "C": 0,
+          "M": 0,
+          "B": 0,
+          "B0": 0
+        },
+        "active_observations": 1367,
+        "first_eligible_observations": 60,
+        "first_eligible_basis_exact": true,
+        "frozen_control_paths_exact": true
+      }
+    },
+    "2026-05-08": {
+      "fit_days": [
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "fits": {
+        "F": {
+          "no_support": false,
+          "optimization_attempted": true,
+          "objective": "frozen_G_offset_original_complete_NLL",
+          "C": 0.1,
+          "parameters": {
+            "method": "L-BFGS-B",
+            "options": {
+              "maxiter": 2000,
+              "maxls": 50,
+              "ftol": 1e-13,
+              "gtol": 1e-08
+            },
+            "bounds": null,
+            "starts": 1,
+            "initialization": "zeros"
+          },
+          "supervision_weight_sum": 179.0,
+          "active_weight_sum": 94.23304864488158,
+          "inactive_constant_weight_sum": 84.76695135511841,
+          "processed_dimensions": 7,
+          "initial_coefficients": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "optimization_success": true,
+          "solver_success": true,
+          "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+          "iterations": 8,
+          "coefficients": [
+            -0.14159330172728785,
+            -0.013571082285677537,
+            0.05397156596674012,
+            0.04145570295548669,
+            0.03502315217769892,
+            -0.22096741361911304,
+            -0.05361447952977645
+          ],
+          "normalized_objective": 0.3091919736044801,
+          "normalized_gradient_inf": 4.074816892039519e-09,
+          "fit_days": [
+            "2026-05-06",
+            "2026-05-07"
+          ],
+          "preprocessing": {
+            "raw_features": [
+              "momentum_return_30s",
+              "momentum_efficiency_30s",
+              "momentum_volume_rate_ratio_30s",
+              "momentum_transactions_rate_ratio_30s",
+              "momentum_signed_volume_proxy_30s",
+              "momentum_reclaim_prior_high_30s",
+              "momentum_acceleration_10_30"
+            ],
+            "processed_dimensions": 14,
+            "all_training_missing": [],
+            "lower": [
+              -5.318233295583241,
+              -1.000000000000102,
+              0.023427433524657374,
+              0.038461538461538464,
+              -1.0,
+              -5.318233295583241,
+              -3.54548886372216
+            ],
+            "upper": [
+              4.930966469428011,
+              1.0000000000001077,
+              75.005,
+              47.5,
+              1.0,
+              3.630363036303641,
+              2.601626016260165
+            ],
+            "median": [
+              0.0,
+              0.0,
+              1.1851851851851851,
+              1.1518324607329844,
+              0.0,
+              -0.0803858520900258,
+              0.0
+            ],
+            "mean": [
+              0.00683088817351779,
+              -0.005774201438113671,
+              3.910437662246022,
+              3.001705568433637,
+              0.018077500086630952,
+              -0.20004519914932087,
+              -0.02406383311072776
+            ],
+            "scale": [
+              1.3807143637004422,
+              0.7149084737670623,
+              9.715510592563868,
+              6.233919378248514,
+              0.7063702716286323,
+              1.1635510126216102,
+              0.8660742533595728
+            ]
+          },
+          "frozen_R328_S_transform": true,
+          "numeric_columns_only": true,
+          "intercept": false,
+          "tau_s": 30.0,
+          "training_path_sha256": {
+            "current": "2a775dc2a750b9e164306d844274cf5282d4741985b51ef2da34113c8284fbde",
+            "EMA_evidence": "31058e8466170c0a265a9e00fc69f4a92128f41bded68c9d950b7ed7ede23976",
+            "first_eligible_anchor": "082f8fcdc27244df78c141eec39795ce2958ffcb1d696d89fdee2b9918663a09",
+            "EMA_before": "4781d26e3cebba0fc834c21e2979a3aacfa1f68c5aa15ace93532bee5ebd55d4",
+            "EMA_after": "f1df1c5915e95e6b68b6fd7cea0ad652b45f575fdfdd61e768905f9b6d9bacdb",
+            "last_eligible_t": "56469f08d82b586ea2758b4c1a454124bc4fdaa092e5bf304fb942dab1bc0f48"
+          }
+        },
+        "N": {
+          "no_support": false,
+          "optimization_attempted": true,
+          "objective": "frozen_G_offset_original_complete_NLL",
+          "C": 0.1,
+          "parameters": {
+            "method": "L-BFGS-B",
+            "options": {
+              "maxiter": 2000,
+              "maxls": 50,
+              "ftol": 1e-13,
+              "gtol": 1e-08
+            },
+            "bounds": null,
+            "starts": 1,
+            "initialization": "zeros"
+          },
+          "supervision_weight_sum": 179.0,
+          "active_weight_sum": 94.23304864488158,
+          "inactive_constant_weight_sum": 84.76695135511841,
+          "processed_dimensions": 7,
+          "initial_coefficients": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "optimization_success": true,
+          "solver_success": true,
+          "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+          "iterations": 10,
+          "coefficients": [
+            -0.1894103062269614,
+            -0.1862023222361361,
+            0.13314274701750703,
+            0.12662638223558553,
+            -0.19424002606233884,
+            -0.29664254308994786,
+            -0.013208914420159108
+          ],
+          "normalized_objective": 0.2945129148319924,
+          "normalized_gradient_inf": 7.078639942360335e-09,
+          "fit_days": [
+            "2026-05-06",
+            "2026-05-07"
+          ],
+          "preprocessing": {
+            "raw_features": [
+              "momentum_return_30s",
+              "momentum_efficiency_30s",
+              "momentum_volume_rate_ratio_30s",
+              "momentum_transactions_rate_ratio_30s",
+              "momentum_signed_volume_proxy_30s",
+              "momentum_reclaim_prior_high_30s",
+              "momentum_acceleration_10_30"
+            ],
+            "processed_dimensions": 14,
+            "all_training_missing": [],
+            "lower": [
+              -5.318233295583241,
+              -1.000000000000102,
+              0.023427433524657374,
+              0.038461538461538464,
+              -1.0,
+              -5.318233295583241,
+              -3.54548886372216
+            ],
+            "upper": [
+              4.930966469428011,
+              1.0000000000001077,
+              75.005,
+              47.5,
+              1.0,
+              3.630363036303641,
+              2.601626016260165
+            ],
+            "median": [
+              0.0,
+              0.0,
+              1.1851851851851851,
+              1.1518324607329844,
+              0.0,
+              -0.0803858520900258,
+              0.0
+            ],
+            "mean": [
+              0.00683088817351779,
+              -0.005774201438113671,
+              3.910437662246022,
+              3.001705568433637,
+              0.018077500086630952,
+              -0.20004519914932087,
+              -0.02406383311072776
+            ],
+            "scale": [
+              1.3807143637004422,
+              0.7149084737670623,
+              9.715510592563868,
+              6.233919378248514,
+              0.7063702716286323,
+              1.1635510126216102,
+              0.8660742533595728
+            ]
+          },
+          "frozen_R328_S_transform": true,
+          "numeric_columns_only": true,
+          "intercept": false,
+          "tau_s": 30.0,
+          "training_path_sha256": {
+            "current": "2a775dc2a750b9e164306d844274cf5282d4741985b51ef2da34113c8284fbde",
+            "EMA_evidence": "31058e8466170c0a265a9e00fc69f4a92128f41bded68c9d950b7ed7ede23976",
+            "first_eligible_anchor": "082f8fcdc27244df78c141eec39795ce2958ffcb1d696d89fdee2b9918663a09",
+            "EMA_before": "4781d26e3cebba0fc834c21e2979a3aacfa1f68c5aa15ace93532bee5ebd55d4",
+            "EMA_after": "f1df1c5915e95e6b68b6fd7cea0ad652b45f575fdfdd61e768905f9b6d9bacdb",
+            "last_eligible_t": "56469f08d82b586ea2758b4c1a454124bc4fdaa092e5bf304fb942dab1bc0f48"
+          }
+        }
+      },
+      "inference": {
+        "unscored_observations": {
+          "F": 0,
+          "N": 0,
+          "C": 0,
+          "M": 0,
+          "B": 0,
+          "B0": 0
+        },
+        "active_observations": 1305,
+        "first_eligible_observations": 57,
+        "first_eligible_basis_exact": true,
+        "frozen_control_paths_exact": true
+      }
+    }
+  }
+}
