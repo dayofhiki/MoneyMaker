@@ -319,10 +319,23 @@ def run(previous_dir, pinned, output):
     g, priors, prefix_audit = previous.prefix_initial(raw, prior, saved.R326_B_p_net_5.to_numpy())
     np.testing.assert_array_equal(g, controls['training'].R328_B_p_net_5.to_numpy())
     # Authenticate every full/fold basis before the first new real fit.
+    output.mkdir(parents=True, exist_ok=True)
     for scope, frame, fit in [('full', raw, frozen_audit['full']['S'])]+[(d, raw.loc[raw.trading_day.lt(d)], item['fits']['S']) for d, item in frozen_audit['folds'].items()]:
         transform = frozen_preprocessing(frame, fit)
-        if len(frame) and path_hashes(memory_basis(frame, transform)) != scopes[scope]['path_sha256']:
-            raise ValueError('registered full/fold basis changed before fitting')
+        if len(frame):
+            basis = memory_basis(frame, transform)
+            hashes = path_hashes(basis)
+            if hashes != scopes[scope]['path_sha256']:
+                values = {}
+                for name, array in zip(('gate', 'current', 'EMA_evidence', 'first_eligible_anchor', 'first_eligible', 'EMA_before', 'EMA_after', 'last_eligible_t'), basis):
+                    if array.ndim == 1:
+                        values[name] = array
+                    else:
+                        values.update({f'{name}_{j}': array[:, j] for j in range(array.shape[1])})
+                path = output/f'request329-prefit-path-failure-{scope}.parquet'
+                pd.DataFrame(values).to_parquet(path, index=False)
+                (output/'request329-prefit-failure.json').write_text(json.dumps({'scope': scope, 'actual_path_sha256': hashes, 'registered_path_sha256': scopes[scope]['path_sha256'], 'real_fits': 0}, indent=2)+'\n')
+                raise ValueError('registered full/fold basis changed before fitting; numerical paths preserved')
     output.mkdir(parents=True, exist_ok=True)
     parquet(transitions, output, 'transition-manifest')
     parquet(transition_ledger, output, 'transition-ledger')

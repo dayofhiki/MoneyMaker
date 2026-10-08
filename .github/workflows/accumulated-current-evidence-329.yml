@@ -91,7 +91,7 @@ jobs:
                   else:
                       shutil.copyfile(source, target)
           PY
-      - name: One fixed offline experiment
+      - name: One fixed offline experiment with pre-fit failure diagnostics
         run: |
           set -o pipefail
           mkdir -p artifacts
@@ -100,7 +100,7 @@ jobs:
           python -m pip freeze >> artifacts/environment.txt
           python -m victory_trader.accumulated_current_evidence_momentum \
             --previous prepared --pinned-inputs research/request329-inputs.json \
-            --output-dir artifacts | tee artifacts/request329.log
+            --output-dir artifacts 2>&1 | tee artifacts/request329.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
