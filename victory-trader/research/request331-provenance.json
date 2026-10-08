@@ -1,0 +1,56 @@
+{
+  "request_id": 331,
+  "remote_preregistration_commit": "d61395380d6ad49ff17d0506985d7f1d9e620c5b",
+  "evaluated_source": "175645954cf2216781992a4619356c49b348332b",
+  "source_tree": "bf9e207943853169d5d6c439b5bf7a3b355a6ec5",
+  "official_run": 37752214023,
+  "official_successful_census_runs": 1,
+  "failed_official_census_runs": 0,
+  "duplicate_official_census_runs": 0,
+  "artifacts": {
+    "clocks": {
+      "id": 11537704285,
+      "zip_sha256": "286161e5110003a1ab0e38da66a8f914e00355dd85938590fa712ffa6f4e017c",
+      "created_at": "2026-10-08T08:49:00Z"
+    },
+    "complete": {
+      "id": 11538058764,
+      "zip_sha256": "aba75601607e50a4cc6bd8eab3b98f075c460c52a792e8ae6dea3a9505d67fbf",
+      "created_at": "2026-10-08T08:49:51Z"
+    }
+  },
+  "clock_publication_before_outcomes": true,
+  "original_tolerance": 1e-09,
+  "json_numeric_fields": 5093,
+  "maximum_numeric_error": 0.0,
+  "both_json_bytes_equal": true,
+  "all_eight_table_bytes_equal": true,
+  "source_ci_success_runs": [
+    37752213870,
+    37752218207
+  ],
+  "local_full_tests": {
+    "passed": 1239,
+    "warnings": 160,
+    "seconds": 56.89,
+    "new_synthetic_tests": 19,
+    "critical_ruff": "pass"
+  },
+  "market_requests": 0,
+  "model_fits": 0,
+  "sealed_dates_opened": false,
+  "gate_checks_passed": 9,
+  "gate_checks_failed": 1,
+  "publication_history": {
+    "initial_auto_review_rejections": 2,
+    "renewed_explicit_user_approval": true,
+    "shell_git_push_authentication_failure": true,
+    "publication_via_connected_github_app": true
+  },
+  "transfer_history": {
+    "raw_url_attempt_http_status": 403,
+    "authenticated_materialization_succeeded": true,
+    "scientific_inputs_or_criteria_changed": false
+  },
+  "temporary_output_files_remaining": 0
+}

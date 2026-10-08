@@ -29,5 +29,7 @@
   "official_R331_workflows_started": 0,
   "public_branch_push_rejections": 2,
   "remote_R331_branch_found": false,
-  "approval_review_reason": "Public research metadata/dataset-derived hash publication requires trusted explicit authorization for this exact disclosure; prior standing authorization was not accepted."
+  "approval_review_reason": "Public research metadata/dataset-derived hash publication requires trusted explicit authorization for this exact disclosure; prior standing authorization was not accepted.",
+  "record_phase": "preserved_prepublication_preexecution_validation_snapshot",
+  "current_scientific_status": "request331-findings.md and request331-provenance.json supersede this historical status"
 }

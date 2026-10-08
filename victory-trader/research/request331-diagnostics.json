@@ -1,0 +1,170 @@
+{
+  "request_id": 331,
+  "post_result_descriptive_only": true,
+  "new_labels": 0,
+  "model_fits": 0,
+  "threshold_or_phase_selection": false,
+  "provider_gap_is_not_proof_of_actual_fill_failure": true,
+  "scopes": {
+    "training_primary": {
+      "EARLY": {
+        "compatible_clock_count": 7457,
+        "compatible_reason_counts": {
+          "fixed60s_or_session_cap": 3669,
+          "entry_missing_or_late": 2176,
+          "exit_missing_or_late": 1072,
+          "stop": 540
+        },
+        "compatible_entry_reference_gap_bins_s": {
+          "at_most_registered3s": 5281,
+          "over3s_through_bucket30s": 1734,
+          "over30s_through_hold60s": 241,
+          "over60s": 201,
+          "no_later_reference": 0
+        },
+        "compatible_exit_reference_gap_bins_given_resolved_entry_s": {
+          "at_most_registered3s": 4209,
+          "over3s_through_bucket30s": 951,
+          "over30s_through_hold60s": 65,
+          "over60s": 54,
+          "no_later_reference": 2
+        },
+        "equal_day_identity_observation_mass_resolution": 0.15059775415773363,
+        "pooled_clock_resolution_registered_gate_estimator": 0.564436100308435,
+        "these_two_resolution_estimators_are_distinct": true
+      },
+      "ADDITIONAL_LATE": {
+        "compatible_clock_count": 12629,
+        "compatible_reason_counts": {
+          "entry_missing_or_late": 7636,
+          "fixed60s_or_session_cap": 2620,
+          "exit_missing_or_late": 2205,
+          "stop": 168
+        },
+        "compatible_entry_reference_gap_bins_s": {
+          "at_most_registered3s": 4993,
+          "over3s_through_bucket30s": 4871,
+          "over30s_through_hold60s": 1167,
+          "over60s": 1595,
+          "no_later_reference": 3
+        },
+        "compatible_exit_reference_gap_bins_given_resolved_entry_s": {
+          "at_most_registered3s": 2788,
+          "over3s_through_bucket30s": 1692,
+          "over30s_through_hold60s": 253,
+          "over60s": 244,
+          "no_later_reference": 16
+        },
+        "equal_day_identity_observation_mass_resolution": 0.11343554894322842,
+        "pooled_clock_resolution_registered_gate_estimator": 0.22076173885501624,
+        "these_two_resolution_estimators_are_distinct": true
+      },
+      "EXTENDED": {
+        "compatible_clock_count": 20086,
+        "compatible_reason_counts": {
+          "entry_missing_or_late": 9812,
+          "fixed60s_or_session_cap": 6289,
+          "exit_missing_or_late": 3277,
+          "stop": 708
+        },
+        "compatible_entry_reference_gap_bins_s": {
+          "at_most_registered3s": 10274,
+          "over3s_through_bucket30s": 6605,
+          "over30s_through_hold60s": 1408,
+          "over60s": 1796,
+          "no_later_reference": 3
+        },
+        "compatible_exit_reference_gap_bins_given_resolved_entry_s": {
+          "at_most_registered3s": 6997,
+          "over3s_through_bucket30s": 2643,
+          "over30s_through_hold60s": 318,
+          "over60s": 298,
+          "no_later_reference": 18
+        },
+        "equal_day_identity_observation_mass_resolution": 0.1247046023373405,
+        "pooled_clock_resolution_registered_gate_estimator": 0.3483520860300707,
+        "these_two_resolution_estimators_are_distinct": true
+      }
+    },
+    "evaluation": {
+      "EARLY": {
+        "compatible_clock_count": 18192,
+        "compatible_reason_counts": {
+          "fixed60s_or_session_cap": 7701,
+          "entry_missing_or_late": 5382,
+          "exit_missing_or_late": 2673,
+          "stop": 2436
+        },
+        "compatible_entry_reference_gap_bins_s": {
+          "at_most_registered3s": 12810,
+          "over3s_through_bucket30s": 4280,
+          "over30s_through_hold60s": 545,
+          "over60s": 553,
+          "no_later_reference": 4
+        },
+        "compatible_exit_reference_gap_bins_given_resolved_entry_s": {
+          "at_most_registered3s": 10137,
+          "over3s_through_bucket30s": 2296,
+          "over30s_through_hold60s": 148,
+          "over60s": 169,
+          "no_later_reference": 60
+        },
+        "equal_day_identity_observation_mass_resolution": 0.14163086065047,
+        "pooled_clock_resolution_registered_gate_estimator": 0.5572229551451188,
+        "these_two_resolution_estimators_are_distinct": true
+      },
+      "ADDITIONAL_LATE": {
+        "compatible_clock_count": 29869,
+        "compatible_reason_counts": {
+          "entry_missing_or_late": 18636,
+          "fixed60s_or_session_cap": 5185,
+          "exit_missing_or_late": 5097,
+          "stop": 951
+        },
+        "compatible_entry_reference_gap_bins_s": {
+          "at_most_registered3s": 11233,
+          "over3s_through_bucket30s": 11517,
+          "over30s_through_hold60s": 2915,
+          "over60s": 4188,
+          "no_later_reference": 16
+        },
+        "compatible_exit_reference_gap_bins_given_resolved_entry_s": {
+          "at_most_registered3s": 6136,
+          "over3s_through_bucket30s": 3879,
+          "over30s_through_hold60s": 579,
+          "over60s": 605,
+          "no_later_reference": 34
+        },
+        "equal_day_identity_observation_mass_resolution": 0.0969827628678593,
+        "pooled_clock_resolution_registered_gate_estimator": 0.20543037932304395,
+        "these_two_resolution_estimators_are_distinct": true
+      },
+      "EXTENDED": {
+        "compatible_clock_count": 48061,
+        "compatible_reason_counts": {
+          "entry_missing_or_late": 24018,
+          "fixed60s_or_session_cap": 12886,
+          "exit_missing_or_late": 7770,
+          "stop": 3387
+        },
+        "compatible_entry_reference_gap_bins_s": {
+          "at_most_registered3s": 24043,
+          "over3s_through_bucket30s": 15797,
+          "over30s_through_hold60s": 3460,
+          "over60s": 4741,
+          "no_later_reference": 20
+        },
+        "compatible_exit_reference_gap_bins_given_resolved_entry_s": {
+          "at_most_registered3s": 16273,
+          "over3s_through_bucket30s": 6175,
+          "over30s_through_hold60s": 727,
+          "over60s": 774,
+          "no_later_reference": 94
+        },
+        "equal_day_identity_observation_mass_resolution": 0.11126238393032757,
+        "pooled_clock_resolution_registered_gate_estimator": 0.3385905411872412,
+        "these_two_resolution_estimators_are_distinct": true
+      }
+    }
+  }
+}

@@ -1,5 +1,11 @@
 # R331 prepared continuation — experiment not executed
 
+This is the preserved PRE-EXECUTION snapshot. R331 is now executed and exactly
+reproduced:9/10 checks pass, while34.8352% execution resolution fails the90%
+requirement. Current scientific status and source/artifact audit are in
+request331-findings.md and request331-provenance.json; R332 is a designed,
+unexecuted cached source/execution observation proposal.
+
 Historical preparation snapshot: the user explicitly approved public R331
 design/code/hash publication and official cached execution on2026-10-08, then
 renewed same-scope standing approval. The two earlier review rejections below

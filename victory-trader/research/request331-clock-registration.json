@@ -1,0 +1,38 @@
+{
+  "request_id": 331,
+  "stage": "timestamps_only_before_prices_and_targets",
+  "input_sha256": {
+    "official311/source-sha.txt": "5ffba8292c3603ca5e3b5ac0ddd63a4f66fcca14fbd440364c5fd50da0485ba2",
+    "official311/request311-raw-seconds.parquet": "3382ad9f1c5c35d0d161848e90710a61566438eda8da93efde0744c0838cfcc6",
+    "official315/source-sha.txt": "6ea3fcfa4283d33f45ef7aebd0fc1cc093e48e4c599cad913f3a0cc0469a7776",
+    "official315/request315-training-cohort.parquet": "75c59cca49ff0eb6d81fb4708a3804e20550c073c2ad66503b832086d8925a97",
+    "official315/request315-training-raw-seconds.parquet": "414608871f35d73bbf3a2ad949472d46c99d3b6a52ea9834285fc50902ba2de7",
+    "official319/source-sha.txt": "63b0ba042ff56de3d6deb26ad981ed4464732ccf21f26d69f825c8b235c482a5",
+    "official319/request319-episode-ledger.parquet": "d5952a888cc97353d1bdfce3ba94ffa9845e88aadc96a00a69cb77a1adf54707",
+    "official319/request319-training-states.parquet": "bbf45eb9d26c9c5ce83b96187121db3e5de4ca92ae27435545b9817225113358",
+    "official319/request319-clock-manifest.parquet": "9a7dac1ee2a02c873668cb463a5eb6623b274efd8c13b1a310023047ffe6c78f",
+    "official330/source-sha.txt": "ffde4c870c03bdda3226db0177de9d0cff11d53acd1055f5b3e8a0a36308e1f2",
+    "official330/request330-training-states.parquet": "40c164cc377fddc7e1fe90fada7badd056c0b8bf68099c29ba94b13e7f16284e",
+    "official330/request330-states.parquet": "ac2c411abc81815de681f9e7e1998613818f66fd6f62eb3a07712adc86bafb5e"
+  },
+  "clock_sha256": {
+    "request331-training-clocks.parquet": "7c0ac4cf5513baddb5e3c2de370e8582c80f311fd18b3fc687d2e664c59d9958",
+    "request331-training-clock-ledger.parquet": "94a7049543b005c049d42ff86f774859e208c8ac76b2f9d843f74a43afb01a62",
+    "request331-evaluation-clocks.parquet": "6b8c391f43eb8f5f403c32651bf1dd485a068ffdd5f8d36246ab92473e0ebc1b",
+    "request331-evaluation-clock-ledger.parquet": "fe6fbe951bad29c64bf431d119cd3f263314f5e0877801289f32b6d8f876632b"
+  },
+  "scope": {
+    "training": {
+      "identities": 407,
+      "early_clocks": 9325,
+      "additional_late_clocks": 17108,
+      "no_observation_identities": 10
+    },
+    "evaluation": {
+      "identities": 828,
+      "early_clocks": 19530,
+      "additional_late_clocks": 33378,
+      "no_observation_identities": 21
+    }
+  }
+}
