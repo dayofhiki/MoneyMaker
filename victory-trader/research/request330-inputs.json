@@ -1,0 +1,13 @@
+{
+  "official311/source-sha.txt": "5ffba8292c3603ca5e3b5ac0ddd63a4f66fcca14fbd440364c5fd50da0485ba2",
+  "official311/request311-raw-seconds.parquet": "3382ad9f1c5c35d0d161848e90710a61566438eda8da93efde0744c0838cfcc6",
+  "official315/source-sha.txt": "6ea3fcfa4283d33f45ef7aebd0fc1cc093e48e4c599cad913f3a0cc0469a7776",
+  "official315/request315-training-raw-seconds.parquet": "414608871f35d73bbf3a2ad949472d46c99d3b6a52ea9834285fc50902ba2de7",
+  "official319/request319-episode-ledger.parquet": "d5952a888cc97353d1bdfce3ba94ffa9845e88aadc96a00a69cb77a1adf54707",
+  "official321/request321-chronological-states.parquet": "637b08447d038361b0027c7503dfe08294c136bb5c80efdf0a4cd9d187383807",
+  "official321/request321-states.parquet": "fe4c93365e75111b0cecdce02cbf849d7da60870d94d7c9d9c76086ccc2aeec0",
+  "official328/request328-training-states.parquet": "90bfabaaf3f754a0dca19d96492846a89b58912d14a3013f7b1c119682eed821",
+  "official328/request328-chronological-states.parquet": "d4d9d59802e44906f26353bfdad954f7d3a396f818a8b9b8bb388a148ad509e0",
+  "official328/request328-states.parquet": "53f6ed0e10259fe9b12fd21b2f5efc290e49ae8140850a1a186337f4e1c38978",
+  "official328/source-sha.txt": "4f785bd56b7bcfb84dedb06e91b12b5c9a09c68f27a0bb626e85965c464a98cb"
+}
