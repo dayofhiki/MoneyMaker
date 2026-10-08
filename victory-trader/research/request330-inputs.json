@@ -9,5 +9,6 @@
   "official328/request328-training-states.parquet": "90bfabaaf3f754a0dca19d96492846a89b58912d14a3013f7b1c119682eed821",
   "official328/request328-chronological-states.parquet": "d4d9d59802e44906f26353bfdad954f7d3a396f818a8b9b8bb388a148ad509e0",
   "official328/request328-states.parquet": "53f6ed0e10259fe9b12fd21b2f5efc290e49ae8140850a1a186337f4e1c38978",
-  "official328/source-sha.txt": "4f785bd56b7bcfb84dedb06e91b12b5c9a09c68f27a0bb626e85965c464a98cb"
+  "official328/source-sha.txt": "4f785bd56b7bcfb84dedb06e91b12b5c9a09c68f27a0bb626e85965c464a98cb",
+  "official328/request328-fit-audit.json": "b2aff1376605824e6515710c7639110f84dc7696caa402d0b72b610fb0b3ea8b"
 }
