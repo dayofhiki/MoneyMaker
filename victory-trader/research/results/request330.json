@@ -1,0 +1,1534 @@
+{
+  "request_id": 330,
+  "development_only": true,
+  "promotion_eligible": false,
+  "market_requests": 0,
+  "June_HOLD_opened": false,
+  "final_July_August_opened": false,
+  "input_sha256": {
+    "official311/source-sha.txt": "5ffba8292c3603ca5e3b5ac0ddd63a4f66fcca14fbd440364c5fd50da0485ba2",
+    "official311/request311-raw-seconds.parquet": "3382ad9f1c5c35d0d161848e90710a61566438eda8da93efde0744c0838cfcc6",
+    "official315/source-sha.txt": "6ea3fcfa4283d33f45ef7aebd0fc1cc093e48e4c599cad913f3a0cc0469a7776",
+    "official315/request315-training-raw-seconds.parquet": "414608871f35d73bbf3a2ad949472d46c99d3b6a52ea9834285fc50902ba2de7",
+    "official319/request319-episode-ledger.parquet": "d5952a888cc97353d1bdfce3ba94ffa9845e88aadc96a00a69cb77a1adf54707",
+    "official321/request321-chronological-states.parquet": "637b08447d038361b0027c7503dfe08294c136bb5c80efdf0a4cd9d187383807",
+    "official321/request321-states.parquet": "fe4c93365e75111b0cecdce02cbf849d7da60870d94d7c9d9c76086ccc2aeec0",
+    "official328/request328-training-states.parquet": "90bfabaaf3f754a0dca19d96492846a89b58912d14a3013f7b1c119682eed821",
+    "official328/request328-chronological-states.parquet": "d4d9d59802e44906f26353bfdad954f7d3a396f818a8b9b8bb388a148ad509e0",
+    "official328/request328-states.parquet": "53f6ed0e10259fe9b12fd21b2f5efc290e49ae8140850a1a186337f4e1c38978",
+    "official328/source-sha.txt": "4f785bd56b7bcfb84dedb06e91b12b5c9a09c68f27a0bb626e85965c464a98cb",
+    "official328/request328-fit-audit.json": "b2aff1376605824e6515710c7639110f84dc7696caa402d0b72b610fb0b3ea8b"
+  },
+  "fit": {
+    "no_support": false,
+    "optimization_attempted": true,
+    "fit_days": [
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ],
+    "inputs": [
+      "G_logit",
+      "current_0",
+      "current_1",
+      "current_2",
+      "current_3",
+      "current_4",
+      "current_5",
+      "current_6",
+      "gate",
+      "cost_drag_stop_units"
+    ],
+    "alpha": 10.0,
+    "unpenalized_intercept": true,
+    "coefficients": [
+      [
+        0.13899746016948578,
+        -0.006448107566167722,
+        0.01230272664126273,
+        -0.018186739655202195,
+        -0.024567302455599304,
+        0.04546224430337956,
+        0.07303774651550111,
+        -0.029263493762614733,
+        0.054937699383460686,
+        -0.410169285984535
+      ],
+      [
+        -0.12536734709570252,
+        0.0065761823783542315,
+        -0.008453645093384145,
+        0.0012558348980190555,
+        0.013968700844372767,
+        -0.017473404044768506,
+        0.026273176430336165,
+        0.00480962097066536,
+        0.005771676363314052,
+        0.007167348452841879
+      ]
+    ],
+    "intercepts": [
+      -0.5790139535957599,
+      -0.49024827295613826
+    ],
+    "observed_states": 7806,
+    "common_finite_targets": 4144,
+    "common_target_episodes": 104,
+    "positive_enter_episodes": 34,
+    "positive_enter_dates": [
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ],
+    "negative_enter_dates": [
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08"
+    ],
+    "original_observed_weight_mass": 266.0,
+    "common_target_original_weight_mass": 34.64042578744502,
+    "condition_number": 235.69724025196805,
+    "maximum_normal_equation_residual": 2.842170943040401e-14,
+    "weighted_target_means": [
+      -1.1857226693998038,
+      -0.08381910271223511
+    ]
+  },
+  "chronological_fits": {
+    "2026-05-06": {
+      "no_support": true,
+      "reason": "no_preceding_value_fit",
+      "optimization_attempted": false
+    },
+    "2026-05-07": {
+      "no_support": false,
+      "optimization_attempted": true,
+      "fit_days": [
+        "2026-05-06"
+      ],
+      "inputs": [
+        "G_logit",
+        "current_0",
+        "current_1",
+        "current_2",
+        "current_3",
+        "current_4",
+        "current_5",
+        "current_6",
+        "gate",
+        "cost_drag_stop_units"
+      ],
+      "alpha": 10.0,
+      "unpenalized_intercept": true,
+      "coefficients": [
+        [
+          0.10569227836221838,
+          -0.06014057880566139,
+          -0.004568809436890334,
+          -0.05085510859428339,
+          0.012753192655229615,
+          0.04433177371911103,
+          0.10576884774578377,
+          -0.07450926070422098,
+          -0.027850369965849314,
+          -0.22864557604245322
+        ],
+        [
+          -0.0202406780965938,
+          -8.884654670511591e-05,
+          -0.00041642126290265954,
+          0.0003144118039560413,
+          0.0011200993103858696,
+          0.000378519683674235,
+          0.0015413847318086272,
+          0.00043274850736246454,
+          0.01019242399370058,
+          0.0006753813410041551
+        ]
+      ],
+      "intercepts": [
+        -0.6001185225134475,
+        -0.08820121854950078
+      ],
+      "observed_states": 4602,
+      "common_finite_targets": 3237,
+      "common_target_episodes": 44,
+      "positive_enter_episodes": 15,
+      "positive_enter_dates": [
+        "2026-05-06"
+      ],
+      "negative_enter_dates": [
+        "2026-05-06"
+      ],
+      "original_observed_weight_mass": 100.0,
+      "common_target_original_weight_mass": 21.652220849181493,
+      "condition_number": 284.6182030448322,
+      "maximum_normal_equation_residual": 1.4210854715202004e-14,
+      "weighted_target_means": [
+        -1.091544259854166,
+        -0.011245113937672227
+      ]
+    },
+    "2026-05-08": {
+      "no_support": false,
+      "optimization_attempted": true,
+      "fit_days": [
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "inputs": [
+        "G_logit",
+        "current_0",
+        "current_1",
+        "current_2",
+        "current_3",
+        "current_4",
+        "current_5",
+        "current_6",
+        "gate",
+        "cost_drag_stop_units"
+      ],
+      "alpha": 10.0,
+      "unpenalized_intercept": true,
+      "coefficients": [
+        [
+          0.1940277995875044,
+          -0.04362564744999105,
+          0.004626394847332692,
+          -0.03170806400834124,
+          -0.007107711208641849,
+          0.05144437284537547,
+          0.07526458504092917,
+          -0.048880902827558054,
+          -0.015431595947090048,
+          -0.2681097371027031
+        ],
+        [
+          -0.07758433461444868,
+          0.00794928354367142,
+          -0.0034015547304852337,
+          0.0005118640645362413,
+          0.004877858444118437,
+          -0.0043322397000870455,
+          0.01343107711083698,
+          -0.0008394734082047204,
+          0.012393153979936561,
+          0.0008800909786360579
+        ]
+      ],
+      "intercepts": [
+        -0.34217815943104507,
+        -0.31139684679745344
+      ],
+      "observed_states": 6221,
+      "common_finite_targets": 3690,
+      "common_target_episodes": 72,
+      "positive_enter_episodes": 27,
+      "positive_enter_dates": [
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "negative_enter_dates": [
+        "2026-05-06",
+        "2026-05-07"
+      ],
+      "original_observed_weight_mass": 184.0,
+      "common_target_original_weight_mass": 28.247815734006046,
+      "condition_number": 258.4446439804464,
+      "maximum_normal_equation_residual": 1.4210854715202004e-14,
+      "weighted_target_means": [
+        -1.1262374451693085,
+        -0.047746714543607446
+      ]
+    }
+  },
+  "observations": {
+    "training": 7806,
+    "evaluation": 19530,
+    "chronological": 7806,
+    "supported_chronological_value_rows": 3204,
+    "ledger_identities": 828
+  },
+  "fixed_contract": {
+    "hold_ms": 60000,
+    "watch_ms": 300000,
+    "hard_stop_base_pct": -2.5,
+    "maximum_fill_lag_ms": 3000
+  },
+  "policies": {
+    "F": {
+      "episodes": 828,
+      "entries": 0,
+      "resolved_or_cash": 828,
+      "resolution_or_cash_rate": 1.0,
+      "full_population_base_mean_pct": 0.0,
+      "full_population_stress_mean_pct": 0.0,
+      "resolved_only_base_mean_pct": 0.0,
+      "resolved_trade_base_mean_pct": null,
+      "severe_resolved_trade_rate": null,
+      "positive_resolved_trades": 0,
+      "observed_positive_opportunity_episodes": 69,
+      "positive_opportunity_capture_rate": 0.0
+    },
+    "E": {
+      "episodes": 828,
+      "entries": 0,
+      "resolved_or_cash": 828,
+      "resolution_or_cash_rate": 1.0,
+      "full_population_base_mean_pct": 0.0,
+      "full_population_stress_mean_pct": 0.0,
+      "resolved_only_base_mean_pct": 0.0,
+      "resolved_trade_base_mean_pct": null,
+      "severe_resolved_trade_rate": null,
+      "positive_resolved_trades": 0,
+      "observed_positive_opportunity_episodes": 69,
+      "positive_opportunity_capture_rate": 0.0
+    },
+    "G": {
+      "episodes": 828,
+      "entries": 330,
+      "resolved_or_cash": 557,
+      "resolution_or_cash_rate": 0.6727053140096618,
+      "full_population_base_mean_pct": null,
+      "full_population_stress_mean_pct": null,
+      "resolved_only_base_mean_pct": -0.12513098990584598,
+      "resolved_trade_base_mean_pct": -1.1813213792806136,
+      "severe_resolved_trade_rate": 0.1016949152542373,
+      "positive_resolved_trades": 7,
+      "observed_positive_opportunity_episodes": 69,
+      "positive_opportunity_capture_rate": 0.10144927536231885
+    },
+    "G0": {
+      "episodes": 828,
+      "entries": 330,
+      "resolved_or_cash": 557,
+      "resolution_or_cash_rate": 0.6727053140096618,
+      "full_population_base_mean_pct": null,
+      "full_population_stress_mean_pct": null,
+      "resolved_only_base_mean_pct": -0.12513098990584598,
+      "resolved_trade_base_mean_pct": -1.1813213792806136,
+      "severe_resolved_trade_rate": 0.1016949152542373,
+      "positive_resolved_trades": 7,
+      "observed_positive_opportunity_episodes": 69,
+      "positive_opportunity_capture_rate": 0.10144927536231885
+    },
+    "CASH": {
+      "episodes": 828,
+      "entries": 0,
+      "resolved_or_cash": 828,
+      "resolution_or_cash_rate": 1.0,
+      "full_population_base_mean_pct": 0.0,
+      "full_population_stress_mean_pct": 0.0,
+      "resolved_only_base_mean_pct": 0.0,
+      "resolved_trade_base_mean_pct": null,
+      "severe_resolved_trade_rate": null,
+      "positive_resolved_trades": 0,
+      "observed_positive_opportunity_episodes": 69,
+      "positive_opportunity_capture_rate": 0.0
+    }
+  },
+  "per_day": {
+    "2026-05-11": {
+      "F": {
+        "episodes": 108,
+        "entries": 0,
+        "resolved_or_cash": 108,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 8,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "E": {
+        "episodes": 108,
+        "entries": 0,
+        "resolved_or_cash": 108,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 8,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G": {
+        "episodes": 108,
+        "entries": 51,
+        "resolved_or_cash": 70,
+        "resolution_or_cash_rate": 0.6481481481481481,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.18021833545184432,
+        "resolved_trade_base_mean_pct": -0.9704064216637771,
+        "severe_resolved_trade_rate": 0.0,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 8,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G0": {
+        "episodes": 108,
+        "entries": 51,
+        "resolved_or_cash": 70,
+        "resolution_or_cash_rate": 0.6481481481481481,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.18021833545184432,
+        "resolved_trade_base_mean_pct": -0.9704064216637771,
+        "severe_resolved_trade_rate": 0.0,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 8,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "CASH": {
+        "episodes": 108,
+        "entries": 0,
+        "resolved_or_cash": 108,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 8,
+        "positive_opportunity_capture_rate": 0.0
+      }
+    },
+    "2026-05-12": {
+      "F": {
+        "episodes": 87,
+        "entries": 0,
+        "resolved_or_cash": 87,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "E": {
+        "episodes": 87,
+        "entries": 0,
+        "resolved_or_cash": 87,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G": {
+        "episodes": 87,
+        "entries": 30,
+        "resolved_or_cash": 61,
+        "resolution_or_cash_rate": 0.7011494252873564,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.11203754080034475,
+        "resolved_trade_base_mean_pct": -1.7085724972052576,
+        "severe_resolved_trade_rate": 0.25,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G0": {
+        "episodes": 87,
+        "entries": 30,
+        "resolved_or_cash": 61,
+        "resolution_or_cash_rate": 0.7011494252873564,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.11203754080034475,
+        "resolved_trade_base_mean_pct": -1.7085724972052576,
+        "severe_resolved_trade_rate": 0.25,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "CASH": {
+        "episodes": 87,
+        "entries": 0,
+        "resolved_or_cash": 87,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.0
+      }
+    },
+    "2026-05-13": {
+      "F": {
+        "episodes": 106,
+        "entries": 0,
+        "resolved_or_cash": 106,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 6,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "E": {
+        "episodes": 106,
+        "entries": 0,
+        "resolved_or_cash": 106,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 6,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G": {
+        "episodes": 106,
+        "entries": 38,
+        "resolved_or_cash": 77,
+        "resolution_or_cash_rate": 0.7264150943396226,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.1646066910580603,
+        "resolved_trade_base_mean_pct": -1.408301690163405,
+        "severe_resolved_trade_rate": 0.2222222222222222,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 6,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G0": {
+        "episodes": 106,
+        "entries": 38,
+        "resolved_or_cash": 77,
+        "resolution_or_cash_rate": 0.7264150943396226,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.1646066910580603,
+        "resolved_trade_base_mean_pct": -1.408301690163405,
+        "severe_resolved_trade_rate": 0.2222222222222222,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 6,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "CASH": {
+        "episodes": 106,
+        "entries": 0,
+        "resolved_or_cash": 106,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 6,
+        "positive_opportunity_capture_rate": 0.0
+      }
+    },
+    "2026-05-14": {
+      "F": {
+        "episodes": 112,
+        "entries": 0,
+        "resolved_or_cash": 112,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 2,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "E": {
+        "episodes": 112,
+        "entries": 0,
+        "resolved_or_cash": 112,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 2,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G": {
+        "episodes": 112,
+        "entries": 41,
+        "resolved_or_cash": 75,
+        "resolution_or_cash_rate": 0.6696428571428571,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.11117120933444902,
+        "resolved_trade_base_mean_pct": -2.084460175020919,
+        "severe_resolved_trade_rate": 0.25,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 2,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G0": {
+        "episodes": 112,
+        "entries": 41,
+        "resolved_or_cash": 75,
+        "resolution_or_cash_rate": 0.6696428571428571,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.11117120933444902,
+        "resolved_trade_base_mean_pct": -2.084460175020919,
+        "severe_resolved_trade_rate": 0.25,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 2,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "CASH": {
+        "episodes": 112,
+        "entries": 0,
+        "resolved_or_cash": 112,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 2,
+        "positive_opportunity_capture_rate": 0.0
+      }
+    },
+    "2026-05-15": {
+      "F": {
+        "episodes": 104,
+        "entries": 0,
+        "resolved_or_cash": 104,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 9,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "E": {
+        "episodes": 104,
+        "entries": 0,
+        "resolved_or_cash": 104,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 9,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G": {
+        "episodes": 104,
+        "entries": 37,
+        "resolved_or_cash": 74,
+        "resolution_or_cash_rate": 0.7115384615384616,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.15641345199802098,
+        "resolved_trade_base_mean_pct": -1.65351363540765,
+        "severe_resolved_trade_rate": 0.14285714285714285,
+        "positive_resolved_trades": 1,
+        "observed_positive_opportunity_episodes": 9,
+        "positive_opportunity_capture_rate": 0.1111111111111111
+      },
+      "G0": {
+        "episodes": 104,
+        "entries": 37,
+        "resolved_or_cash": 74,
+        "resolution_or_cash_rate": 0.7115384615384616,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.15641345199802098,
+        "resolved_trade_base_mean_pct": -1.65351363540765,
+        "severe_resolved_trade_rate": 0.14285714285714285,
+        "positive_resolved_trades": 1,
+        "observed_positive_opportunity_episodes": 9,
+        "positive_opportunity_capture_rate": 0.1111111111111111
+      },
+      "CASH": {
+        "episodes": 104,
+        "entries": 0,
+        "resolved_or_cash": 104,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 9,
+        "positive_opportunity_capture_rate": 0.0
+      }
+    },
+    "2026-05-18": {
+      "F": {
+        "episodes": 102,
+        "entries": 0,
+        "resolved_or_cash": 102,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "E": {
+        "episodes": 102,
+        "entries": 0,
+        "resolved_or_cash": 102,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G": {
+        "episodes": 102,
+        "entries": 48,
+        "resolved_or_cash": 64,
+        "resolution_or_cash_rate": 0.6274509803921569,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.12488749803299046,
+        "resolved_trade_base_mean_pct": -0.7992799874111389,
+        "severe_resolved_trade_rate": 0.0,
+        "positive_resolved_trades": 3,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.25
+      },
+      "G0": {
+        "episodes": 102,
+        "entries": 48,
+        "resolved_or_cash": 64,
+        "resolution_or_cash_rate": 0.6274509803921569,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.12488749803299046,
+        "resolved_trade_base_mean_pct": -0.7992799874111389,
+        "severe_resolved_trade_rate": 0.0,
+        "positive_resolved_trades": 3,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.25
+      },
+      "CASH": {
+        "episodes": 102,
+        "entries": 0,
+        "resolved_or_cash": 102,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.0
+      }
+    },
+    "2026-05-19": {
+      "F": {
+        "episodes": 92,
+        "entries": 0,
+        "resolved_or_cash": 92,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "E": {
+        "episodes": 92,
+        "entries": 0,
+        "resolved_or_cash": 92,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G": {
+        "episodes": 92,
+        "entries": 29,
+        "resolved_or_cash": 65,
+        "resolution_or_cash_rate": 0.7065217391304348,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.01142184941225131,
+        "resolved_trade_base_mean_pct": -0.3712101058981676,
+        "severe_resolved_trade_rate": 0.5,
+        "positive_resolved_trades": 1,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.08333333333333333
+      },
+      "G0": {
+        "episodes": 92,
+        "entries": 29,
+        "resolved_or_cash": 65,
+        "resolution_or_cash_rate": 0.7065217391304348,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.01142184941225131,
+        "resolved_trade_base_mean_pct": -0.3712101058981676,
+        "severe_resolved_trade_rate": 0.5,
+        "positive_resolved_trades": 1,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.08333333333333333
+      },
+      "CASH": {
+        "episodes": 92,
+        "entries": 0,
+        "resolved_or_cash": 92,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 12,
+        "positive_opportunity_capture_rate": 0.0
+      }
+    },
+    "2026-05-20": {
+      "F": {
+        "episodes": 117,
+        "entries": 0,
+        "resolved_or_cash": 117,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "E": {
+        "episodes": 117,
+        "entries": 0,
+        "resolved_or_cash": 117,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.0
+      },
+      "G": {
+        "episodes": 117,
+        "entries": 56,
+        "resolved_or_cash": 71,
+        "resolution_or_cash_rate": 0.6068376068376068,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.1257185417153588,
+        "resolved_trade_base_mean_pct": -0.8926016461790475,
+        "severe_resolved_trade_rate": 0.0,
+        "positive_resolved_trades": 2,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.2
+      },
+      "G0": {
+        "episodes": 117,
+        "entries": 56,
+        "resolved_or_cash": 71,
+        "resolution_or_cash_rate": 0.6068376068376068,
+        "full_population_base_mean_pct": null,
+        "full_population_stress_mean_pct": null,
+        "resolved_only_base_mean_pct": -0.1257185417153588,
+        "resolved_trade_base_mean_pct": -0.8926016461790475,
+        "severe_resolved_trade_rate": 0.0,
+        "positive_resolved_trades": 2,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.2
+      },
+      "CASH": {
+        "episodes": 117,
+        "entries": 0,
+        "resolved_or_cash": 117,
+        "resolution_or_cash_rate": 1.0,
+        "full_population_base_mean_pct": 0.0,
+        "full_population_stress_mean_pct": 0.0,
+        "resolved_only_base_mean_pct": 0.0,
+        "resolved_trade_base_mean_pct": null,
+        "severe_resolved_trade_rate": null,
+        "positive_resolved_trades": 0,
+        "observed_positive_opportunity_episodes": 10,
+        "positive_opportunity_capture_rate": 0.0
+      }
+    }
+  },
+  "accounts": {
+    "F": {
+      "days": {
+        "2026-05-11": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-12": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-13": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-14": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-15": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-18": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-19": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-20": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        }
+      },
+      "all_days_complete": true,
+      "aggregate_daily_reset_base_return_pct": 0.0,
+      "maximum_closure_ledger_drawdown_pct": 0.0,
+      "full_marked_account_drawdown_pct": null,
+      "daily_initial_capital_reset": true,
+      "limitations": "Next-print cost scenarios; no NBBO/size fills. Closure ledger omits intratrade marks. Unknown day prevents a complete multi-day account claim."
+    },
+    "E": {
+      "days": {
+        "2026-05-11": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-12": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-13": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-14": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-15": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-18": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-19": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-20": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        }
+      },
+      "all_days_complete": true,
+      "aggregate_daily_reset_base_return_pct": 0.0,
+      "maximum_closure_ledger_drawdown_pct": 0.0,
+      "full_marked_account_drawdown_pct": null,
+      "daily_initial_capital_reset": true,
+      "limitations": "Next-print cost scenarios; no NBBO/size fills. Closure ledger omits intratrade marks. Unknown day prevents a complete multi-day account claim."
+    },
+    "G": {
+      "days": {
+        "2026-05-11": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 1197,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.10613820975550968,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-12": {
+          "entries": 4,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 280,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.22123227318316838,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-13": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 514,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.2684157637787965,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-14": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 373,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.3636261514266459,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-15": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 396,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.20978337349547457,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-18": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 677,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.1195034926378169,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-19": {
+          "entries": 2,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 340,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-20": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 981,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": 0.03579842912591058,
+          "closure_ledger_drawdown_pct": null
+        }
+      },
+      "all_days_complete": false,
+      "aggregate_daily_reset_base_return_pct": null,
+      "maximum_closure_ledger_drawdown_pct": null,
+      "full_marked_account_drawdown_pct": null,
+      "daily_initial_capital_reset": true,
+      "limitations": "Next-print cost scenarios; no NBBO/size fills. Closure ledger omits intratrade marks. Unknown day prevents a complete multi-day account claim."
+    },
+    "G0": {
+      "days": {
+        "2026-05-11": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 48,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.10613820975550968,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-12": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 27,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.11523004516733049,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-13": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 35,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.2684157637787965,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-14": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 38,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.3636261514266459,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-15": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 34,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.20978337349547457,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-18": {
+          "entries": 4,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 44,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": -0.05715818400510054,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-19": {
+          "entries": 2,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 27,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": null
+        },
+        "2026-05-20": {
+          "entries": 3,
+          "unresolved_orders": 2,
+          "capacity_WAIT_decisions": 53,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 2,
+          "complete_account": false,
+          "base_return_pct": null,
+          "stress_return_pct": null,
+          "resolved_leg_only_base_return_pct": 0.03579842912591058,
+          "closure_ledger_drawdown_pct": null
+        }
+      },
+      "all_days_complete": false,
+      "aggregate_daily_reset_base_return_pct": null,
+      "maximum_closure_ledger_drawdown_pct": null,
+      "full_marked_account_drawdown_pct": null,
+      "daily_initial_capital_reset": true,
+      "limitations": "Next-print cost scenarios; no NBBO/size fills. Closure ledger omits intratrade marks. Unknown day prevents a complete multi-day account claim."
+    },
+    "CASH": {
+      "days": {
+        "2026-05-11": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-12": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-13": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-14": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-15": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-18": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-19": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        },
+        "2026-05-20": {
+          "entries": 0,
+          "unresolved_orders": 0,
+          "capacity_WAIT_decisions": 0,
+          "same_ticker_WAIT_decisions": 0,
+          "maximum_simultaneous_reserved_slots": 0,
+          "complete_account": true,
+          "base_return_pct": 0.0,
+          "stress_return_pct": 0.0,
+          "resolved_leg_only_base_return_pct": 0.0,
+          "closure_ledger_drawdown_pct": 0.0
+        }
+      },
+      "all_days_complete": true,
+      "aggregate_daily_reset_base_return_pct": 0.0,
+      "maximum_closure_ledger_drawdown_pct": 0.0,
+      "full_marked_account_drawdown_pct": null,
+      "daily_initial_capital_reset": true,
+      "limitations": "Next-print cost scenarios; no NBBO/size fills. Closure ledger omits intratrade marks. Unknown day prevents a complete multi-day account claim."
+    }
+  },
+  "paired_intervals": {
+    "day": {
+      "clusters": 8,
+      "draws": 1000,
+      "conditional_common_resolved_only": true,
+      "comparisons": {
+        "F_minus_E": {
+          "base_mean_ci95": [
+            0.0,
+            0.0
+          ],
+          "valid_draws": 1000,
+          "common_resolved_episodes": 828
+        },
+        "F_minus_G": {
+          "base_mean_ci95": [
+            0.08619112611797579,
+            0.15274467061851615
+          ],
+          "valid_draws": 1000,
+          "common_resolved_episodes": 557
+        }
+      }
+    },
+    "ticker_day": {
+      "clusters": 828,
+      "draws": 1000,
+      "conditional_common_resolved_only": true,
+      "comparisons": {
+        "F_minus_E": {
+          "base_mean_ci95": [
+            0.0,
+            0.0
+          ],
+          "valid_draws": 1000,
+          "common_resolved_episodes": 828
+        },
+        "F_minus_G": {
+          "base_mean_ci95": [
+            0.07799604285946571,
+            0.17064144951465432
+          ],
+          "valid_draws": 1000,
+          "common_resolved_episodes": 557
+        }
+      }
+    }
+  },
+  "target_support": {
+    "training_reasons": {
+      "fixed60s_or_session_cap": 3669,
+      "entry_missing_or_late": 2379,
+      "exit_missing_or_late": 1123,
+      "stop": 635
+    },
+    "evaluation_reasons": {
+      "fixed60s_or_session_cap": 7704,
+      "entry_missing_or_late": 6011,
+      "stop": 2951,
+      "exit_missing_or_late": 2864
+    },
+    "training_common_targets": 4144,
+    "evaluation_common_targets": 10074,
+    "evaluation_cost_only_stop_rows": 708
+  },
+  "integrity": {
+    "registered_inputs_verified": true,
+    "all_original_clocks_replayed": true,
+    "strict_prefix_fitting_no_outcome_inputs": true,
+    "immutable_current_G": true,
+    "wait_target_is_fixed_causal_pi0_not_future_max": true,
+    "unknowns_never_cash": true
+  },
+  "limitations": "Reused May development. Q_WAIT is value of pi0, not the learned policy or optimal WAIT; policy iteration is not established. Fixed-fit conditional intervals omit unknowns and fitting uncertainty. Next-print cost scenarios do not prove NBBO/size fills. No learned HOLD/EXIT/ADD/REDUCE/allocator or promotion.",
+  "gate_checks": {
+    "training_paired_episodes150": false,
+    "training_positive_enter_episodes30": true,
+    "training_both_enter_signs3_dates": true,
+    "strict_prefix_fit_no_outcome_inputs": true,
+    "immutable_current_G": true,
+    "F_entries30": false,
+    "F_resolution95": true,
+    "F_all_shared_capital_days_complete": true,
+    "F_full_base_positive": false,
+    "F_full_base_beats_E": false,
+    "F_full_base_beats_G": false,
+    "F_full_stress_positive": false,
+    "F_positive_days5": false,
+    "F_closure_drawdown_no_worse_E_G": false,
+    "day_F_minus_E_base_ci_positive": false,
+    "day_F_minus_G_base_ci_positive": true,
+    "ticker_day_F_minus_E_base_ci_positive": false,
+    "ticker_day_F_minus_G_base_ci_positive": true
+  }
+}
