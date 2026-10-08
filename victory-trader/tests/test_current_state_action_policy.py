@@ -182,3 +182,5 @@ def test_clock_replay_uses_original_complete_bar_observations():
     with pytest.raises(AssertionError):
         exp.verify_clocks(states.iloc[:1], states[exp.KEYS].drop_duplicates(), {('2026-05-11', 'A'): b})
     assert closing > hot
+
+# R330 registered cached replay uses this exact causal/action regression suite.
