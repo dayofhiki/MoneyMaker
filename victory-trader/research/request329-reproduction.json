@@ -1,0 +1,87 @@
+{
+  "request_id": 329,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 1915,
+    "maximum_numeric_error": 0.0
+  },
+  "json_bytes_equal": true,
+  "fit_audit": {
+    "numeric_fields": 408,
+    "maximum_numeric_error": 0.0
+  },
+  "frames": {
+    "request329-transition-manifest.parquet": {
+      "rows": 7066,
+      "columns": 10,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "correction_and_logit_ranks_equal": true
+    },
+    "request329-transition-ledger.parquet": {
+      "rows": 266,
+      "columns": 6,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "correction_and_logit_ranks_equal": true
+    },
+    "request329-training-states.parquet": {
+      "rows": 7806,
+      "columns": 239,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "correction_and_logit_ranks_equal": true
+    },
+    "request329-states.parquet": {
+      "rows": 19530,
+      "columns": 236,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "correction_and_logit_ranks_equal": true
+    },
+    "request329-chronological-states.parquet": {
+      "rows": 7806,
+      "columns": 238,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "correction_and_logit_ranks_equal": true
+    },
+    "request329-first-states.parquet": {
+      "rows": 679,
+      "columns": 236,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "correction_and_logit_ranks_equal": true
+    },
+    "request329-episode-ledger.parquet": {
+      "rows": 828,
+      "columns": 13,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "correction_and_logit_ranks_equal": true
+    },
+    "request329-evidence-history.parquet": {
+      "rows": 35142,
+      "columns": 49,
+      "maximum_numeric_error": 0.0,
+      "missingness_equal": true,
+      "identities_labels_and_values_equal_within_tolerance": true,
+      "score_pair_ranks_equal": true,
+      "correction_and_logit_ranks_equal": true
+    }
+  }
+}
