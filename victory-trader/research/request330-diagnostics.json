@@ -1,0 +1,84 @@
+{
+  "training": {
+    "all_enter_finite_rows": 4304,
+    "all_enter_finite_episodes": 114,
+    "all_enter_original_weight_mass": 38.638357903219045,
+    "all_original_episode_mass": 266.0,
+    "all_enter_weighted_mean_pct": -1.132951799629755,
+    "all_enter_positive_episodes": 38,
+    "paired_original_weight_mass": 34.64042578744502,
+    "predicted_enter_range_pct": [
+      -2.1291671465432565,
+      -0.6113519881125845
+    ],
+    "predicted_wait_range_pct": [
+      -0.3954618915523665,
+      0.23888122721656124
+    ],
+    "conditional_enter_positive_auc": 0.6349686771203799,
+    "positive_target_quantiles_pct": {
+      "0.1": 0.09583304437004614,
+      "0.5": 0.6785932986940857,
+      "0.9": 2.377119153990623,
+      "1.0": 7.167122223996447
+    }
+  },
+  "evaluation": {
+    "all_enter_finite_rows": 10655,
+    "all_enter_finite_episodes": 263,
+    "all_enter_original_weight_mass": 91.7362885056171,
+    "all_original_episode_mass": 679.0,
+    "all_enter_weighted_mean_pct": -1.5358388856389655,
+    "all_enter_positive_episodes": 69,
+    "paired_original_weight_mass": 80.2412721889622,
+    "predicted_enter_range_pct": [
+      -2.6480531102136307,
+      -0.5715699870351169
+    ],
+    "predicted_wait_range_pct": [
+      -0.43621226141085007,
+      0.4191927800819818
+    ],
+    "conditional_enter_positive_auc": 0.5898006466608896,
+    "positive_target_quantiles_pct": {
+      "0.1": 0.13439021761009196,
+      "0.5": 0.8142860720033895,
+      "0.9": 3.5159295164462034,
+      "1.0": 15.069107671651949
+    }
+  },
+  "chronological": {
+    "all_enter_finite_rows": 4304,
+    "all_enter_finite_episodes": 114,
+    "all_enter_original_weight_mass": 38.638357903219045,
+    "all_original_episode_mass": 266.0,
+    "all_enter_weighted_mean_pct": -1.132951799629755,
+    "all_enter_positive_episodes": 38,
+    "paired_original_weight_mass": 34.64042578744502,
+    "predicted_enter_range_pct": [
+      -1.8027393316943507,
+      -0.5132302346036075
+    ],
+    "predicted_wait_range_pct": [
+      -0.24287354256342417,
+      0.12747904692074968
+    ],
+    "conditional_enter_positive_auc": 0.580948148686572,
+    "positive_target_quantiles_pct": {
+      "0.1": 0.09583304437004614,
+      "0.5": 0.6785932986940857,
+      "0.9": 2.377119153990623,
+      "1.0": 7.167122223996447
+    }
+  },
+  "G_first_vs_continuous_identical_selected_entries": true,
+  "G_selected_order_reasons": {
+    "entry_missing_or_late": 215,
+    "exit_missing_or_late": 56,
+    "fixed60s_or_session_cap": 45,
+    "stop": 14
+  },
+  "G_resolved_trade_count": 59,
+  "G_full_return_is_unknown": true,
+  "post_result_descriptive_only": true
+}

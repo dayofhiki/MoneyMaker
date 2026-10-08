@@ -1,0 +1,53 @@
+{
+  "canonical_run": {
+    "id": 37748181012,
+    "source": "29b60b70ec02e68292f19c7d9c0af80017da1cc5",
+    "artifact": 11536504167,
+    "zip_sha256": "c8a4745341dfd87ad41182ca886e218151a920fc98903cbf2d10e348d8d83b6b"
+  },
+  "unnecessary_identical_duplicate": {
+    "id": 37748621105,
+    "source": "0de204621a97052ba5dc39adf9f94af7009631ec",
+    "artifact": 11536603199,
+    "zip_sha256": "f28dc297b0ad36add2660a63cb46e9157bb51ffc3e3650cea0eb15756401bf23",
+    "reason": "Commit workflow/run listings omitted the custom replay, so triggering was changed without first checking commit check-runs. Canonical replay had already succeeded. This was an avoidable duplicate of the registered cached replay.",
+    "scientific_code_inputs_parameters_changed": false,
+    "counted_as_fresh_validation_or_additional_sample": false,
+    "protocol_deviation": "two official cached replays instead of the intended one; both preserved and verified with no result selection"
+  },
+  "local_validation": {
+    "tests_passed": 1220,
+    "warnings": 160,
+    "seconds": 45.5,
+    "targeted_new_tests": 15,
+    "critical_ruff": "pass"
+  },
+  "source_CI": {
+    "implementation": [
+      37747178110,
+      37747183192
+    ],
+    "canonical": [
+      37748180935,
+      37748192487
+    ],
+    "duplicate": [
+      37748630466
+    ],
+    "all_success": true
+  },
+  "main_json_numeric_fields": 909,
+  "maximum_local_official_numeric_error": 0.0,
+  "all_five_parquet_bytes_equal": true,
+  "duplicate_all_numeric_and_parquet_bytes_equal": false,
+  "temporary_output_files_remaining": 0,
+  "duplicate_reproduction": {
+    "maximum_json_numeric_error": 3.694822225952521e-12,
+    "json_bytes_equal": false,
+    "maximum_table_numeric_error": 7.527312106958561e-14,
+    "all_actions_identities_missingness_and_tie_aware_ranks_equal": true,
+    "registered_absolute_tolerance": 1e-09,
+    "tolerance_not_relaxed": true,
+    "only_episode_decisions_and_account_orders_parquets_byte_equal": true
+  }
+}
