@@ -1,0 +1,51 @@
+{
+  "request_id": 334,
+  "status": "completed_exactly_replayed_all24_HEAD_requests_rejected_403",
+  "preregistration_sha": "fc5abd2daa1f689c98a9d17119195420042b2222",
+  "evaluated_source_sha": "f373f21c588d1cca6f3285a1c486f9eb913a10e1",
+  "evaluated_tree_sha": "daa020b4f4e4d5493c99835e215c3e01987b1cf6",
+  "official_run": 37920390526,
+  "official_attempt": 1,
+  "metadata_artifact_id": 11611851108,
+  "metadata_artifact_created_at": "2026-10-09T10:54:37Z",
+  "metadata_zip_sha256": "9b899f1f875c650f8e560c55406889e7fb6fec6a49bf38995d7cc424a3627ff4",
+  "offline_analysis_started_at": "2026-10-09T10:54:37.660275+00:00",
+  "complete_artifact_id": 11611452568,
+  "complete_artifact_created_at": "2026-10-09T10:54:40Z",
+  "complete_zip_sha256": "14c11e5d1a59dcf184ffea86acff16c5d17680c4d761fae770741d80a270b19d",
+  "result_sha256": "c74ec3b75cd1e94a54078980b8aa5450dd7abf3c2984834b67069e597795f97b",
+  "metadata_ledger_sha256": "68bd378f8e89091bf96581ac0afeba3d0674ccf5b7e977c01d8962524d1dd008",
+  "pr_url": "https://github.com/dayofhiki/MoneyMaker/pull/107",
+  "failed_official_runs": [],
+  "duplicate_official_runs": [],
+  "http_attempts": 24,
+  "request_start_spacing_minimum_seconds": 0.500097,
+  "market_body_bytes_read": 0,
+  "market_rows_read": 0,
+  "local_relevant_tests_passed": 44,
+  "new_synthetic_tests_passed": 12,
+  "local_full_tests_passed": 1301,
+  "local_full_warnings": 160,
+  "critical_lint": "passed",
+  "archived_reproduction": {
+    "request_id": 334,
+    "new_network_requests_for_reproduction": 0,
+    "json": {
+      "numeric_fields": 68,
+      "maximum_numeric_error": 0.0,
+      "bytes_equal": true
+    },
+    "metadata_ledger_sha256": "68bd378f8e89091bf96581ac0afeba3d0674ccf5b7e977c01d8962524d1dd008",
+    "all_dates_objects_statuses_timestamps_and_unknowns_exact": true
+  },
+  "new_economic_labels": 0,
+  "model_fits": 0,
+  "sealed_dates_opened": false,
+  "promotion_eligible": false,
+  "source_full_ci_tests_passed": 1301,
+  "source_full_ci_warnings": 160,
+  "source_ci_success_runs": [
+    37920390530,
+    37920420600
+  ]
+}
