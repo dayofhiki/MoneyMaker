@@ -1,5 +1,26 @@
 # R335 preparation complete; actual source access still unresolved
 
+## Subsequent cost-constrained continuation — 2026-10-09
+
+The user has now confirmed Massive Starter ($29/month) and has withheld approval
+for any paid subscription, purchase or API call. Reviewed R331–334 and public
+primary-source options in [request335-cost-integrity-review.md](request335-cost-integrity-review.md).
+An authorized retained export / institutional Daily TAQ and a conditional free
+Alpaca historical SIP qualification are preferable to an immediate Advanced
+purchase. Alpaca documentation conflicts and missing historical clock, units,
+correction and ordering evidence remain explicit; it is not yet an equivalent
+source. Other single-venue or synthetic BBO feeds are not treated as NBBO.
+
+Added offline fixed-census request planning and a quote-at-arrival observation
+diagnostic with exact nanoseconds, explicit unknown units/clock semantics,
+future-prefix guards, stale SIP age, ambiguous ties and displayed-size ceilings.
+No source, actual fill, economic label or market result was produced. These
+helpers do not modify the inherited R331 execution contract or failed90% gate.
+The 24 sample descriptors remain separate from all 2,470 full stream entries.
+R335 branch CI retains full tests/lint while skipping the unrelated credentialed
+Flat Files metadata job. Validation is recorded in `request335-cost-validation.json`.
+The original historical closeout below remains preserved.
+
 The interrupted research had closed R334, draft PR107, at
 `bea348ff5e46b3ee375d500c3dc165638544ccbc`. R333 recorded explicit REST trade/quote
 entitlement denials. R334 recorded 24 rejected metadata HEADs, without proving

@@ -1,5 +1,13 @@
 # R335 source choice after the completed R333/R334 access checks
 
+Update 2026-10-09: the user has confirmed Stocks Starter ($29/month), with no
+approval for paid upgrades, purchases or metered calls. The current comparison,
+conditional zero-cost qualification route and exact integrity requirements are
+in [request335-cost-integrity-review.md](request335-cost-integrity-review.md).
+The earlier plan-unknown text below records the previous preparatory stage;
+Starter does not include the required trade/NBBO tick streams. Advanced is a
+price benchmark, not the selected next purchase.
+
 The minimum next input is the existing account's stocks plan/entitlement or an
 already licensed historical trade + NBBO export. No API keys should be shared
 in a message. No account plan is inferred from the original 403 observations.
