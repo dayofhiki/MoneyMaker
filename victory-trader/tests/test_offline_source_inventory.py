@@ -145,6 +145,23 @@ def test_mixed_ticker_file_rejected(tmp_path):
     assert m.inventory([window()], [e], tmp_path)[1][0]["state"] == "INVALID_OR_UNAVAILABLE_EXPORT"
 
 
+def test_csv_parser_failure_retains_full_unknown_ledger(tmp_path):
+    import csv
+    e = entry(tmp_path, format="provider_csv")
+    data = f"sip_timestamp,conditions\n{START},".encode() + b"x"*33 + b"\n"
+    (tmp_path/"ticks.jsonl").write_bytes(data)
+    e["sha256"] = m.sha(data)
+    original_limit = csv.field_size_limit(32)
+    try:
+        report, ledger = m.inventory([window()], [e], tmp_path)
+    finally:
+        csv.field_size_limit(original_limit)
+    assert len(ledger) == 2
+    assert ledger[0]["state"] == "INVALID_OR_UNAVAILABLE_EXPORT"
+    assert ledger[0]["error_type"] == "Error"
+    assert report["independent_complete_source_pairs_verified"] == 0
+
+
 @pytest.mark.parametrize("constant", ["NaN", "Infinity", "-Infinity"])
 def test_nonfinite_and_duplicate_json_keys_rejected(constant):
     with pytest.raises(ValueError):

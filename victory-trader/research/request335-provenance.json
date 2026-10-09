@@ -11,14 +11,15 @@
     "pytest": "9.1.1",
     "scikit-learn": "1.8.0"
   },
+  "final_CSV_parser_guard": "csv.Error retains the invalid partition and full unknown ledger; new regression passed.",
   "full_evaluation_identities": 828,
   "full_training_identities": 407,
-  "local_full_tests_passed": 1339,
+  "local_full_tests_passed": 1340,
   "local_full_warnings": 243,
   "market_http_attempts": 0,
   "model_fits": 0,
   "new_economic_labels": 0,
-  "new_synthetic_tests_passed": 38,
+  "new_synthetic_tests_passed": 39,
   "note": "No exported market files supplied. Two local offline preparations are not independent market samples. Original R333/R334 denials and R331 failed gate are preserved.",
   "official_market_acquisition_run": null,
   "original_R332_source_sha": "6dbcd3f45eb6763dad979aa8ca4456702ecbc8b7",
@@ -49,6 +50,13 @@
   },
   "request_id": 335,
   "required_identity_stream_entries": 2470,
+  "source_first_CI_success_runs": [
+    37931490444,
+    37931496297
+  ],
+  "source_first_CI_tests_passed": 1339,
+  "source_first_CI_warnings": 160,
   "stage": "offline_input_preparation_only",
+  "standard_CI_metadata_checks": "Unmodified CI also ran aggregate-only metadata HEAD checks for April1, separate from the zero-request R335 offline stage; both CI jobs succeeded, downloaded no market bodies and did not test trade/quote access.",
   "status": "preparation_complete_actual_source_access_unresolved"
 }

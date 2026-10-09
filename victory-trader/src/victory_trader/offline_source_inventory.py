@@ -185,7 +185,7 @@ def inventory(windows, catalog, root):
             observation = inspect_export(data, entry)
             observation.update(state="SOURCE_COMPLETENESS_UNVERIFIED", error_type=None,
                                source_sha256=sha(data), provenance_sha256=entry["provenance_sha256"])
-        except (ValueError, KeyError, TypeError, OSError, UnicodeError) as error:
+        except (ValueError, KeyError, TypeError, OSError, UnicodeError, csv.Error) as error:
             # Never echo untrusted paths, source references, rows or exception text.
             observation = {"state": "INVALID_OR_UNAVAILABLE_EXPORT", "error_type": type(error).__name__}
         observations[key] = observation

@@ -37,17 +37,27 @@ were altered in the process.
 This is an input-readiness result, not a new market experiment. The empty catalog
 does not scan the export directory, infer that no source exists elsewhere, or
 establish absence of actual trades. Project-file metadata contained research
-archives/reports and generated trade-decision CSVs; no independent licensed trade
-and NBBO export was supplied to this stage. Full source acquisition/reconciliation
+archives/reports and generated CSVs; this run did not import those files or treat
+their metadata as independent source evidence. No licensed trade and NBBO export
+was supplied to this stage. Full source acquisition/reconciliation
 and economic learning remain unexecuted.
 
 ## Validation and exact reproduction
 
-38 new synthetic cases passed; full local suite passed 1,339 tests with 243
+39 new synthetic cases passed; full local suite passed 1,340 tests with 243
 warnings on Python3.12.14. Critical source/test lint passed. The earlier initial
 targeted attempt exposed missing local package dependencies and an unused test
 import; dependencies were installed and the import removed before final checks.
 These were preparation/test issues, not failed market acquisitions or model fits.
+A final inspection also found that a CSV parser limit could raise a distinct
+exception and stop the whole inventory. That exception now preserves the invalid
+partition and the full unknown ledger; a new synthetic regression covers it.
+
+The first implementation also passed both full source CI runs 37931490444 and
+37931496297 (1,339 tests; 160 warnings on the Python3.11 CI environment).
+Unmodified standard CI additionally ran aggregate-only metadata HEAD checks on
+April1. Those jobs succeeded and read no market bodies; they are separate from
+R335's zero-request offline preparation and establish no trade/quote entitlement.
 
 Two independent local empty-catalog preparations produced identical report and
 all-identity ledger bytes: 13 report numeric fields + 7,410 ledger numeric fields
