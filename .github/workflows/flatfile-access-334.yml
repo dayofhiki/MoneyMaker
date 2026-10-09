@@ -1,0 +1,63 @@
+name: MoneyMaker R334 Metadata Only Alternative Source Check
+
+on: [push]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  metadata:
+    if: github.ref == 'refs/heads/research/flatfile-access-334'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e '.[dev]' numpy==2.4.6 pandas==3.0.6 scipy==1.17.1 scikit-learn==1.9.1 pyarrow==25.0.1 pytest==9.1.1 ruff==0.16.10
+      - name: Fixed metadata scope, secrecy and transport regressions
+        run: |
+          ruff check src tests research/verify_request334.py --select E4,E7,E9,F
+          pytest -q tests/test_flatfile_metadata_access.py tests/test_historical_source_qualification.py
+      - name: Metadata HEAD only through the existing configured account
+        env:
+          MASSIVE_S3_ACCESS_KEY: ${{ secrets.MASSIVE_S3_ACCESS_KEY }}
+          MASSIVE_S3_SECRET_KEY: ${{ secrets.MASSIVE_S3_SECRET_KEY }}
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          git rev-parse HEAD > artifacts/source-sha.txt
+          python --version > artifacts/environment.txt
+          python -m victory_trader.flatfile_metadata_access --stage collect \
+            --research research --output-dir artifacts/metadata \
+            2>&1 | tee artifacts/request334-collection.log
+      - name: Publish fixed metadata ledger before interpretation
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: moneymaker-flatfile-access-334-metadata
+          path: |
+            victory-trader/artifacts/source-sha.txt
+            victory-trader/artifacts/metadata/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Offline metadata summary
+        run: |
+          python -m victory_trader.flatfile_metadata_access --stage analyze \
+            --research research --metadata-dir artifacts/metadata --output-dir artifacts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: moneymaker-flatfile-access-334
+          path: victory-trader/artifacts/
+          if-no-files-found: warn
+          retention-days: 90
