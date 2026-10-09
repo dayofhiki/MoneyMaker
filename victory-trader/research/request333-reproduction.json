@@ -1,0 +1,16 @@
+{
+  "request_id": 333,
+  "new_market_requests_for_reproduction": 0,
+  "absolute_tolerance": 1e-09,
+  "json": {
+    "numeric_fields": 996,
+    "maximum_numeric_error": 0.0,
+    "bytes_equal": true
+  },
+  "retained_wire_page_hashes_verified": 26,
+  "sanitized_payload_hashes_verified": 26,
+  "page_manifest_sha256": "d7a74b6e3b23fde180e36468bf68b10efe483326c18c2cca8cacb31d82bf5411",
+  "all_declared_pairs_and_categories_exact": true,
+  "full_identity_window_manifest_sha256": "932c0d2d97389e80e3e3e723421ca2ceded0c8d345057829ee461b2aade2a5de",
+  "reproduction_is_same_archived_acquisition_not_new_market_sample": true
+}

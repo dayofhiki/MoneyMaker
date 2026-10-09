@@ -1,0 +1,2020 @@
+{
+  "request_id": 333,
+  "qualification_completed": true,
+  "full_census_collected": false,
+  "full_identity_count_retained_in_plan": 1235,
+  "sampled_identities": 12,
+  "declared_pairs": 48,
+  "market_http_attempts": 26,
+  "retained_response_bytes": 11921,
+  "credential_configured": true,
+  "page_manifest_sha256": "d7a74b6e3b23fde180e36468bf68b10efe483326c18c2cca8cacb31d82bf5411",
+  "plan_sha256": "a7d0e5f13ce0d32e00620cdb2a82785e13fabbad4eebd343f3ccc79eabf035a1",
+  "new_economic_labels": 0,
+  "model_fits": 0,
+  "sealed_dates_opened": false,
+  "promotion_eligible": false,
+  "full_census_support_or_gap_causes_claimed": false,
+  "R331_90pct_failure_preserved": true,
+  "all_required_sampled_sources_available": false,
+  "all_required_sampled_endpoint_access_observed": false,
+  "decision": "REQUIRED_SOURCE_ACCESS_OR_COMPLETENESS_UNRESOLVED",
+  "streams": {
+    "seconds": {
+      "declared_pairs": 12,
+      "endpoint_access_observed_pairs": 12,
+      "observed_complete_pairs": 12,
+      "denied_pairs_observed": 0,
+      "retained_rows": 81,
+      "state_counts": {
+        "COMPLETE_OBSERVED_PAGES": 12
+      }
+    },
+    "minutes": {
+      "declared_pairs": 12,
+      "endpoint_access_observed_pairs": 12,
+      "observed_complete_pairs": 12,
+      "denied_pairs_observed": 0,
+      "retained_rows": 12,
+      "state_counts": {
+        "COMPLETE_OBSERVED_PAGES": 12
+      }
+    },
+    "trades": {
+      "declared_pairs": 12,
+      "endpoint_access_observed_pairs": 0,
+      "observed_complete_pairs": 0,
+      "denied_pairs_observed": 1,
+      "retained_rows": 0,
+      "state_counts": {
+        "DENIED_403": 1,
+        "SKIPPED_AFTER_DENIAL": 11
+      }
+    },
+    "quotes": {
+      "declared_pairs": 12,
+      "endpoint_access_observed_pairs": 0,
+      "observed_complete_pairs": 0,
+      "denied_pairs_observed": 1,
+      "retained_rows": 0,
+      "state_counts": {
+        "DENIED_403": 1,
+        "SKIPPED_AFTER_DENIAL": 11
+      }
+    }
+  },
+  "pairs": [
+    {
+      "window": {
+        "trading_day": "2026-05-05",
+        "ticker": "AIRS",
+        "hot_t": 1777990860000,
+        "scope": "training",
+        "start_ms": 1777990800000,
+        "end_ms": 1777990860000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 18,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1777990811000,
+      "last_event_timestamp": 1777990859000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-05",
+        "ticker": "AIRS",
+        "hot_t": 1777990860000,
+        "scope": "training",
+        "start_ms": 1777990800000,
+        "end_ms": 1777990860000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1777990800000,
+      "last_event_timestamp": 1777990800000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-05",
+        "ticker": "AIRS",
+        "hot_t": 1777990860000,
+        "scope": "training",
+        "start_ms": 1777990800000,
+        "end_ms": 1777990860000
+      },
+      "stream": "trades",
+      "collection_state": "DENIED_403",
+      "attempted_pages": 1,
+      "http_statuses": [
+        403
+      ],
+      "provider_statuses": [
+        "NOT_AUTHORIZED"
+      ],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-05",
+        "ticker": "AIRS",
+        "hot_t": 1777990860000,
+        "scope": "training",
+        "start_ms": 1777990800000,
+        "end_ms": 1777990860000
+      },
+      "stream": "quotes",
+      "collection_state": "DENIED_403",
+      "attempted_pages": 1,
+      "http_statuses": [
+        403
+      ],
+      "provider_statuses": [
+        "NOT_AUTHORIZED"
+      ],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-06",
+        "ticker": "ABVC",
+        "hot_t": 1778097540000,
+        "scope": "training",
+        "start_ms": 1778097480000,
+        "end_ms": 1778097540000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 5,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778097499000,
+      "last_event_timestamp": 1778097535000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-06",
+        "ticker": "ABVC",
+        "hot_t": 1778097540000,
+        "scope": "training",
+        "start_ms": 1778097480000,
+        "end_ms": 1778097540000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778097480000,
+      "last_event_timestamp": 1778097480000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-06",
+        "ticker": "ABVC",
+        "hot_t": 1778097540000,
+        "scope": "training",
+        "start_ms": 1778097480000,
+        "end_ms": 1778097540000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-06",
+        "ticker": "ABVC",
+        "hot_t": 1778097540000,
+        "scope": "training",
+        "start_ms": 1778097480000,
+        "end_ms": 1778097540000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-07",
+        "ticker": "ACTU",
+        "hot_t": 1778167500000,
+        "scope": "training",
+        "start_ms": 1778167440000,
+        "end_ms": 1778167500000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 2,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778167492000,
+      "last_event_timestamp": 1778167493000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-07",
+        "ticker": "ACTU",
+        "hot_t": 1778167500000,
+        "scope": "training",
+        "start_ms": 1778167440000,
+        "end_ms": 1778167500000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778167440000,
+      "last_event_timestamp": 1778167440000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-07",
+        "ticker": "ACTU",
+        "hot_t": 1778167500000,
+        "scope": "training",
+        "start_ms": 1778167440000,
+        "end_ms": 1778167500000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-07",
+        "ticker": "ACTU",
+        "hot_t": 1778167500000,
+        "scope": "training",
+        "start_ms": 1778167440000,
+        "end_ms": 1778167500000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-08",
+        "ticker": "ABLV",
+        "hot_t": 1778247540000,
+        "scope": "training",
+        "start_ms": 1778247480000,
+        "end_ms": 1778247540000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 2,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778247490000,
+      "last_event_timestamp": 1778247505000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-08",
+        "ticker": "ABLV",
+        "hot_t": 1778247540000,
+        "scope": "training",
+        "start_ms": 1778247480000,
+        "end_ms": 1778247540000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778247480000,
+      "last_event_timestamp": 1778247480000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-08",
+        "ticker": "ABLV",
+        "hot_t": 1778247540000,
+        "scope": "training",
+        "start_ms": 1778247480000,
+        "end_ms": 1778247540000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-08",
+        "ticker": "ABLV",
+        "hot_t": 1778247540000,
+        "scope": "training",
+        "start_ms": 1778247480000,
+        "end_ms": 1778247540000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-11",
+        "ticker": "ABLV",
+        "hot_t": 1778507160000,
+        "scope": "evaluation",
+        "start_ms": 1778507100000,
+        "end_ms": 1778507160000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 4,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778507103000,
+      "last_event_timestamp": 1778507146000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-11",
+        "ticker": "ABLV",
+        "hot_t": 1778507160000,
+        "scope": "evaluation",
+        "start_ms": 1778507100000,
+        "end_ms": 1778507160000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778507100000,
+      "last_event_timestamp": 1778507100000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-11",
+        "ticker": "ABLV",
+        "hot_t": 1778507160000,
+        "scope": "evaluation",
+        "start_ms": 1778507100000,
+        "end_ms": 1778507160000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-11",
+        "ticker": "ABLV",
+        "hot_t": 1778507160000,
+        "scope": "evaluation",
+        "start_ms": 1778507100000,
+        "end_ms": 1778507160000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-12",
+        "ticker": "ABTS",
+        "hot_t": 1778594880000,
+        "scope": "evaluation",
+        "start_ms": 1778594820000,
+        "end_ms": 1778594880000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778594834000,
+      "last_event_timestamp": 1778594834000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-12",
+        "ticker": "ABTS",
+        "hot_t": 1778594880000,
+        "scope": "evaluation",
+        "start_ms": 1778594820000,
+        "end_ms": 1778594880000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778594820000,
+      "last_event_timestamp": 1778594820000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-12",
+        "ticker": "ABTS",
+        "hot_t": 1778594880000,
+        "scope": "evaluation",
+        "start_ms": 1778594820000,
+        "end_ms": 1778594880000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-12",
+        "ticker": "ABTS",
+        "hot_t": 1778594880000,
+        "scope": "evaluation",
+        "start_ms": 1778594820000,
+        "end_ms": 1778594880000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-13",
+        "ticker": "AARD",
+        "hot_t": 1778701620000,
+        "scope": "evaluation",
+        "start_ms": 1778701560000,
+        "end_ms": 1778701620000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 4,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778701562000,
+      "last_event_timestamp": 1778701607000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-13",
+        "ticker": "AARD",
+        "hot_t": 1778701620000,
+        "scope": "evaluation",
+        "start_ms": 1778701560000,
+        "end_ms": 1778701620000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778701560000,
+      "last_event_timestamp": 1778701560000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-13",
+        "ticker": "AARD",
+        "hot_t": 1778701620000,
+        "scope": "evaluation",
+        "start_ms": 1778701560000,
+        "end_ms": 1778701620000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-13",
+        "ticker": "AARD",
+        "hot_t": 1778701620000,
+        "scope": "evaluation",
+        "start_ms": 1778701560000,
+        "end_ms": 1778701620000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-14",
+        "ticker": "ACRV",
+        "hot_t": 1778766960000,
+        "scope": "evaluation",
+        "start_ms": 1778766900000,
+        "end_ms": 1778766960000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 4,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778766915000,
+      "last_event_timestamp": 1778766958000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-14",
+        "ticker": "ACRV",
+        "hot_t": 1778766960000,
+        "scope": "evaluation",
+        "start_ms": 1778766900000,
+        "end_ms": 1778766960000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778766900000,
+      "last_event_timestamp": 1778766900000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-14",
+        "ticker": "ACRV",
+        "hot_t": 1778766960000,
+        "scope": "evaluation",
+        "start_ms": 1778766900000,
+        "end_ms": 1778766960000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-14",
+        "ticker": "ACRV",
+        "hot_t": 1778766960000,
+        "scope": "evaluation",
+        "start_ms": 1778766900000,
+        "end_ms": 1778766960000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-15",
+        "ticker": "AAME",
+        "hot_t": 1778854080000,
+        "scope": "evaluation",
+        "start_ms": 1778854020000,
+        "end_ms": 1778854080000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778854068000,
+      "last_event_timestamp": 1778854068000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-15",
+        "ticker": "AAME",
+        "hot_t": 1778854080000,
+        "scope": "evaluation",
+        "start_ms": 1778854020000,
+        "end_ms": 1778854080000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1778854020000,
+      "last_event_timestamp": 1778854020000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-15",
+        "ticker": "AAME",
+        "hot_t": 1778854080000,
+        "scope": "evaluation",
+        "start_ms": 1778854020000,
+        "end_ms": 1778854080000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-15",
+        "ticker": "AAME",
+        "hot_t": 1778854080000,
+        "scope": "evaluation",
+        "start_ms": 1778854020000,
+        "end_ms": 1778854080000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-18",
+        "ticker": "ABR",
+        "hot_t": 1779119520000,
+        "scope": "evaluation",
+        "start_ms": 1779119460000,
+        "end_ms": 1779119520000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 24,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1779119464000,
+      "last_event_timestamp": 1779119517000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-18",
+        "ticker": "ABR",
+        "hot_t": 1779119520000,
+        "scope": "evaluation",
+        "start_ms": 1779119460000,
+        "end_ms": 1779119520000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1779119460000,
+      "last_event_timestamp": 1779119460000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-18",
+        "ticker": "ABR",
+        "hot_t": 1779119520000,
+        "scope": "evaluation",
+        "start_ms": 1779119460000,
+        "end_ms": 1779119520000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-18",
+        "ticker": "ABR",
+        "hot_t": 1779119520000,
+        "scope": "evaluation",
+        "start_ms": 1779119460000,
+        "end_ms": 1779119520000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-19",
+        "ticker": "ACH",
+        "hot_t": 1779210480000,
+        "scope": "evaluation",
+        "start_ms": 1779210420000,
+        "end_ms": 1779210480000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 3,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1779210423000,
+      "last_event_timestamp": 1779210475000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-19",
+        "ticker": "ACH",
+        "hot_t": 1779210480000,
+        "scope": "evaluation",
+        "start_ms": 1779210420000,
+        "end_ms": 1779210480000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1779210420000,
+      "last_event_timestamp": 1779210420000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-19",
+        "ticker": "ACH",
+        "hot_t": 1779210480000,
+        "scope": "evaluation",
+        "start_ms": 1779210420000,
+        "end_ms": 1779210480000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-19",
+        "ticker": "ACH",
+        "hot_t": 1779210480000,
+        "scope": "evaluation",
+        "start_ms": 1779210420000,
+        "end_ms": 1779210480000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-20",
+        "ticker": "ABCL",
+        "hot_t": 1779287160000,
+        "scope": "evaluation",
+        "start_ms": 1779287100000,
+        "end_ms": 1779287160000
+      },
+      "stream": "seconds",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 13,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1779287108000,
+      "last_event_timestamp": 1779287155000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-20",
+        "ticker": "ABCL",
+        "hot_t": 1779287160000,
+        "scope": "evaluation",
+        "start_ms": 1779287100000,
+        "end_ms": 1779287160000
+      },
+      "stream": "minutes",
+      "collection_state": "COMPLETE_OBSERVED_PAGES",
+      "attempted_pages": 1,
+      "http_statuses": [
+        200
+      ],
+      "provider_statuses": [
+        "OK"
+      ],
+      "endpoint_access_observed": true,
+      "source_complete_in_sampled_window": true,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 1,
+      "empty_returned_stream": false,
+      "first_event_timestamp": 1779287100000,
+      "last_event_timestamp": 1779287100000,
+      "timestamp_unit": "millisecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "t": 0,
+        "o": 0,
+        "h": 0,
+        "l": 0,
+        "c": 0,
+        "v": 0,
+        "n": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-20",
+        "ticker": "ABCL",
+        "hot_t": 1779287160000,
+        "scope": "evaluation",
+        "start_ms": 1779287100000,
+        "end_ms": 1779287160000
+      },
+      "stream": "trades",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-20",
+        "ticker": "ABCL",
+        "hot_t": 1779287160000,
+        "scope": "evaluation",
+        "start_ms": 1779287100000,
+        "end_ms": 1779287160000
+      },
+      "stream": "quotes",
+      "collection_state": "SKIPPED_AFTER_DENIAL",
+      "attempted_pages": 0,
+      "http_statuses": [],
+      "provider_statuses": [],
+      "endpoint_access_observed": false,
+      "source_complete_in_sampled_window": false,
+      "wire_body_withheld_pages": 0,
+      "retained_rows": 0,
+      "empty_returned_stream": false,
+      "first_event_timestamp": null,
+      "last_event_timestamp": null,
+      "timestamp_unit": "nanosecond",
+      "out_of_window_rows": 0,
+      "out_of_order_pairs": 0,
+      "duplicate_event_timestamps": 0,
+      "missing_optional_fields": {
+        "participant_timestamp": 0,
+        "sip_timestamp": 0,
+        "conditions": 0,
+        "correction": 0,
+        "bid_price": 0,
+        "ask_price": 0,
+        "bid_size": 0,
+        "ask_size": 0
+      },
+      "returned_condition_codes": [],
+      "returned_correction_rows": 0,
+      "SIP_before_participant_rows": 0
+    }
+  ]
+}

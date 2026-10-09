@@ -1,0 +1,1418 @@
+{
+  "request_id": 333,
+  "stage": "source_pages_before_analysis",
+  "plan_sha256": "a7d0e5f13ce0d32e00620cdb2a82785e13fabbad4eebd343f3ccc79eabf035a1",
+  "credential_configured": true,
+  "http_attempts": 26,
+  "retained_response_bytes": 11921,
+  "pairs": [
+    {
+      "window": {
+        "trading_day": "2026-05-05",
+        "ticker": "AIRS",
+        "hot_t": 1777990860000,
+        "scope": "training",
+        "start_ms": 1777990800000,
+        "end_ms": 1777990860000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/AIRS/range/1/second/1777990800000/1777990859999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "d37e68c12b56a3ce3c4735ab0b1dacb6",
+          "adjusted": false,
+          "resultsCount": 18,
+          "queryCount": 18,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "b807c6a949086aee4ed17dd09154f12a32d12bf9365f323d7a570a85ae4bb69d",
+          "wire_file": "pages/00-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/00-seconds-00.json",
+          "payload_sha256": "9a130659bd362e18ab088690c79499f3fefee1724d00cf288e66f2b941237745",
+          "body_bytes": 1692,
+          "error_type": null,
+          "attempt_number": 1,
+          "request_utc": "2026-10-09T10:32:35.068899+00:00",
+          "response_utc": "2026-10-09T10:32:35.231611+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-05",
+        "ticker": "AIRS",
+        "hot_t": 1777990860000,
+        "scope": "training",
+        "start_ms": 1777990800000,
+        "end_ms": 1777990860000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/AIRS/range/1/minute/1777990800000/1777990859999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "a49835ccb73ee589bb8db1367ea25736",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "492b778783833373d77dc2d5d5d4067cf37e4a8fc9218f81c2753d7012feed57",
+          "wire_file": "pages/00-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/00-minutes-00.json",
+          "payload_sha256": "5a04d322c54f749c1382885cc48dadc3442295972b35371e60882976611db7f7",
+          "body_bytes": 244,
+          "error_type": null,
+          "attempt_number": 2,
+          "request_utc": "2026-10-09T10:32:47.569037+00:00",
+          "response_utc": "2026-10-09T10:32:47.739384+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-05",
+        "ticker": "AIRS",
+        "hot_t": 1777990860000,
+        "scope": "training",
+        "start_ms": 1777990800000,
+        "end_ms": 1777990860000
+      },
+      "stream": "trades",
+      "pages": [
+        {
+          "request_path": "/v3/trades/AIRS",
+          "request_parameters": {
+            "timestamp.gte": "1777990800000000000",
+            "timestamp.lt": "1777990860000000000",
+            "sort": "timestamp",
+            "order": "asc",
+            "limit": 100
+          },
+          "http_status": 403,
+          "provider_status": "NOT_AUTHORIZED",
+          "request_id": "f7c82c9647668d43e126ee96d7e031d2",
+          "adjusted": null,
+          "resultsCount": null,
+          "queryCount": null,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "0a2dc01fb24af5dc7c3607a8c0dc4e9ac145c369fd5723839dfd432c7e4d53c7",
+          "wire_file": "pages/00-trades-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/00-trades-00.json",
+          "payload_sha256": "9205026b76ed79e1cd8ea8f050fac209a77f180f7cbe106a7ba53094f71224ac",
+          "body_bytes": 178,
+          "error_type": null,
+          "attempt_number": 3,
+          "request_utc": "2026-10-09T10:33:00.069147+00:00",
+          "response_utc": "2026-10-09T10:33:00.121270+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "DENIED_403"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-05",
+        "ticker": "AIRS",
+        "hot_t": 1777990860000,
+        "scope": "training",
+        "start_ms": 1777990800000,
+        "end_ms": 1777990860000
+      },
+      "stream": "quotes",
+      "pages": [
+        {
+          "request_path": "/v3/quotes/AIRS",
+          "request_parameters": {
+            "timestamp.gte": "1777990800000000000",
+            "timestamp.lt": "1777990860000000000",
+            "sort": "timestamp",
+            "order": "asc",
+            "limit": 100
+          },
+          "http_status": 403,
+          "provider_status": "NOT_AUTHORIZED",
+          "request_id": "9d2dc4074f4f98f2b205cbacc88b8420",
+          "adjusted": null,
+          "resultsCount": null,
+          "queryCount": null,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "e4c90a1262be37e917b3167a3cdc99c6d04bdfc8c413801a7533d239a66a3d3b",
+          "wire_file": "pages/00-quotes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/00-quotes-00.json",
+          "payload_sha256": "1209ac6cafa507acc7ec276e8a2a09eb16f94dbd5e4a93d39a5a7a4512a8be62",
+          "body_bytes": 178,
+          "error_type": null,
+          "attempt_number": 4,
+          "request_utc": "2026-10-09T10:33:12.569261+00:00",
+          "response_utc": "2026-10-09T10:33:12.623723+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "DENIED_403"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-06",
+        "ticker": "ABVC",
+        "hot_t": 1778097540000,
+        "scope": "training",
+        "start_ms": 1778097480000,
+        "end_ms": 1778097540000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABVC/range/1/second/1778097480000/1778097539999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "afa9d50105d40f69928b9830fa6475e9",
+          "adjusted": false,
+          "resultsCount": 5,
+          "queryCount": 5,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "dd16029b3df802d3e563c96f5476c29033817246c898be268cf3179b893b7556",
+          "wire_file": "pages/01-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/01-seconds-00.json",
+          "payload_sha256": "6446a8cca13e07cce6059cdef905d4550a2ebdcee85fc88f74c7d72a20e88a2d",
+          "body_bytes": 574,
+          "error_type": null,
+          "attempt_number": 5,
+          "request_utc": "2026-10-09T10:33:25.069396+00:00",
+          "response_utc": "2026-10-09T10:33:25.156648+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-06",
+        "ticker": "ABVC",
+        "hot_t": 1778097540000,
+        "scope": "training",
+        "start_ms": 1778097480000,
+        "end_ms": 1778097540000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABVC/range/1/minute/1778097480000/1778097539999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "4bb180b9f8d602437e72a9ad06a00877",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "964ae2537373914090dc8bd877c3eafb0fe2adf8d90a53e72c0c53cf89170a28",
+          "wire_file": "pages/01-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/01-minutes-00.json",
+          "payload_sha256": "ab1d15b64fa123572510dea247b2ee54dad661d302402b3882bf1c40ca5f65d6",
+          "body_bytes": 234,
+          "error_type": null,
+          "attempt_number": 6,
+          "request_utc": "2026-10-09T10:33:37.569561+00:00",
+          "response_utc": "2026-10-09T10:33:37.673497+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-06",
+        "ticker": "ABVC",
+        "hot_t": 1778097540000,
+        "scope": "training",
+        "start_ms": 1778097480000,
+        "end_ms": 1778097540000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-06",
+        "ticker": "ABVC",
+        "hot_t": 1778097540000,
+        "scope": "training",
+        "start_ms": 1778097480000,
+        "end_ms": 1778097540000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-07",
+        "ticker": "ACTU",
+        "hot_t": 1778167500000,
+        "scope": "training",
+        "start_ms": 1778167440000,
+        "end_ms": 1778167500000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ACTU/range/1/second/1778167440000/1778167499999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "fe076ce25d8b57dd3a39217d7ae3e1ad",
+          "adjusted": false,
+          "resultsCount": 2,
+          "queryCount": 2,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "48940e1f61f6001172645696a0d141b0478747bc3531e359a85a502f69830da1",
+          "wire_file": "pages/02-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/02-seconds-00.json",
+          "payload_sha256": "1a9ca8a6136cce8fd2f063d7ee8ee7f1c0067fd06f5958187e8a736ab2a86947",
+          "body_bytes": 315,
+          "error_type": null,
+          "attempt_number": 7,
+          "request_utc": "2026-10-09T10:33:50.069681+00:00",
+          "response_utc": "2026-10-09T10:33:50.154833+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-07",
+        "ticker": "ACTU",
+        "hot_t": 1778167500000,
+        "scope": "training",
+        "start_ms": 1778167440000,
+        "end_ms": 1778167500000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ACTU/range/1/minute/1778167440000/1778167499999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "09d4bf17f2ea741418466a1ebf9b4d95",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "db7825386235c3a5ff28bb15afb006958dac775a780aabff5a76f17df63f9595",
+          "wire_file": "pages/02-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/02-minutes-00.json",
+          "payload_sha256": "d1e46f4688affaf7346d537f72794079f76d30b01394aebb1b37dbe8b12fb103",
+          "body_bytes": 233,
+          "error_type": null,
+          "attempt_number": 8,
+          "request_utc": "2026-10-09T10:34:02.569804+00:00",
+          "response_utc": "2026-10-09T10:34:02.655844+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-07",
+        "ticker": "ACTU",
+        "hot_t": 1778167500000,
+        "scope": "training",
+        "start_ms": 1778167440000,
+        "end_ms": 1778167500000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-07",
+        "ticker": "ACTU",
+        "hot_t": 1778167500000,
+        "scope": "training",
+        "start_ms": 1778167440000,
+        "end_ms": 1778167500000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-08",
+        "ticker": "ABLV",
+        "hot_t": 1778247540000,
+        "scope": "training",
+        "start_ms": 1778247480000,
+        "end_ms": 1778247540000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABLV/range/1/second/1778247480000/1778247539999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "901358d1411977abdfb1ec9012caeebc",
+          "adjusted": false,
+          "resultsCount": 2,
+          "queryCount": 2,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "95a7419d490de72f2a11c02aefb46888377b03b647020441bd6e9da798399f38",
+          "wire_file": "pages/03-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/03-seconds-00.json",
+          "payload_sha256": "227142a1a3b2854e3f920357c05d0257ed716f0a22fe14f428e16011b1efc729",
+          "body_bytes": 326,
+          "error_type": null,
+          "attempt_number": 9,
+          "request_utc": "2026-10-09T10:34:15.069932+00:00",
+          "response_utc": "2026-10-09T10:34:15.243152+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-08",
+        "ticker": "ABLV",
+        "hot_t": 1778247540000,
+        "scope": "training",
+        "start_ms": 1778247480000,
+        "end_ms": 1778247540000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABLV/range/1/minute/1778247480000/1778247539999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "3eb8bbb36f7db6392124d5dc4bd70143",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "38856bb83d9638177fcc9ae2acd12e09a639e5e77757cd3c2b4a316621fe0d7b",
+          "wire_file": "pages/03-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/03-minutes-00.json",
+          "payload_sha256": "b86e4df64e29d00a39fe95bda4fa6949788431978460d481fc7e9c596fcf9d6f",
+          "body_bytes": 236,
+          "error_type": null,
+          "attempt_number": 10,
+          "request_utc": "2026-10-09T10:34:27.570059+00:00",
+          "response_utc": "2026-10-09T10:34:27.673372+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-08",
+        "ticker": "ABLV",
+        "hot_t": 1778247540000,
+        "scope": "training",
+        "start_ms": 1778247480000,
+        "end_ms": 1778247540000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-08",
+        "ticker": "ABLV",
+        "hot_t": 1778247540000,
+        "scope": "training",
+        "start_ms": 1778247480000,
+        "end_ms": 1778247540000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-11",
+        "ticker": "ABLV",
+        "hot_t": 1778507160000,
+        "scope": "evaluation",
+        "start_ms": 1778507100000,
+        "end_ms": 1778507160000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABLV/range/1/second/1778507100000/1778507159999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "9a2d9dd347bfd6a2d74cb04463fec9a3",
+          "adjusted": false,
+          "resultsCount": 4,
+          "queryCount": 4,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "90f23e30354efb8e6c96afa07d82cd5eef4697b8609ea3334f88bfc04cf9baae",
+          "wire_file": "pages/04-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/04-seconds-00.json",
+          "payload_sha256": "d0da704b933e2131c2ac18f85f61d27f1fb2dfb90b892d35bb4e7baaff95dad0",
+          "body_bytes": 500,
+          "error_type": null,
+          "attempt_number": 11,
+          "request_utc": "2026-10-09T10:34:40.070178+00:00",
+          "response_utc": "2026-10-09T10:34:40.261444+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-11",
+        "ticker": "ABLV",
+        "hot_t": 1778507160000,
+        "scope": "evaluation",
+        "start_ms": 1778507100000,
+        "end_ms": 1778507160000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABLV/range/1/minute/1778507100000/1778507159999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "6afff5f8f81e92a418cbb35db8564af7",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "0187bffba4681bdcea02c307b174ef5f716684b8b41e6120c34a26e616b0f021",
+          "wire_file": "pages/04-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/04-minutes-00.json",
+          "payload_sha256": "9da3887d47449232bdcf57b4a630458d46a3ce638c1bb87460d964d724aa01a3",
+          "body_bytes": 237,
+          "error_type": null,
+          "attempt_number": 12,
+          "request_utc": "2026-10-09T10:34:52.570296+00:00",
+          "response_utc": "2026-10-09T10:34:52.676194+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-11",
+        "ticker": "ABLV",
+        "hot_t": 1778507160000,
+        "scope": "evaluation",
+        "start_ms": 1778507100000,
+        "end_ms": 1778507160000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-11",
+        "ticker": "ABLV",
+        "hot_t": 1778507160000,
+        "scope": "evaluation",
+        "start_ms": 1778507100000,
+        "end_ms": 1778507160000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-12",
+        "ticker": "ABTS",
+        "hot_t": 1778594880000,
+        "scope": "evaluation",
+        "start_ms": 1778594820000,
+        "end_ms": 1778594880000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABTS/range/1/second/1778594820000/1778594879999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "ade82189a7a55a03f9acae1bfefb168f",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "32e2b64c9732740105d7896fd705095416d3af682bc93fe4faac715f3db26a64",
+          "wire_file": "pages/05-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/05-seconds-00.json",
+          "payload_sha256": "6b713e0d133a4e82079c9d4f88b8c1a427da4faea16adac89bce42971611261e",
+          "body_bytes": 234,
+          "error_type": null,
+          "attempt_number": 13,
+          "request_utc": "2026-10-09T10:35:05.070421+00:00",
+          "response_utc": "2026-10-09T10:35:05.221065+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-12",
+        "ticker": "ABTS",
+        "hot_t": 1778594880000,
+        "scope": "evaluation",
+        "start_ms": 1778594820000,
+        "end_ms": 1778594880000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABTS/range/1/minute/1778594820000/1778594879999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "44b212f7c2bc52afcdad300cccf17e32",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "c641cdc9bfbdc5add4db2859a3b9e1102dc5995c9be3e94b16792004a2982fd8",
+          "wire_file": "pages/05-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/05-minutes-00.json",
+          "payload_sha256": "12dc1ed64e0121115c928b83359f5ec13883818984d0ce732ee55bb819d22f5b",
+          "body_bytes": 233,
+          "error_type": null,
+          "attempt_number": 14,
+          "request_utc": "2026-10-09T10:35:17.570543+00:00",
+          "response_utc": "2026-10-09T10:35:17.800648+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-12",
+        "ticker": "ABTS",
+        "hot_t": 1778594880000,
+        "scope": "evaluation",
+        "start_ms": 1778594820000,
+        "end_ms": 1778594880000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-12",
+        "ticker": "ABTS",
+        "hot_t": 1778594880000,
+        "scope": "evaluation",
+        "start_ms": 1778594820000,
+        "end_ms": 1778594880000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-13",
+        "ticker": "AARD",
+        "hot_t": 1778701620000,
+        "scope": "evaluation",
+        "start_ms": 1778701560000,
+        "end_ms": 1778701620000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/AARD/range/1/second/1778701560000/1778701619999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "c7d3c922bf26a00b446ea4e46240ca6e",
+          "adjusted": false,
+          "resultsCount": 4,
+          "queryCount": 4,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "495ac7acad82d4343fe902d4b4288b7d88ff102db97fbdab82c7a822f982fabc",
+          "wire_file": "pages/06-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/06-seconds-00.json",
+          "payload_sha256": "a9bf9d5d4426191ae104654b5fc75be5cc9547f6df295beb41dcf5c0ecacb5a4",
+          "body_bytes": 490,
+          "error_type": null,
+          "attempt_number": 15,
+          "request_utc": "2026-10-09T10:35:30.070696+00:00",
+          "response_utc": "2026-10-09T10:35:30.149150+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-13",
+        "ticker": "AARD",
+        "hot_t": 1778701620000,
+        "scope": "evaluation",
+        "start_ms": 1778701560000,
+        "end_ms": 1778701620000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/AARD/range/1/minute/1778701560000/1778701619999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "03f1802eab7d530b51cf1ba318d61de2",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "3d524b520ce8f94364a1b4e9f94d9010072e686ebbe1e0a38b527938c38338ed",
+          "wire_file": "pages/06-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/06-minutes-00.json",
+          "payload_sha256": "af8fb1b6c2a7d352278cc844dd8e712c23bc4b6139ce6b61558d2011fb260e58",
+          "body_bytes": 244,
+          "error_type": null,
+          "attempt_number": 16,
+          "request_utc": "2026-10-09T10:35:42.570823+00:00",
+          "response_utc": "2026-10-09T10:35:42.755640+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-13",
+        "ticker": "AARD",
+        "hot_t": 1778701620000,
+        "scope": "evaluation",
+        "start_ms": 1778701560000,
+        "end_ms": 1778701620000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-13",
+        "ticker": "AARD",
+        "hot_t": 1778701620000,
+        "scope": "evaluation",
+        "start_ms": 1778701560000,
+        "end_ms": 1778701620000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-14",
+        "ticker": "ACRV",
+        "hot_t": 1778766960000,
+        "scope": "evaluation",
+        "start_ms": 1778766900000,
+        "end_ms": 1778766960000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ACRV/range/1/second/1778766900000/1778766959999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "ba46e5d47638e2cbfdabd19042b4aa99",
+          "adjusted": false,
+          "resultsCount": 4,
+          "queryCount": 4,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "b832ffcd0427e6c382e6624c838f6c9c3f89677935b62c996c3462dfadd72ce0",
+          "wire_file": "pages/07-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/07-seconds-00.json",
+          "payload_sha256": "52b06e03bb5ecd8bdd7b15c16c87c1e8f664841306e98294a8fe1724ce5d7088",
+          "body_bytes": 476,
+          "error_type": null,
+          "attempt_number": 17,
+          "request_utc": "2026-10-09T10:35:55.070954+00:00",
+          "response_utc": "2026-10-09T10:35:55.158230+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-14",
+        "ticker": "ACRV",
+        "hot_t": 1778766960000,
+        "scope": "evaluation",
+        "start_ms": 1778766900000,
+        "end_ms": 1778766960000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ACRV/range/1/minute/1778766900000/1778766959999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "aaa7d18d1da8bd672503cb4de24c8599",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "e07522de87828d87ed90dc8375a1f6b4903ff4cf378c42f8ae8a5deddd431ec7",
+          "wire_file": "pages/07-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/07-minutes-00.json",
+          "payload_sha256": "dcefcb386d583ecf9504acf821089d41edef468b0f9ba5794af6651d79a20e10",
+          "body_bytes": 239,
+          "error_type": null,
+          "attempt_number": 18,
+          "request_utc": "2026-10-09T10:36:07.571078+00:00",
+          "response_utc": "2026-10-09T10:36:07.743530+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-14",
+        "ticker": "ACRV",
+        "hot_t": 1778766960000,
+        "scope": "evaluation",
+        "start_ms": 1778766900000,
+        "end_ms": 1778766960000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-14",
+        "ticker": "ACRV",
+        "hot_t": 1778766960000,
+        "scope": "evaluation",
+        "start_ms": 1778766900000,
+        "end_ms": 1778766960000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-15",
+        "ticker": "AAME",
+        "hot_t": 1778854080000,
+        "scope": "evaluation",
+        "start_ms": 1778854020000,
+        "end_ms": 1778854080000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/AAME/range/1/second/1778854020000/1778854079999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "a1385cfa65992d28e890f37b95606fcc",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "3a150157f6ea651f44f2a9085dc149b5991a798a2d969070e71bdd90052a64de",
+          "wire_file": "pages/08-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/08-seconds-00.json",
+          "payload_sha256": "e96751df5737df838127fe4f534093c41e580ed1f7283a266d6b1af8d752f9a4",
+          "body_bytes": 232,
+          "error_type": null,
+          "attempt_number": 19,
+          "request_utc": "2026-10-09T10:36:20.071201+00:00",
+          "response_utc": "2026-10-09T10:36:20.298830+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-15",
+        "ticker": "AAME",
+        "hot_t": 1778854080000,
+        "scope": "evaluation",
+        "start_ms": 1778854020000,
+        "end_ms": 1778854080000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/AAME/range/1/minute/1778854020000/1778854079999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "f32f4e82f631031ac75dee6853dd3f62",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "c4d7df0d27c1748c283043f9edb346b3265c264b553749cc967d7b56cd576f5e",
+          "wire_file": "pages/08-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/08-minutes-00.json",
+          "payload_sha256": "5e58d002c3978fa7a299db3427590bd2172f130ef8cdad004d105005f6fdf101",
+          "body_bytes": 232,
+          "error_type": null,
+          "attempt_number": 20,
+          "request_utc": "2026-10-09T10:36:32.571336+00:00",
+          "response_utc": "2026-10-09T10:36:32.658533+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-15",
+        "ticker": "AAME",
+        "hot_t": 1778854080000,
+        "scope": "evaluation",
+        "start_ms": 1778854020000,
+        "end_ms": 1778854080000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-15",
+        "ticker": "AAME",
+        "hot_t": 1778854080000,
+        "scope": "evaluation",
+        "start_ms": 1778854020000,
+        "end_ms": 1778854080000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-18",
+        "ticker": "ABR",
+        "hot_t": 1779119520000,
+        "scope": "evaluation",
+        "start_ms": 1779119460000,
+        "end_ms": 1779119520000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABR/range/1/second/1779119460000/1779119519999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "40b339a6a29816a4b2f24fd53e2dfb1e",
+          "adjusted": false,
+          "resultsCount": 24,
+          "queryCount": 24,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "8754d7a329137aec5bd18affd601b14b7cf444bdccb8a63e489613cbc4a30c64",
+          "wire_file": "pages/09-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/09-seconds-00.json",
+          "payload_sha256": "3b6ad0688043222630762eb5a4b71343a3c5df44aa7228a710069023b0ec210f",
+          "body_bytes": 2221,
+          "error_type": null,
+          "attempt_number": 21,
+          "request_utc": "2026-10-09T10:36:45.071457+00:00",
+          "response_utc": "2026-10-09T10:36:45.211089+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-18",
+        "ticker": "ABR",
+        "hot_t": 1779119520000,
+        "scope": "evaluation",
+        "start_ms": 1779119460000,
+        "end_ms": 1779119520000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABR/range/1/minute/1779119460000/1779119519999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "8fcd3877b271ba86d19bb7dd6b1c964f",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "2ffefef96c3c3edaec7fa5a4f33605ca1afe1d79af2171e70f8d13f9a9b0a6b0",
+          "wire_file": "pages/09-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/09-minutes-00.json",
+          "payload_sha256": "d039b85ed4b66e02805cff9c00500ce93a1a73efcee7af844186d100adb72cd0",
+          "body_bytes": 245,
+          "error_type": null,
+          "attempt_number": 22,
+          "request_utc": "2026-10-09T10:36:57.571577+00:00",
+          "response_utc": "2026-10-09T10:36:57.680347+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-18",
+        "ticker": "ABR",
+        "hot_t": 1779119520000,
+        "scope": "evaluation",
+        "start_ms": 1779119460000,
+        "end_ms": 1779119520000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-18",
+        "ticker": "ABR",
+        "hot_t": 1779119520000,
+        "scope": "evaluation",
+        "start_ms": 1779119460000,
+        "end_ms": 1779119520000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-19",
+        "ticker": "ACH",
+        "hot_t": 1779210480000,
+        "scope": "evaluation",
+        "start_ms": 1779210420000,
+        "end_ms": 1779210480000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ACH/range/1/second/1779210420000/1779210479999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "dd22e32b642bfc13b66d00d6968766cc",
+          "adjusted": false,
+          "resultsCount": 3,
+          "queryCount": 3,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "5886957997b4f435b95b488c3083dfc210e423e6fa81724650fcf95da1b16152",
+          "wire_file": "pages/10-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/10-seconds-00.json",
+          "payload_sha256": "48e8f939d62a94f63c5da7857edcb50e79659773b9238127592f56d35dd9a6ec",
+          "body_bytes": 404,
+          "error_type": null,
+          "attempt_number": 23,
+          "request_utc": "2026-10-09T10:37:10.071714+00:00",
+          "response_utc": "2026-10-09T10:37:10.155230+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-19",
+        "ticker": "ACH",
+        "hot_t": 1779210480000,
+        "scope": "evaluation",
+        "start_ms": 1779210420000,
+        "end_ms": 1779210480000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ACH/range/1/minute/1779210420000/1779210479999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "5f43f3ffea761e46a5042e6285339d86",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "5abea417dadd42a751a7f28dec6646bb201af15645d4fb1f51c22737c62da9c3",
+          "wire_file": "pages/10-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/10-minutes-00.json",
+          "payload_sha256": "8eb81b6a2cd1a59b366c631a14c715ec2c6385edf22506a858c49e93956e8685",
+          "body_bytes": 235,
+          "error_type": null,
+          "attempt_number": 24,
+          "request_utc": "2026-10-09T10:37:22.571840+00:00",
+          "response_utc": "2026-10-09T10:37:22.814117+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-19",
+        "ticker": "ACH",
+        "hot_t": 1779210480000,
+        "scope": "evaluation",
+        "start_ms": 1779210420000,
+        "end_ms": 1779210480000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-19",
+        "ticker": "ACH",
+        "hot_t": 1779210480000,
+        "scope": "evaluation",
+        "start_ms": 1779210420000,
+        "end_ms": 1779210480000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-20",
+        "ticker": "ABCL",
+        "hot_t": 1779287160000,
+        "scope": "evaluation",
+        "start_ms": 1779287100000,
+        "end_ms": 1779287160000
+      },
+      "stream": "seconds",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABCL/range/1/second/1779287100000/1779287159999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "7f9ebceabee0514d94e86ba77d5d356b",
+          "adjusted": false,
+          "resultsCount": 13,
+          "queryCount": 13,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "8d70ee86e06ff856ad3d47f4f8157c7bfad6e5d5fbe0aaaa9fb330eafba84749",
+          "wire_file": "pages/11-seconds-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/11-seconds-00.json",
+          "payload_sha256": "7700caf8c755ae91e9815730e34d8e78343d05a7ddd96444fd645f0cefe89b7c",
+          "body_bytes": 1246,
+          "error_type": null,
+          "attempt_number": 25,
+          "request_utc": "2026-10-09T10:37:35.071971+00:00",
+          "response_utc": "2026-10-09T10:37:35.166401+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-20",
+        "ticker": "ABCL",
+        "hot_t": 1779287160000,
+        "scope": "evaluation",
+        "start_ms": 1779287100000,
+        "end_ms": 1779287160000
+      },
+      "stream": "minutes",
+      "pages": [
+        {
+          "request_path": "/v2/aggs/ticker/ABCL/range/1/minute/1779287100000/1779287159999",
+          "request_parameters": {
+            "adjusted": "false",
+            "sort": "asc",
+            "limit": 50000
+          },
+          "http_status": 200,
+          "provider_status": "OK",
+          "request_id": "014cd41296e0320274ecf70d3cd00d2a",
+          "adjusted": false,
+          "resultsCount": 1,
+          "queryCount": 1,
+          "next_url": null,
+          "terminal_page_observed": true,
+          "wire_complete": true,
+          "pagination_safe": null,
+          "wire_sha256": "f583211d2185036e421dd60ef8bfa0cb7f3f34767a3d81985332387d752a79d1",
+          "wire_file": "pages/11-minutes-00.wire",
+          "wire_evidence_withheld": false,
+          "payload_file": "pages/11-minutes-00.json",
+          "payload_sha256": "f7dbc554cb6e8f8f560c04fa65d0605415c2fc14360dc55391db6259005f4128",
+          "body_bytes": 243,
+          "error_type": null,
+          "attempt_number": 26,
+          "request_utc": "2026-10-09T10:37:47.572092+00:00",
+          "response_utc": "2026-10-09T10:37:47.670206+00:00",
+          "page_number": 0
+        }
+      ],
+      "collection_state": "COMPLETE_OBSERVED_PAGES"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-20",
+        "ticker": "ABCL",
+        "hot_t": 1779287160000,
+        "scope": "evaluation",
+        "start_ms": 1779287100000,
+        "end_ms": 1779287160000
+      },
+      "stream": "trades",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    },
+    {
+      "window": {
+        "trading_day": "2026-05-20",
+        "ticker": "ABCL",
+        "hot_t": 1779287160000,
+        "scope": "evaluation",
+        "start_ms": 1779287100000,
+        "end_ms": 1779287160000
+      },
+      "stream": "quotes",
+      "pages": [],
+      "collection_state": "SKIPPED_AFTER_DENIAL"
+    }
+  ]
+}

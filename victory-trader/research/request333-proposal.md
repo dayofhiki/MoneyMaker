@@ -1,6 +1,10 @@
 # R333 proposal: independently observed source gaps before new action targets
 
-Prepared after exactly reproduced R332. Not preregistered, collected or executed.
+Historical proposal after R332, now superseded by the bounded R333 qualification
+contract and completed `request333-findings.md`. The full census was not collected.
+R334 separately preregisters existing Flat Files metadata access without market
+downloads. The original full-source proposal below remains a subsequent design,
+not an execution or access claim.
 R332 identified interior late references, not causes:98.7% of primary unresolved
 compatible clocks have a later print before the relevant boundary. Every raw
 ticker-day path is present, but response/page completeness and independent market

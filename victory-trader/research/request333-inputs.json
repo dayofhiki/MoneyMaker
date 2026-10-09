@@ -1,0 +1,5 @@
+{
+  "official332/source-sha.txt": "61418d3f38243133125acabc7e91ec89266cdd319b978b8370e62dd634eb858f",
+  "official332/request332-training-source-ledger.parquet": "f70dcfc2312a5e5ebc701313bdf4d3193d4aaca0dcd37919e1bfb75a50dfc317",
+  "official332/request332-evaluation-source-ledger.parquet": "53683e0a351272f3d74ef8e370f8424ef108627f18d85c3420405afe9aa9e03f"
+}

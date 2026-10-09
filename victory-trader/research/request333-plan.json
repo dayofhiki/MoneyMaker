@@ -1,0 +1,122 @@
+{
+  "request_id": 333,
+  "base_closeout_sha": "2ff0fd9b54af1b9eba242c1ccd3312d26af6b4c5",
+  "source_artifact_sha": "6dbcd3f45eb6763dad979aa8ca4456702ecbc8b7",
+  "full_identities": 1235,
+  "full_window_manifest_sha256": "932c0d2d97389e80e3e3e723421ca2ceded0c8d345057829ee461b2aade2a5de",
+  "selection": "lexicographically first original(day,ticker,HOT) identity per day",
+  "qualification_windows": [
+    {
+      "trading_day": "2026-05-05",
+      "ticker": "AIRS",
+      "hot_t": 1777990860000,
+      "scope": "training",
+      "start_ms": 1777990800000,
+      "end_ms": 1777990860000
+    },
+    {
+      "trading_day": "2026-05-06",
+      "ticker": "ABVC",
+      "hot_t": 1778097540000,
+      "scope": "training",
+      "start_ms": 1778097480000,
+      "end_ms": 1778097540000
+    },
+    {
+      "trading_day": "2026-05-07",
+      "ticker": "ACTU",
+      "hot_t": 1778167500000,
+      "scope": "training",
+      "start_ms": 1778167440000,
+      "end_ms": 1778167500000
+    },
+    {
+      "trading_day": "2026-05-08",
+      "ticker": "ABLV",
+      "hot_t": 1778247540000,
+      "scope": "training",
+      "start_ms": 1778247480000,
+      "end_ms": 1778247540000
+    },
+    {
+      "trading_day": "2026-05-11",
+      "ticker": "ABLV",
+      "hot_t": 1778507160000,
+      "scope": "evaluation",
+      "start_ms": 1778507100000,
+      "end_ms": 1778507160000
+    },
+    {
+      "trading_day": "2026-05-12",
+      "ticker": "ABTS",
+      "hot_t": 1778594880000,
+      "scope": "evaluation",
+      "start_ms": 1778594820000,
+      "end_ms": 1778594880000
+    },
+    {
+      "trading_day": "2026-05-13",
+      "ticker": "AARD",
+      "hot_t": 1778701620000,
+      "scope": "evaluation",
+      "start_ms": 1778701560000,
+      "end_ms": 1778701620000
+    },
+    {
+      "trading_day": "2026-05-14",
+      "ticker": "ACRV",
+      "hot_t": 1778766960000,
+      "scope": "evaluation",
+      "start_ms": 1778766900000,
+      "end_ms": 1778766960000
+    },
+    {
+      "trading_day": "2026-05-15",
+      "ticker": "AAME",
+      "hot_t": 1778854080000,
+      "scope": "evaluation",
+      "start_ms": 1778854020000,
+      "end_ms": 1778854080000
+    },
+    {
+      "trading_day": "2026-05-18",
+      "ticker": "ABR",
+      "hot_t": 1779119520000,
+      "scope": "evaluation",
+      "start_ms": 1779119460000,
+      "end_ms": 1779119520000
+    },
+    {
+      "trading_day": "2026-05-19",
+      "ticker": "ACH",
+      "hot_t": 1779210480000,
+      "scope": "evaluation",
+      "start_ms": 1779210420000,
+      "end_ms": 1779210480000
+    },
+    {
+      "trading_day": "2026-05-20",
+      "ticker": "ABCL",
+      "hot_t": 1779287160000,
+      "scope": "evaluation",
+      "start_ms": 1779287100000,
+      "end_ms": 1779287160000
+    }
+  ],
+  "streams": [
+    "seconds",
+    "minutes",
+    "trades",
+    "quotes"
+  ],
+  "limits": {
+    "http_attempts": 96,
+    "pages_per_pair": 2,
+    "bytes_per_page": 2097152,
+    "total_response_bytes": 33554432,
+    "request_interval_seconds": 12.5,
+    "timeout_seconds": 30,
+    "tick_page_limit": 100,
+    "retry_attempts": 0
+  }
+}
