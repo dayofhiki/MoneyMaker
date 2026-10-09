@@ -1,0 +1,11 @@
+{
+  "request_id": 334,
+  "new_network_requests_for_reproduction": 0,
+  "json": {
+    "numeric_fields": 68,
+    "maximum_numeric_error": 0.0,
+    "bytes_equal": true
+  },
+  "metadata_ledger_sha256": "68bd378f8e89091bf96581ac0afeba3d0674ccf5b7e977c01d8962524d1dd008",
+  "all_dates_objects_statuses_timestamps_and_unknowns_exact": true
+}
