@@ -182,6 +182,11 @@ learning을 재개하고, HOLD/EXIT, 다른 종목 기회비용, ADD/REDUCE allo
   Plan의 두 독립 로컬 실행은 바이트 일치했고 기존 report/ledger의7,423 numeric
   fields, identity, states, missingness도 전부 동일했다. 초기 fresh runtime에는
   pytest/ruff가 없어 실행되지 않았으며 dev dependencies 설치 후 실제 검증했다.
+  게시된 source `07849b83313c9dab75bc61082bf14fb1f219b562`의 push/PR CI
+  [37940378756](https://github.com/dayofhiki/MoneyMaker/actions/runs/37940378756),
+  [37940383056](https://github.com/dayofhiki/MoneyMaker/actions/runs/37940383056)도
+  critical lint와 full1,390 tests(기존160 warnings, Python3.11)를 통과했다.
+  두 실행 모두 credentialed metadata job은 skipped이며 시장 수집 실행이 아니다.
 
 추가 결제 없이 가능: 명세·가격/라이선스 조사, pinned census 보존, 정확한 시간/
 unit/missingness 검사, future-prefix·order ambiguity 테스트, source/plan byte replay,

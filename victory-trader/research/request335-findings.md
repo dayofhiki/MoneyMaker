@@ -21,6 +21,13 @@ R335 branch CI retains full tests/lint while skipping the unrelated credentialed
 Flat Files metadata job. Validation is recorded in `request335-cost-validation.json`.
 The original historical closeout below remains preserved.
 
+Cost-constrained application source `07849b83313c9dab75bc61082bf14fb1f219b562`
+passed both CI runs 37940378756 and 37940383056: critical Ruff and all1,390 tests,
+160 existing warnings on Python3.11; the metadata jobs were skipped in both.
+Local Python3.12.14 passed the same1,390 tests with243 existing warnings. All50
+additional fixtures are synthetic. Exact plan and original unknown-ledger replay
+passed; no source, fill, profit or promotion is certified by these checks.
+
 The interrupted research had closed R334, draft PR107, at
 `bea348ff5e46b3ee375d500c3dc165638544ccbc`. R333 recorded explicit REST trade/quote
 entitlement denials. R334 recorded 24 rejected metadata HEADs, without proving

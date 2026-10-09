@@ -1,5 +1,16 @@
 {
-  "CI_current_head": "not_yet_published",
+  "CI_acquisition_or_profitability_claim": false,
+  "CI_full_test_and_lint": "passed_both_runs",
+  "CI_market_metadata_job": "skipped_both_runs",
+  "CI_python": "3.11",
+  "CI_success_runs": [
+    37940378756,
+    37940383056
+  ],
+  "CI_tests_passed": 1390,
+  "CI_verified_source_sha": "07849b83313c9dab75bc61082bf14fb1f219b562",
+  "CI_verified_source_tree": "90674f0a39aca965dc878d0293bd2f85fd9e1f28",
+  "CI_warnings": 160,
   "R335_branch_metadata_network_job": "skipped_by_push_and_PR_branch_guard",
   "actual_fill_or_profitability_verified": false,
   "additional_spending_authorized_USD": 0,
