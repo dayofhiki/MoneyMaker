@@ -1,0 +1,52 @@
+{
+  "request_id": 333,
+  "status": "completed_exactly_replayed_required_tick_sources_denied",
+  "preregistration_sha": "e8e85dd4cb5410f5948b1d062720c963a87c02ec",
+  "evaluated_source_sha": "5471e097cda5ae310ab09fcd25507254aa1d2823",
+  "evaluated_tree_sha": "fbb286c438671dbe7fec4e64393c859b6076c18a",
+  "official_run": 37918134023,
+  "page_artifact_id": 11610023036,
+  "page_artifact_created_at": "2026-10-09T10:37:48Z",
+  "page_zip_sha256": "309a3b2967db8707d2ca706f4bdd711e874c818f5adcb83326ecb14fb21bf97d",
+  "complete_artifact_id": 11610362865,
+  "complete_artifact_created_at": "2026-10-09T10:37:51Z",
+  "complete_zip_sha256": "f4475837b45eb3041c4fb29ef6cdd3841433abb22388b5524f9e7b9a631c697b",
+  "offline_analysis_started_at": "2026-10-09T10:37:50Z",
+  "result_sha256": "48bf3c10d5012f2c4846cb6dff9898ff8c393bd47b23a80824628c1f243dff7d",
+  "page_manifest_sha256": "d7a74b6e3b23fde180e36468bf68b10efe483326c18c2cca8cacb31d82bf5411",
+  "pr_url": "https://github.com/dayofhiki/MoneyMaker/pull/106",
+  "failed_official_runs": [],
+  "duplicate_official_runs": [],
+  "market_http_attempts": 26,
+  "retained_response_bytes": 11921,
+  "local_relevant_tests_passed": 84,
+  "new_synthetic_tests_passed": 32,
+  "source_full_ci_tests_passed": 1289,
+  "source_full_ci_warnings": 160,
+  "source_ci_success_runs": [
+    37918133952,
+    37918137157
+  ],
+  "critical_lint": "passed",
+  "archived_reproduction": {
+    "request_id": 333,
+    "new_market_requests_for_reproduction": 0,
+    "absolute_tolerance": 1e-09,
+    "json": {
+      "numeric_fields": 996,
+      "maximum_numeric_error": 0.0,
+      "bytes_equal": true
+    },
+    "retained_wire_page_hashes_verified": 26,
+    "sanitized_payload_hashes_verified": 26,
+    "page_manifest_sha256": "d7a74b6e3b23fde180e36468bf68b10efe483326c18c2cca8cacb31d82bf5411",
+    "all_declared_pairs_and_categories_exact": true,
+    "full_identity_window_manifest_sha256": "932c0d2d97389e80e3e3e723421ca2ceded0c8d345057829ee461b2aade2a5de",
+    "reproduction_is_same_archived_acquisition_not_new_market_sample": true
+  },
+  "new_market_requests_for_reproduction": 0,
+  "new_economic_labels": 0,
+  "model_fits": 0,
+  "sealed_dates_opened": false,
+  "promotion_eligible": false
+}
