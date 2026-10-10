@@ -2,6 +2,11 @@
 안내를 추가했다. 실제 시장 요청 0, full census와 경제적 연구는 계속 blocked다.
 [최신 실행 안내](request335-free-qualification-guide.md)와
 [후속 검증 기록](request335-free-qualification-validation.json)을 참고한다.
+같은 날 계정 후속: 실제 Paper Basic 무료 플랜을 확인했다. 최신 Basic 안내와
+historical SIP FAQ 및 개인/비상업 Terms를 근거로 등록된 접근 표본을 진행한다.
+지원팀의 별도 답변은 필수 조건에서 제외했다. 아래 문서 충돌 검토는 이전 기록이며,
+actual access 및 NBBO/clock/units/order/completeness 미확인 상태는 유지한다.
+[계정 확인 및 결정 수정](request335-alpaca-account-review.md)을 참고한다.
 기존 결과와 아래 이전 단계 기록은 보존한다.
 
 # R335: 비용을 낮추면서 원자료·실험 무결성을 보존하는 경로

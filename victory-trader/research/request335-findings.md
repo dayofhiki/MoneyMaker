@@ -2,6 +2,10 @@
 안내를 추가했다. 실제 시장 요청 0, full census와 경제적 연구는 계속 blocked다.
 [최신 실행 안내](request335-free-qualification-guide.md)와
 [후속 검증 기록](request335-free-qualification-validation.json)을 참고한다.
+같은 날 계정 후속: 실제 Paper Basic 무료 플랜을 확인했고, 공식 Basic/FAQ/Terms를
+근거로 등록된 무료 접근 표본을 진행하기로 했다. 지원팀 답변은 필수 조건이 아니다.
+실제 데이터 접근과 source/execution qualification은 여전히 미확인이다.
+[계정 확인 및 결정 수정](request335-alpaca-account-review.md)을 참고한다.
 기존 결과와 아래 이전 단계 기록은 보존한다.
 
 # R335 preparation complete; actual source access still unresolved

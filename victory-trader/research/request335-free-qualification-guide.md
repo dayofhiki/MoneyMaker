@@ -4,26 +4,30 @@
 이 단계는 **접근권한·응답 형식·페이지 연결의 기술 검증**이다. 전체 1,235개
 identity의 원자료 확보, 실제 체결 검증, 모델 수익성 검증을 완료하지 않는다.
 
-## 지금 사용자가 확인할 사항
+## 공식 근거와 다음 단계
 
-1. 이미 무료 Alpaca Basic 계정이 있으면 그 계정을 우선 확인한다. 없으면
-   본인이 무료 계정의 가입 조건을 검토한다. AlgoTrader Plus 결제, 입금,
-   실거래 계좌 개설 또는 Massive 업그레이드를 이 작업을 위해 진행하지 않는다.
-2. 해당 계정에서 2026년 5월 과거 **SIP Trades/Quotes 조회, 개인 연구 사용,
-   원본의 로컬 보관과 재현**이 무료로 허용되는지 확인한다. 적용 약관이나
-   권한 설명의 URL·확인일 또는 별도 확인의 참조를 보관한다. 기술적 200 응답은
-   라이선스의 증거가 아니며, 코드의 확인서도 법적 권리를 만들어 주지 않는다.
-3. 우선 확인 결과만 알려준다. API key/secret은 대화, PR, 코드, 로그에 보내지
-   않는다. 현재 PR의 자동 CI에는 Alpaca 자격증명을 주입하거나 수집하는 job이
-   없다. 지금 GitHub Secrets에 키를 넣어도 실제 수집이 시작되는 구조가 아니다.
+사용자가 보안 로그인을 완료한 실제 Paper 계정의 Basic / Included / Current Plan을
+확인했다. 계정 작업은 사용자가 위임했으며 지원팀 문의는 진행 조건이 아니다.
+최신 Basic 안내는 Paper/Live 기본 플랜을 무료로 설명하고 실시간 주식은 IEX로
+제한한다. FAQ는 historical `end`가 15분 이상 과거이면 SIP를 구독 없이 조회할 수
+있다고 명시한다. 일반 Terms의 개인/비상업 이용 범위와 이 공식 근거를 기록하여
+등록된 2026년 5월 접근 표본을 진행한다. 별도의 공급자 답변을 기다리지 않는다.
 
-Alpaca FAQ는 historical `end`가 15분보다 오래된 SIP 조회를 구독 없이 허용한다고
-설명한다. 반면 Paper Trading 문서는 Paper Only 계정의 데이터 이용권을 IEX로
-설명한다. 따라서 무료 계정 생성 가능성이 곧 이 연구용 SIP 권리를 뜻하지
-않는다. 문서가 충돌하면 IEX를 동등한 NBBO로 대체하거나 유료 플랜을 결제하지
-않는다. 권한 확인이 어려우면 기관 Daily TAQ 또는 적법한 보유 원본 경로를
-유지한다. 대학/WRDS 로그인 자체는 TAQ 모듈 사용권의 증거가 아니다.
+확인서의 권리 근거에는 공식 URL, 확인일, 비공개 개인 연구 범위를 적는다.
+이는 영구 보관·공개 배포·상업 이용 권리의 확인이나 전체 source qualification이
+아니다. Paper Only 및 일반 Terms의 범위 차이는
+[계정 확인 기록](request335-alpaca-account-review.md)에 보존한다. 기술적 200 응답도
+별도의 계약 권리를 만들지 않는다. 구체적인 제한·추가 계약 요구·접근 거부가
+나타나면 해당 문제를 확인하며, IEX를 동등한 NBBO로 대체하거나 유료 경로로
+전환하지 않는다. 기관 Daily TAQ와 적법한 보유 원본 경로도 유지한다.
 
+현재 실제 접근 표본에 필요한 API credential 연결이 남아 있다. API key/secret은
+대화, PR, 코드, 로그에 보내지 않는다. 현재 PR의 자동 CI에는 Alpaca 자격증명을
+주입하거나 수집하는 job이 없다. GitHub Secrets에 키를 넣는 것만으로 수집이
+시작되지 않는다. AlgoTrader Plus 결제, 입금, 실거래 계좌 개설 또는 Massive
+업그레이드는 진행하지 않는다.
+
+- Basic 플랜: https://docs.alpaca.markets/us/docs/about-market-data-api
 - FAQ: https://docs.alpaca.markets/us/docs/market-data-faq
 - Paper Only 안내: https://docs.alpaca.markets/us/docs/paper-trading
 - 계정별 적용 약관 확인: https://alpaca.markets/disclosures
@@ -85,9 +89,10 @@ python -m victory_trader.r335_alpaca_qualification preflight --output ../r335-fr
 python -m victory_trader.r335_alpaca_qualification replay --output ../r335-free-preflight
 ```
 
-실제 `collect`는 위 무료 사용·보관 권한이 확인된 경우에만 실행한다. 다음 형식의
+실제 `collect`는 위 공식 근거와 무료 계정 및 비공개 개인 연구 범위를 기록한 뒤
+실행한다. 별도 지원팀 답변은 필요하지 않다. 다음 형식의
 `attestation.json`을 저장한다. 각 false는 사실을 확인한 뒤에만 true로 변경하고,
-`rights_evidence_reference`에는 적용 권리 확인의 참조를 넣는다. 이 파일은 private
+`rights_evidence_reference`에는 적용 공식 문서와 범위의 참조를 넣는다. 이 파일은 private
 원본 디렉터리에 복사되며 manifest에는 내용 대신 해시만 기록된다.
 
 ```json
@@ -125,7 +130,8 @@ CLI 출력의 시도 수·pair 수와 manifest의 상태 집계부터 공유할 
 
 ## 다음 연구를 시작할 최소 조건
 
-접근 표본을 시작하려면 무료 계정의 권한·보관 확인서, 원본 계획과 이번 계약의
+접근 표본을 시작하려면 공식 문서를 근거로 한 무료 이용·비공개 개인 연구 확인서,
+원본 계획과 이번 계약의
 등록된 코드, 자격증명, 적법한 private 저장 환경이 필요하다. 미확인 명세는 위
 목록 그대로 남겨 접근/형식만 조사한다. 실제 source qualification은 공식 NBBO,
 clock, share/lot units, correction/cancel chronology, same-clock ordering,
