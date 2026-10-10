@@ -47,17 +47,31 @@ def test_unknown_or_lossy_clocks_are_rejected(clock):
         rfc3339_ns(clock)
 
 
-def test_alpaca_provider_clock_never_becomes_sip_and_lots_never_become_shares():
+def test_alpaca_provider_clock_never_becomes_sip_and_documented_shares_are_not_scaled():
     raw = {"t": format_ns(NOW), "bp": "1.01", "ap": "1.02", "bs": 2, "as": 3,
            "bx": "Q", "ax": "P", "c": ["R"], "z": "C"}
     normalized = alpaca_row(raw, stream="quotes", feed="sip")
     assert normalized["provider_timestamp_ns"] == NOW
     assert normalized["sip_timestamp"] is None
-    assert normalized["size_unit"] == "UNVERIFIED_HISTORICAL_SIZE_UNIT"
-    assert normalized["documented_realtime_size_unit_hint"] == "round_lots"
+    assert normalized["size_unit"] == "shares"
+    assert normalized["documented_realtime_size_unit_hint"] == "shares"
+    assert normalized["size_unit_evidence"] and normalized["round_lot_shares"] is None
     assert normalized["ask_size"] == 3
     assert not normalized["source_ready"]
     assert raw["t"] == format_ns(NOW) and "sip_timestamp" not in raw
+
+
+@pytest.mark.parametrize("timestamp,unit", [
+    ("2025-11-02T23:59:59.999999999-05:00", "round_lots"),
+    ("2025-11-03T00:00:00-05:00", "shares"),
+    ("2025-11-03T04:59:59.999999999Z", "round_lots"),
+    ("2025-11-03T05:00:00Z", "shares"),
+])
+def test_quote_unit_change_uses_market_date_without_assuming_a_100_share_lot(timestamp, unit):
+    result = alpaca_row({"t": timestamp, "bs": 40, "as": 10}, stream="quotes", feed="sip")
+    assert result["size_unit"] == unit
+    assert result["bid_size"] == 40 and result["ask_size"] == 10
+    assert result["round_lot_shares"] is None and not result["source_ready"]
 
 
 def test_alpaca_trade_retains_missing_corrections_and_sequences():
@@ -66,6 +80,14 @@ def test_alpaca_trade_retains_missing_corrections_and_sequences():
     assert normalized["size_unit"] == "UNVERIFIED_HISTORICAL_SIZE_UNIT"
     assert normalized["documented_realtime_size_unit_hint"] == "shares"
     assert normalized["sequence_number"] is normalized["correction"] is None
+
+
+@pytest.mark.parametrize("status", ["canceled", "incorrect", "corrected", "new_unknown_value"])
+def test_optional_trade_update_is_preserved_without_inventing_correction_time(status):
+    result = alpaca_row({"t": format_ns(NOW), "u": status}, stream="trades", feed="sip")
+    assert result["trade_update_status"] == status
+    assert result["correction"] is result["sequence_number"] is None
+    assert result["sip_timestamp"] is None and not result["source_ready"]
 
 
 @pytest.mark.parametrize("feed", ["iex", "boats", "otc", None])

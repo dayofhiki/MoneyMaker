@@ -5,12 +5,17 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
+from zoneinfo import ZoneInfo
 
 NANOSECOND = 1_000_000_000
 MAX_REFERENCE_LAG_NS = 3 * NANOSECOND
 EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 RFC3339 = re.compile(
     r"(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})"
+)
+ALPACA_QUOTE_UNIT_CHANGE_DAY = "2025-11-03"
+ALPACA_UNIT_EVIDENCE = (
+    "https://docs.alpaca.markets/us/v1.1/changelog/marketdata-bid-and-ask-size-display-change"
 )
 
 
@@ -51,7 +56,9 @@ def alpaca_row(row: dict, *, stream: str, feed: str) -> dict:
 
     A declared SIP request is not authentication of the response/feed. The
     historical `t` field remains a provider clock until its meaning is verified.
-    Quote lots require a date/symbol-specific round-lot mapping before use.
+    CTA/UTP quote sizes changed to shares on 2025-11-03. Earlier quote lots
+    require a date/symbol-specific round-lot mapping before conversion. The
+    current schema documents this date rule for historical stock_quote records.
     Original response bytes and pagination evidence must be retained separately.
     """
     if not isinstance(row, dict) or stream not in ("trades", "quotes") or feed != "sip":
@@ -60,13 +67,22 @@ def alpaca_row(row: dict, *, stream: str, feed: str) -> dict:
                if stream == "trades" else
                {"bid_price": "bp", "ask_price": "ap", "bid_size": "bs",
                 "ask_size": "as", "bid_exchange": "bx", "ask_exchange": "ax"})
+    provider_ns = rfc3339_ns(row.get("t"))
+    seconds = provider_ns // NANOSECOND
+    market_day = (EPOCH + timedelta(seconds=seconds)).astimezone(
+        ZoneInfo("America/New_York")).date().isoformat()
+    unit = ("shares" if market_day >= ALPACA_QUOTE_UNIT_CHANGE_DAY else "round_lots")
     result = {key: row.get(field) for key, field in mapping.items()}
-    result.update(provider_timestamp_ns=rfc3339_ns(row.get("t")),
+    result.update(provider_timestamp_ns=provider_ns,
                   timestamp_semantics="UNVERIFIED_PROVIDER_CLOCK", declared_feed=feed,
                   sip_timestamp=None, participant_timestamp=None, trf_timestamp=None,
                   sequence_number=None, correction=None, conditions=row.get("c"),
-                  tape=row.get("z"), size_unit="UNVERIFIED_HISTORICAL_SIZE_UNIT",
-                  documented_realtime_size_unit_hint="shares" if stream == "trades" else "round_lots",
+                  tape=row.get("z"),
+                  size_unit=unit if stream == "quotes" else "UNVERIFIED_HISTORICAL_SIZE_UNIT",
+                  size_unit_evidence=ALPACA_UNIT_EVIDENCE if stream == "quotes" else None,
+                  round_lot_shares=None,
+                  trade_update_status=row.get("u") if stream == "trades" else None,
+                  documented_realtime_size_unit_hint="shares" if stream == "trades" else unit,
                   source_ready=False)
     return result
 
