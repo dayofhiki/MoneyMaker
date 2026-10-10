@@ -1,0 +1,21 @@
+{
+  "files": {
+    "request335-input-ledger.json": {
+      "bytes_equal": true,
+      "maximum_numeric_error": 0,
+      "numeric_fields": 7410,
+      "sha256": "06151d77c57c633c67c2896dc4b5faadc3f8060a81a8f90a1871bde35d50b9dd"
+    },
+    "request335.json": {
+      "bytes_equal": true,
+      "maximum_numeric_error": 0,
+      "numeric_fields": 13,
+      "sha256": "6dd012bb8b87c004677af9df24a90b785463a6cdad6d1f83d832873abde8e0bf"
+    }
+  },
+  "new_market_requests_for_reproduction": 0,
+  "request_id": 335,
+  "same_missingness_identities_and_states": true,
+  "source_completeness_or_licensing_established": false,
+  "stage": "offline_input_preparation_only"
+}
