@@ -45,6 +45,8 @@ The old sample-only assertion is not represented as census authorization.
 | Incremental spending |USD0|
 
 These are technical censoring limits, not completion or elapsed-time estimates.
+Wall cutoffs block new starts; already-started responses drain. The global body
+cutoff is checked between received chunks, with the socket timeout still applying.
 The unchanged original endpoints, SIP feed, asof-, USD and limit10000 are used.
 Each original [max(open,HOT−60seconds),close) range remains intact; the REST inclusive
 end is the original exclusive end minus1ns. All twelve dates remain in ascending
@@ -99,4 +101,18 @@ causal execution rules remain source-qualification requirements. Downloading mor
 rows does not solve those requirements or prove profits. Current user action: no
 login or payment is needed.
 
-Actual results will be appended after the registered acquisition.
+Registration CI38080629887/job114296626773 passes required lint and all1,557
+tests (Python3.11,160 warnings,102.44seconds). Credentialed metadata is skipped.
+
+The separate all-census offline audit links every original partition to the
+authenticated replay, handles copied pilot chains and preserves incomplete/empty
+entries. Equal-clock cross-stream counts use exact original identity/windows;
+row counts are partition observations rather than unique market events. Its2
+new tests and21 existing semantics tests pass (23 total); critical Ruff passes.
+The expanded local full suite passes1,559 tests (243 warnings,55.90seconds).
+The pinned official historical schema was retrieved again and matches its prior
+476,591-byte hash exactly. Remaining source requirements are recorded in
+`request335-census-source-qualification-20261011.md`.
+
+Actual collection is running. Results will be appended after the registered
+acquisition and authenticated raw verification.
