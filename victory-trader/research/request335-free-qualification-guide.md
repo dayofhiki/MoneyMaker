@@ -66,6 +66,12 @@ Alpaca FAQ는 historical `end`가 15분보다 오래된 SIP 조회를 구독 없
 검증: 추가 synthetic 테스트 51개, 관련 테스트 140개 통과. 전체 로컬 suite는
 Python 3.12.14에서 **1,441 passed, 기존 warning 243개**다. Critical Ruff와
 `git diff --check`도 통과했다. 모의 응답은 코드 검증에만 사용했다.
+게시된 source `216f0df45e331c2f1b401f9a01934ed64b82f491`의 push CI
+[38040701948](https://github.com/dayofhiki/MoneyMaker/actions/runs/38040701948)와
+PR CI [38040704653](https://github.com/dayofhiki/MoneyMaker/actions/runs/38040704653)
+모두 lint 및 **1,441 tests**를 통과했다(Python 3.11, 기존 warning 160개).
+자격증명을 사용하는 Flat Files metadata job은 두 실행에서 모두 skipped였다.
+CI는 모의 코드 검증이며 시장 원자료나 수익성의 검증이 아니다.
 
 ## 로컬 실행 절차
 
@@ -103,16 +109,16 @@ python -m victory_trader.r335_alpaca_qualification replay --output ../r335-free-
 read -r -s -p 'Alpaca key ID: ' APCA_API_KEY_ID
 read -r -s -p 'Alpaca secret: ' APCA_API_SECRET_KEY
 export APCA_API_KEY_ID APCA_API_SECRET_KEY
-python -m victory_trader.r335_alpaca_qualification collect --attestation attestation.json --output ../r335-free-qualified-access
+python -m victory_trader.r335_alpaca_qualification collect --attestation attestation.json --output ../r335-free-access-sample
 unset APCA_API_KEY_ID APCA_API_SECRET_KEY
-python -m victory_trader.r335_alpaca_qualification replay --output ../r335-free-qualified-access
+python -m victory_trader.r335_alpaca_qualification replay --output ../r335-free-access-sample
 ```
 
 중단된 실행은 같은 디렉터리에 이어쓰거나 덮어쓰지 않는다. 수집 도중 프로세스가
 종료되어 manifest가 없으면 해당 실행은 미완결 증거다. 원본을 유지하고 이유와
 별도 실행 ID를 기록한다. 임의 재시도·예산 증가·샘플 변경을 하지 않는다.
 
-CLI 출력의 시도 수·pair 수·상태 요약부터 공유할 수 있다. 원본 시장데이터를
+CLI 출력의 시도 수·pair 수와 manifest의 상태 집계부터 공유할 수 있다. 원본 시장데이터를
 업로드하기 전에는 적용 라이선스와 비공개 저장·처리 환경을 확인한다. 키는
 원본/manifest에도 포함되면 안 된다. 원본을 공유하지 않은 요약만으로 연구팀이
 데이터 무결성이나 경제적 결론을 인증할 수는 없다.
