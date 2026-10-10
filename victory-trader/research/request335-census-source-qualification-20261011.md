@@ -10,6 +10,10 @@ commit `53606273aa230a40c64b783425dcb3f4423ede30`. Its476,591 bytes reproduce SH
 `56b0278e0eca3dde122304b5dd6b74abfab6848123141a7947bc15614d8843b7` exactly.
 This verifies the prior schema reference rather than relying on its old summary.
 The stock historical endpoints reference the corresponding trade/quote schemas.
+The official repository default-branch version was also retrieved during this
+review and is byte-identical to the pinned file (Git blob
+`2f3acf6f07b4fcede2004ced07a3aa991ef37ffe`). No inspected current schema adds a
+physical historical trade-size unit or identifies the historical timestamp clock.
 
 | Requirement | Current evidence and remaining work |
 |---|---|
@@ -23,8 +27,17 @@ The stock historical endpoints reference the corresponding trade/quote schemas.
 | Availability/version | Reused and newly downloaded pages have distinct acquisition provenance. asof- disables symbol remapping; it does not freeze provider revision history. Download/HTTP timestamps are acquisition metadata, not historical strategy receipt. |
 | Actual execution and account economics | NBBO top-of-book quantities do not prove routing, depth, queue priority, fills or slippage. Registered causal availability/latency/quote-age/participation/cancel/fees/capital/opportunity-cost rules and outcome resolution are required before economic evaluation. |
 
-Full-census row diagnostics will measure these issues only where fields can be
-observed. Missing fields/clock semantics remain unknown, rather than reconstructed
+Full-census diagnostics now cover all 2,470 original partitions and 26,279,965
+partition-row observations. Every API chain is terminal; all scientific source
+qualifications remain false. There are 472,835 within-stream equal-clock groups,
+420 cross-stream equal-clock groups, 1,015,609 locked quotes, 6,592 crossed quotes,
+9 quotes with an inactive side and 36 current trade records marked canceled.
+No inspected required-field missingness, schema invalidity or returned-clock
+reversal was observed. These observations do not establish causal ordering or
+complete as-observed coverage. Exact decoded-field variation includes scalar type
+and Decimal text, rather than proving numeric price differences.
+
+Missing clock semantics remain unknown, rather than reconstructed
 with interpolation, convenient latency assumptions or profitable outcomes. No
 source-validation percentage is substituted for execution-resolution percentage.
 
@@ -33,6 +46,11 @@ private raw evidence. Aggregated row counts are original-partition observations;
 overlapping original windows may count the same market event more than once.
 Cross-stream equal-clock counts are paired by exact original identity and window,
 not merely by symbol/date. This avoids overwriting different windows for one ticker.
+
+Actual audit counts and provenance are recorded in
+[the complete census follow-up](request335-census-followup-20261011.md) and
+`request335-census-summary-20261011.json`. These are technical diagnostics, not
+economic outcomes or a source-validation substitute for the execution gate.
 
 ## Primary references reviewed
 
