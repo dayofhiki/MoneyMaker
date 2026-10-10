@@ -1,3 +1,9 @@
+2026-10-10 후속: 고정 무료 SIP 접근 표본 수집기·오프라인 replay와 사용자 실행
+안내를 추가했다. 실제 시장 요청 0, full census와 경제적 연구는 계속 blocked다.
+[최신 실행 안내](request335-free-qualification-guide.md)와
+[후속 검증 기록](request335-free-qualification-validation.json)을 참고한다.
+기존 결과와 아래 이전 단계 기록은 보존한다.
+
 # R335: 비용을 낮추면서 원자료·실험 무결성을 보존하는 경로
 
 확인일: 2026-10-09. 출발점은 PR108의 `afc106e77c36c219482641c2114f441fbd2e2b93`.
