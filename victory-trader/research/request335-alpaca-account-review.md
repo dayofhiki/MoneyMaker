@@ -1,11 +1,18 @@
 # R335 Alpaca 계정 확인 — 2026-10-10
 
+같은 날 22:09 KST 사용자 승인 후 Paper API 키를 생성하여 비공개 수집기에
+연결했다. 등록된 표본의 31 HTTP 요청 모두 200, 체결 674행/호가 812행,
+23 terminal pair와 1 page-capped 호가 pair를 관측했다. replay 2회가 동일하다.
+추가 비용 $0, 원본·키 비공개, 경제적 라벨 0이다.
+[실제 접근 결과와 남은 조건](request335-free-access-result-20261010.md)을 참고한다.
+아래 첫 계정 확인 당시의 기록과 미발송 문의 초안은 이전 상태로 보존한다.
+
 사용자가 Alpaca 계정에서 무료 연구에 필요한 확인 작업을 위임했고 직접 보안
 로그인을 완료했다. 계정 화면에서 Paper Trading 및 Plans & Features의
 `Subscription Status: Basic`, Basic `Included / Current Plan`을 확인했다.
 계정 ID, 이메일, API key/secret, 인증 쿠키는 이 기록에 포함하지 않는다.
 
-이번 단계의 추가 지출, 시장 데이터 HTTP 요청, 새 경제적 라벨은 모두 0이다.
+첫 계정 확인 단계의 추가 지출, 시장 데이터 HTTP 요청, 새 경제적 라벨은 모두 0이었다.
 구독 변경, 무료 체험 시작, live 계좌 개설, 주문, 보안 설정 변경은 없다.
 기존 407 training / 828 development의 원자료 및 전체 수익성 검증은 계속 막혀 있다.
 
@@ -29,7 +36,7 @@ Paper Only 안내 및 일반 Terms의 미국 거주자 대상 문구는 원래 �
 공식 무료 지원과 실제 source qualification은 별개다. 아직 실제 시장 요청은 0이며
 clock/NBBO/units/corrections/order/completeness 검증과 수익성 기준은 바꾸지 않는다.
 
-## 현재 확인 상태
+## API 연결 전 확인 상태 — 이후 접근 결과는 위 후속 기록 참조
 
 | 항목 | 확인 상태 |
 |---|---|

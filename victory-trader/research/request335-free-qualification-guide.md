@@ -1,5 +1,12 @@
 # R335 무료 표본 검증 실행 안내
 
+**같은 날 실제 연결·접근 완료:** 사용자 승인 후 Paper 키를 비공개 수집기에
+연결했다. 등록된 24 pair에 대해 31 HTTP 요청 모두 200, 체결 674행/호가 812행을
+받았다. 23 pair terminal, 호가 1 pair는 2페이지 한도로 미완결이다. replay 2회가
+동일하며 추가 지출은 $0이다. 아래 자격증명 없는 실행 기록은 이전 단계다.
+[실제 표본 결과 및 다음 데이터 조건](request335-free-access-result-20261010.md)을
+우선 참고한다. 전체 source/execution qualification은 계속 미완료다.
+
 2026-10-10 후속 작업. 추가 지출 허용액은 $0이며, PR108은 draft 상태를 유지한다.
 이 단계는 **접근권한·응답 형식·페이지 연결의 기술 검증**이다. 전체 1,235개
 identity의 원자료 확보, 실제 체결 검증, 모델 수익성 검증을 완료하지 않는다.
@@ -21,7 +28,7 @@ identity의 원자료 확보, 실제 체결 검증, 모델 수익성 검증을 �
 나타나면 해당 문제를 확인하며, IEX를 동등한 NBBO로 대체하거나 유료 경로로
 전환하지 않는다. 기관 Daily TAQ와 적법한 보유 원본 경로도 유지한다.
 
-현재 실제 접근 표본에 필요한 API credential 연결이 남아 있다. API key/secret은
+API credential은 실제 비공개 수집기에 연결했다. API key/secret은
 대화, PR, 코드, 로그에 보내지 않는다. 현재 PR의 자동 CI에는 Alpaca 자격증명을
 주입하거나 수집하는 job이 없다. GitHub Secrets에 키를 넣는 것만으로 수집이
 시작되지 않는다. AlgoTrader Plus 결제, 입금, 실거래 계좌 개설 또는 Massive
@@ -62,7 +69,7 @@ identity의 원자료 확보, 실제 체결 검증, 모델 수익성 검증을 �
   체결 가능성 또는 계좌 수익성을 인증하지 않는다. 출력에는 항상
   `source_ready=false`, `new_economic_labels=0`이 남는다.
 
-**실행 결과:** 자격증명 없는 원래 24 pair의 사전 점검과 replay를 각각 두 번
+**이전 실행 결과(API 연결 전):** 자격증명 없는 원래 24 pair의 사전 점검과 replay를 각각 두 번
 수행했다. 계약·manifest·replay 결과가 바이트 단위로 일치했다. 모든 pair는
 `NOT_REQUESTED_MISSING_CREDENTIAL`, 실제 시장 HTTP 시도 0이다. 상세 해시는
 `request335-free-qualification-reproduction.json`에 고정했다.

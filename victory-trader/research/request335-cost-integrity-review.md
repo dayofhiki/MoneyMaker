@@ -1,4 +1,10 @@
-2026-10-10 후속: 고정 무료 SIP 접근 표본 수집기·오프라인 replay와 사용자 실행
+2026-10-10 실제 접근 후속: Paper 키 연결 후 등록된 표본 31 요청 모두 200,
+체결 674행/호가 812행, 23 terminal pair/1 미완결 호가 pair를 확보했다. 추가 $0.
+[실제 접근 결과](request335-free-access-result-20261010.md)를 우선 참고한다.
+무료 접근은 확인했지만 full census/NBBO·clock·단위·순서·체결/계좌 검증은 미완료다.
+이후 문서는 이전 단계의 조사와 실행 상태를 보존한 것이다.
+
+2026-10-10 이전 후속: 고정 무료 SIP 접근 표본 수집기·오프라인 replay와 사용자 실행
 안내를 추가했다. 실제 시장 요청 0, full census와 경제적 연구는 계속 blocked다.
 [최신 실행 안내](request335-free-qualification-guide.md)와
 [후속 검증 기록](request335-free-qualification-validation.json)을 참고한다.
