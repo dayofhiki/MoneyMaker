@@ -1,5 +1,14 @@
 2026-10-10 전체 구간 후속: 고정 24개 구간의 무료 수집에서 14회 요청, 13개 HTTP 200, 체결 12,769건 / 호가 17,825건을 보존했다. 12개 API 종료 후 전송 오류와 실행환경의 네트워크 승인 취소로 중단했다. 추가 $0, source/local/CI 1,525 tests 통과, 전체 수익성 검증은 미완료다. [최신 전체 구간 결과와 예산](request335-full-window-followup-20261010.md)을 먼저 참고하며 아래 이전 기록은 보존한다.
 
+2026-10-11 무료 재조회 후속: 같은12일/24개 원래 full-window 구간을 독립 계약으로
+다시 수집했다. 33 HTTP200, 체결68,937건/호가105,112건, 24개 API chain 모두 terminal,
+추가USD0. 두 번의 replay/감사/prefix 비교가 각각 byte-equal이고 원래24개 prefix는
+모두 일치했다. 비공개 로컬 원본 archive의 실제 복원/replay도 확인했다. 같은clock
+3,258묶음과 locked10,334/crossed16행은 그대로 유지한다. 기존 전체1,235개/2,470
+partition ledger 및12일 shard 계획을 보존했으며 source/체결/수익 검증은 미완료다.
+[최신 수집 완료·감사·다음 연구 조건](request335-recovery-followup-20261011.md)을
+우선 참고하며 아래 기록은 이전 단계를 보존한다.
+
 2026-10-10 단위·페이지 후속: 공식 historical schema에 따라 May 호가 수량을
 shares로 확인했다. 별도 사전등록 후 AIRS 새 조회 1회에서 367행·terminal 및
 원래 200행 prefix 일치를 관측했다. 기존 미완결 기록은 변경하지 않았다. 추가 $0,

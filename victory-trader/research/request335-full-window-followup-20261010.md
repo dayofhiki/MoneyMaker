@@ -1,5 +1,10 @@
 # R335 — fixed anchors, full-window technical feasibility
 
+2026-10-11: a separately registered independent repeat completed all24 selected
+API chains at additionalUSD0 and verified original prefixes and private restore.
+See [the latest repeat and qualification report](request335-recovery-followup-20261011.md).
+This document preserves the earlier interrupted acquisition, including its failure.
+
 **실제 후속 결과:** 무료 전체 구간 기술 수집을 진행했다. 14회 요청 중 13개
 HTTP 200 응답에서 체결 12,769건 / 호가 17,825건, 3,209,029바이트를 보존했다.
 24개 표본 구간 중 12개에서 API 종료를 확인했으며, 14번째 요청의 전송 오류로
