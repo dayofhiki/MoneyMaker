@@ -1,5 +1,9 @@
 # R335 historical 단위·순서 감사와 별도 페이지 검증
 
+**후속 완료:** 공식 May quote shares 단위를 반영했고, 사전등록 후 AIRS 새 조회
+1회에서 367행·terminal 및 원래 200행 prefix 일치를 확인했다. 추가 비용 $0,
+local 전체 1,492 tests와 해당 source의 push/PR CI가 통과했다. 수익 검증은 미완료다.
+
 원래 R335의 연구 대상·성공 기준과 R331의 실패 결과를 보존하면서 무료 SIP
 표본의 해석을 구체화했다. 기존 31개 응답은 변경하지 않았다. 이번 원본 감사는
 추가 시장 API 요청 0회, 추가 비용 $0, 경제적 라벨 0개다.
@@ -82,12 +86,47 @@ SHA256 `45733ee0319e325100b01c4ace64ba2d9d8a1765459724b41dfa4b15b03d99c7`.
 기존 수집기 구현 hash, 48/2/32 MiB 계약, source plan과 과거 결과는 변경하지 않는다.
 이 후속 조회의 수량/순서 검사도 기술 검증이며 R335 수익성 성공이 아니다.
 
-## 실행 준비와 남은 최소 조건
+## 별도 조회 실제 결과
+
+조회 전에 코드·계약·검증을 commit `9fc4fc578d0fa987e17786890531cb04da8ffa06`
+(tree `c006f1b69723e16a0cf417c60f47290ca087c545`)에 공개했다. 원래 고정 collector를
+변경하지 않은 새 코드로 2026-10-10 15:03:42~15:03:53 UTC에 실행했다.
+
+| 항목 | 실제 관측 |
+|---|---|
+| 요청/HTTP/비용 | 1회 / 200 / 추가 $0 |
+| 응답 | 41,490 bytes, byte-complete, terminal marker |
+| AIRS quotes | 367행, documented shares |
+| 원래 prefix 비교 | 첫 200행 모두 원래 순서와 decoded 값 일치 |
+| 검사한 schema 누락/오류·역순·동일 clock·동일 decoded 행 | 각 0 |
+| locked / crossed / inactive-side | 38 / 0 / 0행 |
+| 독립 replay | 2회 byte-equal |
+
+원래 prefix 이후 167행을 관측했다. 새로 받은 367행을 원래 chain에 붙이거나
+이전 PAGE_CAP_INCOMPLETE 상태를 덮어쓰지 않았다. 다른 23개 pair의 기존 terminal
+관측과 이번 별도 chain의 terminal을 모두 사용할 수 있지만, 서로 다른 취득 시점의
+evidence다. prefix 일치는 비교한 200행의 일치이며 전체 vendor 수정/시장 완결성
+보증이 아니다. 이 60초 표본을 원래 full-window나 수익 결과로 일반화하지 않는다.
+
+새 manifest SHA256:
+`bf1b1ece92fecde6910a0cdc5fc9f60874df663dd9730249ab1498aaec30d98d`.
+새 replay SHA256:
+`dfd6db662b2532e055bab0c85aba7573464201ec283daf8cdcf0ee1451b055ea`.
+root0700 / 모든 파일0600을 확인했고 원본·키·account ID를 공개하지 않았다.
+기계 판독 결과:
+[request335-page-check-result-20261010.json](request335-page-check-result-20261010.json).
+
+## 검증과 남은 최소 조건
 
 별도 조회 코드와 단위/감사 테스트를 포함한 관련 147개 synthetic cases가 통과했다
 (Python3.12.14, 0.39초). 전체 local suite는 **1,492 passed**, 기존 warnings243,
 43.05초다. 저장소 CI와 같은 Ruff E4/E7/E9/F 검사도 통과했다. 모의 fixture는
-코드 검증에만 사용한다. 후속 실제 조회 결과는 완료 후 별도 기록한다.
+코드 검증에만 사용한다. 같은 source commit의 push CI38062043122 / PR CI38062047672에서
+필수 lint와 test 단계가 모두 성공했다. credentialed metadata job은 모두 skipped다.
+Decoded job log에서 양쪽 모두 1,492 passed / 기존 warnings160을 확인했다.
+Python3.11에서 push86.47초 / PR56.37초이며 local Python3.12 결과와 구분한다.
+[request335-semantics-validation-20261010.json](request335-semantics-validation-20261010.json)에
+검증 대상 코드/테스트 hash, local 결과, CI job, 실제 replay 결과를 구분해 기록했다.
 
 현재 가장 경제적인 경로는 Basic historical SIP를 개인 비상업 연구의 private
 acquisition에 계속 사용하는 것이다. 무료 접근·May quote 단위는 해결되었다.
@@ -106,6 +145,21 @@ acquisition에 계속 사용하는 것이다. 무료 접근·May quote 단위는
 원래 407 training / 828 development, 3초 reference, 60초 hold, BASE −2.5%
 completed-close stop, 90% 해소 기준 및 R331 34.8352% 실패를 보존한다.
 June HOLD / July·August sealed는 열지 않는다.
+
+| 경로 | 예상 추가 비용 | 이번 판단 |
+|---|---|---|
+| 현재 Alpaca Basic historical SIP | $0 | 무료 raw acquisition 우선; 과거 clock·순서·정정 전달 이력과 시장 완결성은 별도 검증 |
+| 현재 Massive Starter | $0, 기존 $29/월 | 보유 aggregates 재사용 가능; Trades/NBBO 제공 범위는 해결하지 못함 |
+| Massive Advanced | $199/월 플랜 | 새 결제 미승인; 라이선스·보관 조건과 execution 계약까지 해결되는 것은 아님 |
+| 기관 Daily TAQ/WRDS | 이미 해당 모듈을 허가받았으면 증분 $0 가능; 그 외 견적 | 사용자에게 실제 module 권한이 있는지 미확인 |
+| vendor exact May subset / 연구 지원 | 개별 견적, 가격 미확정 | 무료 경로가 제공하지 않는 필드를 확인하고 필요한 부분만 문의·구매 검토 |
+| Databento / ThetaData / algoseek | 상품·범위·권리에 따라 다름 | credit/부분 BBO/ms/synthetic 자료를 원래 NBBO와 동등하다고 간주하지 않음 |
+
+전체 비용·범위·누락·라이선스·재현성 비교는
+[request335-cost-integrity-review.md](request335-cost-integrity-review.md)의 기존 조사를
+참조한다. 이번 변경은 May quote 수량 단위와 실제 capped-pair 접근 검증을 해결한
+것이며 그 비교의 미확정 견적을 새 확정 가격으로 바꾸지 않는다. 현재 사용자에게
+요구할 결제·문의·로그인 행동은 없다.
 
 공식 근거(2026-10-10 열람):
 - https://docs.alpaca.markets/us/v1.1/changelog/marketdata-bid-and-ask-size-display-change

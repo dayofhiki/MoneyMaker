@@ -1,3 +1,11 @@
+2026-10-10 단위·페이지 후속: 공식 historical schema에 따라 May 호가 수량을
+shares로 확인했다. 별도 사전등록 후 AIRS 새 조회 1회에서 367행·terminal 및
+원래 200행 prefix 일치를 관측했다. 기존 미완결 기록은 변경하지 않았다. 추가 $0,
+local/해당 source CI 1,492 tests 통과. 시계·동일 시각 순서·정정 전달 이력과
+full census/체결·수익 검증은 미완료다.
+[최신 단위·순서 감사와 페이지 결과](request335-semantics-followup-20261010.md)를
+우선 참고하며 아래 기록은 이전 취득과 조사 상태를 보존한다.
+
 2026-10-10 실제 접근 후속: Paper 키 연결 후 등록된 표본 31 요청 모두 200,
 체결 674행/호가 812행, 23 terminal pair/1 미완결 호가 pair를 확보했다. 추가 $0.
 [실제 접근 결과](request335-free-access-result-20261010.md)를 우선 참고한다.
