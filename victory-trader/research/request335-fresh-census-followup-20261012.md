@@ -1,3 +1,5 @@
+Current continuation: this run stopped on a verified private-storage mismatch after814 complete chains. The failed result is preserved. The raw pages were retained, privately repaired/restored and verified. [Separate complete-chain recovery registration](request335-recovery-census-followup-20261012.md) records the next acquisition; no cursor resume or failure overwrite.
+
 # R335 — independent free requery with private durable checkpoints
 
 The previous successful 2,470-chain acquisition and its actual local restore remain
