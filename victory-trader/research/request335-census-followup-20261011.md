@@ -1,3 +1,10 @@
+2026-10-12 대상별 병목 후속: 기존 전체 수집·감사·복원은 완료됐지만, 현재 실행환경에서
+그 전체 비공개 원본/로컬 archive는 발견되지 않았다. 공개 기록의 해시를 검증해
+원래1,235개를 분석했으며, 740개 구간에 점검한 상태가 관측됐다. 495개의 나머지
+구간도 source/체결 qualified가 아니다. 새 요청0 /추가USD0 /경제 라벨0.
+[최신 대상별 분석·현재 원본 상태·다음 조건](request335-bottleneck-followup-20261012.md)을
+먼저 참고하며, 아래 모든 이전 성공·중단 기록은 보존한다.
+
 # R335 — completed free original-census acquisition and technical audit
 
 **Result:** all 2,470 original API chains for 1,235 identities (407 training /828
