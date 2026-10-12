@@ -1,3 +1,5 @@
+Current continuation: this registered run stopped before upload when the May18 archive source bytes no longer matched its readiness record. All2,052 complete original chains remain raw-verified. The failed status is preserved. [Atomic archive completion registration](request335-final-census-followup-20261012.md) records the remaining418 original queries.
+
 # R335 — retain restored complete chains after a verified storage failure
 
 The independently registered requery stopped after all814 first-four-date chains
