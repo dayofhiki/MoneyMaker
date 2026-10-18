@@ -1,0 +1,54 @@
+{
+  "additional_cost_USD": 0,
+  "all_partition_page_row_counts_equal_published_recovery_ledger": true,
+  "all_raw_body_digests_equal_internal_attempt_records": true,
+  "archive_bytes": 15244586,
+  "archive_members": 525,
+  "archive_scan_passes": 1,
+  "counts": {
+    "quotes_rows": 633648,
+    "trades_rows": 438903,
+    "wire_bytes": 114375659,
+    "wire_files_verified": 261
+  },
+  "external_original_archive_digest_pin_available": false,
+  "field_presence": {
+    "quotes": {
+      "ap": 633648,
+      "as": 633648,
+      "ax": 633648,
+      "bp": 633648,
+      "bs": 633648,
+      "bx": 633648,
+      "c": 633648,
+      "t": 633648,
+      "z": 633648
+    },
+    "trades": {
+      "c": 438903,
+      "i": 438903,
+      "p": 438903,
+      "s": 438903,
+      "t": 438903,
+      "x": 438903,
+      "z": 438903
+    }
+  },
+  "full_original_census_replayed": false,
+  "named_historical_SIP_publication_clock_field_found": false,
+  "named_receive_clock_field_found": false,
+  "named_sequence_field_found": false,
+  "new_economic_labels": 0,
+  "new_fits": 0,
+  "new_market_requests": 0,
+  "observed_archive_sha256": "fa5496a4576d261ffb01bc1efe942978db966b3a0ec2b69abd8ecb9fed698367",
+  "original_identities": 102,
+  "original_receipt_correction_event_history_established": false,
+  "original_stream_partitions": 204,
+  "reference_ledger_sha256": "a6d4796533b83c3926ae2782b7bc8164c8a8f94a53b29b59e102fe509679b234",
+  "request_id": 335,
+  "sample_day": "2026-05-05",
+  "selection": "first_original_date_not_selected_by_outcome",
+  "source_ready": false,
+  "stage": "retained_first_date_internal_integrity_and_field_audit"
+}
