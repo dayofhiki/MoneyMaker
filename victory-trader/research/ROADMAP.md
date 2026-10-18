@@ -1,5 +1,13 @@
 # MoneyMaker Research Roadmap
 
+Current R335 continuation (2026-10-18): [source-first, fixed-target support plan](request335-efficient-continuation-20261018.md).
+Preserve all1,235 identities and the original90% execution gate. Stop repeated
+full-census collection from a source with unresolved information semantics.
+The77.484% interval reduction is conditional support for the existing fixed
+R330/R331 target, not a new permanent horizon or full-session audit replacement.
+The next external dependency is institutional raw-source access and a small
+source-sufficiency check; no value fit or profitability validation has resumed.
+
 ## North Star
 
 MoneyMaker is not intended to become a fixed-horizon predictor or a collection of isolated backtest rules.

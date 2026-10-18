@@ -1,0 +1,15 @@
+{
+  "R334_base_sha": "bea348ff5e46b3ee375d500c3dc165638544ccbc",
+  "compressed_ledger_sha256": "315a445c080b7639a0b5fcd5db60bca2824bcc5343d81204fd398b185dd1c795",
+  "empty_catalog_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "preregistered_offline_contract_sha": "eaaae72103168708aa096757d439026994e1f9b5",
+  "registered_R333_inputs_sha256": "6e058f72bf12dfc08c8c9419e2ceb1a36fd66c441435bf5540615b14c65a6eb6",
+  "registered_R333_plan_sha256": "3f56e490a8a5e79e4871107dd8889f3266f39ba4e212baf0aa44f898ba2aa907",
+  "source_files": {
+    "official332/request332-evaluation-source-ledger.parquet": "53683e0a351272f3d74ef8e370f8424ef108627f18d85c3420405afe9aa9e03f",
+    "official332/request332-training-source-ledger.parquet": "f70dcfc2312a5e5ebc701313bdf4d3193d4aaca0dcd37919e1bfb75a50dfc317",
+    "official332/source-sha.txt": "61418d3f38243133125acabc7e91ec89266cdd319b978b8370e62dd634eb858f"
+  },
+  "uncompressed_ledger_bytes": 509056,
+  "uncompressed_ledger_sha256": "06151d77c57c633c67c2896dc4b5faadc3f8060a81a8f90a1871bde35d50b9dd"
+}

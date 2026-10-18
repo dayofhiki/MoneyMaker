@@ -1,0 +1,62 @@
+{
+  "all_not_supplied": true,
+  "authenticated_original_census_files": 3,
+  "base_sha": "bea348ff5e46b3ee375d500c3dc165638544ccbc",
+  "compressed_ledger_sha256": "315a445c080b7639a0b5fcd5db60bca2824bcc5343d81204fd398b185dd1c795",
+  "critical_lint": "passed",
+  "dependencies": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "pyarrow": "26.0.0",
+    "pytest": "9.1.1",
+    "scikit-learn": "1.8.0"
+  },
+  "final_CSV_parser_guard": "csv.Error retains the invalid partition and full unknown ledger; new regression passed.",
+  "full_evaluation_identities": 828,
+  "full_training_identities": 407,
+  "local_full_tests_passed": 1340,
+  "local_full_warnings": 243,
+  "market_http_attempts": 0,
+  "model_fits": 0,
+  "new_economic_labels": 0,
+  "new_synthetic_tests_passed": 39,
+  "note": "No exported market files supplied. Two local offline preparations are not independent market samples. Original R333/R334 denials and R331 failed gate are preserved.",
+  "official_market_acquisition_run": null,
+  "original_R332_source_sha": "6dbcd3f45eb6763dad979aa8ca4456702ecbc8b7",
+  "preregistration_sha": "eaaae72103168708aa096757d439026994e1f9b5",
+  "primary_May6_8_identities": 305,
+  "promotion_eligible": false,
+  "python": "3.12.14",
+  "reproduction": {
+    "files": {
+      "request335-input-ledger.json": {
+        "bytes_equal": true,
+        "maximum_numeric_error": 0,
+        "numeric_fields": 7410,
+        "sha256": "06151d77c57c633c67c2896dc4b5faadc3f8060a81a8f90a1871bde35d50b9dd"
+      },
+      "request335.json": {
+        "bytes_equal": true,
+        "maximum_numeric_error": 0,
+        "numeric_fields": 13,
+        "sha256": "6dd012bb8b87c004677af9df24a90b785463a6cdad6d1f83d832873abde8e0bf"
+      }
+    },
+    "new_market_requests_for_reproduction": 0,
+    "request_id": 335,
+    "same_missingness_identities_and_states": true,
+    "source_completeness_or_licensing_established": false,
+    "stage": "offline_input_preparation_only"
+  },
+  "request_id": 335,
+  "required_identity_stream_entries": 2470,
+  "source_first_CI_success_runs": [
+    37931490444,
+    37931496297
+  ],
+  "source_first_CI_tests_passed": 1339,
+  "source_first_CI_warnings": 160,
+  "stage": "offline_input_preparation_only",
+  "standard_CI_metadata_checks": "Unmodified CI also ran aggregate-only metadata HEAD checks for April1, separate from the zero-request R335 offline stage; both CI jobs succeeded, downloaded no market bodies and did not test trade/quote access.",
+  "status": "preparation_complete_actual_source_access_unresolved"
+}

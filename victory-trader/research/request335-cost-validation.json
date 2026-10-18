@@ -1,0 +1,76 @@
+{
+  "CI_acquisition_or_profitability_claim": false,
+  "CI_full_test_and_lint": "passed_both_runs",
+  "CI_market_metadata_job": "skipped_both_runs",
+  "CI_python": "3.11",
+  "CI_success_runs": [
+    37940378756,
+    37940383056
+  ],
+  "CI_tests_passed": 1390,
+  "CI_verified_source_sha": "07849b83313c9dab75bc61082bf14fb1f219b562",
+  "CI_verified_source_tree": "90674f0a39aca965dc878d0293bd2f85fd9e1f28",
+  "CI_warnings": 160,
+  "R335_branch_metadata_network_job": "skipped_by_push_and_PR_branch_guard",
+  "actual_fill_or_profitability_verified": false,
+  "additional_spending_authorized_USD": 0,
+  "base_head_sha": "afc106e77c36c219482641c2114f441fbd2e2b93",
+  "collection_enabled": false,
+  "critical_lint": "passed",
+  "final_local_full_tests_passed": 1390,
+  "final_local_full_warnings": 243,
+  "free_plan_replay": {
+    "bytes": 946999,
+    "bytes_equal": true,
+    "compressed_artifact": "request335-free-source-plan.json.gz",
+    "compressed_bytes": 36171,
+    "compressed_sha256": "6fa878519c5ab572148a7ff23a7d8e9f43159975fb6499157eeddb63227fc31f",
+    "sha256": "0ad2603a2a62ef49a975f21c5951e55fa6708fbe0d062bf5df5c832bb88c235e"
+  },
+  "full_census_identities": 1235,
+  "full_identity_stream_entries": 2470,
+  "full_unique_partition_streams": 2470,
+  "local_initial_attempt": "pytest/ruff absent in fresh runtime; installed repository dev dependencies before actual successful checks",
+  "model_fits": 0,
+  "new_economic_labels": 0,
+  "new_market_http_attempts": 0,
+  "new_synthetic_cases_passed": 50,
+  "notes": [
+    "All new books/prices are synthetic code fixtures, never market evidence.",
+    "Historical Alpaca clock and units stay unverified; realtime units are hints only.",
+    "No original research population, gates, prices or labels changed."
+  ],
+  "old_inventory_replay": {
+    "files": {
+      "request335-input-ledger.json": {
+        "bytes_equal": true,
+        "maximum_numeric_error": 0,
+        "numeric_fields": 7410,
+        "sha256": "06151d77c57c633c67c2896dc4b5faadc3f8060a81a8f90a1871bde35d50b9dd"
+      },
+      "request335.json": {
+        "bytes_equal": true,
+        "maximum_numeric_error": 0,
+        "numeric_fields": 13,
+        "sha256": "6dd012bb8b87c004677af9df24a90b785463a6cdad6d1f83d832873abde8e0bf"
+      }
+    },
+    "new_market_requests_for_reproduction": 0,
+    "request_id": 335,
+    "same_missingness_identities_and_states": true,
+    "source_completeness_or_licensing_established": false,
+    "stage": "offline_input_preparation_only"
+  },
+  "original_R331_primary_resolution_pct": 34.8352,
+  "original_R331_required_resolution_pct": 90,
+  "paid_api_calls": 0,
+  "python": "3.12.14",
+  "qualification_actual_http_attempts": 0,
+  "qualification_pair_descriptors": 24,
+  "request_id": 335,
+  "source_equivalence_verified": false,
+  "stage": "cost_constrained_offline_preparation_only",
+  "targeted_with_original_inventory_cases_passed": 89,
+  "user_confirmed_plan": "Massive Stocks Starter",
+  "workflow_yaml_parse": "passed"
+}
