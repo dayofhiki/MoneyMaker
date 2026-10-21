@@ -1,0 +1,7 @@
+{
+  "request_id": 202,
+  "experiment": "supply-barrier-ev-executable-bridge-v1.0",
+  "run_reason": "Use Request201 supply features to model direct runner barrier EV (+10 take, -3 stop, 0 neither) and test semantic predicted_EV>0 entries on Request171 chronological calibration with full one-second runner replay. Request178 remains sealed unless bridge passes.",
+  "opens_new_dates": false,
+  "promotion_eligible": false
+}

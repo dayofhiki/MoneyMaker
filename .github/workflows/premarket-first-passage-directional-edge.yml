@@ -1,0 +1,92 @@
+name: MoneyMaker Premarket First Passage Directional Edge
+
+on:
+  push:
+    branches:
+      - research/causal-second-execution-20260925
+    paths:
+      - 'victory-trader/research/premarket-first-passage-directional-edge-request.json'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: victory-trader
+    env:
+      MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MoneyMaker
+        run: python -m pip install -e '.[dev]'
+
+      - name: Test request 200
+        run: |
+          ruff check \
+            src/victory_trader/causal_first_passage_directional_edge.py \
+            src/victory_trader/premarket_first_passage_directional_edge.py \
+            tests/test_causal_first_passage_directional_edge.py \
+            tests/test_premarket_first_passage_directional_edge.py \
+            --select E4,E7,E9,F
+          pytest -q \
+            tests/test_causal_first_passage_directional_edge.py \
+            tests/test_premarket_first_passage_directional_edge.py
+
+      - name: Restore Request 197/198/199 second cache
+        uses: actions/cache/restore@v4
+        with:
+          path: victory-trader/data/cache/massive-second-attention
+          key: request200-reuse-${{ github.run_id }}
+          restore-keys: |
+            request197-second-
+            moneymaker-request171-second-fit-
+            moneymaker-request171-second-calibration-
+
+      - name: Download Request 171 FIT/CAL POSITION states
+        uses: actions/download-artifact@v4
+        with:
+          pattern: request171-rich-second-*
+          path: victory-trader/prepared/rich
+          merge-multiple: true
+          repository: dayofhiki/MoneyMaker
+          run-id: 36033120106
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download historical market scan
+        uses: actions/download-artifact@v4
+        with:
+          name: request163-opportunity-prepared
+          path: victory-trader/prepared/opportunity
+          repository: dayofhiki/MoneyMaker
+          run-id: 36001945920
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Evaluate request 200
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          python -m victory_trader.premarket_first_passage_directional_edge \
+            --fit prepared/rich/fit-rich-second.parquet \
+            --calibration prepared/rich/calibration-rich-second.parquet \
+            --history-scan prepared/opportunity/opportunity-scan.parquet \
+            --output artifacts/premarket-first-passage-directional-edge-v10.json \
+            | tee artifacts/premarket-first-passage-directional-edge-v10.log
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: moneymaker-premarket-first-passage-directional-edge-v10-200
+          path: |
+            victory-trader/artifacts/premarket-first-passage-directional-edge-v10.json
+            victory-trader/artifacts/premarket-first-passage-directional-edge-v10.log
+          if-no-files-found: warn
+          retention-days: 90

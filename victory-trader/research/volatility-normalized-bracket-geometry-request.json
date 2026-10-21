@@ -1,0 +1,7 @@
+{
+  "request_id": 206,
+  "experiment": "volatility-normalized-bracket-geometry-v1.0",
+  "run_reason": "After Requests199-205 repeatedly failed to produce a positive economic selected tail under fixed -3% stop geometry, isolate whether a causal local-volatility R unit materially improves realized bracket economics on Request171 calibration only. Request178 remains sealed.",
+  "opens_new_dates": false,
+  "promotion_eligible": false
+}

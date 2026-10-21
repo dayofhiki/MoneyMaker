@@ -1,0 +1,7 @@
+{
+  "request_id": 204,
+  "experiment": "filing-semantics-first-passage-directional-edge-v1.0",
+  "run_reason": "After Request203 failed, test frozen strictly-prior SEC 8-K filing semantics as a distinct structural context on the same FIT->chronological calibration first-passage target. Request178 remains sealed.",
+  "opens_new_dates": false,
+  "promotion_eligible": false
+}
